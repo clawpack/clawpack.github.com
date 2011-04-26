@@ -1,0 +1,230 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Fortran version &mdash; Clawpack v4.6.x documentation</title>
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '4.6.x',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="shortcut icon" href="_static/clawicon.ico"/>
+    <link rel="author" title="About these documents" href="about.html" />
+    <link rel="top" title="Clawpack v4.6.x documentation" href="index.html" />
+    <link rel="next" title="Python Hints" href="python.html" />
+    <link rel="prev" title="Compiling the Sphinx documentation locally" href="sphinxdoc.html" /> 
+  </head>
+  <body>
+
+<div style="background-color: #FFFFE8; text-align: left; padding: 10px 10px 15px 15px">
+<table>
+<tr>
+<!--
+<td>
+&nbsp;
+<br>
+<a href="http://www.clawpack.org/"><img src="_static/clawlogo.jpg" border="0" alt="Clawpack logo"/></a>
+</td>
+-->
+<td>
+<br>
+&nbsp;
+<br>
+<a href
+<font size="7"  color="#7F0000"> Clawpack Documentation</font>
+<br>
+&nbsp;
+<br>
+</td>
+</tr>
+</table>
+</div>
+
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="python.html" title="Python Hints"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="sphinxdoc.html" title="Compiling the Sphinx documentation locally"
+             accesskey="P">previous</a> |</li>
+<li><a href="http://www.clawpack.org"><font color="#7F0000">Clawpack Webpage</font></a>|&nbsp;</li>
+<li><a href="apps.html"><font color="#7F0000">Gallery</font></a>|&nbsp;</li>
+<li><a href="index.html"><font color="#7F0000">Contents</font></a>|&nbsp;</li>
+ 
+      </ul>
+    </div>
+
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="index.html">
+              <img class="logo" src="_static/clawlogo.jpg" alt="Logo"/>
+            </a></p>
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Fortran version</a><ul>
+<li><a class="reference internal" href="#new-in-4-4">New in 4.4</a></li>
+<li><a class="reference internal" href="#makefiles">Makefiles</a></li>
+<li><a class="reference internal" href="#more-tips">More tips</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="sphinxdoc.html"
+                        title="previous chapter">Compiling the Sphinx documentation locally</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="python.html"
+                        title="next chapter">Python Hints</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/fortran.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" size="18" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="fortran-version">
+<span id="fortran"></span><h1>Fortran version<a class="headerlink" href="#fortran-version" title="Permalink to this headline">¶</a></h1>
+<p>Much of the Clawpack 4.3 documentation still applies:</p>
+<blockquote>
+<ul class="simple">
+<li><a class="reference external" href="http://www.amath.washington.edu/~claw/doc.html">Original 4.3 documentation</a></li>
+</ul>
+</blockquote>
+<div class="section" id="new-in-4-4">
+<h2>New in 4.4<a class="headerlink" href="#new-in-4-4" title="Permalink to this headline">¶</a></h2>
+<p>Input parameters are generally specified in a Python script <tt class="file docutils literal"><span class="pre">setrun.py</span></tt>
+and then:</p>
+<div class="highlight-python"><pre>$ make .data</pre>
+</div>
+<p>creates the <tt class="file docutils literal"><span class="pre">*.data</span></tt> files that the Fortran code requires.  These have nearly
+the same form as in Clawpack 4.3, except:</p>
+<ul class="simple">
+<li><tt class="file docutils literal"><span class="pre">clawNez.data</span></tt> is now <tt class="file docutils literal"><span class="pre">claw.data</span></tt></li>
+<li>The first line of the file now contains <tt class="docutils literal"><span class="pre">ndim</span></tt>, the number of space dimensions.</li>
+</ul>
+<p>The output files <tt class="file docutils literal"><span class="pre">fort.*</span></tt> have nearly the same form as in Clawpack 4.3
+except:</p>
+<ul class="simple">
+<li>The <tt class="file docutils literal"><span class="pre">fort.t*</span></tt> files now contain <tt class="docutils literal"><span class="pre">ndim</span></tt>.</li>
+</ul>
+</div>
+<div class="section" id="makefiles">
+<h2>Makefiles<a class="headerlink" href="#makefiles" title="Permalink to this headline">¶</a></h2>
+<p>Most example directories contain a <tt class="file docutils literal"><span class="pre">Makefile</span></tt> that offers several
+options.  Type:</p>
+<div class="highlight-python"><pre>$ make help</pre>
+</div>
+<p>for a list.
+Often:</p>
+<div class="highlight-python"><pre>$ make .plots</pre>
+</div>
+<p>is all you need to type to create the data files,
+compile the code, run it, and produce plots as png and html files.</p>
+<p>Or, if you just want to run the code and produce output without making
+all the plots (and then do the plotting interactively, for example):</p>
+<div class="highlight-python"><pre>$ make .output</pre>
+</div>
+<p>Note: There is a dot before <tt class="docutils literal"><span class="pre">plots</span></tt> and <tt class="docutils literal"><span class="pre">output</span></tt> in the above
+commands.</p>
+<p>The directory where output and plots are stored is specified in the Makefile.</p>
+<p>The Makefile in most directories includes a common Makefile found at
+<a class="reference external" href="claw/util/Makefile.common">$CLAW/util/Makefile.common</a> that does most
+of the work.</p>
+</div>
+<div class="section" id="more-tips">
+<h2>More tips<a class="headerlink" href="#more-tips" title="Permalink to this headline">¶</a></h2>
+<ul>
+<li><p class="first">The &#8220;make .output&#8221;
+command runs the code and stores the name of the output directory in the
+file <tt class="docutils literal"><span class="pre">.output</span></tt> and it is the modification time of this file that is checked
+relative to the dependencies. (Note: the unix command ls generally does
+not display files that start with a dot so this file may be invisible
+unless you use &#8220;ls -a&#8221;.)</p>
+<p>If you want to re-run the code and encounter:</p>
+<div class="highlight-python"><pre>$ make .output
+$ make: `.output' is up to date.</pre>
+</div>
+<p>you can remove the file <tt class="docutils literal"><span class="pre">.output</span></tt> to force the code to be run again.</p>
+</li>
+<li><p class="first">Similarly, remove the file <tt class="docutils literal"><span class="pre">.plots</span></tt> to force the plots to be recreated.</p>
+</li>
+<li><p class="first">If you change the compiler flags FFLAGS in the Makefile then you should
+make sure that all files used are recompiled with the new flags.  The
+Makefiles as written do not catch this dependency and will not recompile
+all the .o files when the Makefile changes.  To force recompilation,
+use:</p>
+<div class="highlight-python"><pre>$ make new</pre>
+</div>
+</li>
+</ul>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="python.html" title="Python Hints"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="sphinxdoc.html" title="Compiling the Sphinx documentation locally"
+             >previous</a> |</li>
+<li><a href="http://www.clawpack.org"><font color="#7F0000">Clawpack Webpage</font></a>|&nbsp;</li>
+<li><a href="apps.html"><font color="#7F0000">Gallery</font></a>|&nbsp;</li>
+<li><a href="index.html"><font color="#7F0000">Contents</font></a>|&nbsp;</li>
+ 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2011, Randall J. LeVeque and others.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.4.
+    </div>
+  </body>
+</html>

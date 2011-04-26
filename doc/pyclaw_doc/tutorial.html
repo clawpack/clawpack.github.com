@@ -1,0 +1,347 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Pyclaw Tutorial &mdash; Clawpack v4.6.x documentation</title>
+    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '4.6.x',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="shortcut icon" href="../_static/clawicon.ico"/>
+    <link rel="author" title="About these documents" href="../about.html" />
+    <link rel="top" title="Clawpack v4.6.x documentation" href="../index.html" />
+    <link rel="up" title="Pyclaw" href="index.html" />
+    <link rel="next" title="Pyclaw Utility Module" href="util.html" />
+    <link rel="prev" title="Pyclaw Solutions" href="solution.html" /> 
+  </head>
+  <body>
+
+<div style="background-color: #FFFFE8; text-align: left; padding: 10px 10px 15px 15px">
+<table>
+<tr>
+<!--
+<td>
+&nbsp;
+<br>
+<a href="http://www.clawpack.org/"><img src="../_static/clawlogo.jpg" border="0" alt="Clawpack logo"/></a>
+</td>
+-->
+<td>
+<br>
+&nbsp;
+<br>
+<a href
+<font size="7"  color="#7F0000"> Clawpack Documentation</font>
+<br>
+&nbsp;
+<br>
+</td>
+</tr>
+</table>
+</div>
+
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="util.html" title="Pyclaw Utility Module"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="solution.html" title="Pyclaw Solutions"
+             accesskey="P">previous</a> |</li>
+<li><a href="http://www.clawpack.org"><font color="#7F0000">Clawpack Webpage</font></a>|&nbsp;</li>
+<li><a href="../apps.html"><font color="#7F0000">Gallery</font></a>|&nbsp;</li>
+<li><a href="../index.html"><font color="#7F0000">Contents</font></a>|&nbsp;</li>
+
+          <li><a href="index.html" accesskey="U">Pyclaw</a> &raquo;</li> 
+      </ul>
+    </div>
+
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/clawlogo.jpg" alt="Logo"/>
+            </a></p>
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Pyclaw Tutorial</a><ul>
+<li><a class="reference internal" href="#flow-of-a-pyclaw-simulation">Flow of a Pyclaw Simulation</a></li>
+<li><a class="reference internal" href="#creation-of-a-pyclaw-solution">Creation of a Pyclaw <tt class="docutils literal"><span class="pre">Solution</span></tt></a></li>
+<li><a class="reference internal" href="#creation-of-a-pyclaw-solver">Creation of a Pyclaw <tt class="docutils literal"><span class="pre">Solver</span></tt></a></li>
+<li><a class="reference internal" href="#creating-and-running-a-simulation-with-controller">Creating and Running a Simulation with <tt class="docutils literal"><span class="pre">Controller</span></tt></a></li>
+<li><a class="reference internal" href="#moving-on">Moving On</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="solution.html"
+                        title="previous chapter">Pyclaw Solutions</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="util.html"
+                        title="next chapter">Pyclaw Utility Module</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../_sources/pyclaw_doc/tutorial.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" size="18" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <blockquote>
+</blockquote>
+<div class="section" id="pyclaw-tutorial">
+<span id="id1"></span><h1>Pyclaw Tutorial<a class="headerlink" href="#pyclaw-tutorial" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="flow-of-a-pyclaw-simulation">
+<h2>Flow of a Pyclaw Simulation<a class="headerlink" href="#flow-of-a-pyclaw-simulation" title="Permalink to this headline">¶</a></h2>
+<p>The basic idea of a pyclaw simulation is to construct a
+<tt class="xref py py-class docutils literal"><span class="pre">Solution</span></tt> object, hand it to a
+<tt class="xref py py-class docutils literal"><span class="pre">Solver</span></tt> object with the request new time and the
+solver will take whatever steps are necessary to evolve the solution to the
+requested time.</p>
+<img alt="../_images/pyclaw_architecture_flow.png" src="../_images/pyclaw_architecture_flow.png" />
+<p>The bulk of the work in order to run a simulation then is the creation and
+setup of the appropriate <tt class="xref py py-class docutils literal"><span class="pre">Solution</span></tt> objects and the
+<tt class="xref py py-class docutils literal"><span class="pre">Solver</span></tt> needed to evolve the solution to the
+requested time.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Here we will assume that you have run <tt class="docutils literal"><span class="pre">import</span> <span class="pre">numpy</span> <span class="pre">as</span> <span class="pre">np</span></tt> before we do
+any of the tutorial commands.</p>
+</div>
+</div>
+<div class="section" id="creation-of-a-pyclaw-solution">
+<h2>Creation of a Pyclaw <tt class="xref py py-class docutils literal"><span class="pre">Solution</span></tt><a class="headerlink" href="#creation-of-a-pyclaw-solution" title="Permalink to this headline">¶</a></h2>
+<p>A Pyclaw <tt class="xref py py-class docutils literal"><span class="pre">Solution</span></tt> is a container for a collection of
+<tt class="xref py py-class docutils literal"><span class="pre">Grid</span></tt> objects in order to support adaptive mesh
+refinement and multi-block simulations. The <tt class="xref py py-class docutils literal"><span class="pre">Solution</span></tt>
+object keeps track of a list of <tt class="xref py py-class docutils literal"><span class="pre">Grid</span></tt> objects then
+and controls the overall input and output of the entire collection of
+<tt class="xref py py-class docutils literal"><span class="pre">Grid</span></tt> objects.  Inside of a
+<tt class="xref py py-class docutils literal"><span class="pre">Grid</span></tt> object, a set of
+<tt class="xref py py-class docutils literal"><span class="pre">Dimension</span></tt> objects define the extents and basic
+grids of the <tt class="xref py py-class docutils literal"><span class="pre">Grid</span></tt>.</p>
+<img alt="../_images/pyclaw_solution_structure.png" src="../_images/pyclaw_solution_structure.png" />
+<p>The process needed to create a <tt class="xref py py-class docutils literal"><span class="pre">Solution</span></tt> object then
+follows from the bottom up.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">pyclaw.solution</span> <span class="kn">import</span> <span class="n">Solution</span><span class="p">,</span> <span class="n">Grid</span><span class="p">,</span> <span class="n">Dimension</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">Dimension</span><span class="p">(</span><span class="s">&#39;x&#39;</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mi">200</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">y</span> <span class="o">=</span> <span class="n">Dimension</span><span class="p">(</span><span class="s">&#39;y&#39;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="o">.</span><span class="n">mthbc_lower</span> <span class="o">=</span> <span class="mi">2</span>
+</pre></div>
+</div>
+<p>This code creates two dimensions, a dimension <tt class="docutils literal"><span class="pre">x</span></tt>  on the interval
+<tt class="docutils literal"><span class="pre">[-1.0,</span> <span class="pre">1.0]</span></tt> with <tt class="docutils literal"><span class="pre">200</span></tt> grid points and a dimension <tt class="docutils literal"><span class="pre">y</span></tt> on the interval
+<tt class="docutils literal"><span class="pre">[0.0,</span> <span class="pre">1.0]</span></tt> with <tt class="docutils literal"><span class="pre">100</span></tt> grid points.  We then set the boundary conditions
+in the x direction to be periodic (note that if you set periodic boundary
+conditions, the corresponding lower or upper boundary condition method will be
+set as well).</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Many of the attributes of a <tt class="xref py py-class docutils literal"><span class="pre">Dimension</span></tt>
+object are set automatically so make sure that the values you want are set
+by default.  Please refer to the <tt class="xref py py-class docutils literal"><span class="pre">Dimension</span></tt>
+classes definition for what the default values are.</p>
+</div>
+<p>Next we have to create a <tt class="xref py py-class docutils literal"><span class="pre">Grid</span></tt> object that will
+contain our <tt class="xref py py-class docutils literal"><span class="pre">Dimension</span></tt> objects.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">grid</span> <span class="o">=</span> <span class="n">Grid</span><span class="p">([</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">grid</span><span class="o">.</span><span class="n">meqn</span> <span class="o">=</span> <span class="mi">2</span>
+</pre></div>
+</div>
+<p>Here we create a grid with the dimensions we created earlier to make a single
+2D <tt class="xref py py-class docutils literal"><span class="pre">Grid</span></tt> object and set the number of equations it
+will represent to 2.  As before, many of the attributes of the
+<tt class="xref py py-class docutils literal"><span class="pre">Grid</span></tt> object are set automatically.</p>
+<p>We now need to set the initial condition <tt class="docutils literal"><span class="pre">q</span></tt> and possibly <tt class="docutils literal"><span class="pre">aux</span></tt> to the correct
+values.  There are multiple convenience functions to help in this, here we
+will use the method <tt class="xref py py-meth docutils literal"><span class="pre">zeros_q()</span></tt> to set all the
+values of <tt class="docutils literal"><span class="pre">q</span></tt> to zero.</p>
+<div class="highlight-python"><pre>&gt;&gt; sigma = 0.2
+&gt;&gt; omega = np.pi
+&gt;&gt; grid.zeros_q()
+&gt;&gt; q[:,0] = np.cos(omega * grid.x.center)
+&gt;&gt; q[:,1] = np.exp(-grid.x.center**2 / sigma**2)</pre>
+</div>
+<p>We now have initialized the first entry of q to a cosine function
+evaluated at the cell centers and the second entry of q to a gaussian, again
+evaluated at the grid cell centers.</p>
+<p>Many Riemann solvers also require information about the problem we are going
+to run which happen to be grid properties such as the impedence <tt class="docutils literal"><span class="pre">Z</span></tt> and
+speed of sound <tt class="docutils literal"><span class="pre">c</span></tt> for linear acoustics.  We can set these values in the
+<tt class="docutils literal"><span class="pre">aux_global</span></tt> dictionary in one of two ways.  The first way is to set them
+directly as in:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">grid</span><span class="o">.</span><span class="n">aux_global</span><span class="p">[</span><span class="s">&#39;c&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">grid</span><span class="o">.</span><span class="n">aux_global</span><span class="p">[</span><span class="sb">`Z`</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.25</span>
+</pre></div>
+</div>
+<p>We can also read in the value from a file similar to how it was done in the
+previous version of Clawpack.  The <tt class="xref py py-class docutils literal"><span class="pre">Grid</span></tt> class
+provides a convenience routine to do this called
+<tt class="xref py py-meth docutils literal"><span class="pre">set_aux_global()</span></tt> which expects a path to an
+appropriately formatted data file.  The method
+<tt class="xref py py-meth docutils literal"><span class="pre">set_aux_global()</span></tt> will then open the file, parse
+its contents, and use the names of the data as dictionary keys.</p>
+<div class="highlight-python"><pre>&gt;&gt; grid.set_aux_global('./setprob.data')</pre>
+</div>
+<p>Last we have to put our <tt class="xref py py-class docutils literal"><span class="pre">Grid</span></tt> object into a
+<tt class="xref py py-class docutils literal"><span class="pre">Solution</span></tt> object to complete the process.  In this
+case, since we are not using adaptive mesh refinement or a multi-block
+algorithm, we do not have multiple grids.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">sol</span> <span class="o">=</span> <span class="n">Solution</span><span class="p">(</span><span class="n">grid</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>We now have a solution ready to be evolved in a
+<tt class="xref py py-class docutils literal"><span class="pre">Solver</span></tt> object.</p>
+</div>
+<div class="section" id="creation-of-a-pyclaw-solver">
+<h2>Creation of a Pyclaw <tt class="xref py py-class docutils literal"><span class="pre">Solver</span></tt><a class="headerlink" href="#creation-of-a-pyclaw-solver" title="Permalink to this headline">¶</a></h2>
+<p>A Pyclaw <tt class="xref py py-class docutils literal"><span class="pre">Solver</span></tt> can represent many different
+types of solvers so here we will concentrate on a 1D, classic Clawpack type of
+solver.  This solver is located in the <tt class="xref py py-mod docutils literal"><span class="pre">clawpack</span></tt> module.</p>
+<p>First we import the particular solver we want and create it with the default
+configuration.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">pyclaw.evolve.clawpack</span> <span class="kn">import</span> <span class="n">ClawSolver1D</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">solver</span> <span class="o">=</span> <span class="n">ClawSolver1D</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>Next we need to tell the solver which Riemann solver to use from the
+<tt class="xref doc docutils literal"><span class="pre">Riemann</span> <span class="pre">solver</span> <span class="pre">package</span></tt> .  We can always check what
+Riemann solvers are available to use via the
+<tt class="xref py py-meth docutils literal"><span class="pre">list_riemann_solvers()</span></tt> method.  Once we have
+picked one out, we let the solver pick it out for us via:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">solver</span><span class="o">.</span><span class="n">set_riemann_solver</span><span class="p">(</span><span class="s">&#39;acoustics&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>In this case we have decided to use the linear acoustics Riemann solver.  You
+can also set your own solver by importing the module that contains it and
+setting it directly to the <tt class="xref py py-attr docutils literal"><span class="pre">rp</span></tt>
+attribute to the particular function.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">my_rp_module</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">solver</span><span class="o">.</span><span class="n">rp</span> <span class="o">=</span> <span class="n">my_rp_module</span><span class="o">.</span><span class="n">my_acoustics_rp</span>
+</pre></div>
+</div>
+<p>Last we finish up by specifying the specific values for our solver to use.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">solver</span><span class="o">.</span><span class="n">mthlim</span> <span class="o">=</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span><span class="mi">3</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">solver</span><span class="o">.</span><span class="n">dt</span> <span class="o">=</span> <span class="mf">0.01</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">solver</span><span class="o">.</span><span class="n">cfl_desired</span> <span class="o">=</span> <span class="mf">0.9</span>
+</pre></div>
+</div>
+<p>In this case, because we are using a Riemann solver that passes back two
+waves, we must choose two limiters.</p>
+<p>If we wanted to control the simulation we could at this point by issuing the
+following commands:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">solver</span><span class="o">.</span><span class="n">evolve_to_time</span><span class="p">(</span><span class="n">sol</span><span class="p">,</span><span class="mf">1.0</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>This would evolve our solution <tt class="docutils literal"><span class="pre">sol</span></tt> to <tt class="docutils literal"><span class="pre">t</span> <span class="pre">=</span> <span class="pre">1.0</span></tt> but we are then
+responsible for all output and other setup considerations.</p>
+</div>
+<div class="section" id="creating-and-running-a-simulation-with-controller">
+<h2>Creating and Running a Simulation with <tt class="xref py py-class docutils literal"><span class="pre">Controller</span></tt><a class="headerlink" href="#creating-and-running-a-simulation-with-controller" title="Permalink to this headline">¶</a></h2>
+<p>The <tt class="xref py py-class docutils literal"><span class="pre">Controller</span></tt> coordinates the output and setup of
+a run with the same parameters as the classic Clawpack.  In order to have it
+control a run, we need only to create the controller, assign it a solver and
+initial condition, and call the <tt class="xref py py-meth docutils literal"><span class="pre">run()</span></tt>
+method.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">pyclaw.controller</span> <span class="kn">import</span> <span class="n">Controller</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">claw</span> <span class="o">=</span> <span class="n">Controller</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">claw</span><span class="o">.</span><span class="n">solver</span> <span class="o">=</span> <span class="n">solver</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">claw</span><span class="o">.</span><span class="n">solutions</span><span class="p">[</span><span class="s">&#39;n&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">sol</span>
+</pre></div>
+</div>
+<p>Here we have imported and created the <tt class="xref py py-class docutils literal"><span class="pre">Controller</span></tt>
+class, assigned the <tt class="xref py py-class docutils literal"><span class="pre">Solver</span></tt> and
+<tt class="xref py py-class docutils literal"><span class="pre">Solution</span></tt>.</p>
+<p>These next commands setup the type of output the controller will output.  The
+parameters are similar to the ones found in the classic clawpack claw.data
+format.</p>
+<div class="highlight-python"><pre>&gt;&gt; claw.outstyle = 1
+&gt;&gt; claw.nout = 10
+&gt;&gt; claw.tfinal = 1.0</pre>
+</div>
+<p>When we are ready to run the simulation, we can call the
+<tt class="xref py py-meth docutils literal"><span class="pre">run()</span></tt> method.  It will then run the
+simulation and output the appropriate time points.  If the
+<tt class="xref py py-attr docutils literal"><span class="pre">keep_copy</span></tt> is set to <em>True</em> the
+controller will keep a copy of each solution output in the frames array.  For
+instance, you can then immediately plot the solutions output into the <em>frames</em>
+array.</p>
+</div>
+<div class="section" id="moving-on">
+<h2>Moving On<a class="headerlink" href="#moving-on" title="Permalink to this headline">¶</a></h2>
+<p>This is only a jumping off point for all that can be setup using the pyclaw
+library.  Please refer to the rest of the documentation for more examples and
+options.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="util.html" title="Pyclaw Utility Module"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="solution.html" title="Pyclaw Solutions"
+             >previous</a> |</li>
+<li><a href="http://www.clawpack.org"><font color="#7F0000">Clawpack Webpage</font></a>|&nbsp;</li>
+<li><a href="../apps.html"><font color="#7F0000">Gallery</font></a>|&nbsp;</li>
+<li><a href="../index.html"><font color="#7F0000">Contents</font></a>|&nbsp;</li>
+
+          <li><a href="index.html" >Pyclaw</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2011, Randall J. LeVeque and others.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.4.
+    </div>
+  </body>
+</html>

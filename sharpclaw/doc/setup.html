@@ -1,0 +1,158 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Setting up a new problem &mdash; SharpClaw v0.3 documentation</title>
+    <link rel="stylesheet" href="_static/haiku.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/print.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '0.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="/Users/ketch/jsMath/easy/load.js"></script>
+    <script type="text/javascript" src="_static/theme_extras.js"></script>
+    <link rel="author" title="About these documents" href="about.html" />
+    <link rel="top" title="SharpClaw v0.3 documentation" href="index.html" />
+    <link rel="up" title="User Guide" href="userguide.html" />
+    <link rel="next" title="Problem Parameters" href="options.html" />
+    <link rel="prev" title="User Guide" href="userguide.html" /> 
+  </head>
+  <body>
+      <div class="header"><h1 class="heading"><a href="index.html">
+          <span>SharpClaw v0.3 documentation</span></a></h1>
+        <h2 class="heading"><span>Setting up a new problem</span></h2>
+      </div>
+      <div class="topnav">
+      
+        <p>
+        «&#160;&#160;<a href="userguide.html">User Guide</a>
+        &#160;&#160;::&#160;&#160;
+        <a class="uplink" href="index.html">Contents</a>
+        &#160;&#160;::&#160;&#160;
+        <a href="options.html">Problem Parameters</a>&#160;&#160;»
+        </p>
+
+      </div>
+      <div class="content">
+        
+        
+  <div class="section" id="setting-up-a-new-problem">
+<h1>Setting up a new problem<a class="headerlink" href="#setting-up-a-new-problem" title="Permalink to this headline">¶</a></h1>
+<p>The easiest way to set up a new problem is typically to copy an existing
+problem directory that is similar.</p>
+<div class="section" id="adapting-a-clawpack-problem-setup-to-sharpclaw">
+<h2>Adapting a Clawpack problem setup to SharpClaw<a class="headerlink" href="#adapting-a-clawpack-problem-setup-to-sharpclaw" title="Permalink to this headline">¶</a></h2>
+<p>It is relatively quick and straightforward to adapt a problem that is
+set up to run in Clawpack to run in SharpClaw.  The following modifications
+need to be made:</p>
+<blockquote>
+<ul>
+<li><dl class="first docutils">
+<dt>Modify <tt class="file docutils literal"><span class="pre">setrun.py</span></tt></dt>
+<dd><ul class="first last simple">
+<li>Set <cite>time_integrator</cite>, <cite>tfluct_solver</cite>, <cite>char_decomp</cite>, <cite>src_term</cite>,
+<cite>lim_type</cite>, <cite>mbc</cite></li>
+<li>Set <cite>mbc</cite> to 3</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>Modify <tt class="file docutils literal"><span class="pre">Makefile</span></tt></dt>
+<dd><ul class="first last simple">
+<li>For this, it is best to copy an existing SharpClaw Makefile</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>Slight modifications to:</dt>
+<dd><ul class="first last simple">
+<li><tt class="file docutils literal"><span class="pre">rpnN.f</span></tt></li>
+<li><tt class="file docutils literal"><span class="pre">bcN.f</span></tt></li>
+<li><tt class="file docutils literal"><span class="pre">outN.f</span></tt></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><p class="first">Source terms: <tt class="file docutils literal"><span class="pre">srcN.f</span></tt> should be converted from full-discrete
+to semi-discrete form.</p>
+</li>
+<li><p class="first">Optionally, provide <tt class="file docutils literal"><span class="pre">tfluctN.f</span></tt> and/or <tt class="file docutils literal"><span class="pre">evec.f</span></tt></p>
+</li>
+</ul>
+</blockquote>
+<p>It is expected that in Clawpack 5.0, the setup for using SharpClaw or Clawpack
+will be even less pronounced, as the interfaces to these latter functions will
+be unified.</p>
+</div>
+<div class="section" id="user-provided-functions">
+<h2>User-provided functions<a class="headerlink" href="#user-provided-functions" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="riemann-solver">
+<h3>Riemann solver<a class="headerlink" href="#riemann-solver" title="Permalink to this headline">¶</a></h3>
+<p>The Riemann solver is the basic building block of any Godunov-type method,
+including the methods in SharpClaw.  The routine required takes the form
+of a wave-propagation solver, just like those used in Clawpack.  For many
+systems of hyperbolic equations, a wave propagation Riemann solver already
+exists within Clawpack or SharpClaw.  For new systems of equations,
+this function must be written by the user.</p>
+<p>The inputs to the Riemann solver are the left and right states appearing
+in the Riemann problem, as well as any auxiliary variables (such as spatially
+varying coefficients) that are required for the solution of the Riemann problem.
+The outputs of the Riemann solver routine are the waves, speeds, and fluctuations.</p>
+<p>The following routines must be provided by the user, if necessary.</p>
+</div>
+<div class="section" id="source-terms">
+<h3>Source terms<a class="headerlink" href="#source-terms" title="Permalink to this headline">¶</a></h3>
+<p>If the problem includes source terms, these should be included in a routine
+<tt class="file docutils literal"><span class="pre">src.f</span></tt>.  Unlike the source term routine for Clawpack, this routine
+should not integrate the source term over a time step.  Rather, it should
+compute the instantaneous value of the source term in the semi-discrete
+system.</p>
+</div>
+<div class="section" id="auxiliary-variables">
+<h3>Auxiliary variables<a class="headerlink" href="#auxiliary-variables" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="eigenvectors">
+<h3>Eigenvectors<a class="headerlink" href="#eigenvectors" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="total-fluctuations">
+<h3>Total Fluctuations<a class="headerlink" href="#total-fluctuations" title="Permalink to this headline">¶</a></h3>
+</div>
+</div>
+</div>
+
+
+      </div>
+      <div class="bottomnav">
+      
+        <p>
+        «&#160;&#160;<a href="userguide.html">User Guide</a>
+        &#160;&#160;::&#160;&#160;
+        <a class="uplink" href="index.html">Contents</a>
+        &#160;&#160;::&#160;&#160;
+        <a href="options.html">Problem Parameters</a>&#160;&#160;»
+        </p>
+
+      </div>
+
+    <div class="footer">
+        &copy; Copyright 2010, David I. Ketcheson.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.4.
+    </div>
+  </body>
+</html>

@@ -1,0 +1,480 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Specifying GeoClaw parameters in setrun.py &mdash; Clawpack v4.6.x documentation</title>
+    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '4.6.x',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="shortcut icon" href="../_static/clawicon.ico"/>
+    <link rel="author" title="About these documents" href="../about.html" />
+    <link rel="top" title="Clawpack v4.6.x documentation" href="../index.html" />
+    <link rel="up" title="GeoClaw documentation" href="index.html" />
+    <link rel="next" title="Sample GeoClaw setrun.py module" href="setrun_geoclaw_sample.html" />
+    <link rel="prev" title="GeoClaw" href="geoclaw.html" /> 
+  </head>
+  <body>
+
+<div style="background-color: #FFFFE8; text-align: left; padding: 10px 10px 15px 15px">
+<table>
+<tr>
+<!--
+<td>
+&nbsp;
+<br>
+<a href="http://www.clawpack.org/"><img src="../_static/clawlogo.jpg" border="0" alt="Clawpack logo"/></a>
+</td>
+-->
+<td>
+<br>
+&nbsp;
+<br>
+<a href
+<font size="7"  color="#7F0000"> Clawpack Documentation</font>
+<br>
+&nbsp;
+<br>
+</td>
+</tr>
+</table>
+</div>
+
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="setrun_geoclaw_sample.html" title="Sample GeoClaw setrun.py module"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="geoclaw.html" title="GeoClaw"
+             accesskey="P">previous</a> |</li>
+<li><a href="http://www.clawpack.org"><font color="#7F0000">Clawpack Webpage</font></a>|&nbsp;</li>
+<li><a href="../apps.html"><font color="#7F0000">Gallery</font></a>|&nbsp;</li>
+<li><a href="../index.html"><font color="#7F0000">Contents</font></a>|&nbsp;</li>
+
+          <li><a href="index.html" accesskey="U">GeoClaw documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/clawlogo.jpg" alt="Logo"/>
+            </a></p>
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Specifying GeoClaw parameters in <cite>setrun.py</cite></a><ul>
+<li><a class="reference internal" href="#refinement-factors-in-time">Refinement factors in time</a></li>
+<li><a class="reference internal" href="#general-geo-parameters">General geo parameters</a></li>
+<li><a class="reference internal" href="#tsunami-parameters">Tsunami parameters</a></li>
+<li><a class="reference internal" href="#topography-data-file-parameters">Topography data file parameters</a></li>
+<li><a class="reference internal" href="#qinit-data-file-parameters">qinit data file parameters</a></li>
+<li><a class="reference internal" href="#amr-refinement-region-parameters">AMR refinement region parameters</a></li>
+<li><a class="reference internal" href="#gauge-parameters">Gauge parameters</a></li>
+<li><a class="reference internal" href="#fixed-grid-output-parameters">Fixed grid output parameters</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="geoclaw.html"
+                        title="previous chapter">GeoClaw</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="setrun_geoclaw_sample.html"
+                        title="next chapter">Sample GeoClaw <cite>setrun.py</cite> module</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../_sources/geoclaw_doc/setrun_geoclaw.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" size="18" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="specifying-geoclaw-parameters-in-setrun-py">
+<span id="setrun-geoclaw"></span><h1>Specifying GeoClaw parameters in <cite>setrun.py</cite><a class="headerlink" href="#specifying-geoclaw-parameters-in-setrun-py" title="Permalink to this headline">¶</a></h1>
+<p>Since <a class="reference internal" href="geoclaw.html#geoclaw"><em>GeoClaw</em></a> is a modified version of <em class="xref std std-ref">amrclaw</em>,
+all of the parameters that
+are required for AMRClaw are also needed by GeoClaw.  See
+<a class="reference internal" href="../amrclaw_doc/setrun_amrclaw.html#setrun-amrclaw"><em>Specifying AMRClaw parameters in setrun.py</em></a> for a discussion of these, and <a class="reference internal" href="../setrun.html#setrun"><em>Specifying run-time parameters in setrun.py</em></a> for a
+description of <cite>setrun.py</cite> input scripts more generally.</p>
+<p>In addition, a number of other parameters should be set in the <cite>setrun.py</cite>
+file in any <a class="reference internal" href="geoclaw.html#geoclaw"><em>GeoClaw</em></a> application.</p>
+<p>It is best to look at a specific example while reading this section, for
+example  <a class="reference internal" href="setrun_geoclaw_sample.html#setrun-geoclaw-sample"><em>Sample GeoClaw setrun.py module</em></a>.</p>
+<p>The function <cite>setrun</cite> in this module is essentially the same as for AMRClaw,
+except that it expects to be called with <em>claw_pkg = &#8216;geoclaw&#8217;</em>.  This call
+should be performed properly by the Makefile if you have <em>CLAW_PKG =
+geoclaw</em> set properly there.</p>
+<p>The new section <a class="reference internal" href="setrun_geoclaw_sample.html#setrun-setgeo"><em>setgeo function</em></a>
+in this module contains the new GeoClaw parameters.</p>
+<p>A brief summary of these:</p>
+<div class="section" id="refinement-factors-in-time">
+<h2>Refinement factors in time<a class="headerlink" href="#refinement-factors-in-time" title="Permalink to this headline">¶</a></h2>
+<p>New in 4.6.0: It is now possible to have GeoClaw automatically choose
+refinement factors in time on each level based on an estimate of the maximum
+wave speed on all grids at this level.  For most hyperbolic problems the CFL
+condition suggests that one should refine in time by the same factor as in
+space.  However, for GeoClaw applications where fine grids appear only in
+shallow coastal regions this may not be the case.  Automatic choice of
+refinement factors is used if</p>
+<dl class="attribute">
+<dt>
+<tt class="descname">variable_dt_refinement_ratios : bool</tt></dt>
+<dd></dd></dl>
+
+<p>is set to True.  The default is False, in which case refinement factors in time
+are specified by the user as usual.</p>
+</div>
+<div class="section" id="general-geo-parameters">
+<h2>General geo parameters<a class="headerlink" href="#general-geo-parameters" title="Permalink to this headline">¶</a></h2>
+<dl class="attribute">
+<dt>
+<tt class="descname">igravity : integer</tt></dt>
+<dd><p><em>igravity = 1</em> should be set in general.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<tt class="descname">gravity : float</tt></dt>
+<dd><p>gravitational constant in m/s**2, e.g.  <em>gravity = 9.81</em>.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<tt class="descname">icoordsys : integer</tt></dt>
+<dd><p><em>icoordsys = 1</em> for Cartesian x-y in meters,</p>
+<p><em>icoordsys = 2</em> for latitude-longitude.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="tsunami-parameters">
+<span id="setrun-tsunami"></span><h2>Tsunami parameters<a class="headerlink" href="#tsunami-parameters" title="Permalink to this headline">¶</a></h2>
+<p>These parameters are used for tsunami modeling (can also be used for other
+problems  &#8212; need to clarify this!).</p>
+<dl class="attribute">
+<dt>
+<tt class="descname">sealevel : float</tt></dt>
+<dd><p>sea level (often <em>sealevel = 0.</em>)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<tt class="descname">wavetolerance : float</tt></dt>
+<dd><p>Cells are flagged for refinement if the difference between the surface
+elevation and sea level is larger than this tolerance.  Note that whether
+refinement is actually done depends also on how various AMR regions have
+been set (see Section <a class="reference internal" href="../regions.html#regions"><em>Specifying AMR regions</em></a>) and also on several other
+attributes described below that contain information on minimum and
+maximum refinement allowed in various regions.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<tt class="descname">maxleveldeep : float</tt></dt>
+<dd><p>For simulations over the ocean, it is often useful to specify
+a maximum refinement level allowed in deep parts of the ocean.  This is
+useful if a high level of refinement is specified on some rectangular
+region but only the parts of this region near the shore actually need to
+be refined.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<tt class="descname">depthdeep : float</tt></dt>
+<dd><p>The deepness that triggers the refinement limitation imposed by
+<em>maxleveldeep</em> above.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<tt class="descname">ifriction : integer</tt></dt>
+<dd><p>Whether or not to include source terms for friction (1=yes, 0=no).
+<strong>Is this actually used??</strong></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<tt class="descname">coeffmanning : float</tt></dt>
+<dd><p>For friction source terms, the Manning coefficient.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<tt class="descname">frictiondepth : float</tt></dt>
+<dd><p>Friction source terms are only applied in water shallower than this,
+since they have negligible effect in shallower water.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="topography-data-file-parameters">
+<span id="setrun-topo"></span><h2>Topography data file parameters<a class="headerlink" href="#topography-data-file-parameters" title="Permalink to this headline">¶</a></h2>
+<p>See <a class="reference internal" href="topo.html#topo"><em>Topography data</em></a> for more information about specifying topography (and
+bathymetry) data files in GeoClaw.</p>
+<dl class="attribute">
+<dt>
+<tt class="descname">topofiles : list of lists</tt></dt>
+<dd><p><em>topofiles</em> should be a list of the form <em>[file1info, file2info, etc.]</em>
+where each element is itself a list of the form</p>
+<blockquote>
+[topotype, minlevel, maxlevel, t1, t2, fname]</blockquote>
+<p>with values</p>
+<blockquote>
+<blockquote>
+<p><em>topotype</em> : integer</p>
+<blockquote>
+1,2 or 3 depending on the format of the file (see <a class="reference internal" href="topo.html#topo"><em>Topography data</em></a>).</blockquote>
+<p><em>minlevel</em> : integer</p>
+<blockquote>
+the minimum refinement level that should be enforced in the region
+covered by this grid (for times between <em>t1</em> and <em>t2</em>).</blockquote>
+<p><em>maxlevel</em> : integer</p>
+<blockquote>
+the maximum refinement level that should be allowed in the region
+covered by this grid (for times between <em>t1</em> and <em>t2</em>).</blockquote>
+<p><em>t1, t2</em> : floats</p>
+<blockquote>
+the time interval over which refinement should be controlled.</blockquote>
+<p><em>fname</em> : string</p>
+<blockquote>
+the name of the topo file.</blockquote>
+</blockquote>
+<p>For more about controlling AMR in various regions, see <a class="reference internal" href="../regions.html#regions"><em>Specifying AMR regions</em></a>.</p>
+</blockquote>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<tt class="descname">dtopofiles : list of lists</tt></dt>
+<dd><p>Information about topography displacement files, giving perturbations to
+topography generated by an earthquake, for example.</p>
+<p><em>dtopofiles</em> should be a list of the form <em>[]</em> or <em>[file1info]</em>
+where each element (currently at most 1 is allowed!)
+is itself a list of the form</p>
+<blockquote>
+[minlevel, maxlevel, fname]</blockquote>
+<p>with values</p>
+<blockquote>
+<p><em>minlevel</em> : integer</p>
+<blockquote>
+the minimum refinement level that should be enforced in the region
+covered by this grid.</blockquote>
+<p><em>maxlevel</em> : integer</p>
+<blockquote>
+the maximum refinement level that should be allowed in the region
+covered by this grid.</blockquote>
+<p><em>fname</em> : string</p>
+<blockquote>
+the name of the dtopo file.  See <a class="reference internal" href="topo.html#topo"><em>Topography data</em></a> for information about
+the format of data in this file.</blockquote>
+</blockquote>
+</dd></dl>
+
+</div>
+<div class="section" id="qinit-data-file-parameters">
+<span id="setrun-qinit"></span><h2>qinit data file parameters<a class="headerlink" href="#qinit-data-file-parameters" title="Permalink to this headline">¶</a></h2>
+<p>A modification to the initial data specified by default can be made as
+described at <a class="reference internal" href="topo.html#qinit-file"><em>qinit data file</em></a>.</p>
+<dl class="attribute">
+<dt>
+<tt class="descname">iqinit : integer</tt></dt>
+<dd><p>Specifies what type of perturbation is stored in the <em>qinitfile</em>,
+see <a class="reference internal" href="topo.html#qinit-file"><em>qinit data file</em></a> for more information.  Valid values for <em>iqinit</em>
+are</p>
+<blockquote>
+<ul class="simple">
+<li>0 = No perturbation specified</li>
+<li>1 = Perturbation to depth <em>h</em></li>
+<li>2 = Perturbation to x-momentum <em>hu</em></li>
+<li>3 = Perturbation to y-momentum <em>hv</em></li>
+<li>4 = Perturbation to surface level</li>
+</ul>
+</blockquote>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<tt class="descname">qinitfiles : list of lists</tt></dt>
+<dd><p><em>qinitfiles</em> should be a list of the form <em>[]</em> or <em>[file1info]</em>
+where each element (currently at most 1 is allowed!)
+is itself a list of the form</p>
+<blockquote>
+[minlevel, maxlevel, fname]</blockquote>
+<p>with values</p>
+<blockquote>
+<p><em>minlevel</em> : integer</p>
+<blockquote>
+the minimum refinement level that should be enforced in the region
+covered by this grid.</blockquote>
+<p><em>maxlevel</em> : integer</p>
+<blockquote>
+the maximum refinement level that should be allowed in the region
+covered by this grid.</blockquote>
+<p><em>fname</em> : string</p>
+<blockquote>
+the name of the qinitdata file.  See <a class="reference internal" href="topo.html#topo"><em>Topography data</em></a> for information about
+the format of data in this file.</blockquote>
+</blockquote>
+</dd></dl>
+
+<p>See <a class="reference internal" href="topo.html#qinit-file"><em>qinit data file</em></a> for more details about the format.</p>
+</div>
+<div class="section" id="amr-refinement-region-parameters">
+<span id="setrun-regions"></span><h2>AMR refinement region parameters<a class="headerlink" href="#amr-refinement-region-parameters" title="Permalink to this headline">¶</a></h2>
+<dl class="attribute">
+<dt>
+<tt class="descname">regions : list of lists</tt></dt>
+<dd><p><strong>Note:</strong> this should become a more general AMR parameter.</p>
+<p><em>regions</em> should be a list of the form <em>[region1info, region2info, etc.]</em>
+where each element is itself a list of the form</p>
+<blockquote>
+[minlevel, maxlevel, t1, t2, x1, x2, y1, y2]</blockquote>
+<p>with values</p>
+<blockquote>
+<blockquote>
+<p><em>minlevel</em> : integer</p>
+<blockquote>
+the minimum refinement level that should be enforced in the region
+covered by this grid (for times between <em>t1</em> and <em>t2</em>).</blockquote>
+<p><em>maxlevel</em> : integer</p>
+<blockquote>
+the maximum refinement level that should be allowed in the region
+covered by this grid (for times between <em>t1</em> and <em>t2</em>).</blockquote>
+<p><em>t1, t2</em> : floats</p>
+<blockquote>
+the time interval over which refinement should be controlled.</blockquote>
+<p><em>x1, x2, y1, y2</em> : floats</p>
+<blockquote>
+the spacial extent of this region.</blockquote>
+</blockquote>
+<p>For more about controlling AMR in various regions, see <a class="reference internal" href="../regions.html#regions"><em>Specifying AMR regions</em></a>.</p>
+</blockquote>
+</dd></dl>
+
+</div>
+<div class="section" id="gauge-parameters">
+<span id="setrun-guages"></span><h2>Gauge parameters<a class="headerlink" href="#gauge-parameters" title="Permalink to this headline">¶</a></h2>
+<dl class="attribute">
+<dt>
+<tt class="descname">gauges : list of lists</tt></dt>
+<dd><p><strong>Note:</strong> this should become a more general AMR parameter.</p>
+<p><em>gauges</em> should be a list of the form <em>[gauge1info, gauge2info, etc.]</em>
+where each element is itself a list of the form</p>
+<blockquote>
+[gaugeno, x, y, t1, t2]</blockquote>
+<p>with values</p>
+<blockquote>
+<p><em>gaugeno</em> : integer</p>
+<blockquote>
+the number of this gauge</blockquote>
+<p><em>x, y</em> : floats</p>
+<blockquote>
+the location of this gauge</blockquote>
+<p><em>t1, t2</em> : floats</p>
+<blockquote>
+the time interval over which gauge data should be output.</blockquote>
+</blockquote>
+<p>For more about gauges, see <a class="reference internal" href="../gauges.html#gauges"><em>Gauges</em></a>.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="fixed-grid-output-parameters">
+<span id="setrun-fixedgrids"></span><h2>Fixed grid output parameters<a class="headerlink" href="#fixed-grid-output-parameters" title="Permalink to this headline">¶</a></h2>
+<dl class="attribute">
+<dt>
+<tt class="descname">fixedgrids : list of lists</tt></dt>
+<dd><p><strong>Note:</strong> this might become a more general AMR parameter.</p>
+<p>This can be used to specify a set of grids where output should be
+produced at the specified resolution regardless of how the AMR grids look
+at each time.  Interpolation from the best available grid near each point
+is used.  This is useful for comparing AMR output to results obtained
+with other codes that use a fixed grid.</p>
+<p><em>fixedgrids</em> should be a list of the form <em>[grid1info, grid2info, etc.]</em>
+where each element is itself a list of the form</p>
+<blockquote>
+[t1, t2, x1, x2, y1, y2, xpoints, ypoints]</blockquote>
+<p>with values</p>
+<blockquote>
+<p><em>t1, t2</em> : floats</p>
+<blockquote>
+the time interval over which output should be written for this grid.</blockquote>
+<p><em>x1, x2, y1, y2</em> : floats</p>
+<blockquote>
+the spacial extent of this grid.</blockquote>
+<p><em>xpoints, ypoints</em> : floats</p>
+<blockquote>
+the number of grid points in the x and y directions (the grid will
+include <em>x1</em>, <em>x2</em> and <em>xpoints-2</em> points in between, for example).</blockquote>
+</blockquote>
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="setrun_geoclaw_sample.html" title="Sample GeoClaw setrun.py module"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="geoclaw.html" title="GeoClaw"
+             >previous</a> |</li>
+<li><a href="http://www.clawpack.org"><font color="#7F0000">Clawpack Webpage</font></a>|&nbsp;</li>
+<li><a href="../apps.html"><font color="#7F0000">Gallery</font></a>|&nbsp;</li>
+<li><a href="../index.html"><font color="#7F0000">Contents</font></a>|&nbsp;</li>
+
+          <li><a href="index.html" >GeoClaw documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2011, Randall J. LeVeque and others.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.4.
+    </div>
+  </body>
+</html>

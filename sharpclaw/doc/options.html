@@ -1,0 +1,208 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Problem Parameters &mdash; SharpClaw v0.3 documentation</title>
+    <link rel="stylesheet" href="_static/haiku.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/print.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '0.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="/Users/ketch/jsMath/easy/load.js"></script>
+    <script type="text/javascript" src="_static/theme_extras.js"></script>
+    <link rel="author" title="About these documents" href="about.html" />
+    <link rel="top" title="SharpClaw v0.3 documentation" href="index.html" />
+    <link rel="up" title="User Guide" href="userguide.html" />
+    <link rel="next" title="Future Plans" href="future.html" />
+    <link rel="prev" title="Setting up a new problem" href="setup.html" /> 
+  </head>
+  <body>
+      <div class="header"><h1 class="heading"><a href="index.html">
+          <span>SharpClaw v0.3 documentation</span></a></h1>
+        <h2 class="heading"><span>Problem Parameters</span></h2>
+      </div>
+      <div class="topnav">
+      
+        <p>
+        «&#160;&#160;<a href="setup.html">Setting up a new problem</a>
+        &#160;&#160;::&#160;&#160;
+        <a class="uplink" href="index.html">Contents</a>
+        &#160;&#160;::&#160;&#160;
+        <a href="future.html">Future Plans</a>&#160;&#160;»
+        </p>
+
+      </div>
+      <div class="content">
+        
+        
+  <div class="section" id="problem-parameters">
+<h1>Problem Parameters<a class="headerlink" href="#problem-parameters" title="Permalink to this headline">¶</a></h1>
+<p>The following values should be set in <tt class="file docutils literal"><span class="pre">setrun.py</span></tt>.</p>
+<div class="section" id="problem-definition">
+<h2>Problem definition<a class="headerlink" href="#problem-definition" title="Permalink to this headline">¶</a></h2>
+<dl class="docutils">
+<dt><strong>ndim</strong> (<em>integer</em>)</dt>
+<dd>Number of dimensions in problem domain (1 or 2).</dd>
+<dt><strong>mx</strong> (<em>integer</em>)</dt>
+<dd>Number of computational cells.</dd>
+<dt><strong>meqn</strong> (<em>integer</em>)</dt>
+<dd>Number of equations in the system to be solved.</dd>
+<dt><strong>mwaves</strong> (<em>integer</em>)</dt>
+<dd>Number of waves with non-zero speed in Riemann solution.</dd>
+<dt><strong>maux</strong> (<em>integer</em>)</dt>
+<dd>Number of auxiliary variables.</dd>
+<dt><strong>mcapa</strong> (<em>0 or 1</em>)</dt>
+<dd><ul class="first last simple">
+<li>0: No kappa array used.</li>
+<li>1: Kappa array used.</li>
+</ul>
+</dd>
+<dt><strong>xlower</strong>, <strong>xupper</strong> (<em>real</em>)</dt>
+<dd>Endpoints of computational domain.</dd>
+<dt><strong>t0</strong> (<em>real</em>)</dt>
+<dd>Initial simulation time.</dd>
+</dl>
+<p><strong>src_term</strong> (<em>0 or 1</em>)</p>
+<dl class="docutils">
+<dt><strong>mbc</strong></dt>
+<dd>Number of ghost cells.</dd>
+<dt><strong>mthbc_xlower</strong>, <strong>mthbc_xupper</strong></dt>
+<dd><p class="first">Boundary condition to be used at left and right boundaries.</p>
+<ul class="last simple">
+<li>0: User-specified boundary condition (must modify :<a class="reference external" href="file:bcN.f">file:bcN.f</a>
+to use this option).</li>
+<li>1: Zero-order extrapolation (non-reflecting)</li>
+<li>2: Periodic (must be specified at both boundaries).</li>
+<li>3: Solid wall BC for systems where <em>q(2)</em> is the normal velocity.</li>
+</ul>
+</dd>
+</dl>
+</div>
+<div class="section" id="output-options">
+<h2>Output Options<a class="headerlink" href="#output-options" title="Permalink to this headline">¶</a></h2>
+<dl class="docutils">
+<dt><strong>outstyle</strong> (<em>1, 2, or 3</em>)</dt>
+<dd><ul class="first last simple">
+<li>1: Produce <em>nout</em> outputs at equally spaced intervals.</li>
+<li>2: Produce output at a provided list of times (<em>tout</em>).</li>
+<li>3: Produce output every <em>iout</em> timesteps with a total of <em>ntot</em> time steps.</li>
+</ul>
+</dd>
+<dt><strong>verbosity</strong> (<em>0 or 1</em>)</dt>
+<dd><ul class="first last simple">
+<li>0: Output a message to screen only when writing output files.</li>
+<li>1: Output a message to screen at every time step.</li>
+</ul>
+</dd>
+</dl>
+</div>
+<div class="section" id="time-stepping">
+<h2>Time stepping<a class="headerlink" href="#time-stepping" title="Permalink to this headline">¶</a></h2>
+<dl class="docutils">
+<dt><strong>dt_variable</strong> (<em>0 or 1</em>)</dt>
+<dd><ul class="first last simple">
+<li>0: Use <em>dt_initial</em> for the size of all time steps.</li>
+<li>1: Adjust the time step to achieve a desired CFL number.</li>
+</ul>
+</dd>
+<dt><strong>dt_initial</strong> (<em>real</em>)</dt>
+<dd>Step size for first time step.</dd>
+<dt><strong>dt_max</strong></dt>
+<dd>Maximum allowable time step size; usually set to <cite>10^99</cite>.</dd>
+<dt><strong>cfl_desired</strong></dt>
+<dd>The time step will be adjusted at each step in order to achieve
+approximately this CFL at the next time step.</dd>
+<dt><strong>cfl_max</strong></dt>
+<dd>If this CFL number is exceeded in a step, the step will be rejected
+and retaken.  This should be set somewhat larger than <em>cfl_desired</em>
+to avoid having many rejected steps.</dd>
+<dt><strong>max_steps</strong></dt>
+<dd>SharpClaw will abort if more than this number of steps is taken between
+outputs.</dd>
+</dl>
+</div>
+<div class="section" id="numerical-scheme">
+<h2>Numerical Scheme<a class="headerlink" href="#numerical-scheme" title="Permalink to this headline">¶</a></h2>
+<dl class="docutils">
+<dt><strong>time_integrator</strong> (<em>1, 2, 3, 4</em>)</dt>
+<dd><ul class="first last simple">
+<li>1: 2-stage, 2nd-order SSP Runge-Kutta method</li>
+<li>2: 4-stage, 2nd-order SSP Runge-Kutta method</li>
+<li>3: 3-stage, 3rd-order SSP Runge-Kutta method</li>
+<li>4: 10-stage, 4th-order SSP Runge-Kutta method</li>
+</ul>
+</dd>
+<dt><strong>lim_type</strong> (<em>0, 1, 2</em>)</dt>
+<dd><p class="first">The type of limiter to use:</p>
+<ul class="last simple">
+<li>0: No limiting (piecewise-polynomial interpolation)</li>
+<li>1: TVD reconstruction</li>
+<li>2: WENO reconstruction</li>
+</ul>
+</dd>
+<dt><strong>mthlim</strong> (<em>integer</em>)</dt>
+<dd><p class="first">The meaning of <strong>mhtlim</strong> depends on the value of <strong>lim_type</strong>:</p>
+<ul class="last">
+<li><p class="first"><strong>lim_type</strong> =0:</p>
+<blockquote>
+<ul class="simple">
+<li><strong>mthlim</strong> =3: Third-order polynomial reconstruction</li>
+<li><strong>mthlim</strong> =7: Seventh-order polynomial reconstruction</li>
+</ul>
+</blockquote>
+</li>
+<li><p class="first"><strong>lim_type</strong> =1:</p>
+<blockquote>
+<ul class="simple">
+<li>The value of <strong>mthlim</strong> selects a TVD limiter exactly as in Clawpack</li>
+</ul>
+</blockquote>
+</li>
+<li><p class="first"><strong>lim_type</strong> =2:</p>
+<blockquote>
+<ul class="simple">
+<li>The value of <strong>mthlim</strong> does not matter; 5th-order WENO reconstruction          is used</li>
+</ul>
+</blockquote>
+</li>
+</ul>
+</dd>
+</dl>
+</div>
+</div>
+
+
+      </div>
+      <div class="bottomnav">
+      
+        <p>
+        «&#160;&#160;<a href="setup.html">Setting up a new problem</a>
+        &#160;&#160;::&#160;&#160;
+        <a class="uplink" href="index.html">Contents</a>
+        &#160;&#160;::&#160;&#160;
+        <a href="future.html">Future Plans</a>&#160;&#160;»
+        </p>
+
+      </div>
+
+    <div class="footer">
+        &copy; Copyright 2010, David I. Ketcheson.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.4.
+    </div>
+  </body>
+</html>

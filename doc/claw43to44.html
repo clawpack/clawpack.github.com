@@ -1,0 +1,185 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Converting from Clawpack 4.3 to 4.4 or 4.5 &mdash; Clawpack v4.6.x documentation</title>
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '4.6.x',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="shortcut icon" href="_static/clawicon.ico"/>
+    <link rel="author" title="About these documents" href="about.html" />
+    <link rel="top" title="Clawpack v4.6.x documentation" href="index.html" />
+    <link rel="next" title="Troubleshooting" href="trouble.html" />
+    <link rel="prev" title="Clawpack 4.3 documentation" href="claw43.html" /> 
+  </head>
+  <body>
+
+<div style="background-color: #FFFFE8; text-align: left; padding: 10px 10px 15px 15px">
+<table>
+<tr>
+<!--
+<td>
+&nbsp;
+<br>
+<a href="http://www.clawpack.org/"><img src="_static/clawlogo.jpg" border="0" alt="Clawpack logo"/></a>
+</td>
+-->
+<td>
+<br>
+&nbsp;
+<br>
+<a href
+<font size="7"  color="#7F0000"> Clawpack Documentation</font>
+<br>
+&nbsp;
+<br>
+</td>
+</tr>
+</table>
+</div>
+
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="trouble.html" title="Troubleshooting"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="claw43.html" title="Clawpack 4.3 documentation"
+             accesskey="P">previous</a> |</li>
+<li><a href="http://www.clawpack.org"><font color="#7F0000">Clawpack Webpage</font></a>|&nbsp;</li>
+<li><a href="apps.html"><font color="#7F0000">Gallery</font></a>|&nbsp;</li>
+<li><a href="index.html"><font color="#7F0000">Contents</font></a>|&nbsp;</li>
+ 
+      </ul>
+    </div>
+
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="index.html">
+              <img class="logo" src="_static/clawlogo.jpg" alt="Logo"/>
+            </a></p>
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Converting from Clawpack 4.3 to 4.4 or 4.5</a><ul>
+<li><a class="reference internal" href="#python-conversion-tool">Python conversion tool</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="claw43.html"
+                        title="previous chapter">Clawpack 4.3 documentation</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="trouble.html"
+                        title="next chapter">Troubleshooting</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/claw43to44.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" size="18" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="converting-from-clawpack-4-3-to-4-4-or-4-5">
+<span id="claw43to44"></span><h1>Converting from Clawpack 4.3 to 4.4 or 4.5<a class="headerlink" href="#converting-from-clawpack-4-3-to-4-4-or-4-5" title="Permalink to this headline">¶</a></h1>
+<p>The minimal change needed to make a 4.3 application run in 4.4 (or 4.5)
+is to rename
+the <em>clawNez.data</em> file as <em>claw.data</em> and add a line to the top with a
+single value <em>N</em>, the number of space dimensions.</p>
+<p>To take full advantage of new features available in Clawpack 4.4 you may
+also want to:</p>
+<blockquote>
+<ul class="simple">
+<li>Create a <em>setrun.py</em> file to automatically generate <em>claw.data</em>,</li>
+<li>Modify <em>setrun.py</em> to also create  <em>setprob.data</em> or other data files you
+read in. In this case you must alse modify <em>setprob.f</em> to use the
+library routine <em>opendatafile</em> instead of the f77 function <em>open</em> as
+illustrated in examples.  This routine skips over the warning message
+generated at the top of data files.</li>
+<li>Switch to Python graphics by creating an appropriate <em>setplot.py</em> file,</li>
+<li>Rewrite the Makefile to give options &#8216;make .output&#8217;, &#8216;make .plots&#8217;, etc.</li>
+<li>Create a README.txt file that has links to the various other files in
+this directory, that will be converted to README.html by &#8216;make .htmls&#8217;</li>
+</ul>
+</blockquote>
+<div class="section" id="python-conversion-tool">
+<h2>Python conversion tool<a class="headerlink" href="#python-conversion-tool" title="Permalink to this headline">¶</a></h2>
+<p>A first pass at all of the conversions listed above can often be achieved by
+typing:</p>
+<div class="highlight-python"><pre>$ python $CLAW/python/convert43to44.py</pre>
+</div>
+<p>in your application directory.  You should then inspect the files generated
+and fix any broken links, etc.</p>
+<p>Currently this works for 1d and 2d applications on a single grid,
+but not for <em>amrclaw</em>.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="trouble.html" title="Troubleshooting"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="claw43.html" title="Clawpack 4.3 documentation"
+             >previous</a> |</li>
+<li><a href="http://www.clawpack.org"><font color="#7F0000">Clawpack Webpage</font></a>|&nbsp;</li>
+<li><a href="apps.html"><font color="#7F0000">Gallery</font></a>|&nbsp;</li>
+<li><a href="index.html"><font color="#7F0000">Contents</font></a>|&nbsp;</li>
+ 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2011, Randall J. LeVeque and others.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.4.
+    </div>
+  </body>
+</html>
