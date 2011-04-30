@@ -1,0 +1,248 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Setting up a new problem &mdash; SharpClaw v0.3.x documentation</title>
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '0.3.x',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/jsmath/easy/load.js"></script>
+    <link rel="shortcut icon" href="_static/clawicon.ico"/>
+    <link rel="author" title="About these documents" href="about.html" />
+    <link rel="top" title="SharpClaw v0.3.x documentation" href="index.html" />
+    <link rel="up" title="User Guide" href="userguide.html" />
+    <link rel="next" title="Problem Parameters" href="options.html" />
+    <link rel="prev" title="User Guide" href="userguide.html" /> 
+  </head>
+  <body>
+
+<div style="background-color: #FFFFE8; text-align: left; padding: 10px 10px 15px 15px">
+<table>
+<tr>
+<!--
+<td>
+&nbsp;
+<br>
+<a href="http://www.clawpack.org/"><img src="_static/clawlogo.jpg" border="0" alt="Clawpack logo"/></a>
+</td>
+-->
+<td>
+<br>
+&nbsp;
+<br>
+<a href
+<font size="7"  color="#7F0000"> SharpClaw Documentation</font>
+<br>
+&nbsp;
+<br>
+</td>
+</tr>
+</table>
+</div>
+
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="options.html" title="Problem Parameters"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="userguide.html" title="User Guide"
+             accesskey="P">previous</a> |</li>
+<li><a href="http://www.clawpack.org"><font color="#7F0000">SharpClaw Webpage</font></a>|&nbsp;</li>
+<li><a href="apps.html"><font color="#7F0000">Gallery</font></a>|&nbsp;</li>
+<li><a href="index.html"><font color="#7F0000">Contents</font></a>|&nbsp;</li>
+
+          <li><a href="userguide.html" accesskey="U">User Guide</a> &raquo;</li> 
+      </ul>
+    </div>
+
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="index.html">
+              <img class="logo" src="_static/clawlogo.jpg" alt="Logo"/>
+            </a></p>
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Setting up a new problem</a><ul>
+<li><a class="reference internal" href="#adapting-a-clawpack-problem-setup-to-sharpclaw">Adapting a Clawpack problem setup to SharpClaw</a></li>
+<li><a class="reference internal" href="#user-provided-functions">User-provided functions</a><ul>
+<li><a class="reference internal" href="#riemann-solver">Riemann solver</a></li>
+<li><a class="reference internal" href="#source-terms">Source terms</a></li>
+<li><a class="reference internal" href="#auxiliary-variables">Auxiliary variables</a></li>
+<li><a class="reference internal" href="#eigenvectors">Eigenvectors</a></li>
+<li><a class="reference internal" href="#total-fluctuations">Total Fluctuations</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="userguide.html"
+                        title="previous chapter">User Guide</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="options.html"
+                        title="next chapter">Problem Parameters</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/setup.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" size="18" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="setting-up-a-new-problem">
+<h1>Setting up a new problem<a class="headerlink" href="#setting-up-a-new-problem" title="Permalink to this headline">¶</a></h1>
+<p>The easiest way to set up a new problem is typically to copy an existing
+problem directory that is similar.</p>
+<div class="section" id="adapting-a-clawpack-problem-setup-to-sharpclaw">
+<h2>Adapting a Clawpack problem setup to SharpClaw<a class="headerlink" href="#adapting-a-clawpack-problem-setup-to-sharpclaw" title="Permalink to this headline">¶</a></h2>
+<p>It is relatively quick and straightforward to adapt a problem that is
+set up to run in Clawpack to run in SharpClaw.  The following modifications
+need to be made:</p>
+<blockquote>
+<div><ul>
+<li><dl class="first docutils">
+<dt>Modify <tt class="file docutils literal"><span class="pre">setrun.py</span></tt></dt>
+<dd><ul class="first last simple">
+<li>Set <cite>time_integrator</cite>, <cite>tfluct_solver</cite>, <cite>char_decomp</cite>, <cite>src_term</cite>,
+<cite>lim_type</cite>, <cite>mbc</cite></li>
+<li>Set <cite>mbc</cite> to 3</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>Modify <tt class="file docutils literal"><span class="pre">Makefile</span></tt></dt>
+<dd><ul class="first last simple">
+<li>For this, it is best to copy an existing SharpClaw Makefile</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>Slight modifications to:</dt>
+<dd><ul class="first last simple">
+<li><tt class="file docutils literal"><span class="pre">rpnN.f</span></tt></li>
+<li><tt class="file docutils literal"><span class="pre">bcN.f</span></tt></li>
+<li><tt class="file docutils literal"><span class="pre">outN.f</span></tt></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><p class="first">Source terms: <tt class="file docutils literal"><span class="pre">srcN.f</span></tt> should be converted from full-discrete
+to semi-discrete form.</p>
+</li>
+<li><p class="first">Optionally, provide <tt class="file docutils literal"><span class="pre">tfluctN.f</span></tt> and/or <tt class="file docutils literal"><span class="pre">evec.f</span></tt></p>
+</li>
+</ul>
+</div></blockquote>
+<p>It is expected that in Clawpack 5.0, the setup for using SharpClaw or Clawpack
+will be even less pronounced, as the interfaces to these latter functions will
+be unified.</p>
+</div>
+<div class="section" id="user-provided-functions">
+<h2>User-provided functions<a class="headerlink" href="#user-provided-functions" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="riemann-solver">
+<h3>Riemann solver<a class="headerlink" href="#riemann-solver" title="Permalink to this headline">¶</a></h3>
+<p>The Riemann solver is the basic building block of any Godunov-type method,
+including the methods in SharpClaw.  The routine required takes the form
+of a wave-propagation solver, just like those used in Clawpack.  For many
+systems of hyperbolic equations, a wave propagation Riemann solver already
+exists within Clawpack or SharpClaw.  For new systems of equations,
+this function must be written by the user.</p>
+<p>The inputs to the Riemann solver are the left and right states appearing
+in the Riemann problem, as well as any auxiliary variables (such as spatially
+varying coefficients) that are required for the solution of the Riemann problem.
+The outputs of the Riemann solver routine are the waves, speeds, and fluctuations.</p>
+<p>The following routines must be provided by the user, if necessary.</p>
+</div>
+<div class="section" id="source-terms">
+<h3>Source terms<a class="headerlink" href="#source-terms" title="Permalink to this headline">¶</a></h3>
+<p>If the problem includes source terms, these should be included in a routine
+<tt class="file docutils literal"><span class="pre">src.f</span></tt>.  Unlike the source term routine for Clawpack, this routine
+should not integrate the source term over a time step.  Rather, it should
+compute the instantaneous value of the source term in the semi-discrete
+system.</p>
+</div>
+<div class="section" id="auxiliary-variables">
+<h3>Auxiliary variables<a class="headerlink" href="#auxiliary-variables" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="eigenvectors">
+<h3>Eigenvectors<a class="headerlink" href="#eigenvectors" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="total-fluctuations">
+<h3>Total Fluctuations<a class="headerlink" href="#total-fluctuations" title="Permalink to this headline">¶</a></h3>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="options.html" title="Problem Parameters"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="userguide.html" title="User Guide"
+             >previous</a> |</li>
+<li><a href="http://www.clawpack.org"><font color="#7F0000">SharpClaw Webpage</font></a>|&nbsp;</li>
+<li><a href="apps.html"><font color="#7F0000">Gallery</font></a>|&nbsp;</li>
+<li><a href="index.html"><font color="#7F0000">Contents</font></a>|&nbsp;</li>
+
+          <li><a href="userguide.html" >User Guide</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2011, David I. Ketcheson.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.7.
+    </div>
+  </body>
+</html>
