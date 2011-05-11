@@ -1,0 +1,667 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>pyclaw.controller &mdash; PyClaw v0.1 documentation</title>
+    <link rel="stylesheet" href="../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../_static/jsmath/easy/load.js"></script>
+    <link rel="shortcut icon" href="../../_static/clawicon.ico"/>
+    <link rel="author" title="About these documents" href="../../about.html" />
+    <link rel="top" title="PyClaw v0.1 documentation" href="../../index.html" />
+    <link rel="up" title="Module code" href="../index.html" /> 
+  </head>
+  <body>
+
+<div style="background-color: #FFFFE8; text-align: left; padding: 10px 10px 15px 15px">
+<table>
+<tr>
+<!--
+<td>
+&nbsp;
+<br>
+<a href="http://www.clawpack.org/"><img src="../../_static/clawlogo.jpg" border="0" alt="Clawpack logo"/></a>
+</td>
+-->
+<td>
+<br>
+&nbsp;
+<br>
+<a href
+<font size="7"  color="#7F0000"> PyClaw Documentation</font>
+<br>
+&nbsp;
+<br>
+</td>
+</tr>
+</table>
+</div>
+
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+<li><a href="http://www.clawpack.org"><font color="#7F0000">Clawpack Webpage</font></a>|&nbsp;</li>
+<li><a href="../../apps.html"><font color="#7F0000">Gallery</font></a>|&nbsp;</li>
+<li><a href="../../index.html"><font color="#7F0000">Contents</font></a>|&nbsp;</li>
+
+          <li><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../index.html">
+              <img class="logo" src="../../_static/clawlogo.jpg" alt="Logo"/>
+            </a></p>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" size="18" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for pyclaw.controller</h1><div class="highlight"><pre>
+<span class="c">#!/usr/bin/env python</span>
+<span class="c"># encoding: utf-8</span>
+<span class="s">r&quot;&quot;&quot;</span>
+<span class="s">Controller for basic computation and plotting setup</span>
+
+<span class="s">This module defines the Pyclaw controller class.  It can be used to perform</span>
+<span class="s">simulations similar to previous versions of clawpack, i.e. with outstyle and</span>
+<span class="s">output time specification.  It also can be used to setup easy plotting and </span>
+<span class="s">running of compiled fortran binaries.</span>
+
+<span class="s">:Authors:</span>
+<span class="s">    Kyle T. Mandli (2008-02-15) Initial version</span>
+<span class="s">    </span>
+<span class="s">    Randall J. LeVeque and Kyle T Mandli (2009) Plotting and run updates</span>
+<span class="s">&quot;&quot;&quot;</span>
+<span class="c"># ============================================================================</span>
+<span class="c">#      Copyright (C) 2009 Kyle T. Mandli &lt;mandli@amath.washington.edu&gt;</span>
+<span class="c">#      Copyright (C) 2009 Randall J. LeVeque &lt;rjl@amath.washington.edu&gt;</span>
+<span class="c">#</span>
+<span class="c">#  Distributed under the terms of the Berkeley Software Distribution (BSD) </span>
+<span class="c">#  license</span>
+<span class="c">#                     http://www.opensource.org/licenses/</span>
+<span class="c"># ============================================================================</span>
+
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">copy</span>
+<span class="kn">import</span> <span class="nn">shutil</span>
+<span class="kn">import</span> <span class="nn">time</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+
+<span class="kn">from</span> <span class="nn">data</span> <span class="kn">import</span> <span class="n">Data</span>
+<span class="kn">from</span> <span class="nn">solution</span> <span class="kn">import</span> <span class="n">Solution</span>
+<span class="kn">from</span> <span class="nn">evolve.solver</span> <span class="kn">import</span> <span class="n">Solver</span>
+<span class="kn">from</span> <span class="nn">util</span> <span class="kn">import</span> <span class="n">FrameCounter</span>
+
+<div class="viewcode-block" id="Controller"><a class="viewcode-back" href="../../sphinx/pyclaw/controller.html#pyclaw.controller.Controller">[docs]</a><span class="k">class</span> <span class="nc">Controller</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="s">r&quot;&quot;&quot;Controller for pyclaw simulation runs and plotting</span>
+<span class="s">            </span>
+<span class="s">    :Initialization:</span>
+<span class="s">    </span>
+<span class="s">        Input: None</span>
+<span class="s">    </span>
+<span class="s">    :Version: 1.0 (2009-06-01)</span>
+<span class="s">    &quot;&quot;&quot;</span>
+    <span class="c">#  ======================================================================</span>
+    <span class="c">#   Initialization routines</span>
+    <span class="c">#  ======================================================================</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="s">r&quot;&quot;&quot;</span>
+<span class="s">        Initialization routine for a Controller object.</span>
+<span class="s">        </span>
+<span class="s">        See :class:`Controller` for full documentation.</span>
+<span class="s">        &quot;&quot;&quot;</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">viewable_attributes</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;xdir&#39;</span><span class="p">,</span><span class="s">&#39;rundir&#39;</span><span class="p">,</span><span class="s">&#39;outdir&#39;</span><span class="p">,</span><span class="s">&#39;overwrite&#39;</span><span class="p">,</span>
+                        <span class="s">&#39;xclawcmd&#39;</span><span class="p">,</span><span class="s">&#39;xclawout&#39;</span><span class="p">,</span><span class="s">&#39;xclawerr&#39;</span><span class="p">,</span><span class="s">&#39;runmake&#39;</span><span class="p">,</span><span class="s">&#39;savecode&#39;</span><span class="p">,</span>
+                        <span class="s">&#39;solver&#39;</span><span class="p">,</span><span class="s">&#39;keep_copy&#39;</span><span class="p">,</span><span class="s">&#39;write_aux_init&#39;</span><span class="p">,</span>
+                        <span class="s">&#39;write_aux_always&#39;</span><span class="p">,</span><span class="s">&#39;output_format&#39;</span><span class="p">,</span>
+                        <span class="s">&#39;output_file_prefix&#39;</span><span class="p">,</span><span class="s">&#39;output_options&#39;</span><span class="p">,</span><span class="s">&#39;nout&#39;</span><span class="p">,</span>
+                        <span class="s">&#39;outstyle&#39;</span><span class="p">,</span><span class="s">&#39;verbosity&#39;</span><span class="p">]</span>
+        <span class="s">r&quot;&quot;&quot;(list) - Viewable attributes of the `:class:`~pyclaw.controller.Controller`&quot;&quot;&quot;</span>
+
+        <span class="c"># Global information for running and/or plotting</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">xdir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()</span>
+        <span class="s">r&quot;&quot;&quot;(string) - Executable path, executes xclawcmd in xdir&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rundir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()</span>
+        <span class="s">r&quot;&quot;&quot;(string) - Directory to run from (containing \*.data files), uses </span>
+<span class="s">        \*.data from rundir&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">outdir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()</span><span class="o">+</span><span class="s">&#39;/_output&#39;</span>
+        <span class="s">r&quot;&quot;&quot;(string) - Output directory, directs output files to outdir&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">overwrite</span> <span class="o">=</span> <span class="bp">True</span>
+        <span class="s">r&quot;&quot;&quot;(bool) - Ok to overwrite old result in outdir, ``default = True``&quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">xclawcmd</span> <span class="o">=</span> <span class="s">&#39;xclaw&#39;</span>
+        <span class="s">r&quot;&quot;&quot;(string) - Command to execute (if using fortran), defaults to xclaw or</span>
+<span class="s">        xclaw.exe if cygwin is being used (which it checks vis sys.platform)&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">sys</span><span class="o">.</span><span class="n">platform</span> <span class="o">==</span> <span class="s">&#39;cygwin&#39;</span><span class="p">:</span>
+             <span class="bp">self</span><span class="o">.</span><span class="n">xclawcmd</span> <span class="o">=</span> <span class="s">&#39;xclaw.exe&#39;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">xclawout</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="s">r&quot;&quot;&quot;(string) - Where to write timestep messages&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">xclawerr</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="s">r&quot;&quot;&quot;(string) - Where to write error messages&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">runmake</span> <span class="o">=</span> <span class="bp">False</span>
+        <span class="s">r&quot;&quot;&quot;(bool) - Run make in xdir before xclawcmd&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">savecode</span> <span class="o">=</span> <span class="bp">False</span>
+        <span class="s">r&quot;&quot;&quot;(bool) - Save a copy of \*.f files in outdir&quot;&quot;&quot;</span>
+        
+        <span class="c"># Solver information</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">solutions</span> <span class="o">=</span> <span class="p">{}</span>              <span class="c"># Solutions dictionary</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">solver</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="s">r&quot;&quot;&quot;(:class:`~pyclaw.evolve.solver.Solver`) - Solver object&quot;&quot;&quot;</span>
+        
+        <span class="c"># Output parameters for run convenience method</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">keep_copy</span> <span class="o">=</span> <span class="bp">False</span> 
+        <span class="s">r&quot;&quot;&quot;(bool) - Keep a copy in memory of every output time, </span>
+<span class="s">        ``default = False``&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">frames</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="s">r&quot;&quot;&quot;(list) - List of saved frames if ``keep_copy`` is set to ``True``&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">write_aux_init</span> <span class="o">=</span> <span class="bp">False</span>
+        <span class="s">r&quot;&quot;&quot;(bool) - Write out initial auxiliary array, ``default = False``&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">write_aux_always</span> <span class="o">=</span> <span class="bp">False</span>
+        <span class="s">r&quot;&quot;&quot;(bool) - Write out auxiliary array at every time step, </span>
+<span class="s">        ``default = False``&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">output_format</span> <span class="o">=</span> <span class="s">&#39;ascii&#39;</span>
+        <span class="s">r&quot;&quot;&quot;(list of strings) - Format or list of formats to output the data, </span>
+<span class="s">        if this is None, no output is performed.  See _pyclaw_io for more info</span>
+<span class="s">        on available formats.  ``default = &#39;ascii&#39;``&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">output_file_prefix</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="s">r&quot;&quot;&quot;(string) - File prefix to be appended to output files, </span>
+<span class="s">        ``default = None``&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">output_options</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="s">r&quot;&quot;&quot;(dict) - Output options passed to function writing and reading </span>
+<span class="s">        data in output_format&#39;s format.  ``default = {}``&quot;&quot;&quot;</span>
+        
+        <span class="c"># Classic output parameters, used in run convenience method</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">t0</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="s">r&quot;&quot;&quot;(float) - Starting time, ``default = 0.0``&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tfinal</span> <span class="o">=</span> <span class="mf">1.0</span>
+        <span class="s">r&quot;&quot;&quot;(float) - Final time output, ``default = 1.0``&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">outstyle</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="s">r&quot;&quot;&quot;(int) - Time output style, ``default = 1``&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">verbosity</span> <span class="o">=</span> <span class="mi">0</span> 
+        <span class="s">r&quot;&quot;&quot;(int) - Level of output, ``default = 0``&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nout</span> <span class="o">=</span> <span class="mi">10</span>                  <span class="c"># Outstyle 1 defaults</span>
+        <span class="s">r&quot;&quot;&quot;(int) - Number of output times, only used with ``outstyle = 1``,</span>
+<span class="s">        ``default = 10``&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">out_times</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">tfinal</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">nout</span><span class="p">)</span> <span class="c"># Outstyle 2</span>
+        <span class="s">r&quot;&quot;&quot;(int) - Output time list, only used with ``outstyle = 2``,</span>
+<span class="s">        ``default = numpy.linspace(0.0,tfinal,nout)``&quot;&quot;&quot;</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">nstepout</span> <span class="o">=</span> <span class="mi">1</span>               <span class="c"># Outstyle 3 defaults</span>
+        <span class="s">r&quot;&quot;&quot;(int) - Number of steps between output, only used with </span>
+<span class="s">        ``outstyle = 3``, ``default = 1``&quot;&quot;&quot;</span>
+        
+        <span class="c"># Data objects</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">plotdata</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="s">r&quot;&quot;&quot;(:class:`~pyclaw.plotters.data.ClawPlotData`) - An instance of a </span>
+<span class="s">        :class:`~pyclaw.plotters.data.ClawPlotData` object defining the </span>
+<span class="s">        objects plot parameters.&quot;&quot;&quot;</span>
+        
+        
+    <span class="c"># ========== Access methods ===============================================</span>
+    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>        
+        <span class="n">output</span> <span class="o">=</span> <span class="s">&quot;Controller attributes:</span><span class="se">\n</span><span class="s">&quot;</span>
+        <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">viewable_attributes</span><span class="p">:</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">attr</span><span class="p">)</span>
+            <span class="n">output</span> <span class="o">=</span> <span class="n">output</span> <span class="o">+</span> <span class="s">&quot;  </span><span class="si">%s</span><span class="s"> = </span><span class="si">%s</span><span class="s"> </span><span class="se">\n</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">attr</span><span class="p">,</span><span class="n">value</span><span class="p">)</span>
+        <span class="n">output</span> <span class="o">=</span> <span class="n">output</span> <span class="o">+</span> <span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">plotdata</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">output</span> <span class="o">=</span> <span class="n">output</span> <span class="o">+</span> <span class="s">&quot;  Data &quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">plotdata</span><span class="p">)</span><span class="o">+</span><span class="s">&quot;</span><span class="se">\n</span><span class="s">&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">solver</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">output</span> <span class="o">=</span> <span class="n">output</span> <span class="o">+</span> <span class="s">&quot;  Solver &quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">solver</span><span class="p">)</span><span class="o">+</span><span class="s">&quot;</span><span class="se">\n</span><span class="s">&quot;</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">frames</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">output</span> <span class="o">=</span> <span class="n">output</span> <span class="o">+</span> <span class="s">&quot;  Frames </span><span class="se">\n</span><span class="s">&quot;</span>
+            <span class="k">for</span> <span class="n">frame</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">frames</span><span class="p">:</span>
+                <span class="n">output</span> <span class="o">=</span> <span class="n">output</span> <span class="o">+</span> <span class="s">&quot;    &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">frame</span><span class="p">)</span> <span class="o">+</span> <span class="s">&quot;</span><span class="se">\n</span><span class="s">&quot;</span>
+        <span class="k">return</span> <span class="n">output</span>
+        
+    <span class="c"># ========== Properties ==================================================</span>
+    <span class="k">def</span> <span class="nf">solution</span><span class="p">():</span>
+        <span class="k">def</span> <span class="nf">fget</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">solutions</span><span class="p">[</span><span class="s">&#39;n&#39;</span><span class="p">]</span>
+        <span class="k">def</span> <span class="nf">fset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span> <span class="bp">self</span><span class="o">.</span><span class="n">solutions</span><span class="p">[</span><span class="s">&#39;n&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="k">return</span> <span class="nb">locals</span><span class="p">()</span>
+    <span class="n">solution</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span><span class="o">**</span><span class="n">solution</span><span class="p">())</span>
+    
+    <span class="c"># ========== Plotting methods ============================================    </span>
+    <span class="k">def</span> <span class="nf">plotclaw</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">datadir</span><span class="o">=</span><span class="s">&#39;.&#39;</span><span class="p">):</span>
+        <span class="n">pydir</span> <span class="o">=</span> <span class="s">&#39;/home/rjl/claw/trunk/claw/python&#39;</span>
+        <span class="k">if</span> <span class="n">sys</span><span class="o">.</span><span class="n">platform</span> <span class="ow">in</span> <span class="p">[</span><span class="s">&#39;cygwin&#39;</span><span class="p">,</span> <span class="s">&#39;win32&#39;</span><span class="p">]:</span>
+            <span class="n">syscmd</span> <span class="o">=</span> <span class="s">&quot; C:/Python25/python.exe C:/cygwin</span><span class="si">%s</span><span class="s">/pyclaw/plotclaw.py  </span><span class="si">%s</span><span class="s">&quot;</span> \
+                   <span class="o">%</span> <span class="p">(</span><span class="n">pydir</span><span class="p">,</span> <span class="n">datadir</span><span class="p">)</span> 
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">syscmd</span> <span class="o">=</span> <span class="s">&quot; python </span><span class="si">%s</span><span class="s">/pyclaw/plotclaw.py  </span><span class="si">%s</span><span class="s">&quot;</span> \
+                   <span class="o">%</span> <span class="p">(</span><span class="n">pydir</span><span class="p">,</span> <span class="n">datadir</span><span class="p">)</span> 
+        <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="n">syscmd</span><span class="p">)</span>
+    
+    <span class="c"># ========== Solver convenience methods ==================================</span>
+<div class="viewcode-block" id="Controller.run"><a class="viewcode-back" href="../../sphinx/pyclaw/controller.html#pyclaw.controller.Controller.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="s">r&quot;&quot;&quot;</span>
+<span class="s">        Convenience routine that will evolve solutions[&#39;n&#39;] based on the </span>
+<span class="s">        traditional clawpack output and run parameters.</span>
+<span class="s">        </span>
+<span class="s">        This function uses the run parameters and solver parameters to evolve</span>
+<span class="s">        the solution to the end time specified in run_data, outputting at the</span>
+<span class="s">        appropriate times.</span>
+<span class="s">        </span>
+<span class="s">        :Input:</span>
+<span class="s">            None</span>
+<span class="s">            </span>
+<span class="s">        :Ouput:</span>
+<span class="s">            (dict) - Return a dictionary of the status of the solver.</span>
+<span class="s">            </span>
+<span class="s">        :Version: 1.0 (2009-05-01)</span>
+<span class="s">        &quot;&quot;&quot;</span>
+        
+        <span class="n">frame</span> <span class="o">=</span> <span class="n">FrameCounter</span><span class="p">()</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">keep_copy</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">frames</span> <span class="o">=</span> <span class="p">[]</span>
+                    
+        <span class="c"># Check to make sure we have a valid solver to use</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">solver</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s">&quot;No solver set in controller.&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">solver</span><span class="p">,</span><span class="n">Solver</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s">&quot;Solver is not of correct type.&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">solver</span><span class="o">.</span><span class="n">is_valid</span><span class="p">():</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s">&quot;The solver failed to initialize properly.&quot;</span><span class="p">)</span> 
+            
+        <span class="c"># Call solver&#39;s setup routine</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">solver</span><span class="o">.</span><span class="n">setup</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">solutions</span><span class="p">)</span>
+            
+        <span class="c"># Check to make sure the initial solutions are valid</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">reduce</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">:</span> <span class="n">x</span><span class="o">*</span><span class="n">y</span><span class="p">,[</span><span class="n">sol</span><span class="o">.</span><span class="n">is_valid</span><span class="p">()</span> <span class="k">for</span> <span class="n">sol</span> <span class="ow">in</span> 
+                        <span class="bp">self</span><span class="o">.</span><span class="n">solutions</span><span class="o">.</span><span class="n">itervalues</span><span class="p">()]):</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s">&quot;Initial solutions are not valid.&quot;</span><span class="p">)</span>
+        
+        <span class="c"># Output styles</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">outstyle</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">output_times</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">t0</span><span class="p">,</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">tfinal</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">nout</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">outstyle</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="n">output_times</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">out_times</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">outstyle</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+            <span class="n">output_times</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">nout</span><span class="o">+</span><span class="mi">1</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s">&quot;Invalid output style </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">outstyle</span><span class="p">)</span>  
+         
+        <span class="c"># Output and save initial time</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">keep_copy</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">frames</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">solutions</span><span class="p">[</span><span class="s">&#39;n&#39;</span><span class="p">]))</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_format</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">solutions</span><span class="p">[</span><span class="s">&#39;n&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">outdir</span><span class="p">,</span>
+                                        <span class="bp">self</span><span class="o">.</span><span class="n">output_format</span><span class="p">,</span>
+                                        <span class="bp">self</span><span class="o">.</span><span class="n">output_file_prefix</span><span class="p">,</span>
+                                        <span class="bp">self</span><span class="o">.</span><span class="n">write_aux_init</span><span class="p">,</span>
+                                        <span class="bp">self</span><span class="o">.</span><span class="n">output_options</span><span class="p">)</span>                            
+        <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;Solution </span><span class="si">%s</span><span class="s"> computed for time t=</span><span class="si">%f</span><span class="s">&quot;</span> <span class="o">%</span> 
+                        <span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">solutions</span><span class="p">[</span><span class="s">&#39;n&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">t</span><span class="p">)</span> <span class="p">)</span>
+        
+        <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">output_times</span><span class="p">[</span><span class="mi">1</span><span class="p">:]:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">outstyle</span> <span class="o">&lt;</span> <span class="mi">3</span><span class="p">:</span>
+                <span class="n">status</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">solver</span><span class="o">.</span><span class="n">evolve_to_time</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">solutions</span><span class="p">,</span><span class="n">t</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c"># Take nstepout steps and output</span>
+                <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nstepout</span><span class="p">):</span>
+                    <span class="n">status</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">solver</span><span class="o">.</span><span class="n">evolve_to_time</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">solutions</span><span class="p">)</span>
+            <span class="n">frame</span><span class="o">.</span><span class="n">increment</span><span class="p">()</span>
+            <span class="c"># Save current solution to dictionary with frame as key</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">keep_copy</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">frames</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">solutions</span><span class="p">[</span><span class="s">&#39;n&#39;</span><span class="p">]))</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_format</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">solutions</span><span class="p">[</span><span class="s">&#39;n&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">outdir</span><span class="p">,</span>
+                                            <span class="bp">self</span><span class="o">.</span><span class="n">output_format</span><span class="p">,</span>
+                                            <span class="bp">self</span><span class="o">.</span><span class="n">output_file_prefix</span><span class="p">,</span>
+                                            <span class="bp">self</span><span class="o">.</span><span class="n">write_aux_always</span><span class="p">,</span>
+                                            <span class="bp">self</span><span class="o">.</span><span class="n">output_options</span><span class="p">)</span>
+
+            <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;Solution </span><span class="si">%s</span><span class="s"> computed for time t=</span><span class="si">%f</span><span class="s">&quot;</span>
+                <span class="o">%</span> <span class="p">(</span><span class="n">frame</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">solutions</span><span class="p">[</span><span class="s">&#39;n&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">t</span><span class="p">))</span>
+            
+        <span class="c"># Return the current status of the solver</span>
+        <span class="k">return</span> <span class="n">status</span>
+    
+    <span class="c"># ========== Output Data object based on solver and solutions[&#39;n&#39;] =======</span></div>
+<div class="viewcode-block" id="Controller.get_data"><a class="viewcode-back" href="../../sphinx/pyclaw/controller.html#pyclaw.controller.Controller.get_data">[docs]</a>    <span class="k">def</span> <span class="nf">get_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">claw_path</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="s">r&quot;&quot;&quot;</span>
+<span class="s">        Create a data object from this controller&#39;s solver and solutions</span>
+<span class="s">        </span>
+<span class="s">        This function will take the current solver and solutions[&#39;n&#39;] and</span>
+<span class="s">        create a data object that can be read in via classic clawpack.</span>
+<span class="s">        </span>
+<span class="s">        If claw_path is provided, then the data that should be written to the</span>
+<span class="s">        claw.data file will be written to that path.</span>
+<span class="s">        </span>
+<span class="s">        :Input:</span>
+<span class="s">            - *claw_path* - (string) Path to write data file to</span>
+<span class="s">            </span>
+<span class="s">        :Output:</span>
+<span class="s">            - (:class:`~pyclaw.data.Data`) - Data object claw_data containing </span>
+<span class="s">              the appropriate data for a claw.data file.</span>
+<span class="s">        &quot;&quot;&quot;</span>
+        
+        <span class="c"># Check to make sure we have a valid solver and solution</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">solver</span><span class="o">.</span><span class="n">is_valid</span><span class="p">()</span> <span class="ow">or</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">solution</span><span class="o">.</span><span class="n">is_valid</span><span class="p">():</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s">&quot;Invalid solver or solution.&quot;</span><span class="p">)</span>
+        
+        <span class="n">claw_data</span> <span class="o">=</span> <span class="n">Data</span><span class="p">()</span>
+        
+        <span class="n">claw_data</span><span class="o">.</span><span class="n">add_attribute</span><span class="p">(</span><span class="s">&#39;ndim&#39;</span><span class="p">,</span><span class="n">value</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">solution</span><span class="o">.</span><span class="n">ndim</span><span class="p">)</span>
+        <span class="n">claw_data</span><span class="o">.</span><span class="n">add_attribute</span><span class="p">(</span><span class="s">&#39;mx&#39;</span><span class="p">,</span><span class="n">value</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">solution</span><span class="o">.</span><span class="n">dimensions</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">n</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">claw_data</span><span class="o">.</span><span class="n">ndim</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">claw_data</span><span class="o">.</span><span class="n">add_attribute</span><span class="p">(</span><span class="s">&#39;my&#39;</span><span class="p">,</span><span class="n">value</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">solution</span><span class="o">.</span><span class="n">dimensions</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">n</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">claw_data</span><span class="o">.</span><span class="n">ndim</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="n">claw_data</span><span class="o">.</span><span class="n">add_attribute</span><span class="p">(</span><span class="s">&#39;mz&#39;</span><span class="p">,</span><span class="n">value</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">solution</span><span class="o">.</span><span class="n">dimensions</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">n</span><span class="p">)</span>
+            
+        <span class="n">claw_data</span><span class="o">.</span><span class="n">add_attribute</span><span class="p">(</span><span class="s">&#39;nout&#39;</span><span class="p">,</span><span class="n">value</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">nout</span><span class="p">)</span>
+        <span class="n">claw_data</span><span class="o">.</span><span class="n">add_attribute</span><span class="p">(</span><span class="s">&#39;outstyle&#39;</span><span class="p">,</span><span class="n">value</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">outstyle</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">claw_data</span><span class="o">.</span><span class="n">outstyle</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="n">claw_data</span><span class="o">.</span><span class="n">add_attribute</span><span class="p">(</span><span class="s">&#39;out_times&#39;</span><span class="p">,</span><span class="n">value</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">out_times</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">claw_data</span><span class="o">.</span><span class="n">outstyle</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+            <span class="n">claw_data</span><span class="o">.</span><span class="n">add_attribute</span><span class="p">(</span><span class="s">&#39;nstepout&#39;</span><span class="p">,</span><span class="n">value</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">nstepout</span><span class="p">)</span>
+            
+        <span class="n">claw_data</span><span class="o">.</span><span class="n">add_attribute</span><span class="p">(</span><span class="s">&#39;dt_initial&#39;</span><span class="p">,</span><span class="n">value</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">solver</span><span class="o">.</span><span class="n">dt</span><span class="p">)</span>
+        <span class="n">claw_data</span><span class="o">.</span><span class="n">add_attribute</span><span class="p">(</span><span class="s">&#39;dt_max&#39;</span><span class="p">,</span><span class="n">value</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">solver</span><span class="o">.</span><span class="n">dt_max</span><span class="p">)</span>
+        <span class="n">claw_data</span><span class="o">.</span><span class="n">add_attribute</span><span class="p">(</span><span class="s">&#39;cfl_max&#39;</span><span class="p">,</span><span class="n">value</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">solver</span><span class="o">.</span><span class="n">cfl_max</span><span class="p">)</span>
+        <span class="n">claw_data</span><span class="o">.</span><span class="n">add_attribute</span><span class="p">(</span><span class="s">&#39;cfl_desired&#39;</span><span class="p">,</span><span class="n">value</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">solver</span><span class="o">.</span><span class="n">cfl_desired</span><span class="p">)</span>
+        <span class="n">claw_data</span><span class="o">.</span><span class="n">add_attribute</span><span class="p">(</span><span class="s">&#39;max_steps&#39;</span><span class="p">,</span><span class="n">value</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">solver</span><span class="o">.</span><span class="n">max_steps</span><span class="p">)</span>
+        
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">solver</span><span class="o">.</span><span class="n">dt_variable</span><span class="p">:</span>
+            <span class="n">claw_data</span><span class="o">.</span><span class="n">add_attribute</span><span class="p">(</span><span class="s">&#39;dt_variable&#39;</span><span class="p">,</span><span class="n">value</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">claw_data</span><span class="o">.</span><span class="n">add_attribute</span><span class="p">(</span><span class="s">&#39;dt_variable&#39;</span><span class="p">,</span><span class="n">value</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">claw_data</span><span class="o">.</span><span class="n">add_attribute</span><span class="p">(</span><span class="s">&#39;order&#39;</span><span class="p">,</span><span class="n">value</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">solver</span><span class="o">.</span><span class="n">order</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">claw_data</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">claw_data</span><span class="o">.</span><span class="n">add_attribute</span><span class="p">(</span><span class="s">&#39;order_trans&#39;</span><span class="p">,</span><span class="n">value</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">claw_data</span><span class="o">.</span><span class="n">add_attribute</span><span class="p">(</span><span class="s">&#39;order_trans&#39;</span><span class="p">,</span><span class="n">value</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">solver</span><span class="o">.</span><span class="n">order_trans</span><span class="p">)</span>
+        <span class="n">claw_data</span><span class="o">.</span><span class="n">add_attribute</span><span class="p">(</span><span class="s">&#39;verbosity&#39;</span><span class="p">,</span><span class="n">value</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">verbosity</span><span class="p">)</span>
+        <span class="n">claw_data</span><span class="o">.</span><span class="n">add_attribute</span><span class="p">(</span><span class="s">&#39;src_split&#39;</span><span class="p">,</span><span class="n">value</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">solver</span><span class="o">.</span><span class="n">src_split</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">solution</span><span class="o">.</span><span class="n">capa</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s">&quot;Not sure what to do here, they&#39;re are different!&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">claw_data</span><span class="o">.</span><span class="n">add_attribute</span><span class="p">(</span><span class="s">&#39;mcapa&#39;</span><span class="p">,</span><span class="n">value</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">claw_data</span><span class="o">.</span><span class="n">add_attribute</span><span class="p">(</span><span class="s">&#39;maux&#39;</span><span class="p">,</span><span class="n">value</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">solution</span><span class="o">.</span><span class="n">maux</span><span class="p">)</span>
+        
+        <span class="n">claw_data</span><span class="o">.</span><span class="n">add_attribute</span><span class="p">(</span><span class="s">&#39;meqn&#39;</span><span class="p">,</span><span class="n">value</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">solution</span><span class="o">.</span><span class="n">meqn</span><span class="p">)</span>
+        <span class="c"># claw_data.add_attribute(&#39;mwaves&#39;,value=self.solution.mwaves)</span>
+        <span class="n">claw_data</span><span class="o">.</span><span class="n">add_attribute</span><span class="p">(</span><span class="s">&#39;mthlim&#39;</span><span class="p">,</span><span class="n">value</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">solver</span><span class="o">.</span><span class="n">mthlim</span><span class="p">)</span>
+        
+        <span class="n">claw_data</span><span class="o">.</span><span class="n">add_attribute</span><span class="p">(</span><span class="s">&#39;t0&#39;</span><span class="p">,</span><span class="n">value</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">solution</span><span class="o">.</span><span class="n">t</span><span class="p">)</span>
+        <span class="n">claw_data</span><span class="o">.</span><span class="n">add_attribute</span><span class="p">(</span><span class="s">&#39;xlower&#39;</span><span class="p">,</span>
+                                    <span class="n">value</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">solution</span><span class="o">.</span><span class="n">dimensions</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">)</span>
+        <span class="n">claw_data</span><span class="o">.</span><span class="n">add_attribute</span><span class="p">(</span><span class="s">&#39;xupper&#39;</span><span class="p">,</span>
+                                    <span class="n">value</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">solution</span><span class="o">.</span><span class="n">dimensions</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">upper</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">claw_data</span><span class="o">.</span><span class="n">ndim</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">claw_data</span><span class="o">.</span><span class="n">add_attribute</span><span class="p">(</span><span class="s">&#39;ylower&#39;</span><span class="p">,</span>
+                                    <span class="n">value</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">solution</span><span class="o">.</span><span class="n">dimensions</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">)</span>
+            <span class="n">claw_data</span><span class="o">.</span><span class="n">add_attribute</span><span class="p">(</span><span class="s">&#39;yupper&#39;</span><span class="p">,</span>
+                                    <span class="n">value</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">solution</span><span class="o">.</span><span class="n">dimensions</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">upper</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">claw_data</span><span class="o">.</span><span class="n">ndim</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="n">claw_data</span><span class="o">.</span><span class="n">add_attribute</span><span class="p">(</span><span class="s">&#39;zlower&#39;</span><span class="p">,</span>
+                                    <span class="n">value</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">solution</span><span class="o">.</span><span class="n">dimensions</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">)</span>
+            <span class="n">claw_data</span><span class="o">.</span><span class="n">add_attribute</span><span class="p">(</span><span class="s">&#39;zupper&#39;</span><span class="p">,</span>
+                                    <span class="n">value</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">solution</span><span class="o">.</span><span class="n">dimensions</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">upper</span><span class="p">)</span>
+        
+        <span class="n">claw_data</span><span class="o">.</span><span class="n">add_attribute</span><span class="p">(</span><span class="s">&#39;mbc&#39;</span><span class="p">,</span><span class="n">value</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">solution</span><span class="o">.</span><span class="n">mbc</span><span class="p">)</span>
+        <span class="n">claw_data</span><span class="o">.</span><span class="n">add_attribute</span><span class="p">(</span><span class="s">&#39;mthbc_xlower&#39;</span><span class="p">,</span>
+                                <span class="n">value</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">solution</span><span class="o">.</span><span class="n">dimensions</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">mthbc_lower</span><span class="p">)</span>
+        <span class="n">claw_data</span><span class="o">.</span><span class="n">add_attribute</span><span class="p">(</span><span class="s">&#39;mthbc_xupper&#39;</span><span class="p">,</span>
+                                <span class="n">value</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">solution</span><span class="o">.</span><span class="n">dimensions</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">mthbc_upper</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">claw_data</span><span class="o">.</span><span class="n">ndim</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">claw_data</span><span class="o">.</span><span class="n">add_attribute</span><span class="p">(</span><span class="s">&#39;mthbc_ylower&#39;</span><span class="p">,</span>
+                                <span class="n">value</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">solution</span><span class="o">.</span><span class="n">dimensions</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">mthbc_lower</span><span class="p">)</span>
+            <span class="n">claw_data</span><span class="o">.</span><span class="n">add_attribute</span><span class="p">(</span><span class="s">&#39;mthbc_yupper&#39;</span><span class="p">,</span>
+                                <span class="n">value</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">solution</span><span class="o">.</span><span class="n">dimensions</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">mthbc_upper</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">claw_data</span><span class="o">.</span><span class="n">ndim</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="n">claw_data</span><span class="o">.</span><span class="n">add_attribute</span><span class="p">(</span><span class="s">&#39;mthbc_zlower&#39;</span><span class="p">,</span>
+                                <span class="n">value</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">solution</span><span class="o">.</span><span class="n">dimensions</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">mthbc_lower</span><span class="p">)</span>
+            <span class="n">claw_data</span><span class="o">.</span><span class="n">add_attribute</span><span class="p">(</span><span class="s">&#39;mthbc_zupper&#39;</span><span class="p">,</span>
+                                <span class="n">value</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">solution</span><span class="o">.</span><span class="n">dimensions</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">mthbc_upper</span><span class="p">)</span> 
+            
+        <span class="k">if</span> <span class="n">claw_path</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="c"># Write out this data object</span>
+            <span class="k">pass</span>
+
+        <span class="k">return</span> <span class="n">claw_data</span>
+        </div>
+<div class="viewcode-block" id="Controller.read_data"><a class="viewcode-back" href="../../sphinx/pyclaw/controller.html#pyclaw.controller.Controller.read_data">[docs]</a>    <span class="k">def</span> <span class="nf">read_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">path</span><span class="p">):</span>
+        <span class="s">r&quot;&quot;&quot;Read in a claw.data file and initialize accordingly</span>
+<span class="s">        </span>
+<span class="s">        .. warning::</span>
+<span class="s">            </span>
+<span class="s">            Not implemented!</span>
+<span class="s">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="n">NotImplementedException</span><span class="p">()</span>
+        
+    <span class="c">#------------------------------------------------------------</span></div>
+<div class="viewcode-block" id="Controller.runxclaw"><a class="viewcode-back" href="../../sphinx/pyclaw/controller.html#pyclaw.controller.Controller.runxclaw">[docs]</a>    <span class="k">def</span> <span class="nf">runxclaw</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
+    <span class="c">#------------------------------------------------------------</span>
+        <span class="s">r&#39;&#39;&#39;</span>
+<span class="s">        Run the command xdir/xclawcmd, directing the output fort.*</span>
+<span class="s">        files to outdir, writing unit 6 timestepping info to file xclawout.</span>
+<span class="s">        Runtime error messages are written to file xclawerr.</span>
+<span class="s">        If xclawout(xclawerr) is None, then output to stdout(stderr).</span>
+<span class="s">    </span>
+<span class="s">        If savecode==True, archive a copy of the code into directory outdir.</span>
+<span class="s">    </span>
+<span class="s">        This function returns the returncode from the process running xclawcmd,</span>
+<span class="s">        which will be nonzero if a runtime error occurs.</span>
+<span class="s">        &#39;&#39;&#39;</span>
+        <span class="kn">import</span> <span class="nn">os</span><span class="o">,</span> <span class="nn">shutil</span><span class="o">,</span> <span class="nn">glob</span>
+    
+        <span class="k">try</span><span class="p">:</span>
+            <span class="kn">import</span> <span class="nn">subprocess</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="k">print</span> <span class="s">&#39;Must use a more recent version of Python with module subprocess&#39;</span>
+            <span class="k">print</span> <span class="s">&#39;Python 2.5 is recommended&#39;</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s">&#39;subprocess module missing&#39;</span><span class="p">)</span>
+            <span class="k">return</span>
+    
+        <span class="n">debug</span> <span class="o">=</span> <span class="bp">False</span>
+        
+        <span class="k">try</span><span class="p">:</span>
+            <span class="c"># the following attributes are needed:</span>
+            <span class="n">xdir</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">xdir</span>
+            <span class="n">rundir</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rundir</span>
+            <span class="n">outdir</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">outdir</span>
+            <span class="n">overwrite</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">overwrite</span>
+            <span class="n">xclawcmd</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">xclawcmd</span>
+            <span class="n">xclawout</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">xclawout</span>
+            <span class="n">xclawerr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">xclawerr</span>
+            <span class="n">runmake</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">runmake</span>
+            <span class="n">savecode</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">savecode</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s">&#39;missing attributes in runxclaw&#39;</span><span class="p">)</span>
+            <span class="k">return</span>
+
+        <span class="n">startdir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()</span>
+        <span class="n">xdir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">xdir</span><span class="p">)</span>
+        <span class="n">outdir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">outdir</span><span class="p">)</span>
+        <span class="n">rundir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">rundir</span><span class="p">)</span>
+        <span class="n">xclawcmd</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">xdir</span><span class="p">,</span><span class="n">xclawcmd</span><span class="p">)</span>
+    
+        <span class="c">#import pdb; pdb.set_trace()</span>
+    
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="n">xdir</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span> <span class="s">&quot;Cannot change to directory xdir = </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span><span class="n">xdir</span><span class="p">)</span>
+            <span class="k">return</span> 
+    
+        <span class="k">if</span> <span class="n">runmake</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="k">pass</span>
+                <span class="c">#os.system(&#39;make&#39;)</span>
+            <span class="k">except</span><span class="p">:</span>
+                <span class="k">print</span> <span class="s">&#39;Warning: no make file in directory xdir = &#39;</span><span class="p">,</span><span class="n">xdir</span>
+    
+
+    
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">outdir</span><span class="p">):</span>
+            <span class="k">print</span> <span class="s">&quot;Error: outdir specified is a file&quot;</span>
+            <span class="k">return</span>
+        
+        <span class="k">if</span> <span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">outdir</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="ow">not</span> <span class="n">overwrite</span><span class="p">)):</span>
+            <span class="c"># move the old outdir instead of just clobbering it:</span>
+            <span class="n">tm</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">localtime</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">getmtime</span><span class="p">(</span><span class="n">outdir</span><span class="p">))</span>
+            <span class="n">year</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">tm</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">.</span><span class="n">zfill</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+            <span class="n">month</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">tm</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span><span class="o">.</span><span class="n">zfill</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+            <span class="n">day</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">tm</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span><span class="o">.</span><span class="n">zfill</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+            <span class="n">hour</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">tm</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span><span class="o">.</span><span class="n">zfill</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+            <span class="n">minute</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">tm</span><span class="p">[</span><span class="mi">4</span><span class="p">])</span><span class="o">.</span><span class="n">zfill</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+            <span class="n">second</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">tm</span><span class="p">[</span><span class="mi">5</span><span class="p">])</span><span class="o">.</span><span class="n">zfill</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+            <span class="n">outdir_backup</span> <span class="o">=</span> <span class="n">outdir</span> <span class="o">+</span> <span class="s">&#39;_</span><span class="si">%s%s%s</span><span class="s">-</span><span class="si">%s%s%s</span><span class="s">&#39;</span> \
+                  <span class="o">%</span> <span class="p">(</span><span class="n">year</span><span class="p">,</span><span class="n">month</span><span class="p">,</span><span class="n">day</span><span class="p">,</span><span class="n">hour</span><span class="p">,</span><span class="n">minute</span><span class="p">,</span><span class="n">second</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+                <span class="k">print</span> <span class="s">&quot;*** Directory already exists: &quot;</span><span class="p">,</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">outdir</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
+                <span class="k">print</span> <span class="s">&quot;*** Moving directory to:      &quot;</span><span class="p">,</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">outdir_backup</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
+                <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+            
+            <span class="n">shutil</span><span class="o">.</span><span class="n">move</span><span class="p">(</span><span class="n">outdir</span><span class="p">,</span><span class="n">outdir_backup</span><span class="p">)</span>
+            
+            
+        <span class="k">if</span> <span class="p">(</span><span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">outdir</span><span class="p">)):</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">os</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">outdir</span><span class="p">)</span>
+            <span class="k">except</span><span class="p">:</span>
+                <span class="k">print</span> <span class="s">&quot;Cannot make directory &quot;</span><span class="p">,</span><span class="n">outdir</span>
+                <span class="k">return</span>
+    
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="n">outdir</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="k">print</span> <span class="s">&#39;*** Error in runxclaw: cannot move to outdir = &#39;</span><span class="p">,</span>\
+                  <span class="n">outdir</span>
+            <span class="k">raise</span>
+            <span class="k">return</span>
+    
+        <span class="n">fortfiles</span> <span class="o">=</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">outdir</span><span class="p">,</span><span class="s">&#39;fort.*&#39;</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">overwrite</span><span class="p">:</span>
+            <span class="c"># remove any old versions:</span>
+            <span class="k">for</span> <span class="nb">file</span> <span class="ow">in</span> <span class="n">fortfiles</span><span class="p">:</span>
+                <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="nb">file</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">fortfiles</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="k">print</span> <span class="s">&quot;*** Remove fort.* and try again,&quot;</span>
+                <span class="k">print</span> <span class="s">&quot;  or use overwrite=True in call to runxclaw&quot;</span>
+                <span class="k">return</span>
+            
+        
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="n">rundir</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s">&quot;Cannot change to directory </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">rundir</span><span class="p">)</span>
+            <span class="k">return</span> 
+    
+        <span class="n">datafiles</span> <span class="o">=</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s">&#39;*.data&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">datafiles</span> <span class="o">==</span> <span class="p">():</span>
+            <span class="k">print</span> <span class="s">&quot;Warning: no data files found in directory &quot;</span><span class="p">,</span><span class="n">rundir</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">rundir</span> <span class="o">!=</span> <span class="n">outdir</span><span class="p">:</span>
+                <span class="k">for</span> <span class="nb">file</span> <span class="ow">in</span> <span class="n">datafiles</span><span class="p">:</span>
+                    <span class="n">shutil</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="nb">file</span><span class="p">,</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">outdir</span><span class="p">,</span><span class="nb">file</span><span class="p">))</span>
+    
+        <span class="k">if</span> <span class="n">xclawout</span><span class="p">:</span>
+            <span class="n">xclawout</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">xclawout</span><span class="p">,</span><span class="s">&#39;wb&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">xclawerr</span><span class="p">:</span>
+            <span class="n">xclawerr</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">xclawerr</span><span class="p">,</span><span class="s">&#39;wb&#39;</span><span class="p">)</span>
+    
+        <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="n">outdir</span><span class="p">)</span>
+    
+        <span class="c">#print &quot;\nIn directory outdir = &quot;,outdir,&quot;\n&quot;</span>
+    
+        <span class="c"># execute command to run fortran program:</span>
+    
+        <span class="k">try</span><span class="p">:</span>
+            <span class="c">#print &quot;\nExecuting &quot;,xclawcmd, &quot;  ...  &quot;</span>
+            <span class="c">#pclaw = subprocess.Popen(xclawcmd,stdout=xclawout,stderr=xclawerr)</span>
+            <span class="c">#print &#39;+++ pclaw started&#39;</span>
+                <span class="c">#pclaw.wait()   # wait for code to run</span>
+            <span class="c">#returncode = pclaw.returncode</span>
+            <span class="c">#print &#39;+++ pclaw done&#39;</span>
+            
+            <span class="n">returncode</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="n">xclawcmd</span><span class="p">)</span>
+    
+            <span class="k">if</span> <span class="n">returncode</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">print</span> <span class="s">&quot;</span><span class="se">\n</span><span class="s">Finished executing</span><span class="se">\n</span><span class="s">&quot;</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">print</span> <span class="s">&quot;</span><span class="se">\n</span><span class="s"> *** Runtime error: return code = </span><span class="si">%s</span><span class="se">\n</span><span class="s"> &quot;</span> <span class="o">%</span> <span class="n">returncode</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s">&quot;Could not execute command </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">xclawcmd</span><span class="p">)</span>
+            <span class="k">return</span>
+    
+        <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="n">startdir</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">returncode</span></div></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+<li><a href="http://www.clawpack.org"><font color="#7F0000">Clawpack Webpage</font></a>|&nbsp;</li>
+<li><a href="../../apps.html"><font color="#7F0000">Gallery</font></a>|&nbsp;</li>
+<li><a href="../../index.html"><font color="#7F0000">Contents</font></a>|&nbsp;</li>
+
+          <li><a href="../index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2010-2011, Kyle Mandli, David I. Ketcheson, Amal Alghamdi, and Aron Ahmadia.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.7.
+    </div>
+  </body>
+</html>

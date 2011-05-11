@@ -1,0 +1,443 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>pyclaw.io.netcdf &mdash; PyClaw v0.1 documentation</title>
+    <link rel="stylesheet" href="../../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../../_static/jsmath/easy/load.js"></script>
+    <link rel="shortcut icon" href="../../../_static/clawicon.ico"/>
+    <link rel="author" title="About these documents" href="../../../about.html" />
+    <link rel="top" title="PyClaw v0.1 documentation" href="../../../index.html" />
+    <link rel="up" title="Module code" href="../../index.html" /> 
+  </head>
+  <body>
+
+<div style="background-color: #FFFFE8; text-align: left; padding: 10px 10px 15px 15px">
+<table>
+<tr>
+<!--
+<td>
+&nbsp;
+<br>
+<a href="http://www.clawpack.org/"><img src="../../../_static/clawlogo.jpg" border="0" alt="Clawpack logo"/></a>
+</td>
+-->
+<td>
+<br>
+&nbsp;
+<br>
+<a href
+<font size="7"  color="#7F0000"> PyClaw Documentation</font>
+<br>
+&nbsp;
+<br>
+</td>
+</tr>
+</table>
+</div>
+
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+<li><a href="http://www.clawpack.org"><font color="#7F0000">Clawpack Webpage</font></a>|&nbsp;</li>
+<li><a href="../../../apps.html"><font color="#7F0000">Gallery</font></a>|&nbsp;</li>
+<li><a href="../../../index.html"><font color="#7F0000">Contents</font></a>|&nbsp;</li>
+
+          <li><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../../index.html">
+              <img class="logo" src="../../../_static/clawlogo.jpg" alt="Logo"/>
+            </a></p>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" size="18" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for pyclaw.io.netcdf</h1><div class="highlight"><pre>
+<span class="c">#!/usr/bin/env python</span>
+<span class="c"># encoding: utf-8</span>
+<span class="s">r&quot;&quot;&quot;</span>
+<span class="s">Routines for reading and writing a NetCDF output file</span>
+
+<span class="s">Routines for reading and writing a NetCDF output file via either</span>
+<span class="s">    - netcdf4-python - http://code.google.com/p/netcdf4-python/</span>
+<span class="s">    - pupynere - http://pypi.python.org/pypi/pupynere/</span>
+<span class="s">    </span>
+<span class="s">These interfaces are very similar so if a different module needs to be used,</span>
+<span class="s">it can more than likely be inserted with a minimal of effort.</span>
+
+<span class="s">This module will first try to import the netcdf4-python module which is based</span>
+<span class="s">on the compiled libraries and failing that will attempt to import the pure</span>
+<span class="s">python interface pupynere which requires no libraries.</span>
+
+<span class="s">To install the netCDF 4 library, please see:</span>
+<span class="s">    http://www.unidata.ucar.edu/software/netcdf/</span>
+<span class="s">    </span>
+<span class="s">:Authors:</span>
+<span class="s">    Kyle T. Mandli (2009-02-17) Initial version</span>
+<span class="s">&quot;&quot;&quot;</span>
+<span class="c"># ============================================================================</span>
+<span class="c">#      Copyright (C) 2009 Kyle T. Mandli &lt;mandli@amath.washington.edu&gt;</span>
+<span class="c">#</span>
+<span class="c">#  Distributed under the terms of the Berkeley Software Distribution (BSD) </span>
+<span class="c">#  license</span>
+<span class="c">#                     http://www.opensource.org/licenses/</span>
+<span class="c"># ============================================================================</span>
+
+<span class="kn">import</span> <span class="nn">os</span><span class="o">,</span><span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+
+<span class="kn">import</span> <span class="nn">pyclaw.solution</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s">&#39;io&#39;</span><span class="p">)</span>
+
+<span class="c"># Import appropriate netcdf package</span>
+<span class="n">use_netcdf4</span> <span class="o">=</span> <span class="bp">False</span>
+<span class="n">use_pupynere</span> <span class="o">=</span> <span class="bp">False</span>
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">import</span> <span class="nn">netCDF4</span>
+    <span class="n">use_netcdf4</span> <span class="o">=</span> <span class="bp">True</span>
+<span class="k">except</span><span class="p">:</span>
+    <span class="k">pass</span>
+<span class="k">if</span> <span class="ow">not</span> <span class="n">use_netcdf4</span><span class="p">:</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="kn">import</span> <span class="nn">pupynere</span>
+        <span class="n">use_pupynere</span> <span class="o">=</span> <span class="bp">True</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="n">error_msg</span> <span class="o">=</span> <span class="p">(</span><span class="s">&quot;Could not import netCDF4 or Pupynere, please install &quot;</span> <span class="o">+</span>
+            <span class="s">&quot;one of the available modules for netcdf files.  Refer to this &quot;</span> <span class="o">+</span>
+            <span class="s">&quot;modules doc_string for more information.&quot;</span><span class="p">)</span>
+        <span class="c">#raise Exception(error_msg)</span>
+        <span class="k">print</span> <span class="n">error_msg</span>
+
+<div class="viewcode-block" id="write_netcdf"><a class="viewcode-back" href="../../../sphinx/pyclaw/io.html#pyclaw.io.netcdf.write_netcdf">[docs]</a><span class="k">def</span> <span class="nf">write_netcdf</span><span class="p">(</span><span class="n">solution</span><span class="p">,</span><span class="n">frame</span><span class="p">,</span><span class="n">path</span><span class="p">,</span><span class="n">file_prefix</span><span class="o">=</span><span class="s">&#39;claw&#39;</span><span class="p">,</span><span class="n">write_aux</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span>
+                    <span class="n">options</span><span class="o">=</span><span class="p">{}):</span>
+    <span class="s">r&quot;&quot;&quot;</span>
+<span class="s">    Write out a NetCDF data file representation of solution</span>
+<span class="s">    </span>
+<span class="s">    :Input:</span>
+<span class="s">     - *solution* - (:class:`~pyclaw.solution.Solution`) Pyclaw object to be </span>
+<span class="s">       output</span>
+<span class="s">     - *frame* - (int) Frame number</span>
+<span class="s">     - *path* - (string) Root path</span>
+<span class="s">     - *file_prefix* - (string) Prefix for the file name. ``default = &#39;claw&#39;``</span>
+<span class="s">     - *write_aux* - (bool) Boolean controlling whether the associated </span>
+<span class="s">       auxiliary array should be written out. ``default = False``     </span>
+<span class="s">     - *options* - (dict) Optional argument dictionary, see </span>
+<span class="s">       `NetCDF Option Table`_</span>
+<span class="s">    </span>
+<span class="s">    .. _`NetCDF Option Table`:</span>
+<span class="s">    </span>
+<span class="s">    +-------------------------+----------------------------------------------+</span>
+<span class="s">    | Key                     | Value                                        |</span>
+<span class="s">    +=========================+==============================================+</span>
+<span class="s">    | description             | Dictionary of key/value pairs that will be   |</span>
+<span class="s">    |                         | attached to the root group as attributes,    |</span>
+<span class="s">    |                         | i.e. {&#39;time&#39;:3}                              |</span>
+<span class="s">    +-------------------------+----------------------------------------------+</span>
+<span class="s">    | format                  | Can be one of the following netCDF flavors:  |</span>
+<span class="s">    |                         | NETCDF3_CLASSIC, NETCDF3_64BIT,              |</span>
+<span class="s">    |                         | NETCDF4_CLASSIC, and NETCDF4                 |</span>
+<span class="s">    |                         | ``default = NETCDF4``                        |</span>
+<span class="s">    +-------------------------+----------------------------------------------+</span>
+<span class="s">    | clobber                 | if True (Default), file will be overwritten, |</span>
+<span class="s">    |                         | if False an exception will be raised         |</span>
+<span class="s">    +-------------------------+----------------------------------------------+</span>
+<span class="s">    | zlib                    | if True, data assigned to the Variable       |</span>
+<span class="s">    |                         | instance is compressed on disk.              |</span>
+<span class="s">    |                         | ``default = False``                          |</span>
+<span class="s">    +-------------------------+----------------------------------------------+</span>
+<span class="s">    | complevel               | the level of zlib compression to use (1 is   |</span>
+<span class="s">    |                         | the fastest, but poorest compression, 9 is   |</span>
+<span class="s">    |                         | the slowest but best compression).  Ignored  |</span>
+<span class="s">    |                         | if zlib=False.  ``default = 6``              |</span>
+<span class="s">    +-------------------------+----------------------------------------------+</span>
+<span class="s">    | shuffle                 | if True, the HDF5 shuffle filter is applied  |</span>
+<span class="s">    |                         | to improve compression. Ignored if           |</span>
+<span class="s">    |                         | zlib=False. ``default = True``               |</span>
+<span class="s">    +-------------------------+----------------------------------------------+</span>
+<span class="s">    | fletcher32              | if True (default False), the Fletcher32      |</span>
+<span class="s">    |                         | checksum algorithm is used for error         |</span>
+<span class="s">    |                         | detection.                                   |</span>
+<span class="s">    +-------------------------+----------------------------------------------+</span>
+<span class="s">    | contiguous              | if True (default False), the variable data   |</span>
+<span class="s">    |                         | is stored contiguously on disk.  Setting to  |</span>
+<span class="s">    |                         | True for a variable with an unlimited        |</span>
+<span class="s">    |                         | dimension will trigger an error.             |</span>
+<span class="s">    |                         | ``default = False``                          |</span>
+<span class="s">    +-------------------------+----------------------------------------------+</span>
+<span class="s">    | chunksizes              | Can be used to specify the HDF5 chunksizes   |</span>
+<span class="s">    |                         | for each dimension of the variable. A        |</span>
+<span class="s">    |                         | detailed discussion of HDF chunking and I/O  |</span>
+<span class="s">    |                         | performance is available here. Basically,    |</span>
+<span class="s">    |                         | you want the chunk size for each dimension   |</span>
+<span class="s">    |                         | to match as closely as possible the size of  |</span>
+<span class="s">    |                         | the data block that users will read from the |</span>
+<span class="s">    |                         | file. chunksizes cannot be set if            |</span>
+<span class="s">    |                         | contiguous=True.                             |</span>
+<span class="s">    +-------------------------+----------------------------------------------+</span>
+<span class="s">    | least_significant_digit | If specified, variable data will be          |</span>
+<span class="s">    |                         | truncated (quantized). In conjunction with   |</span>
+<span class="s">    |                         | zlib=True this produces &#39;lossy&#39;, but         |</span>
+<span class="s">    |                         | significantly more efficient compression.    |</span>
+<span class="s">    |                         | For example, if least_significant_digit=1,   |</span>
+<span class="s">    |                         | data will be quantized using around          |</span>
+<span class="s">    |                         | (scale*data)/scale, where scale = 2**bits,   |</span>
+<span class="s">    |                         | and bits is determined so that a precision   |</span>
+<span class="s">    |                         | of 0.1 is retained (in this case bits=4).    |</span>
+<span class="s">    |                         | ``default = None``, or no quantization.      |</span>
+<span class="s">    +-------------------------+----------------------------------------------+</span>
+<span class="s">    | endian                  | Can be used to control whether the data is   |</span>
+<span class="s">    |                         | stored in little or big endian format on     | </span>
+<span class="s">    |                         | disk. Possible values are little, big or     |</span>
+<span class="s">    |                         | native (default). The library will           |</span>
+<span class="s">    |                         | automatically handle endian conversions when |</span>
+<span class="s">    |                         | the data is read, but if the data is always  |</span>
+<span class="s">    |                         | going to be read on a computer with the      |</span>
+<span class="s">    |                         | opposite format as the one used to create    |</span>
+<span class="s">    |                         | the file, there may be some performance      |</span>
+<span class="s">    |                         | advantage to be gained by setting the        |</span>
+<span class="s">    |                         | endian-ness.                                 |</span>
+<span class="s">    +-------------------------+----------------------------------------------+</span>
+<span class="s">    | fill_value              | If specified, the default netCDF _FillValue  |</span>
+<span class="s">    |                         | (the value that the variable gets filled     |</span>
+<span class="s">    |                         | with before any data is written to it) is    |</span>
+<span class="s">    |                         | replaced with this value. If fill_value is   |</span>
+<span class="s">    |                         | set to False, then the variable is not       |</span>
+<span class="s">    |                         | pre-filled.                                  |</span>
+<span class="s">    +-------------------------+----------------------------------------------+</span>
+<span class="s">    </span>
+<span class="s">    .. note:: </span>
+<span class="s">        The zlib, complevel, shuffle, fletcher32, contiguous, chunksizes and</span>
+<span class="s">        endian keywords are silently ignored for netCDF 3 files that do not </span>
+<span class="s">        use HDF5.</span>
+<span class="s">        </span>
+<span class="s">    &quot;&quot;&quot;</span>
+    
+    <span class="c"># Option parsing</span>
+    <span class="n">option_defaults</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;format&#39;</span><span class="p">:</span><span class="s">&#39;NETCDF4&#39;</span><span class="p">,</span><span class="s">&#39;zlib&#39;</span><span class="p">:</span><span class="bp">False</span><span class="p">,</span><span class="s">&#39;complevel&#39;</span><span class="p">:</span><span class="mi">6</span><span class="p">,</span>
+                       <span class="s">&#39;shuffle&#39;</span><span class="p">:</span><span class="bp">True</span><span class="p">,</span><span class="s">&#39;fletcher32&#39;</span><span class="p">:</span><span class="bp">False</span><span class="p">,</span><span class="s">&#39;contiguous&#39;</span><span class="p">:</span><span class="bp">False</span><span class="p">,</span>
+                       <span class="s">&#39;chunksizes&#39;</span><span class="p">:</span><span class="bp">None</span><span class="p">,</span><span class="s">&#39;endian&#39;</span><span class="p">:</span><span class="s">&#39;native&#39;</span><span class="p">,</span>
+                       <span class="s">&#39;least_significant_digit&#39;</span><span class="p">:</span><span class="bp">None</span><span class="p">,</span><span class="s">&#39;fill_value&#39;</span><span class="p">:</span><span class="bp">None</span><span class="p">,</span>
+                       <span class="s">&#39;clobber&#39;</span><span class="p">:</span><span class="bp">True</span><span class="p">,</span><span class="s">&#39;description&#39;</span><span class="p">:{}}</span>
+    <span class="k">for</span> <span class="p">(</span><span class="n">k</span><span class="p">,</span><span class="n">v</span><span class="p">)</span> <span class="ow">in</span> <span class="n">option_defaults</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">options</span><span class="o">.</span><span class="n">has_key</span><span class="p">(</span><span class="n">k</span><span class="p">):</span>
+            <span class="k">exec</span><span class="p">(</span><span class="s">&quot;</span><span class="si">%s</span><span class="s"> = options[&#39;</span><span class="si">%s</span><span class="s">&#39;]&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">k</span><span class="p">,</span><span class="n">k</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">exec</span><span class="p">(</span><span class="s">&#39;</span><span class="si">%s</span><span class="s"> = v&#39;</span> <span class="o">%</span> <span class="n">k</span><span class="p">)</span>
+            
+    <span class="c"># Filename</span>
+    <span class="n">filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">,</span><span class="s">&quot;</span><span class="si">%s%s</span><span class="s">.nc&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">file_prefix</span><span class="p">,</span><span class="nb">str</span><span class="p">(</span><span class="n">frame</span><span class="p">)</span><span class="o">.</span><span class="n">zfill</span><span class="p">(</span><span class="mi">4</span><span class="p">)))</span>
+        
+    <span class="k">if</span> <span class="n">use_netcdf4</span><span class="p">:</span>
+        <span class="c"># Open new file</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="n">netCDF4</span><span class="o">.</span><span class="n">Dataset</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span><span class="s">&#39;w&#39;</span><span class="p">,</span><span class="n">clobber</span><span class="o">=</span><span class="n">clobber</span><span class="p">,</span><span class="n">format</span><span class="o">=</span><span class="n">format</span><span class="p">)</span>
+        
+        <span class="c"># Loop through description dictionary and add the attributes to the</span>
+        <span class="c"># root group</span>
+        <span class="k">for</span> <span class="p">(</span><span class="n">k</span><span class="p">,</span><span class="n">v</span><span class="p">)</span> <span class="ow">in</span> <span class="n">description</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
+            <span class="k">exec</span><span class="p">(</span><span class="s">&#39;f.</span><span class="si">%s</span><span class="s"> = </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">k</span><span class="p">,</span><span class="n">v</span><span class="p">))</span>
+        
+        <span class="c"># For each grid, write out attributes</span>
+        <span class="k">for</span> <span class="n">grid</span> <span class="ow">in</span> <span class="n">solution</span><span class="o">.</span><span class="n">grids</span><span class="p">:</span>
+            <span class="c"># Create group for this grid</span>
+            <span class="n">subgroup</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">createGroup</span><span class="p">(</span><span class="s">&#39;grid</span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="n">grid</span><span class="o">.</span><span class="n">gridno</span><span class="p">)</span>
+        
+            <span class="c"># General grid properties</span>
+            <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="p">[</span><span class="s">&#39;t&#39;</span><span class="p">,</span><span class="s">&#39;meqn&#39;</span><span class="p">,</span><span class="s">&#39;gridno&#39;</span><span class="p">,</span><span class="s">&#39;level&#39;</span><span class="p">,</span><span class="s">&#39;mbc&#39;</span><span class="p">]:</span>
+                <span class="nb">setattr</span><span class="p">(</span><span class="n">subgroup</span><span class="p">,</span><span class="n">attr</span><span class="p">,</span><span class="nb">getattr</span><span class="p">(</span><span class="n">grid</span><span class="p">,</span><span class="n">attr</span><span class="p">))</span>
+            
+            <span class="c"># Write out dimension names</span>
+            <span class="nb">setattr</span><span class="p">(</span><span class="n">subgroup</span><span class="p">,</span><span class="s">&#39;dim_names&#39;</span><span class="p">,</span><span class="n">grid</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+            
+            <span class="c"># Create dimensions for q (and aux)</span>
+            <span class="k">for</span> <span class="n">dim</span> <span class="ow">in</span> <span class="n">grid</span><span class="o">.</span><span class="n">dimensions</span><span class="p">:</span>
+                <span class="n">subgroup</span><span class="o">.</span><span class="n">createDimension</span><span class="p">(</span><span class="n">dim</span><span class="o">.</span><span class="n">name</span><span class="p">,</span><span class="n">dim</span><span class="o">.</span><span class="n">n</span><span class="p">)</span>
+                <span class="c"># Write other dimension attributes</span>
+                <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="p">[</span><span class="s">&#39;n&#39;</span><span class="p">,</span><span class="s">&#39;lower&#39;</span><span class="p">,</span><span class="s">&#39;d&#39;</span><span class="p">,</span><span class="s">&#39;upper&#39;</span><span class="p">,</span><span class="s">&#39;mthbc_lower&#39;</span><span class="p">,</span>
+                             <span class="s">&#39;mthbc_upper&#39;</span><span class="p">,</span><span class="s">&#39;units&#39;</span><span class="p">]:</span>
+                    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">dim</span><span class="p">,</span><span class="n">attr</span><span class="p">):</span>
+                        <span class="k">if</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">dim</span><span class="p">,</span><span class="n">attr</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+                            <span class="n">attr_name</span> <span class="o">=</span> <span class="s">&#39;</span><span class="si">%s</span><span class="s">.</span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">dim</span><span class="o">.</span><span class="n">name</span><span class="p">,</span><span class="n">attr</span><span class="p">)</span>
+                            <span class="nb">setattr</span><span class="p">(</span><span class="n">subgroup</span><span class="p">,</span><span class="n">attr_name</span><span class="p">,</span><span class="nb">getattr</span><span class="p">(</span><span class="n">dim</span><span class="p">,</span><span class="n">attr</span><span class="p">))</span>
+            <span class="n">subgroup</span><span class="o">.</span><span class="n">createDimension</span><span class="p">(</span><span class="s">&#39;meqn&#39;</span><span class="p">,</span><span class="n">grid</span><span class="o">.</span><span class="n">meqn</span><span class="p">)</span>
+            
+            <span class="c"># Write q array</span>
+            <span class="n">dim_names</span> <span class="o">=</span> <span class="n">grid</span><span class="o">.</span><span class="n">name</span>
+            <span class="n">dim_names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s">&#39;meqn&#39;</span><span class="p">)</span>
+            <span class="n">index_str</span> <span class="o">=</span> <span class="s">&#39;,&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span> <span class="p">[</span><span class="s">&#39;:&#39;</span> <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">dim_names</span><span class="p">]</span> <span class="p">)</span>
+            <span class="n">q</span> <span class="o">=</span> <span class="n">subgroup</span><span class="o">.</span><span class="n">createVariable</span><span class="p">(</span><span class="s">&#39;q&#39;</span><span class="p">,</span><span class="s">&#39;f8&#39;</span><span class="p">,</span><span class="n">dim_names</span><span class="p">,</span><span class="n">zlib</span><span class="p">,</span>
+                                            <span class="n">complevel</span><span class="p">,</span><span class="n">shuffle</span><span class="p">,</span><span class="n">fletcher32</span><span class="p">,</span>
+                                            <span class="n">contiguous</span><span class="p">,</span><span class="n">chunksizes</span><span class="p">,</span><span class="n">endian</span><span class="p">,</span>
+                                            <span class="n">least_significant_digit</span><span class="p">,</span><span class="n">fill_value</span><span class="p">)</span>
+            <span class="k">exec</span><span class="p">(</span><span class="s">&quot;q[</span><span class="si">%s</span><span class="s">] = grid.q&quot;</span> <span class="o">%</span> <span class="n">index_str</span><span class="p">)</span>
+            
+            <span class="c"># Write out aux</span>
+            <span class="k">if</span> <span class="n">grid</span><span class="o">.</span><span class="n">maux</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">write_aux</span><span class="p">:</span>
+                <span class="n">dim_names</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="s">&#39;maux&#39;</span>
+                <span class="n">subgroup</span><span class="o">.</span><span class="n">createDimension</span><span class="p">(</span><span class="s">&#39;maux&#39;</span><span class="p">,</span><span class="n">grid</span><span class="o">.</span><span class="n">maux</span><span class="p">)</span>
+                <span class="n">aux</span> <span class="o">=</span> <span class="n">subgroup</span><span class="o">.</span><span class="n">createVariable</span><span class="p">(</span><span class="s">&#39;aux&#39;</span><span class="p">,</span><span class="s">&#39;f8&#39;</span><span class="p">,</span><span class="n">dim_names</span><span class="p">,</span>
+                                            <span class="n">zlib</span><span class="p">,</span><span class="n">complevel</span><span class="p">,</span><span class="n">shuffle</span><span class="p">,</span><span class="n">fletcher32</span><span class="p">,</span>
+                                            <span class="n">contiguous</span><span class="p">,</span><span class="n">chunksizes</span><span class="p">,</span><span class="n">endian</span><span class="p">,</span>
+                                            <span class="n">least_significant_digit</span><span class="p">,</span><span class="n">fill_value</span><span class="p">)</span>
+                <span class="k">exec</span><span class="p">(</span><span class="s">&quot;aux[</span><span class="si">%s</span><span class="s">] = grid.aux&quot;</span> <span class="o">%</span> <span class="n">index_str</span><span class="p">)</span>
+        
+        <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="k">elif</span> <span class="n">use_pupynere</span><span class="p">:</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">critical</span><span class="p">(</span><span class="s">&quot;Pupynere support has not been implemented yet.&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="s">&quot;Pupynere support has not been implemented yet.&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">err_msg</span> <span class="o">=</span> <span class="s">&quot;No netcdf python modules available.&quot;</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">critical</span><span class="p">(</span><span class="n">err_msg</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="n">err_msg</span><span class="p">)</span>
+        
+    </div>
+<div class="viewcode-block" id="read_netcdf"><a class="viewcode-back" href="../../../sphinx/pyclaw/io.html#pyclaw.io.netcdf.read_netcdf">[docs]</a><span class="k">def</span> <span class="nf">read_netcdf</span><span class="p">(</span><span class="n">solution</span><span class="p">,</span><span class="n">frame</span><span class="p">,</span><span class="n">path</span><span class="o">=</span><span class="s">&#39;./&#39;</span><span class="p">,</span><span class="n">file_prefix</span><span class="o">=</span><span class="s">&#39;claw&#39;</span><span class="p">,</span><span class="n">read_aux</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+                <span class="n">options</span><span class="o">=</span><span class="p">{}):</span>
+    <span class="s">r&quot;&quot;&quot;</span>
+<span class="s">    Read in a NetCDF data files into solution</span>
+<span class="s">    </span>
+<span class="s">    :Input:</span>
+<span class="s">     - *solution* - (:class:`~pyclaw.solution.Solution`) Pyclaw object to be </span>
+<span class="s">       output</span>
+<span class="s">     - *frame* - (int) Frame number</span>
+<span class="s">     - *path* - (string) Root path</span>
+<span class="s">     - *file_prefix* - (string) Prefix for the file name.  ``default = &#39;claw&#39;``</span>
+<span class="s">     - *write_aux* - (bool) Boolean controlling whether the associated </span>
+<span class="s">       auxiliary array should be written out.  ``default = False``     </span>
+<span class="s">     - *options* - (dict) Optional argument dictionary, unused for reading.</span>
+<span class="s">    &quot;&quot;&quot;</span>
+    
+    <span class="c"># Option parsing</span>
+    <span class="n">option_defaults</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="p">(</span><span class="n">k</span><span class="p">,</span><span class="n">v</span><span class="p">)</span> <span class="ow">in</span> <span class="n">option_defaults</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">options</span><span class="o">.</span><span class="n">has_key</span><span class="p">(</span><span class="n">k</span><span class="p">):</span>
+            <span class="k">exec</span><span class="p">(</span><span class="s">&quot;</span><span class="si">%s</span><span class="s"> = options[&#39;</span><span class="si">%s</span><span class="s">&#39;]&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">k</span><span class="p">,</span><span class="n">k</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">exec</span><span class="p">(</span><span class="s">&#39;</span><span class="si">%s</span><span class="s"> = v&#39;</span> <span class="o">%</span> <span class="n">k</span><span class="p">)</span>
+            
+    <span class="c"># Filename</span>
+    <span class="n">filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">,</span><span class="s">&quot;</span><span class="si">%s%s</span><span class="s">.nc&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">file_prefix</span><span class="p">,</span><span class="nb">str</span><span class="p">(</span><span class="n">frame</span><span class="p">)</span><span class="o">.</span><span class="n">zfill</span><span class="p">(</span><span class="mi">4</span><span class="p">)))</span>
+        
+    <span class="k">if</span> <span class="n">use_netcdf4</span><span class="p">:</span>
+        <span class="c"># Open file</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="n">netCDF4</span><span class="o">.</span><span class="n">Dataset</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span><span class="s">&#39;r&#39;</span><span class="p">)</span>
+        
+        <span class="c"># We only expect subgroups of grids, otherwise we need to put some</span>
+        <span class="c"># sort of conditional here</span>
+        <span class="k">for</span> <span class="n">subgroup</span> <span class="ow">in</span> <span class="n">f</span><span class="o">.</span><span class="n">groups</span><span class="o">.</span><span class="n">itervalues</span><span class="p">():</span>
+            <span class="c"># Construct each dimension</span>
+            <span class="n">dimensions</span> <span class="o">=</span> <span class="p">[]</span>
+            
+            <span class="c"># Read in dimension attribute to keep dimension order</span>
+            <span class="n">dim_names</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">subgroup</span><span class="p">,</span><span class="s">&#39;dim_names&#39;</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">dim_name</span> <span class="ow">in</span> <span class="n">dim_names</span><span class="p">:</span>
+                <span class="n">dim</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">solution</span><span class="o">.</span><span class="n">Dimension</span><span class="p">(</span><span class="n">dim_name</span><span class="p">,</span> 
+                                      <span class="nb">getattr</span><span class="p">(</span><span class="n">subgroup</span><span class="p">,</span><span class="s">&#39;</span><span class="si">%s</span><span class="s">.lower&#39;</span> <span class="o">%</span> <span class="n">dim_name</span><span class="p">),</span>
+                                      <span class="nb">getattr</span><span class="p">(</span><span class="n">subgroup</span><span class="p">,</span><span class="s">&#39;</span><span class="si">%s</span><span class="s">.upper&#39;</span> <span class="o">%</span> <span class="n">dim_name</span><span class="p">),</span>
+                                      <span class="nb">getattr</span><span class="p">(</span><span class="n">subgroup</span><span class="p">,</span><span class="s">&#39;</span><span class="si">%s</span><span class="s">.n&#39;</span> <span class="o">%</span> <span class="n">dim_name</span><span class="p">))</span>
+                 <span class="c"># Optional attributes</span>
+                <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="p">[</span><span class="s">&#39;mthbc_lower&#39;</span><span class="p">,</span><span class="s">&#39;mthbc_upper&#39;</span><span class="p">,</span><span class="s">&#39;units&#39;</span><span class="p">]:</span>
+                    <span class="n">attr_name</span> <span class="o">=</span> <span class="s">&quot;</span><span class="si">%s</span><span class="s">.</span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">dim_name</span><span class="p">,</span><span class="n">attr</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">subgroup</span><span class="p">,</span><span class="n">attr_name</span><span class="p">):</span>
+                        <span class="nb">setattr</span><span class="p">(</span><span class="n">dim</span><span class="p">,</span><span class="n">attr</span><span class="p">,</span><span class="nb">getattr</span><span class="p">(</span><span class="n">subgroup</span><span class="p">,</span> <span class="s">&quot;</span><span class="si">%s</span><span class="s">.</span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">dim_name</span><span class="p">,</span><span class="n">attr</span><span class="p">)))</span>
+                <span class="n">dimensions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">dim</span><span class="p">)</span>
+            
+            <span class="c"># Create grid</span>
+            <span class="n">grid</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">solution</span><span class="o">.</span><span class="n">Grid</span><span class="p">(</span><span class="n">dimensions</span><span class="p">)</span>
+            
+            <span class="c"># General grid properties</span>
+            <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="p">[</span><span class="s">&#39;t&#39;</span><span class="p">,</span><span class="s">&#39;meqn&#39;</span><span class="p">,</span><span class="s">&#39;gridno&#39;</span><span class="p">,</span><span class="s">&#39;level&#39;</span><span class="p">]:</span>
+                <span class="nb">setattr</span><span class="p">(</span><span class="n">grid</span><span class="p">,</span><span class="n">attr</span><span class="p">,</span><span class="nb">getattr</span><span class="p">(</span><span class="n">subgroup</span><span class="p">,</span><span class="n">attr</span><span class="p">))</span>
+                
+            <span class="c"># Read in q</span>
+            <span class="n">index_str</span> <span class="o">=</span> <span class="s">&#39;,&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span> <span class="p">[</span><span class="s">&#39;:&#39;</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="n">grid</span><span class="o">.</span><span class="n">ndim</span><span class="o">+</span><span class="mi">1</span><span class="p">)]</span> <span class="p">)</span>
+            <span class="k">exec</span><span class="p">(</span><span class="s">&quot;grid.q = subgroup.variables[&#39;q&#39;][</span><span class="si">%s</span><span class="s">]&quot;</span> <span class="o">%</span> <span class="n">index_str</span><span class="p">)</span>
+            
+            <span class="c"># Read in aux if applicable</span>
+            <span class="k">if</span> <span class="n">read_aux</span> <span class="ow">and</span> <span class="n">subgroup</span><span class="o">.</span><span class="n">dimensions</span><span class="o">.</span><span class="n">has_key</span><span class="p">(</span><span class="s">&#39;maux&#39;</span><span class="p">):</span>
+                <span class="k">exec</span><span class="p">(</span><span class="s">&quot;grid.aux = subgroup.variables[&#39;aux&#39;][</span><span class="si">%s</span><span class="s">]&quot;</span> <span class="o">%</span> <span class="n">index_str</span><span class="p">)</span>
+        
+            <span class="n">solution</span><span class="o">.</span><span class="n">grids</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">grid</span><span class="p">)</span>
+            
+        <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="k">elif</span> <span class="n">use_pupynere</span><span class="p">:</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">critical</span><span class="p">(</span><span class="s">&quot;Pupynere support has not been implemented yet.&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="s">&quot;Pupynere support has not been implemented yet.&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">err_msg</span> <span class="o">=</span> <span class="s">&quot;No netcdf python modules available.&quot;</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">critical</span><span class="p">(</span><span class="n">err_msg</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="n">err_msg</span><span class="p">)</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+<li><a href="http://www.clawpack.org"><font color="#7F0000">Clawpack Webpage</font></a>|&nbsp;</li>
+<li><a href="../../../apps.html"><font color="#7F0000">Gallery</font></a>|&nbsp;</li>
+<li><a href="../../../index.html"><font color="#7F0000">Contents</font></a>|&nbsp;</li>
+
+          <li><a href="../../index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2010-2011, Kyle Mandli, David I. Ketcheson, Amal Alghamdi, and Aron Ahmadia.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.7.
+    </div>
+  </body>
+</html>
