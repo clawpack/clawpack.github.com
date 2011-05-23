@@ -22,7 +22,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <script type="text/javascript" src="_static/jsmath/easy/load.js"></script>
+    <script type="text/javascript" src="/Users/ketch/Software/jsmath/easy/load.js"></script>
     <link rel="shortcut icon" href="_static/clawicon.ico"/>
     <link rel="author" title="About these documents" href="about.html" />
     <link rel="top" title="PyClaw v0.1 documentation" href="index.html" />
@@ -71,7 +71,7 @@
           <a href="index.html" title="PyClaw"
              accesskey="P">previous</a> |</li>
 <li><a href="http://www.clawpack.org"><font color="#7F0000">Clawpack Webpage</font></a>|&nbsp;</li>
-<li><a href="apps.html"><font color="#7F0000">Gallery</font></a>|&nbsp;</li>
+<li><a href="gallery/gallery_all.html.html"><font color="#7F0000">Gallery</font></a>|&nbsp;</li>
 <li><a href="index.html"><font color="#7F0000">Contents</font></a>|&nbsp;</li>
  
       </ul>
@@ -85,6 +85,7 @@
   <h3><a href="index.html">Table Of Contents</a></h3>
   <ul>
 <li><a class="reference internal" href="#">Getting started with PyClaw</a><ul>
+<li><a class="reference internal" href="#dependencies">Dependencies</a></li>
 <li><a class="reference internal" href="#id1">Installation</a></li>
 <li><a class="reference internal" href="#setting-up-the-environment">Setting up the environment</a></li>
 <li><a class="reference internal" href="#testing-your-installation">Testing your installation</a></li>
@@ -128,25 +129,49 @@
             
   <div class="section" id="getting-started-with-pyclaw">
 <span id="installation"></span><h1>Getting started with PyClaw<a class="headerlink" href="#getting-started-with-pyclaw" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="id1">
-<h2>Installation<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="dependencies">
+<h2>Dependencies<a class="headerlink" href="#dependencies" title="Permalink to this headline">¶</a></h2>
 <p>PyClaw relies on the usual Python libraries for scientific computing:</p>
 <blockquote>
 <div><ul class="simple">
-<li>numpy</li>
-<li>matplotlib</li>
+<li><a class="reference external" href="http://numpy.scipy.org/">numpy</a>. Numpy is used both for handling
+arrays in Python and for interfacing between Python and Fortran
+(via f2py).  The current recommended version is 1.6.0.</li>
+<li><a class="reference external" href="http://matplotlib.sourceforge.net/">matplotlib</a>.  Matplotlib is
+used for plotting results.  The current recommended version is 1.0.1.</li>
 </ul>
 </div></blockquote>
-<p>These can be installed via easy_install or pip, or by downloading the Enthought
-Python Distribution.
-PyClaw requires installation of two Clawpack projects: PyClaw itself and
+<p>These can be installed via easy_install</p>
+<div class="highlight-python"><pre>$ easy_install numpy
+$ easy_install matplotlib</pre>
+</div>
+<p>or pip</p>
+<div class="highlight-python"><pre>$ pip install numpy
+$ pip install matplotlib</pre>
+</div>
+<p>or by downloading the
+<a class="reference external" href="http://www.enthought.com/products/epd.php">Enthought Python Distribution</a>.</p>
+</div>
+<div class="section" id="id1">
+<h2>Installation<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+<p>PyClaw requires installation of two Clawpack projects: PyClaw itself and
 Riemann, a collection of Riemann solvers.  We recommend that you create
-a directory to contain both and set your <cite>CLAW</cite> environment variable to point to that.</p>
+a directory to contain both and set your <cite>CLAW</cite> environment variable to point to that.
+This is accomplished by</p>
+<div class="highlight-python"><pre>$ mkdir clawpack
+$ cd clawpack
+$ export CLAW=`pwd`</pre>
+</div>
+<p>in bash.  In csh/tcsh, replace the last command above with</p>
+<div class="highlight-python"><pre>$ setenv CLAW `pwd`</pre>
+</div>
+<p>You will probably want to add the command to your <cite>.cshrc</cite> or <cite>.bash_profile</cite>.</p>
 <p>The best way to get PyClaw and Riemann right now is to clone the Git repositories</p>
 <div class="highlight-python"><pre>$ cd $CLAW
 $ git clone  git@github.com:clawpack/pyclaw.git
 $ git clone  git@github.com:clawpack/riemann.git</pre>
 </div>
+<p>Eventually we will have an official release and there will be a tarball available.</p>
 </div>
 <div class="section" id="setting-up-the-environment">
 <h2>Setting up the environment<a class="headerlink" href="#setting-up-the-environment" title="Permalink to this headline">¶</a></h2>
@@ -157,6 +182,14 @@ $ git clone  git@github.com:clawpack/riemann.git</pre>
 <li><cite>RIEMANN</cite> must point to the path where you installed Riemann (usually <cite>$CLAW/riemann</cite>)</li>
 </ul>
 </div></blockquote>
+<p>In bash this is accomplished via</p>
+<div class="highlight-python"><pre>$ export RIEMANN=$CLAW/riemann
+$ export PYCLAW=$CLAW/pyclaw</pre>
+</div>
+<p>In csh/tcsh, use</p>
+<div class="highlight-python"><pre>$ setenv RIEMANN $CLAW/riemann
+$ setenv PYCLAW $CLAW/pyclaw</pre>
+</div>
 </div>
 <div class="section" id="testing-your-installation">
 <h2>Testing your installation<a class="headerlink" href="#testing-your-installation" title="Permalink to this headline">¶</a></h2>
@@ -168,7 +201,7 @@ $ git clone  git@github.com:clawpack/riemann.git</pre>
 $ nosetests</pre>
 </div>
 <p>If everything is set up correctly, this will compile the Fortran source,
-run several examples, and inform you that the tests passed.  Note that the
+run several tests, and inform you that the tests passed.  Note that the
 tests <em>must</em> be run from the main PyClaw directory.</p>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
@@ -218,7 +251,7 @@ The <a class="reference external" href="http://kingkong.amath.washington.edu/cla
           <a href="index.html" title="PyClaw"
              >previous</a> |</li>
 <li><a href="http://www.clawpack.org"><font color="#7F0000">Clawpack Webpage</font></a>|&nbsp;</li>
-<li><a href="apps.html"><font color="#7F0000">Gallery</font></a>|&nbsp;</li>
+<li><a href="gallery/gallery_all.html.html"><font color="#7F0000">Gallery</font></a>|&nbsp;</li>
 <li><a href="index.html"><font color="#7F0000">Contents</font></a>|&nbsp;</li>
  
       </ul>
