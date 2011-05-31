@@ -22,13 +22,13 @@
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="../_static/jsmath/easy/load.js"></script>
+    <script type="text/javascript" src="/Users/ketch/Software/jsmath/easy/load.js"></script>
     <link rel="shortcut icon" href="../_static/clawicon.ico"/>
     <link rel="author" title="About these documents" href="../about.html" />
     <link rel="top" title="PyClaw v0.1 documentation" href="../index.html" />
-    <link rel="up" title="Pyclaw Evolve Package" href="../evolve.html" />
-    <link rel="next" title="Pyclaw Input/Output Package" href="../io.html" />
-    <link rel="prev" title="Riemann Solver Package" href="rp.html" /> 
+    <link rel="up" title="Pyclaw Solvers" href="solvers.html" />
+    <link rel="next" title="Pyclaw Classic Clawpack Solvers" href="clawpack.html" />
+    <link rel="prev" title="Pyclaw Solvers" href="solvers.html" /> 
   </head>
   <body>
 
@@ -66,16 +66,16 @@
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="../io.html" title="Pyclaw Input/Output Package"
+          <a href="clawpack.html" title="Pyclaw Classic Clawpack Solvers"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="rp.html" title="Riemann Solver Package"
+          <a href="solvers.html" title="Pyclaw Solvers"
              accesskey="P">previous</a> |</li>
 <li><a href="http://www.clawpack.org"><font color="#7F0000">Clawpack Webpage</font></a>|&nbsp;</li>
-<li><a href="../apps.html"><font color="#7F0000">Gallery</font></a>|&nbsp;</li>
+<li><a href="../gallery/gallery_all.html.html"><font color="#7F0000">Gallery</font></a>|&nbsp;</li>
 <li><a href="../index.html"><font color="#7F0000">Contents</font></a>|&nbsp;</li>
 
-          <li><a href="../evolve.html" accesskey="U">Pyclaw Evolve Package</a> &raquo;</li> 
+          <li><a href="solvers.html" accesskey="U">Pyclaw Solvers</a> &raquo;</li> 
       </ul>
     </div>
 
@@ -93,11 +93,11 @@
 </ul>
 
   <h4>Previous topic</h4>
-  <p class="topless"><a href="rp.html"
-                        title="previous chapter">Riemann Solver Package</a></p>
+  <p class="topless"><a href="solvers.html"
+                        title="previous chapter">Pyclaw Solvers</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="../io.html"
-                        title="next chapter">Pyclaw Input/Output Package</a></p>
+  <p class="topless"><a href="clawpack.html"
+                        title="next chapter">Pyclaw Classic Clawpack Solvers</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="../_sources/evolve/solver.txt"
@@ -133,7 +133,7 @@ interact with.  It is expected that a subclass will override the class method
 <tt class="xref py py-meth docutils literal"><span class="pre">evolve_to_time()</span></tt> method which evolves the solutions given to the end
 time provided.  Details of how this works can be found below.</p>
 <div class="section" id="module-pyclaw.evolve.solver">
-<span id="pyclaw-evolve-solver"></span><h2><a class="reference internal" href="../sphinx/pyclaw/evolve/solver.html#module-pyclaw.evolve.solver" title="pyclaw.evolve.solver"><tt class="xref py py-mod docutils literal"><span class="pre">pyclaw.evolve.solver</span></tt></a><a class="headerlink" href="#module-pyclaw.evolve.solver" title="Permalink to this headline">¶</a></h2>
+<span id="pyclaw-evolve-solver"></span><h2><a class="reference internal" href="#module-pyclaw.evolve.solver" title="pyclaw.evolve.solver"><tt class="xref py py-mod docutils literal"><span class="pre">pyclaw.evolve.solver</span></tt></a><a class="headerlink" href="#module-pyclaw.evolve.solver" title="Permalink to this headline">¶</a></h2>
 <p>Module specifying the interface to every solver in pyclaw.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -220,7 +220,7 @@ solution to a new time a new timing is appended to this list.</p>
 </dd>
 <dt>Output:</dt>
 <dd><ul class="first last simple">
-<li>(<a class="reference internal" href="../sphinx/pyclaw/evolve/solver.html#pyclaw.evolve.solver.Solver" title="pyclaw.evolve.solver.Solver"><tt class="xref py py-class docutils literal"><span class="pre">Solver</span></tt></a>) - Initialized Solver object</li>
+<li>(<a class="reference internal" href="#pyclaw.evolve.solver.Solver" title="pyclaw.evolve.solver.Solver"><tt class="xref py py-class docutils literal"><span class="pre">Solver</span></tt></a>) - Initialized Solver object</li>
 </ul>
 </dd>
 </dl>
@@ -311,20 +311,44 @@ have not been set.</p>
 determined by <tt class="xref py py-attr docutils literal"><span class="pre">mthbc_lower</span></tt> and <tt class="xref py py-attr docutils literal"><span class="pre">mthbc_upper</span></tt> for the 
 approprate dimension.  Valid values for <tt class="xref py py-attr docutils literal"><span class="pre">mthbc_lower</span></tt> and 
 <tt class="xref py py-attr docutils literal"><span class="pre">mthbc_upper</span></tt> include:</p>
-<ol class="arabic simple" start="0">
-<li>A user defined boundary condition will be used, the appropriate 
-Dimension method user_bc_lower or user_bc_upper will be called</li>
-<li>Zero-order extrapolation</li>
-<li>Periodic boundary conditions</li>
-<li>Wall boundary conditions, it is assumed that the second equation
-represents velocity or momentum</li>
-</ol>
+<ul>
+<li><dl class="first docutils">
+<dt>&#8216;custom&#8217;     or 0: A user defined boundary condition will be used, the appropriate </dt>
+<dd><p class="first last">Dimension method user_bc_lower or user_bc_upper will be called.</p>
+</dd>
+</dl>
+</li>
+<li><p class="first">&#8216;outflow&#8217;    or 1: Zero-order extrapolation.</p>
+</li>
+<li><p class="first">&#8216;periodic&#8217;   or 2: Periodic boundary conditions.</p>
+</li>
+<li><dl class="first docutils">
+<dt>&#8216;reflecting&#8217; or 3: Wall boundary conditions. It is assumed that the second </dt>
+<dd><p class="first last">component of q represents velocity or momentum.</p>
+</dd>
+</dl>
+</li>
+</ul>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
+<tr class="field"><th class="field-name">Input :</th><td class="field-body"><ul class="first">
+<li><p class="first"><em>grid</em> - (<tt class="xref py py-class docutils literal"><span class="pre">Grid</span></tt>) The grid being operated on.</p>
+</li>
+<li><dl class="first docutils">
+<dt><em>state</em> - The state being operated on; this may or may not be the</dt>
+<dd><p class="first last">same as <em>grid</em>.  Generally it is the same as <em>grid</em> for
+the classic algorithms and other one-level algorithms, 
+but different for method-of-lines algorithms like SharpClaw.</p>
+</dd>
+</dl>
+</li>
+</ul>
+</td>
+</tr>
 <tr class="field"><th class="field-name">Output :</th><td class="field-body"><ul class="first last simple">
-<li>(ndarray(...,meqn)) q array with boundary ghost cells added and set</li>
+<li>(ndarray(meqn,...)) q array with boundary ghost cells added and set</li>
 </ul>
 </td>
 </tr>
@@ -332,7 +356,7 @@ represents velocity or momentum</li>
 </table>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
-<p class="last">Note that for user defined boundary conditions, the array sent to
+<p class="last">Note that for user-defined boundary conditions, the array sent to
 the boundary condition has not been rolled.</p>
 </div>
 </dd></dl>
@@ -414,6 +438,15 @@ initialization routine.</p>
 would like to use the default time stepping in evolve_to_time.</p>
 </dd></dl>
 
+<dl class="method">
+<dt id="pyclaw.evolve.solver.Solver.teardown">
+<tt class="descname">teardown</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/pyclaw/evolve/solver.html#Solver.teardown"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyclaw.evolve.solver.Solver.teardown" title="Permalink to this definition">¶</a></dt>
+<dd><p>Stub for solver teardown routines.</p>
+<p>This function is called at the end of a simulation.
+A subclass should override it only if it needs to 
+perform some cleanup, such as deallocating arrays in a Fortran module.</p>
+</dd></dl>
+
 </dd></dl>
 
 </div>
@@ -435,16 +468,16 @@ would like to use the default time stepping in evolve_to_time.</p>
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="../io.html" title="Pyclaw Input/Output Package"
+          <a href="clawpack.html" title="Pyclaw Classic Clawpack Solvers"
              >next</a> |</li>
         <li class="right" >
-          <a href="rp.html" title="Riemann Solver Package"
+          <a href="solvers.html" title="Pyclaw Solvers"
              >previous</a> |</li>
 <li><a href="http://www.clawpack.org"><font color="#7F0000">Clawpack Webpage</font></a>|&nbsp;</li>
-<li><a href="../apps.html"><font color="#7F0000">Gallery</font></a>|&nbsp;</li>
+<li><a href="../gallery/gallery_all.html.html"><font color="#7F0000">Gallery</font></a>|&nbsp;</li>
 <li><a href="../index.html"><font color="#7F0000">Contents</font></a>|&nbsp;</li>
 
-          <li><a href="../evolve.html" >Pyclaw Evolve Package</a> &raquo;</li> 
+          <li><a href="solvers.html" >Pyclaw Solvers</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">

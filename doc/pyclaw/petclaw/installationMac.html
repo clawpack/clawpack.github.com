@@ -26,7 +26,7 @@
     <link rel="shortcut icon" href="../_static/clawicon.ico"/>
     <link rel="author" title="About these documents" href="../about.html" />
     <link rel="top" title="PyClaw v0.1 documentation" href="../index.html" />
-    <link rel="next" title="Pyclaw Controller Class" href="../controller.html" />
+    <link rel="next" title="Programming and documenting in PetClaw" href="rulesProposal.html" />
     <link rel="prev" title="About PetClaw" href="about.html" /> 
   </head>
   <body>
@@ -65,7 +65,7 @@
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="../controller.html" title="Pyclaw Controller Class"
+          <a href="rulesProposal.html" title="Programming and documenting in PetClaw"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="about.html" title="About PetClaw"
@@ -99,8 +99,8 @@
   <p class="topless"><a href="about.html"
                         title="previous chapter">About PetClaw</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="../controller.html"
-                        title="next chapter">Pyclaw Controller Class</a></p>
+  <p class="topless"><a href="rulesProposal.html"
+                        title="next chapter">Programming and documenting in PetClaw</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="../_sources/petclaw/installationMac.txt"
@@ -177,6 +177,7 @@ $ sudo python setup.py install</pre>
 </li>
 </ul>
 </div></blockquote>
+<p>Both method install numpy in the system, i.e. inside the python distribution installed in the previous step. If you prefer to install numpy locally, i.e. only for your user account, append the option <tt class="docutils literal"><span class="pre">--user</span></tt> after &#8220;RELEASE-NUMBER&#8221;.</p>
 <p>To test the numpy functionality open a terminal and run python, i.e.</p>
 <div class="highlight-python"><pre>$ python</pre>
 </div>
@@ -195,7 +196,17 @@ $ sudo python setup.py install</pre>
 </div>
 <div class="section" id="installation-of-the-gcc-gnu-compiler-collection">
 <h2>Installation of the gcc (GNU compiler collection)<a class="headerlink" href="#installation-of-the-gcc-gnu-compiler-collection" title="Permalink to this headline">¶</a></h2>
-<p>If you install the Mac OS X developer tools available at <a class="reference external" href="http://developer.apple.com/mac/">http://developer.apple.com/mac/</a>, the gcc GNU compiler suite will be installed as part of the package. To download the Mac OS X Developer tools an Apple developer connection login is needed. This can be obtained for free at the same address.</p>
+<p>We suggest you to install Xcode. Therefore, sign up at <a class="reference external" href="https://connect.apple.com/">https://connect.apple.com/</a>, then download for FREE Xcode from <a class="reference external" href="http://developer.apple.com/xcode/">http://developer.apple.com/xcode/</a>.</p>
+<dl class="docutils">
+<dt>Although Apple XCode Tools includes gcc 4.X, it is not a complete implementation and lacks <a class="reference external" href="http://gcc.gnu.org/wiki/GFortran">gfortran</a>. However, various implementations of gfortran have been compiled and are available at <a class="reference external" href="http://gcc.gnu.org/wiki/GFortranBinaries">GCC Wiki GFortranBinaries</a>. There are two other possible venues to install gfortran, <a class="reference external" href="http://r.research.att.com/tools/">Tools - R (and Fortran) for Mac OS X</a>, or <a class="reference external" href="http://hpc.sourceforge.net/">High Performance Computing for Mac OS X</a>.  Please take a look at this nice web page <a class="reference external" href="http://www.webmo.net/support/fortran_osx.html">http://www.webmo.net/support/fortran_osx.html</a> for more information about fortran and fortran compilers. Here the &#8220;GCC Wiki&#8221; installation is used. Thus,</dt>
+<dd><ul class="first last simple">
+<li>Visit the <a class="reference external" href="http://gcc.gnu.org/wiki/GFortranBinaries">GCC Wiki GFortranBinaries</a> page and scroll to the MacOS section</li>
+<li>Download the gfortran-macosx-{<strong>architecture you need</strong>} (e.g. Intel processors, Tiger and later; Intel 64-bit processors, Snow Leopard; PowerPC Leopard)</li>
+<li>Double-click on the .dmg file to mount the image</li>
+<li>Double-click on the .pkg file to run the installer</li>
+</ul>
+</dd>
+</dl>
 </div>
 <div class="section" id="installation-of-petsc">
 <h2>Installation of PETSc<a class="headerlink" href="#installation-of-petsc" title="Permalink to this headline">¶</a></h2>
@@ -217,7 +228,7 @@ $ setenv PETSC_ARCH arch-darwin-c-debug</pre>
 <p>Then configure PETSc-dev with the following command</p>
 <div class="highlight-python"><pre>$ ./config/configure.py --with-cc=gcc --with-cxx=g++ --with-python=1 --download-mpich=1 --with-shared-libraries=1</pre>
 </div>
-<p>Note that one of the option is &#8211;download-mpich=1. This means that mpich is downloaded. If you do not need/want mpich, remove this option.</p>
+<p>Note that one of the option is &#8211;download-mpich=1. This means that mpich is downloaded. If you do not need/want mpich, remove this option. Note that you need MPI when using PETSc. Therefore, if the option –download-mpich=1 is removed you should have MPI installed on your system or in your user account.</p>
 <p>Once the configuration phase is completed, build PETSc libraries with</p>
 <div class="highlight-python"><pre>$ make PETSC_DIR=path/to/the/dir/where/you/have/Petsc-dev PETSC_ARCH=arch-darwin-c-debug all</pre>
 </div>
@@ -276,6 +287,9 @@ $ cd mpi4py-1.1.2</pre>
 <p>Install it:</p>
 <div class="highlight-python"><pre>$ python setup.py install --user</pre>
 </div>
+<p>or:</p>
+<div class="highlight-python"><pre>$ pip install . --user</pre>
+</div>
 <p>To check mpi4py installation do:</p>
 <div class="highlight-python"><pre>$ mpiexec -n 4 python test/runalltest.py
 $ mpiexec -n 4 python demo/helloworld.py</pre>
@@ -315,7 +329,7 @@ $ mpiexec -n 4 python demo/helloworld.py</pre>
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="../controller.html" title="Pyclaw Controller Class"
+          <a href="rulesProposal.html" title="Programming and documenting in PetClaw"
              >next</a> |</li>
         <li class="right" >
           <a href="about.html" title="About PetClaw"
