@@ -1,0 +1,557 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>pyclaw.io.ascii &mdash; PyClaw v0.1 documentation</title>
+    <link rel="stylesheet" href="../../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../../_static/jsmath/easy/load.js"></script>
+    <link rel="shortcut icon" href="../../../_static/clawicon.ico"/>
+    <link rel="author" title="About these documents" href="../../../about.html" />
+    <link rel="top" title="PyClaw v0.1 documentation" href="../../../index.html" />
+    <link rel="up" title="Module code" href="../../index.html" /> 
+  </head>
+  <body>
+
+<div style="background-color: #FFFFE8; text-align: left; padding: 10px 10px 15px 15px">
+<table>
+<tr>
+<!--
+<td>
+&nbsp;
+<br>
+<a href="http://www.clawpack.org/"><img src="../../../_static/clawlogo.jpg" border="0" alt="Clawpack logo"/></a>
+</td>
+-->
+<td>
+<br>
+&nbsp;
+<br>
+<a href
+<font size="7"  color="#7F0000"> PyClaw Documentation</font>
+<br>
+&nbsp;
+<br>
+</td>
+</tr>
+</table>
+</div>
+
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+<li><a href="http://www.clawpack.org"><font color="#7F0000">Clawpack Webpage</font></a>|&nbsp;</li>
+<li><a href="../../../apps.html"><font color="#7F0000">Gallery</font></a>|&nbsp;</li>
+<li><a href="../../../index.html"><font color="#7F0000">Contents</font></a>|&nbsp;</li>
+
+          <li><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../../index.html">
+              <img class="logo" src="../../../_static/clawlogo.jpg" alt="Logo"/>
+            </a></p>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" size="18" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for pyclaw.io.ascii</h1><div class="highlight"><pre>
+<span class="c">#!/usr/bin/env python</span>
+<span class="c"># encoding: utf-8</span>
+<span class="s">r&quot;&quot;&quot;</span>
+<span class="s">Routines for reading and writing an ascii output file</span>
+
+<span class="s">:Authors:</span>
+<span class="s">    Kyle T. Mandli (2008-02-07) Initial version</span>
+<span class="s">&quot;&quot;&quot;</span>
+<span class="c"># ============================================================================</span>
+<span class="c">#      Copyright (C) 2008 Kyle T. Mandli &lt;mandli@amath.washington.edu&gt;</span>
+<span class="c">#</span>
+<span class="c">#  Distributed under the terms of the Berkeley Software Distribution (BSD) </span>
+<span class="c">#  license</span>
+<span class="c">#                     http://www.opensource.org/licenses/</span>
+<span class="c"># ============================================================================</span>
+
+<span class="kn">import</span> <span class="nn">os</span><span class="o">,</span><span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+
+<span class="kn">from</span> <span class="nn">pyclaw.util</span> <span class="kn">import</span> <span class="n">read_data_line</span>
+<span class="kn">import</span> <span class="nn">pyclaw.solution</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s">&#39;io&#39;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="write_ascii"><a class="viewcode-back" href="../../../sphinx/pyclaw/io.html#pyclaw.io.ascii.write_ascii">[docs]</a><span class="k">def</span> <span class="nf">write_ascii</span><span class="p">(</span><span class="n">solution</span><span class="p">,</span><span class="n">frame</span><span class="p">,</span><span class="n">path</span><span class="p">,</span><span class="n">file_prefix</span><span class="o">=</span><span class="s">&#39;fort&#39;</span><span class="p">,</span><span class="n">write_aux</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span>
+                    <span class="n">options</span><span class="o">=</span><span class="p">{}):</span>
+    <span class="s">r&quot;&quot;&quot;</span>
+<span class="s">    Write out ascii data file</span>
+<span class="s">    </span>
+<span class="s">    Write out an ascii file formatted identical to the fortran clawpack files</span>
+<span class="s">    including writing out fort.t, fort.q, and fort.aux if necessary.  Note</span>
+<span class="s">    that there are some parameters that assumed to be the same for every grid</span>
+<span class="s">    in this format which is not necessarily true for the actual data objects.</span>
+<span class="s">    Make sure that if you use this output format that all of you grids share</span>
+<span class="s">    the appropriate values of ndim, meqn, maux, and t.  Only supports up to</span>
+<span class="s">    3 dimensions.</span>
+<span class="s">    </span>
+<span class="s">    :Input:</span>
+<span class="s">     - *solution* - (:class:`~pyclaw.solution.Solution`) Pyclaw object to be </span>
+<span class="s">       output.</span>
+<span class="s">     - *frame* - (int) Frame number</span>
+<span class="s">     - *path* - (string) Root path</span>
+<span class="s">     - *file_prefix* - (string) Prefix for the file name.  ``default = &#39;fort&#39;``</span>
+<span class="s">     - *write_aux* - (bool) Boolean controlling whether the associated </span>
+<span class="s">       auxiliary array should be written out.  ``default = False``</span>
+<span class="s">     - *options* - (dict) Optional argument dictionary which in the case for</span>
+<span class="s">       ``ascii`` output contains nothing.</span>
+
+<span class="s">    &quot;&quot;&quot;</span>
+    
+    <span class="c"># Option parsing</span>
+    <span class="n">option_defaults</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="p">(</span><span class="n">k</span><span class="p">,</span><span class="n">v</span><span class="p">)</span> <span class="ow">in</span> <span class="n">option_defaults</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">options</span><span class="o">.</span><span class="n">has_key</span><span class="p">(</span><span class="n">k</span><span class="p">):</span>
+            <span class="k">exec</span><span class="p">(</span><span class="s">&quot;</span><span class="si">%s</span><span class="s"> = options[&#39;</span><span class="si">%s</span><span class="s">&#39;]&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">k</span><span class="p">,</span><span class="n">k</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">exec</span><span class="p">(</span><span class="s">&#39;</span><span class="si">%s</span><span class="s"> = v&#39;</span> <span class="o">%</span> <span class="n">k</span><span class="p">)</span>
+    
+    <span class="k">try</span><span class="p">:</span>
+        <span class="c"># Create file name</span>
+        <span class="n">file_name</span> <span class="o">=</span> <span class="s">&#39;</span><span class="si">%s</span><span class="s">.t</span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">file_prefix</span><span class="p">,</span><span class="nb">str</span><span class="p">(</span><span class="n">frame</span><span class="p">)</span><span class="o">.</span><span class="n">zfill</span><span class="p">(</span><span class="mi">4</span><span class="p">))</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">,</span><span class="n">file_name</span><span class="p">),</span><span class="s">&#39;w&#39;</span><span class="p">)</span>
+        
+        <span class="c"># Header for fort.txxxx file</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&quot;</span><span class="si">%18.8e</span><span class="s">     time</span><span class="se">\n</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">solution</span><span class="o">.</span><span class="n">t</span><span class="p">)</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&quot;</span><span class="si">%5i</span><span class="s">                  meqn</span><span class="se">\n</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">solution</span><span class="o">.</span><span class="n">meqn</span><span class="p">)</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&quot;</span><span class="si">%5i</span><span class="s">                  ngrids</span><span class="se">\n</span><span class="s">&quot;</span> <span class="o">%</span> <span class="nb">len</span><span class="p">(</span><span class="n">solution</span><span class="o">.</span><span class="n">grids</span><span class="p">))</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&quot;</span><span class="si">%5i</span><span class="s">                  maux</span><span class="se">\n</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">solution</span><span class="o">.</span><span class="n">maux</span><span class="p">)</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&quot;</span><span class="si">%5i</span><span class="s">                  ndim</span><span class="se">\n</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">solution</span><span class="o">.</span><span class="n">ndim</span><span class="p">)</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        
+        <span class="c"># Open fort.qxxxx for writing</span>
+        <span class="n">file_name</span> <span class="o">=</span> <span class="s">&#39;fort.q</span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="nb">str</span><span class="p">(</span><span class="n">frame</span><span class="p">)</span><span class="o">.</span><span class="n">zfill</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+        <span class="n">q_file</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">,</span><span class="n">file_name</span><span class="p">),</span><span class="s">&#39;w&#39;</span><span class="p">)</span>
+        
+        <span class="c"># If maux != 0 then we open up a file to write it out as well</span>
+        <span class="k">if</span> <span class="n">solution</span><span class="o">.</span><span class="n">maux</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">write_aux</span><span class="p">:</span>
+            <span class="n">file_name</span> <span class="o">=</span> <span class="s">&#39;fort.a</span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="nb">str</span><span class="p">(</span><span class="n">frame</span><span class="p">)</span><span class="o">.</span><span class="n">zfill</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+            <span class="n">aux_file</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">,</span><span class="n">file_name</span><span class="p">),</span><span class="s">&#39;w&#39;</span><span class="p">)</span>
+        
+        <span class="c"># for i in range(0,len(solution.grids)):</span>
+        <span class="k">for</span> <span class="n">grid</span> <span class="ow">in</span> <span class="n">solution</span><span class="o">.</span><span class="n">grids</span><span class="p">:</span>
+            <span class="c"># Header for fort.qxxxx file</span>
+            <span class="n">q_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&quot;</span><span class="si">%5i</span><span class="s">                  grid_number</span><span class="se">\n</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">grid</span><span class="o">.</span><span class="n">gridno</span><span class="p">)</span>
+            <span class="n">q_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&quot;</span><span class="si">%5i</span><span class="s">                  AMR_level</span><span class="se">\n</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">grid</span><span class="o">.</span><span class="n">level</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">dim</span> <span class="ow">in</span> <span class="n">grid</span><span class="o">.</span><span class="n">dimensions</span><span class="p">:</span>
+                <span class="n">q_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&quot;</span><span class="si">%5i</span><span class="s">                  m</span><span class="si">%s</span><span class="se">\n</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">dim</span><span class="o">.</span><span class="n">n</span><span class="p">,</span><span class="n">dim</span><span class="o">.</span><span class="n">name</span><span class="p">))</span>
+            <span class="k">for</span> <span class="n">dim</span> <span class="ow">in</span> <span class="n">grid</span><span class="o">.</span><span class="n">dimensions</span><span class="p">:</span>
+                <span class="n">q_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&quot;</span><span class="si">%18.8e</span><span class="s">     </span><span class="si">%s</span><span class="s">low</span><span class="se">\n</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">dim</span><span class="o">.</span><span class="n">lower</span><span class="p">,</span><span class="n">dim</span><span class="o">.</span><span class="n">name</span><span class="p">))</span>
+            <span class="k">for</span> <span class="n">dim</span> <span class="ow">in</span> <span class="n">grid</span><span class="o">.</span><span class="n">dimensions</span><span class="p">:</span>
+                <span class="n">q_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&quot;</span><span class="si">%18.8e</span><span class="s">     d</span><span class="si">%s</span><span class="se">\n</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">dim</span><span class="o">.</span><span class="n">d</span><span class="p">,</span><span class="n">dim</span><span class="o">.</span><span class="n">name</span><span class="p">))</span>
+            
+            <span class="n">q_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&quot;</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">)</span>
+            
+            <span class="c"># Write data from q</span>
+            <span class="n">q</span> <span class="o">=</span> <span class="n">grid</span><span class="o">.</span><span class="n">q</span>
+            <span class="n">dims</span> <span class="o">=</span> <span class="n">grid</span><span class="o">.</span><span class="n">dimensions</span>
+            <span class="k">if</span> <span class="n">grid</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="n">dims</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">n</span><span class="p">):</span>
+                    <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="n">solution</span><span class="o">.</span><span class="n">meqn</span><span class="p">):</span>
+                        <span class="n">q_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&quot;</span><span class="si">%16.8e</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">q</span><span class="p">[</span><span class="n">m</span><span class="p">,</span><span class="n">k</span><span class="p">])</span>
+                    <span class="n">q_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">grid</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="n">dims</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">n</span><span class="p">):</span>
+                    <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="n">dims</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">n</span><span class="p">):</span>
+                        <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="n">solution</span><span class="o">.</span><span class="n">meqn</span><span class="p">):</span>
+                            <span class="n">q_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&quot;</span><span class="si">%16.8e</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">q</span><span class="p">[</span><span class="n">m</span><span class="p">,</span><span class="n">k</span><span class="p">,</span><span class="n">j</span><span class="p">])</span>
+                        <span class="n">q_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span><span class="p">)</span>
+                    <span class="n">q_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">grid</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="n">dims</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">n</span><span class="p">):</span>
+                    <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="n">dims</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">n</span><span class="p">):</span>
+                        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="n">dims</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">n</span><span class="p">):</span>
+                            <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">solution</span><span class="o">.</span><span class="n">meqn</span><span class="p">):</span>
+                                <span class="n">q_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&quot;</span><span class="si">%16.8e</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">q</span><span class="p">[</span><span class="n">m</span><span class="p">,</span><span class="n">k</span><span class="p">,</span><span class="n">j</span><span class="p">,</span><span class="n">l</span><span class="p">])</span>
+                            <span class="n">q_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span><span class="p">)</span>
+                    <span class="n">q_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span><span class="p">)</span>
+                <span class="n">q_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s">&quot;Dimension Exception in writing fort file.&quot;</span><span class="p">)</span>
+            
+            <span class="k">if</span> <span class="n">grid</span><span class="o">.</span><span class="n">maux</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">write_aux</span><span class="p">:</span>
+                <span class="n">aux</span> <span class="o">=</span> <span class="n">grid</span><span class="o">.</span><span class="n">aux</span>
+                
+                <span class="n">aux_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&quot;</span><span class="si">%5i</span><span class="s">                  grid_number</span><span class="se">\n</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">grid</span><span class="o">.</span><span class="n">gridno</span><span class="p">)</span>
+                <span class="n">aux_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&quot;</span><span class="si">%5i</span><span class="s">                  AMR_level</span><span class="se">\n</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">grid</span><span class="o">.</span><span class="n">level</span><span class="p">)</span>
+                
+                <span class="k">for</span> <span class="n">dim</span> <span class="ow">in</span> <span class="n">grid</span><span class="o">.</span><span class="n">dimensions</span><span class="p">:</span>
+                    <span class="n">aux_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&quot;</span><span class="si">%5i</span><span class="s">                  m</span><span class="si">%s</span><span class="se">\n</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">dim</span><span class="o">.</span><span class="n">n</span><span class="p">,</span><span class="n">dim</span><span class="o">.</span><span class="n">name</span><span class="p">))</span>
+                <span class="k">for</span> <span class="n">dim</span> <span class="ow">in</span> <span class="n">grid</span><span class="o">.</span><span class="n">dimensions</span><span class="p">:</span>
+                    <span class="n">aux_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&quot;</span><span class="si">%18.8e</span><span class="s">     </span><span class="si">%s</span><span class="s">low</span><span class="se">\n</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">dim</span><span class="o">.</span><span class="n">lower</span><span class="p">,</span><span class="n">dim</span><span class="o">.</span><span class="n">name</span><span class="p">))</span>
+                <span class="k">for</span> <span class="n">dim</span> <span class="ow">in</span> <span class="n">grid</span><span class="o">.</span><span class="n">dimensions</span><span class="p">:</span>
+                    <span class="n">aux_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&quot;</span><span class="si">%18.8e</span><span class="s">     d</span><span class="si">%s</span><span class="se">\n</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">dim</span><span class="o">.</span><span class="n">d</span><span class="p">,</span><span class="n">dim</span><span class="o">.</span><span class="n">name</span><span class="p">))</span>
+
+                <span class="n">aux_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&quot;</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">grid</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="n">grid</span><span class="o">.</span><span class="n">dimensions</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+                        <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="n">grid</span><span class="o">.</span><span class="n">maux</span><span class="p">):</span>
+                            <span class="n">aux_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&quot;</span><span class="si">%16.8e</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">aux</span><span class="p">[</span><span class="n">m</span><span class="p">,</span><span class="n">k</span><span class="p">])</span>
+                        <span class="n">aux_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="n">grid</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+                    <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="n">grid</span><span class="o">.</span><span class="n">dimensions</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">n</span><span class="p">):</span>
+                        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="n">grid</span><span class="o">.</span><span class="n">dimension</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">n</span><span class="p">):</span>
+                            <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="n">grid</span><span class="o">.</span><span class="n">maux</span><span class="p">):</span>
+                                <span class="n">aux_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&quot;</span><span class="si">%16.8e</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">aux</span><span class="p">[</span><span class="n">m</span><span class="p">,</span><span class="n">k</span><span class="p">,</span><span class="n">j</span><span class="p">])</span>
+                            <span class="n">aux_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span><span class="p">)</span>    
+                        <span class="n">aux_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="n">grid</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+                    <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="n">grid</span><span class="o">.</span><span class="n">dimensions</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">n</span><span class="p">):</span>
+                        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="n">grid</span><span class="o">.</span><span class="n">dimensions</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">n</span><span class="p">):</span>
+                            <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="n">grid</span><span class="o">.</span><span class="n">dimensions</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">n</span><span class="p">):</span>
+                                <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="n">grid</span><span class="o">.</span><span class="n">maux</span><span class="p">):</span>
+                                    <span class="n">aux_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&quot;</span><span class="si">%16.8e</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">aux</span><span class="p">[</span><span class="n">m</span><span class="p">,</span><span class="n">k</span><span class="p">,</span><span class="n">j</span><span class="p">,</span><span class="n">l</span><span class="p">])</span>
+                                <span class="n">aux_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span><span class="p">)</span>
+                            <span class="n">aux_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span><span class="p">)</span>    
+                        <span class="n">aux_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span><span class="p">)</span>
+    
+        <span class="n">q_file</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">grid</span><span class="o">.</span><span class="n">maux</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">write_aux</span><span class="p">:</span>
+            <span class="n">aux_file</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="k">except</span> <span class="ne">IOError</span><span class="p">,</span> <span class="p">(</span><span class="n">errno</span><span class="p">,</span> <span class="n">strerror</span><span class="p">):</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s">&quot;Error writing file: </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">,</span><span class="n">file_name</span><span class="p">))</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s">&quot;I/O error(</span><span class="si">%s</span><span class="s">): </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">errno</span><span class="p">,</span> <span class="n">strerror</span><span class="p">))</span>
+        <span class="k">raise</span> 
+    <span class="k">except</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s">&quot;Unexpected error:&quot;</span><span class="p">,</span> <span class="n">sys</span><span class="o">.</span><span class="n">exc_info</span><span class="p">()[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="k">raise</span>
+</div>
+<div class="viewcode-block" id="read_ascii"><a class="viewcode-back" href="../../../sphinx/pyclaw/io.html#pyclaw.io.ascii.read_ascii">[docs]</a><span class="k">def</span> <span class="nf">read_ascii</span><span class="p">(</span><span class="n">solution</span><span class="p">,</span><span class="n">frame</span><span class="p">,</span><span class="n">path</span><span class="o">=</span><span class="s">&#39;./&#39;</span><span class="p">,</span><span class="n">file_prefix</span><span class="o">=</span><span class="s">&#39;fort&#39;</span><span class="p">,</span><span class="n">read_aux</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span>
+                <span class="n">options</span><span class="o">=</span><span class="p">{}):</span>
+    <span class="s">r&quot;&quot;&quot;</span>
+<span class="s">    Read in a set of ascii formatted files</span>
+<span class="s">    </span>
+<span class="s">    This routine reads the ascii formatted files corresponding to the classic</span>
+<span class="s">    clawpack format &#39;fort.txxxx&#39;, &#39;fort.qxxxx&#39;, and &#39;fort.axxxx&#39; or &#39;fort.aux&#39;</span>
+<span class="s">    Note that the fort prefix can be changed.</span>
+<span class="s">    </span>
+<span class="s">    :Input:</span>
+<span class="s">     - *solution* - (:class:`~pyclaw.solution.Solution`) Solution object to </span>
+<span class="s">       read the data into.</span>
+<span class="s">     - *frame* - (int) Frame number to be read in</span>
+<span class="s">     - *path* - (string) Path to the current directory of the file</span>
+<span class="s">     - *file_prefix* - (string) Prefix of the files to be read in.  </span>
+<span class="s">       ``default = &#39;fort&#39;``</span>
+<span class="s">     - *read_aux* (bool) Whether or not an auxillary file will try to be read </span>
+<span class="s">       in.  ``default = False``</span>
+<span class="s">     - *options* - (dict) Dictionary of options particular to this format </span>
+<span class="s">       which in the case of ``ascii`` files is empty.</span>
+<span class="s">    </span>
+<span class="s">    &quot;&quot;&quot;</span>
+    
+    <span class="c"># Option parsing</span>
+    <span class="n">option_defaults</span> <span class="o">=</span> <span class="p">{}</span>
+    
+    <span class="k">for</span> <span class="p">(</span><span class="n">k</span><span class="p">,</span><span class="n">v</span><span class="p">)</span> <span class="ow">in</span> <span class="n">option_defaults</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">options</span><span class="o">.</span><span class="n">has_key</span><span class="p">(</span><span class="n">k</span><span class="p">):</span>
+            <span class="k">exec</span><span class="p">(</span><span class="s">&quot;</span><span class="si">%s</span><span class="s"> = options[&#39;</span><span class="si">%s</span><span class="s">&#39;]&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">k</span><span class="p">,</span><span class="n">k</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">exec</span><span class="p">(</span><span class="s">&#39;</span><span class="si">%s</span><span class="s"> = v&#39;</span> <span class="o">%</span> <span class="n">k</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">frame</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="c"># Don&#39;t construct file names with negative frameno values.</span>
+        <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="s">&quot;Frame &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">frame</span><span class="p">)</span> <span class="o">+</span> <span class="s">&quot; does not exist ***&quot;</span><span class="p">)</span>
+
+    <span class="c"># Construct path names</span>
+    <span class="n">base_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">,)</span>
+    <span class="c"># t_fname = os.path.join(base_path, &#39;%s.t&#39; % file_prefix) + str(frame).zfill(4)</span>
+    <span class="n">q_fname</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">base_path</span><span class="p">,</span> <span class="s">&#39;</span><span class="si">%s</span><span class="s">.q&#39;</span> <span class="o">%</span> <span class="n">file_prefix</span><span class="p">)</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">frame</span><span class="p">)</span><span class="o">.</span><span class="n">zfill</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+
+    <span class="c"># Read in values from fort.t file:</span>
+    <span class="p">[</span><span class="n">t</span><span class="p">,</span><span class="n">meqn</span><span class="p">,</span><span class="n">ngrids</span><span class="p">,</span><span class="n">maux</span><span class="p">,</span><span class="n">ndim</span><span class="p">]</span> <span class="o">=</span> <span class="n">read_ascii_t</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span><span class="n">path</span><span class="p">,</span><span class="n">file_prefix</span><span class="p">)</span>
+    
+    <span class="c"># Read in values from fort.q file:</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">q_fname</span><span class="p">,</span><span class="s">&#39;r&#39;</span><span class="p">)</span>
+    
+        <span class="c"># Loop through every grid setting the appropriate information</span>
+        <span class="c"># for ng in range(len(solution.grids)):</span>
+        <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="n">ngrids</span><span class="p">):</span>
+        
+            <span class="c"># Read in base header for this grid</span>
+            <span class="n">gridno</span> <span class="o">=</span> <span class="n">read_data_line</span><span class="p">(</span><span class="n">f</span><span class="p">,</span><span class="nb">type</span><span class="o">=</span><span class="s">&#39;int&#39;</span><span class="p">)</span>
+            <span class="n">level</span> <span class="o">=</span> <span class="n">read_data_line</span><span class="p">(</span><span class="n">f</span><span class="p">,</span><span class="nb">type</span><span class="o">=</span><span class="s">&#39;int&#39;</span><span class="p">)</span>
+            <span class="n">n</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">ndim</span><span class="p">))</span>
+            <span class="n">lower</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">ndim</span><span class="p">))</span>
+            <span class="n">d</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">ndim</span><span class="p">))</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="n">ndim</span><span class="p">):</span>
+                <span class="n">n</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">read_data_line</span><span class="p">(</span><span class="n">f</span><span class="p">,</span><span class="nb">type</span><span class="o">=</span><span class="s">&#39;int&#39;</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="n">ndim</span><span class="p">):</span>
+                <span class="n">lower</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">read_data_line</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="n">ndim</span><span class="p">):</span>
+                <span class="n">d</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">read_data_line</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+        
+            <span class="n">blank</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span>
+        
+            <span class="c"># Construct the grid</span>
+            <span class="c"># Since we do not have names here, we will construct the grid with</span>
+            <span class="c"># the assumed dimensions x,y,z</span>
+            <span class="n">names</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;x&#39;</span><span class="p">,</span><span class="s">&#39;y&#39;</span><span class="p">,</span><span class="s">&#39;z&#39;</span><span class="p">]</span>
+            <span class="n">dimensions</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="n">ndim</span><span class="p">):</span>
+                <span class="n">dimensions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                    <span class="n">pyclaw</span><span class="o">.</span><span class="n">solution</span><span class="o">.</span><span class="n">Dimension</span><span class="p">(</span><span class="n">names</span><span class="p">[</span><span class="n">i</span><span class="p">],</span><span class="n">lower</span><span class="p">[</span><span class="n">i</span><span class="p">],</span><span class="n">lower</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="n">n</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">*</span><span class="n">d</span><span class="p">[</span><span class="n">i</span><span class="p">],</span><span class="n">n</span><span class="p">[</span><span class="n">i</span><span class="p">]))</span>
+            <span class="n">grid</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">solution</span><span class="o">.</span><span class="n">Grid</span><span class="p">(</span><span class="n">dimensions</span><span class="p">)</span>
+            <span class="n">grid</span><span class="o">.</span><span class="n">t</span> <span class="o">=</span> <span class="n">t</span>
+            <span class="n">grid</span><span class="o">.</span><span class="n">meqn</span> <span class="o">=</span> <span class="n">meqn</span>
+
+
+            <span class="c"># RJL 1/8/10:  Changed empty_aux to zeros_aux below so aux won&#39;t</span>
+            <span class="c"># be filled with random values if aux arrays not read in.  Would</span>
+            <span class="c"># like to delete this and initialize grid.aux only if it will be</span>
+            <span class="c"># read in below, but for some reason that doesn&#39;t work.</span>
+
+            <span class="k">if</span> <span class="n">maux</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>   
+                <span class="n">grid</span><span class="o">.</span><span class="n">zeros_aux</span><span class="p">(</span><span class="n">maux</span><span class="p">)</span>
+            
+            <span class="c"># Fill in q values</span>
+            <span class="n">grid</span><span class="o">.</span><span class="n">empty_q</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">grid</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="n">grid</span><span class="o">.</span><span class="n">dimensions</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">n</span><span class="p">):</span>
+                    <span class="n">l</span> <span class="o">=</span> <span class="p">[]</span>
+                    <span class="k">while</span> <span class="nb">len</span><span class="p">(</span><span class="n">l</span><span class="p">)</span><span class="o">&lt;</span><span class="n">grid</span><span class="o">.</span><span class="n">meqn</span><span class="p">:</span>
+                        <span class="n">line</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span>
+                        <span class="n">l</span> <span class="o">=</span> <span class="n">l</span> <span class="o">+</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+                    <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="n">grid</span><span class="o">.</span><span class="n">meqn</span><span class="p">):</span>
+                        <span class="n">grid</span><span class="o">.</span><span class="n">q</span><span class="p">[</span><span class="n">m</span><span class="p">,</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">l</span><span class="p">[</span><span class="n">m</span><span class="p">])</span>
+            <span class="k">elif</span> <span class="n">grid</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="n">grid</span><span class="o">.</span><span class="n">dimensions</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">n</span><span class="p">):</span>
+                    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="n">grid</span><span class="o">.</span><span class="n">dimensions</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">n</span><span class="p">):</span>
+                        <span class="n">l</span> <span class="o">=</span> <span class="p">[]</span>
+                        <span class="k">while</span> <span class="nb">len</span><span class="p">(</span><span class="n">l</span><span class="p">)</span><span class="o">&lt;</span><span class="n">grid</span><span class="o">.</span><span class="n">meqn</span><span class="p">:</span>
+                            <span class="n">line</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span>
+                            <span class="n">l</span> <span class="o">=</span> <span class="n">l</span> <span class="o">+</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+                        <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="n">grid</span><span class="o">.</span><span class="n">meqn</span><span class="p">):</span>
+                            <span class="n">grid</span><span class="o">.</span><span class="n">q</span><span class="p">[</span><span class="n">m</span><span class="p">,</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">l</span><span class="p">[</span><span class="n">m</span><span class="p">])</span>
+                    <span class="n">blank</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span>
+            <span class="k">elif</span> <span class="n">grid</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s">&quot;3d still does not work!&quot;</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="n">grid</span><span class="o">.</span><span class="n">dimensions</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">n</span><span class="p">):</span>
+                    <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="n">grid</span><span class="o">.</span><span class="n">dimensions</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">n</span><span class="p">):</span>
+                        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="n">grid</span><span class="o">.</span><span class="n">dimensions</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">n</span><span class="p">):</span>
+                            <span class="n">l</span><span class="o">=</span><span class="p">[]</span>
+                            <span class="k">while</span> <span class="nb">len</span><span class="p">(</span><span class="n">l</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">grid</span><span class="o">.</span><span class="n">meqn</span><span class="p">:</span>
+                                <span class="n">line</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span>
+                                <span class="n">l</span> <span class="o">=</span> <span class="n">l</span> <span class="o">+</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+                            <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="n">grid</span><span class="o">.</span><span class="n">meqn</span><span class="p">):</span>
+                                <span class="n">grid</span><span class="o">.</span><span class="n">q</span><span class="p">[</span><span class="n">m</span><span class="p">,</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">,</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">l</span><span class="p">[</span><span class="n">m</span><span class="p">])</span>
+                        <span class="n">blank</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span>
+                    <span class="n">blank</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">msg</span> <span class="o">=</span> <span class="s">&quot;Read only supported up to 3d.&quot;</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">critical</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+        
+            <span class="c"># Add AMR attributes:</span>
+            <span class="n">grid</span><span class="o">.</span><span class="n">gridno</span> <span class="o">=</span> <span class="n">gridno</span>
+            <span class="n">grid</span><span class="o">.</span><span class="n">level</span> <span class="o">=</span> <span class="n">level</span>
+
+            <span class="c"># Add new grid to solution</span>
+            <span class="n">solution</span><span class="o">.</span><span class="n">grids</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">grid</span><span class="p">)</span>
+            
+    <span class="k">except</span><span class="p">(</span><span class="ne">IOError</span><span class="p">):</span>
+        <span class="k">raise</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s">&quot;File </span><span class="si">%s</span><span class="s"> was not able to be read.&quot;</span> <span class="o">%</span> <span class="n">q_fname</span><span class="p">)</span>
+        <span class="k">raise</span>
+
+    <span class="c"># Read auxillary file if available and requested</span>
+    <span class="k">if</span> <span class="n">solution</span><span class="o">.</span><span class="n">grids</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">maux</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">read_aux</span><span class="p">:</span>
+        <span class="c"># Check for aux file</span>
+        <span class="n">fname1</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">base_path</span><span class="p">,</span><span class="s">&#39;</span><span class="si">%s</span><span class="s">.a&#39;</span> <span class="o">%</span> <span class="n">file_prefix</span><span class="p">)</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">frame</span><span class="p">)</span><span class="o">.</span><span class="n">zfill</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+        <span class="n">fname2</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">base_path</span><span class="p">,</span><span class="s">&#39;</span><span class="si">%s</span><span class="s">.a&#39;</span> <span class="o">%</span> <span class="n">file_prefix</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">fname1</span><span class="p">):</span>
+            <span class="n">fname</span> <span class="o">=</span> <span class="n">fname1</span>
+        <span class="k">elif</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">fname2</span><span class="p">):</span>
+            <span class="n">fname</span> <span class="o">=</span> <span class="n">fname2</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;Unable to open auxillary file </span><span class="si">%s</span><span class="s"> or </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">fname1</span><span class="p">,</span><span class="n">fname2</span><span class="p">))</span>
+            <span class="k">return</span>
+            
+        <span class="c"># Found a valid path, try to open and read it</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">f</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span><span class="s">&#39;r&#39;</span><span class="p">)</span>
+            
+            <span class="c"># Read in aux file</span>
+            <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">solution</span><span class="o">.</span><span class="n">grids</span><span class="p">)):</span>
+                <span class="c"># Fetch correct grid</span>
+                <span class="n">gridno</span> <span class="o">=</span> <span class="n">read_data_line</span><span class="p">(</span><span class="n">f</span><span class="p">,</span><span class="nb">type</span><span class="o">=</span><span class="s">&#39;int&#39;</span><span class="p">)</span>
+                <span class="n">grid</span> <span class="o">=</span> <span class="n">solution</span><span class="o">.</span><span class="n">grids</span><span class="p">[</span><span class="n">gridno</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        
+                <span class="c"># These should match this grid already, raise exception otherwise</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">grid</span><span class="o">.</span><span class="n">level</span> <span class="o">==</span> <span class="n">read_data_line</span><span class="p">(</span><span class="n">f</span><span class="p">,</span><span class="nb">type</span><span class="o">=</span><span class="s">&#39;int&#39;</span><span class="p">)):</span>
+                    <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="s">&quot;Grid level in aux file header did not match grid no </span><span class="si">%s</span><span class="s">.&quot;</span> <span class="o">%</span> <span class="n">grid</span><span class="o">.</span><span class="n">gridno</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">dim</span> <span class="ow">in</span> <span class="n">grid</span><span class="o">.</span><span class="n">dimensions</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">dim</span><span class="o">.</span><span class="n">n</span> <span class="o">==</span> <span class="n">read_data_line</span><span class="p">(</span><span class="n">f</span><span class="p">,</span><span class="nb">type</span><span class="o">=</span><span class="s">&#39;int&#39;</span><span class="p">)):</span>
+                        <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="s">&quot;Dimension </span><span class="si">%s</span><span class="s">&#39;s n in aux file header did not match grid no </span><span class="si">%s</span><span class="s">.&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">dim</span><span class="o">.</span><span class="n">name</span><span class="p">,</span><span class="n">grid</span><span class="o">.</span><span class="n">gridno</span><span class="p">))</span>
+                <span class="k">for</span> <span class="n">dim</span> <span class="ow">in</span> <span class="n">grid</span><span class="o">.</span><span class="n">dimensions</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">dim</span><span class="o">.</span><span class="n">lower</span> <span class="o">==</span> <span class="n">read_data_line</span><span class="p">(</span><span class="n">f</span><span class="p">,</span><span class="nb">type</span><span class="o">=</span><span class="s">&#39;float&#39;</span><span class="p">)):</span>
+                        <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="s">&quot;Dimension </span><span class="si">%s</span><span class="s">&#39;s lower in aux file header did not match grid no </span><span class="si">%s</span><span class="s">.&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">dim</span><span class="o">.</span><span class="n">name</span><span class="p">,</span><span class="n">grid</span><span class="o">.</span><span class="n">gridno</span><span class="p">))</span>
+                <span class="k">for</span> <span class="n">dim</span> <span class="ow">in</span> <span class="n">grid</span><span class="o">.</span><span class="n">dimensions</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">dim</span><span class="o">.</span><span class="n">d</span> <span class="o">==</span> <span class="n">read_data_line</span><span class="p">(</span><span class="n">f</span><span class="p">,</span><span class="nb">type</span><span class="o">=</span><span class="s">&#39;float&#39;</span><span class="p">)):</span>
+                        <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="s">&quot;Dimension </span><span class="si">%s</span><span class="s">&#39;s d in aux file header did not match grid no </span><span class="si">%s</span><span class="s">.&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">dim</span><span class="o">.</span><span class="n">name</span><span class="p">,</span><span class="n">grid</span><span class="o">.</span><span class="n">gridno</span><span class="p">))</span>
+
+                <span class="n">f</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span>
+        
+                <span class="c"># Read in auxillary array</span>
+                <span class="k">if</span> <span class="n">grid</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="n">grid</span><span class="o">.</span><span class="n">dimensions</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">n</span><span class="p">):</span>
+                        <span class="n">l</span> <span class="o">=</span> <span class="p">[]</span>
+                        <span class="k">while</span> <span class="nb">len</span><span class="p">(</span><span class="n">l</span><span class="p">)</span><span class="o">&lt;</span><span class="n">grid</span><span class="o">.</span><span class="n">maux</span><span class="p">:</span>
+                            <span class="n">line</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span>
+                            <span class="n">l</span> <span class="o">=</span> <span class="n">l</span> <span class="o">+</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+                        <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="n">grid</span><span class="o">.</span><span class="n">maux</span><span class="p">):</span>
+                            <span class="n">grid</span><span class="o">.</span><span class="n">aux</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">m</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">l</span><span class="p">[</span><span class="n">m</span><span class="p">])</span>
+                <span class="k">elif</span> <span class="n">grid</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+                    <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="n">grid</span><span class="o">.</span><span class="n">dimensions</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">n</span><span class="p">):</span>
+                        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="n">grid</span><span class="o">.</span><span class="n">dimensions</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">n</span><span class="p">):</span>
+                            <span class="n">l</span> <span class="o">=</span> <span class="p">[]</span>
+                            <span class="k">while</span> <span class="nb">len</span><span class="p">(</span><span class="n">l</span><span class="p">)</span><span class="o">&lt;</span><span class="n">grid</span><span class="o">.</span><span class="n">maux</span><span class="p">:</span>
+                                <span class="n">line</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span>
+                                <span class="n">l</span> <span class="o">=</span> <span class="n">l</span> <span class="o">+</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+                            <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="n">grid</span><span class="o">.</span><span class="n">maux</span><span class="p">):</span>
+                                <span class="n">grid</span><span class="o">.</span><span class="n">aux</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">,</span><span class="n">m</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">l</span><span class="p">[</span><span class="n">m</span><span class="p">])</span>
+                        <span class="n">blank</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span>
+                <span class="k">elif</span> <span class="n">grid</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+                    <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="n">grid</span><span class="o">.</span><span class="n">dimensions</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">n</span><span class="p">):</span>
+                        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="n">grid</span><span class="o">.</span><span class="n">dimensions</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">n</span><span class="p">):</span>
+                            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="n">grid</span><span class="o">.</span><span class="n">dimensions</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">n</span><span class="p">):</span>
+                                <span class="n">l</span> <span class="o">=</span> <span class="p">[]</span>
+                                <span class="k">while</span> <span class="nb">len</span><span class="p">(</span><span class="n">l</span><span class="p">)</span><span class="o">&lt;</span><span class="n">grid</span><span class="o">.</span><span class="n">maux</span><span class="p">:</span>
+                                    <span class="n">line</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span>
+                                    <span class="n">l</span> <span class="o">=</span> <span class="n">l</span> <span class="o">+</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+                                <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="n">grid</span><span class="o">.</span><span class="n">maux</span><span class="p">):</span>
+                                    <span class="n">grid</span><span class="o">.</span><span class="n">aux</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">,</span><span class="n">k</span><span class="p">,</span><span class="n">m</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">l</span><span class="p">[</span><span class="n">m</span><span class="p">])</span>
+                            <span class="n">blank</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span>
+                        <span class="n">blank</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">logger</span><span class="o">.</span><span class="n">critical</span><span class="p">(</span><span class="s">&quot;Read aux only up to 3d is supported.&quot;</span><span class="p">)</span>
+                    <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s">&quot;Read aux only up to 3d is supported.&quot;</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">(</span><span class="ne">IOError</span><span class="p">):</span>
+            <span class="k">raise</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s">&quot;File </span><span class="si">%s</span><span class="s"> was not able to be read.&quot;</span> <span class="o">%</span> <span class="n">q_fname</span><span class="p">)</span>
+            <span class="k">raise</span>
+            
+            </div>
+<div class="viewcode-block" id="read_ascii_t"><a class="viewcode-back" href="../../../sphinx/pyclaw/io.html#pyclaw.io.ascii.read_ascii_t">[docs]</a><span class="k">def</span> <span class="nf">read_ascii_t</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span><span class="n">path</span><span class="o">=</span><span class="s">&#39;./&#39;</span><span class="p">,</span><span class="n">file_prefix</span><span class="o">=</span><span class="s">&#39;fort&#39;</span><span class="p">):</span>
+    <span class="s">r&quot;&quot;&quot;Read only the fort.t file and return the data</span>
+<span class="s">    </span>
+<span class="s">    :Input:</span>
+<span class="s">     - *frame* - (int) Frame number to be read in</span>
+<span class="s">     - *path* - (string) Path to the current directory of the file</span>
+<span class="s">     - *file_prefix* - (string) Prefix of the files to be read in.  </span>
+<span class="s">       ``default = &#39;fort&#39;``</span>
+<span class="s">     </span>
+<span class="s">    :Output:</span>
+<span class="s">     - (list) List of output variables</span>
+<span class="s">      - *t* - (int) Time of frame</span>
+<span class="s">      - *meqn* - (int) Number of equations in the frame</span>
+<span class="s">      - *ngrids* - (int) Number of grids</span>
+<span class="s">      - *maux* - (int) Auxillary value in the frame</span>
+<span class="s">      - *ndim* - (int) Number of dimensions in q and aux</span>
+<span class="s">    </span>
+<span class="s">    &quot;&quot;&quot;</span>
+
+    <span class="n">base_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">,)</span>
+    <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">base_path</span><span class="p">,</span> <span class="s">&#39;</span><span class="si">%s</span><span class="s">.t&#39;</span> <span class="o">%</span> <span class="n">file_prefix</span><span class="p">)</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">frame</span><span class="p">)</span><span class="o">.</span><span class="n">zfill</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&quot;Opening </span><span class="si">%s</span><span class="s"> file.&quot;</span> <span class="o">%</span> <span class="n">path</span><span class="p">)</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span><span class="s">&#39;r&#39;</span><span class="p">)</span>
+        
+        <span class="n">t</span> <span class="o">=</span> <span class="n">read_data_line</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+        <span class="n">meqn</span> <span class="o">=</span> <span class="n">read_data_line</span><span class="p">(</span><span class="n">f</span><span class="p">,</span><span class="nb">type</span><span class="o">=</span><span class="s">&#39;int&#39;</span><span class="p">)</span>
+        <span class="n">ngrids</span> <span class="o">=</span> <span class="n">read_data_line</span><span class="p">(</span><span class="n">f</span><span class="p">,</span><span class="nb">type</span><span class="o">=</span><span class="s">&#39;int&#39;</span><span class="p">)</span>
+        <span class="n">maux</span> <span class="o">=</span> <span class="n">read_data_line</span><span class="p">(</span><span class="n">f</span><span class="p">,</span><span class="nb">type</span><span class="o">=</span><span class="s">&#39;int&#39;</span><span class="p">)</span>
+        <span class="n">ndim</span> <span class="o">=</span> <span class="n">read_data_line</span><span class="p">(</span><span class="n">f</span><span class="p">,</span><span class="nb">type</span><span class="o">=</span><span class="s">&#39;int&#39;</span><span class="p">)</span>
+        
+        <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="k">except</span><span class="p">(</span><span class="ne">IOError</span><span class="p">):</span>
+        <span class="k">raise</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s">&quot;File &quot;</span> <span class="o">+</span> <span class="n">t_fname</span> <span class="o">+</span> <span class="s">&quot; should contain t, meqn, ngrids, maux, ndim&quot;</span><span class="p">)</span>
+        <span class="k">print</span> <span class="s">&quot;File &quot;</span> <span class="o">+</span> <span class="n">t_fname</span> <span class="o">+</span> <span class="s">&quot; should contain t, meqn, ngrids, maux, ndim&quot;</span>
+        <span class="k">raise</span>
+        
+    <span class="k">return</span> <span class="n">t</span><span class="p">,</span><span class="n">meqn</span><span class="p">,</span><span class="n">ngrids</span><span class="p">,</span><span class="n">maux</span><span class="p">,</span><span class="n">ndim</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+<li><a href="http://www.clawpack.org"><font color="#7F0000">Clawpack Webpage</font></a>|&nbsp;</li>
+<li><a href="../../../apps.html"><font color="#7F0000">Gallery</font></a>|&nbsp;</li>
+<li><a href="../../../index.html"><font color="#7F0000">Contents</font></a>|&nbsp;</li>
+
+          <li><a href="../../index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2010-2011, Kyle Mandli, David I. Ketcheson, Amal Alghamdi, and Aron Ahmadia.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.7.
+    </div>
+  </body>
+</html>

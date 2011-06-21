@@ -1,0 +1,817 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>pyclaw.util &mdash; PyClaw v0.1 documentation</title>
+    <link rel="stylesheet" href="../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../_static/jsmath/easy/load.js"></script>
+    <link rel="shortcut icon" href="../../_static/clawicon.ico"/>
+    <link rel="author" title="About these documents" href="../../about.html" />
+    <link rel="top" title="PyClaw v0.1 documentation" href="../../index.html" />
+    <link rel="up" title="Module code" href="../index.html" /> 
+  </head>
+  <body>
+
+<div style="background-color: #FFFFE8; text-align: left; padding: 10px 10px 15px 15px">
+<table>
+<tr>
+<!--
+<td>
+&nbsp;
+<br>
+<a href="http://www.clawpack.org/"><img src="../../_static/clawlogo.jpg" border="0" alt="Clawpack logo"/></a>
+</td>
+-->
+<td>
+<br>
+&nbsp;
+<br>
+<a href
+<font size="7"  color="#7F0000"> PyClaw Documentation</font>
+<br>
+&nbsp;
+<br>
+</td>
+</tr>
+</table>
+</div>
+
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+<li><a href="http://www.clawpack.org"><font color="#7F0000">Clawpack Webpage</font></a>|&nbsp;</li>
+<li><a href="../../apps.html"><font color="#7F0000">Gallery</font></a>|&nbsp;</li>
+<li><a href="../../index.html"><font color="#7F0000">Contents</font></a>|&nbsp;</li>
+
+          <li><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../index.html">
+              <img class="logo" src="../../_static/clawlogo.jpg" alt="Logo"/>
+            </a></p>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" size="18" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for pyclaw.util</h1><div class="highlight"><pre>
+<span class="c">#!/usr/bin/env python</span>
+<span class="c"># encoding: utf-8</span>
+<span class="s">r&quot;&quot;&quot;</span>
+<span class="s">Pyclaw utility methods</span>
+
+<span class="s">:Authors:</span>
+<span class="s">    Kyle T. Mandli (2008-08-07) Initial version</span>
+<span class="s">    </span>
+<span class="s">    Randall J. LeVeque (2009-01-01) Added svn revision</span>
+<span class="s">    </span>
+<span class="s">    Kyle T. Mandli (2009-03-01) Added topo file utilities</span>
+<span class="s">&quot;&quot;&quot;</span>
+<span class="c"># ============================================================================</span>
+<span class="c">#      Copyright (C) 2008 Kyle T. Mandli &lt;mandli@amath.washington.edu&gt;</span>
+<span class="c">#      Copyright (C) 2009 Randall J. LeVeque &lt;rjl@amath.washington.edu&gt;</span>
+<span class="c">#</span>
+<span class="c">#  Distributed under the terms of the Berkeley Software Distribution (BSD) </span>
+<span class="c">#  license</span>
+<span class="c">#                     http://www.opensource.org/licenses/</span>
+<span class="c"># ============================================================================</span>
+
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">import</span> <span class="nn">os</span><span class="o">,</span><span class="nn">sys</span><span class="o">,</span><span class="nn">shutil</span><span class="o">,</span><span class="nn">glob</span>
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">import</span> <span class="nn">subprocess</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">tempfile</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+
+<span class="c"># ============================================================================</span>
+<span class="c">#  Geoclaw Topography Utility Functions</span>
+<span class="c"># ============================================================================</span>
+<div class="viewcode-block" id="write_topo_file"><a class="viewcode-back" href="../../util.html#pyclaw.util.write_topo_file">[docs]</a><span class="k">def</span> <span class="nf">write_topo_file</span><span class="p">(</span><span class="n">path</span><span class="p">,</span><span class="n">z_func</span><span class="p">,</span><span class="n">nx</span><span class="p">,</span><span class="n">ny</span><span class="p">,</span><span class="n">lower_coord</span><span class="p">,</span><span class="n">upper_coord</span><span class="p">,</span><span class="n">topo_type</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+    <span class="s">r&quot;&quot;&quot;</span>
+<span class="s">    Write out a topo1 file to the file at path.</span>
+<span class="s">    </span>
+<span class="s">    This utility function is for use with GeoClaw.  Please to refer to </span>
+<span class="s">    GeoClaw&#39;s documentation for more details.</span>
+<span class="s">    </span>
+<span class="s">    :Input:</span>
+<span class="s">     - *path* - (string) Path to file</span>
+<span class="s">     - *z_func* - (func) Funtion determining z values (depth or topography)</span>
+<span class="s">     - *nx* - (int) Number of x points</span>
+<span class="s">     - *ny* - (int) Number of y points</span>
+<span class="s">     - *lower_coord* - (float) Lower left coordinate of the domain</span>
+<span class="s">     - *upper_coord* - (float) Upper right coordinate of the domain</span>
+<span class="s">     - *topo_type* - (int) Type of topography file to write, can be one of the</span>
+<span class="s">       following types.</span>
+<span class="s">       </span>
+<span class="s">    +---------------+--------------------------------------------------------+</span>
+<span class="s">    | Topo Type     | Description                                            |</span>
+<span class="s">    +===============+========================================================+</span>
+<span class="s">    | 1             | Standard GIS format:  3 columns with longitude,        |</span>
+<span class="s">    |               | latitude, and z in meters or x, y, z in one row        |</span>
+<span class="s">    +---------------+--------------------------------------------------------+</span>
+<span class="s">    | 2             | One z value per line with header                       |</span>
+<span class="s">    +---------------+--------------------------------------------------------+</span>
+<span class="s">    | 3             | One row of z values per line with header               |</span>
+<span class="s">    +---------------+--------------------------------------------------------+</span>
+
+<span class="s">    Header format is ::</span>
+<span class="s">    </span>
+<span class="s">        xxxx     ncols</span>
+<span class="s">        xxxx     nrows</span>
+<span class="s">        xxxx     xllcorner</span>
+<span class="s">        xxxx     yllcorner</span>
+<span class="s">        xxxx     cellsize</span>
+<span class="s">        xxxx     NODATA_value</span>
+
+
+<span class="s">    z values are positive for topography, negative for bathymetry.</span>
+
+<span class="s">    Values are ordered from upper left corner, moving east across each row</span>
+<span class="s">    (y fixed, x increasing) and then south (y decreasing).</span>
+
+<span class="s">    The region covered by this file should be refined to at least minlevel</span>
+<span class="s">    and at most maxlevel over the time interval specified.</span>
+
+<span class="s">    If a point is covered by several regions, the largest values of minlevel </span>
+<span class="s">    and maxlevel from all such regions are used.</span>
+
+<span class="s">    Refinement may also be forced or allowed by the minlevel and maxlevel</span>
+<span class="s">    parameters for the regions specified in setregions.data or </span>
+<span class="s">    setmovetopo.data.</span>
+
+<span class="s">    At points that lie far from shore (where h is greater than depthdeep),</span>
+<span class="s">    refinement is only allowed to level maxleveldeep.  These parameters are </span>
+<span class="s">    set in setgeo.data.</span>
+
+<span class="s">    In setting topography in a computation, the finest topography available</span>
+<span class="s">    will be used for each grid cell.  If a grid cells lies partially but</span>
+<span class="s">    not entirely in a topo file then a coarser topo file will be used for</span>
+<span class="s">    the remainder of the cell (with area-weighted averaging).</span>
+
+<span class="s">    The order of topo files in the list above should not matter.</span>
+<span class="s">    &quot;&quot;&quot;</span>
+    
+    <span class="c"># Open file</span>
+    <span class="nb">file</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span><span class="s">&#39;w&#39;</span><span class="p">)</span>
+    
+    <span class="c"># Calculate header values</span>
+    <span class="n">nrows</span> <span class="o">=</span> <span class="n">ny</span>
+    <span class="n">ncols</span> <span class="o">=</span> <span class="n">nx</span>
+    <span class="n">dx</span> <span class="o">=</span> <span class="p">(</span><span class="n">upper_coord</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">-</span><span class="n">lower_coord</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">/</span> <span class="n">nx</span>
+    <span class="n">dy</span> <span class="o">=</span> <span class="p">(</span><span class="n">upper_coord</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">-</span><span class="n">lower_coord</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">/</span> <span class="n">ny</span>
+    
+    <span class="k">if</span> <span class="ow">not</span><span class="p">(</span><span class="n">dx</span> <span class="o">==</span> <span class="n">dy</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&quot;dx != dy, dx = </span><span class="si">%s</span><span class="s">, dy = </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">dx</span><span class="p">,</span><span class="n">dy</span><span class="p">))</span>
+        <span class="k">return</span> <span class="mi">13</span>
+    <span class="n">cellsize</span> <span class="o">=</span> <span class="n">dx</span>
+    
+    <span class="c"># Write header</span>
+    <span class="n">header</span> <span class="o">=</span> <span class="s">&#39;</span><span class="si">%s</span><span class="s"> ncols&#39;</span> <span class="o">%</span> <span class="n">ncols</span>
+    <span class="n">header</span> <span class="o">=</span> <span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">((</span><span class="n">header</span><span class="p">,</span><span class="s">&#39;</span><span class="si">%s</span><span class="s"> nrows&#39;</span> <span class="o">%</span> <span class="n">nrows</span><span class="p">))</span>
+    <span class="n">header</span> <span class="o">=</span> <span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">((</span><span class="n">header</span><span class="p">,</span><span class="s">&#39;</span><span class="si">%s</span><span class="s"> xllcorner&#39;</span> <span class="o">%</span> <span class="n">lower_coord</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+    <span class="n">header</span> <span class="o">=</span> <span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">((</span><span class="n">header</span><span class="p">,</span><span class="s">&#39;</span><span class="si">%s</span><span class="s"> yllcorner&#39;</span> <span class="o">%</span> <span class="n">lower_coord</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+    <span class="n">header</span> <span class="o">=</span> <span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">((</span><span class="n">header</span><span class="p">,</span><span class="s">&#39;</span><span class="si">%s</span><span class="s"> cellsize&#39;</span> <span class="o">%</span> <span class="n">cellsize</span><span class="p">))</span>
+    <span class="n">header</span> <span class="o">=</span> <span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">((</span><span class="n">header</span><span class="p">,</span><span class="s">&#39;</span><span class="si">%s</span><span class="s"> NODATA_value</span><span class="se">\n</span><span class="s">&#39;</span> <span class="o">%</span> <span class="o">-</span><span class="mf">9999.0</span><span class="p">))</span>
+    <span class="nb">file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">header</span><span class="p">)</span>
+    
+    <span class="c"># Write out function give topography type requested</span>
+    <span class="k">if</span> <span class="n">topo_type</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="n">upper_coord</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span><span class="o">-</span><span class="n">lower_coord</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span><span class="n">ny</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">lower_coord</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">upper_coord</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">nx</span><span class="p">):</span>
+                <span class="nb">file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&quot;</span><span class="si">%s</span><span class="s"> </span><span class="si">%s</span><span class="s"> </span><span class="si">%s</span><span class="se">\n</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">z_func</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">)))</span>
+    <span class="k">elif</span> <span class="n">topo_type</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="n">upper_coord</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span><span class="o">-</span><span class="n">lower_coord</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span><span class="n">ny</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">lower_coord</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">upper_coord</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">nx</span><span class="p">):</span>
+                <span class="nb">file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&quot;</span><span class="si">%s</span><span class="se">\n</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">z_func</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">))</span>
+    <span class="k">elif</span> <span class="n">topo_type</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="n">upper_coord</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span><span class="o">-</span><span class="n">lower_coord</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span><span class="n">ny</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">lower_coord</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">upper_coord</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">nx</span><span class="p">):</span>
+                <span class="nb">file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&quot;</span><span class="si">%s</span><span class="s"> &quot;</span> <span class="o">%</span> <span class="n">z_func</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">))</span>
+            <span class="nb">file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&quot;</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">)</span>
+     
+    <span class="c"># Close file</span>
+    <span class="nb">file</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    </div>
+<div class="viewcode-block" id="read_topo_file"><a class="viewcode-back" href="../../util.html#pyclaw.util.read_topo_file">[docs]</a><span class="k">def</span> <span class="nf">read_topo_file</span><span class="p">(</span><span class="n">path</span><span class="p">,</span><span class="n">topo_type</span><span class="p">,</span><span class="n">verbose</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+    <span class="s">r&quot;&quot;&quot;</span>
+<span class="s">    Read in a topography file from path of type topo_type.</span>
+<span class="s">    </span>
+<span class="s">    This utility function is for use with GeoClaw.  Please to refer to </span>
+<span class="s">    GeoClaw&#39;s documentation for more details.</span>
+<span class="s">    </span>
+<span class="s">    :Input:</span>
+<span class="s">     - *path* - (string) Path to topography file</span>
+<span class="s">     - *topo_type* - (int) Type of topography file, see </span>
+<span class="s">       :meth:`write_topo_file` for valid types.</span>
+<span class="s">     - *verbose* - (bool) Verbose output, ``default = False``</span>
+<span class="s">    </span>
+<span class="s">    :Output:</span>
+<span class="s">     - (ndarray(:)) X-Coordinate array</span>
+<span class="s">     - (ndarray(:)) Y-Coordinate array</span>
+<span class="s">     - (ndarray(:,:)) Z values stored in topography file</span>
+<span class="s">    &quot;&quot;&quot;</span>
+    
+    <span class="n">topo_file</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span><span class="s">&#39;r&#39;</span><span class="p">)</span>
+    
+    <span class="c"># Read in topography file header</span>
+    <span class="n">nx</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">topo_file</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="n">ny</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">topo_file</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="n">xll</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">topo_file</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="n">yll</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">topo_file</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="n">dx</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">topo_file</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="n">nodata_value</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">topo_file</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">0</span><span class="p">])</span>
+    
+    <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+        <span class="k">print</span> <span class="s">&quot;Header:&quot;</span>
+        <span class="k">print</span> <span class="s">&quot;  (nx,ny) = (</span><span class="si">%s</span><span class="s">,</span><span class="si">%s</span><span class="s">)&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">nx</span><span class="p">,</span><span class="n">ny</span><span class="p">)</span>
+        <span class="k">print</span> <span class="s">&quot;  (xl,yl) = (</span><span class="si">%s</span><span class="s">,</span><span class="si">%s</span><span class="s">)&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">xll</span><span class="p">,</span><span class="n">yll</span><span class="p">)</span>
+        <span class="k">print</span> <span class="s">&quot;  (dx,dy) = (</span><span class="si">%s</span><span class="s">,</span><span class="si">%s</span><span class="s">)&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">dx</span><span class="p">,</span><span class="n">dx</span><span class="p">)</span>
+        <span class="k">print</span> <span class="s">&quot;  nodata  = </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">nodata_value</span>
+    
+    <span class="c"># Create Z matrix</span>
+    <span class="n">dy</span> <span class="o">=</span> <span class="n">dx</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">xll</span><span class="p">,</span><span class="n">xll</span> <span class="o">+</span> <span class="n">nx</span> <span class="o">*</span> <span class="n">dx</span><span class="p">,</span><span class="n">nx</span><span class="p">)</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">yll</span><span class="p">,</span><span class="n">yll</span> <span class="o">+</span> <span class="n">ny</span> <span class="o">*</span> <span class="n">dy</span><span class="p">,</span><span class="n">ny</span><span class="p">)</span>
+    <span class="n">Z</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="n">nx</span><span class="p">,</span><span class="n">ny</span><span class="p">))</span>
+    
+    <span class="k">if</span> <span class="n">topo_type</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="n">ny</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="n">ny</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">nx</span><span class="p">):</span>
+                <span class="n">temp</span> <span class="o">=</span> <span class="n">topo_file</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span>
+                <span class="n">Z</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">temp</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+    <span class="k">elif</span> <span class="n">topo_type</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="n">ny</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="n">ny</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">nx</span><span class="p">):</span>
+                <span class="n">Z</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">topo_file</span><span class="o">.</span><span class="n">readline</span><span class="p">())</span>
+    <span class="k">elif</span> <span class="n">topo_type</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="n">ny</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="n">ny</span><span class="p">):</span>
+            <span class="n">line</span> <span class="o">=</span> <span class="n">topo_file</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">nx</span><span class="p">):</span>
+                <span class="n">Z</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">line</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">print</span> <span class="o">&gt;&gt;</span> <span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="p">,</span> <span class="s">&quot;Invalid topo type </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">topo_type</span>
+        <span class="k">return</span> <span class="bp">None</span>
+    
+    <span class="k">return</span> <span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">Z</span>
+
+</div>
+<div class="viewcode-block" id="create_topo_func"><a class="viewcode-back" href="../../util.html#pyclaw.util.create_topo_func">[docs]</a><span class="k">def</span> <span class="nf">create_topo_func</span><span class="p">(</span><span class="n">loc</span><span class="p">,</span><span class="n">verbose</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Given a set of (x,z) locations, create a lambda function</span>
+<span class="sd">    </span>
+<span class="sd">    Create a lambda function that when evaluated will give the topgraphy </span>
+<span class="sd">    height at the point (x,y).</span>
+<span class="sd">    </span>
+<span class="sd">    :Example: </span>
+<span class="sd">    &gt;&gt;&gt; f = create_topo_profile_func(loc)</span>
+<span class="sd">    &gt;&gt;&gt; b = f(x,y)</span>
+<span class="sd">    </span>
+<span class="sd">    :Input:</span>
+<span class="sd">     - *loc* (list) - Create a topography file with the profile denoted by the</span>
+<span class="sd">       tuples inside of loc.  A sample set of points are shown below.  Note </span>
+<span class="sd">       that the first value of the list is the x location and the second is </span>
+<span class="sd">       the height of the topography.</span>
+<span class="sd">        </span>
+<span class="sd">        z (m)</span>
+<span class="sd">        ^                                                  o loc[5]  o</span>
+<span class="sd">        |                                                    </span>
+<span class="sd">        |                                          loc[4]   </span>
+<span class="sd">        |--------------------------------------------o-----&gt; x (m) (sea level)</span>
+<span class="sd">        |                                            </span>
+<span class="sd">        |                                o loc[2] o loc[3]</span>
+<span class="sd">        |                         </span>
+<span class="sd">        |                         </span>
+<span class="sd">        |                           o loc[1]</span>
+<span class="sd">        |           </span>
+<span class="sd">        |                               </span>
+<span class="sd">        |__________________o loc[0]</span>
+<span class="sd">        0.0               </span>
+<span class="sd">        </span>
+<span class="sd">        </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="n">cmd_str</span> <span class="o">=</span> <span class="s">&quot;lambda x,y: (x &lt; </span><span class="si">%s</span><span class="s">) * </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">loc</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span><span class="n">loc</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">])</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">loc</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+        <span class="n">loc_str</span> <span class="o">=</span> <span class="s">&quot; + (</span><span class="si">%s</span><span class="s"> &lt; x &lt;= </span><span class="si">%s</span><span class="s">)&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">loc</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span><span class="n">loc</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">loc_str</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">((</span><span class="n">loc_str</span><span class="p">,</span><span class="s">&quot; * ((</span><span class="si">%s</span><span class="s"> - </span><span class="si">%s</span><span class="s">) &quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">loc</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span><span class="n">loc</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">])))</span>
+        <span class="n">loc_str</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">((</span><span class="n">loc_str</span><span class="p">,</span><span class="s">&quot; / (</span><span class="si">%s</span><span class="s"> - </span><span class="si">%s</span><span class="s">)&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">loc</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span><span class="n">loc</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">])))</span>
+        <span class="n">loc_str</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">((</span><span class="n">loc_str</span><span class="p">,</span><span class="s">&quot; * (x - </span><span class="si">%s</span><span class="s">) + </span><span class="si">%s</span><span class="s">)&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">loc</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span><span class="n">loc</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">1</span><span class="p">])))</span>
+        <span class="n">cmd_str</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">((</span><span class="n">cmd_str</span><span class="p">,</span><span class="n">loc_str</span><span class="p">))</span>
+    <span class="n">cmd_str</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">((</span><span class="n">cmd_str</span><span class="p">,</span><span class="s">&quot; + (</span><span class="si">%s</span><span class="s"> &lt; x) * </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">loc</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span><span class="n">loc</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">])))</span>
+    
+    <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+        <span class="k">print</span> <span class="n">cmd_str</span>
+    <span class="k">return</span> <span class="nb">eval</span><span class="p">(</span><span class="n">cmd_str</span><span class="p">)</span>
+    
+
+<span class="c"># ============================================================================</span>
+<span class="c">#  F2PY Utility Functions</span>
+<span class="c"># ============================================================================</span></div>
+<div class="viewcode-block" id="compile_library"><a class="viewcode-back" href="../../util.html#pyclaw.util.compile_library">[docs]</a><span class="k">def</span> <span class="nf">compile_library</span><span class="p">(</span><span class="n">source_list</span><span class="p">,</span><span class="n">module_name</span><span class="p">,</span><span class="n">interface_functions</span><span class="o">=</span><span class="p">[],</span>
+                        <span class="n">local_path</span><span class="o">=</span><span class="s">&#39;./&#39;</span><span class="p">,</span><span class="n">library_path</span><span class="o">=</span><span class="s">&#39;./&#39;</span><span class="p">,</span><span class="n">f2py_flags</span><span class="o">=</span><span class="s">&#39;&#39;</span><span class="p">,</span>
+                        <span class="n">FC</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="n">FFLAGS</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="n">recompile</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span><span class="n">clean</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+    <span class="s">r&quot;&quot;&quot;</span>
+<span class="s">    Compiles and wraps fortran source into a callable module in python.</span>
+<span class="s">    </span>
+<span class="s">    This function uses f2py to create an interface from python to the fortran</span>
+<span class="s">    sources in source_list.  The source_list can either be a list of names</span>
+<span class="s">    of source files in which case compile_library will search for the file in</span>
+<span class="s">    local_path and then in library_path.  If a path is given, the file will be</span>
+<span class="s">    checked to see if it exists, if not it will look for the file in the above</span>
+<span class="s">    resolution order.  If any source file is not found, an IOException is</span>
+<span class="s">    raised.  </span>
+<span class="s">    </span>
+<span class="s">    The list interface_functions allows the user to specify which fortran </span>
+<span class="s">    functions are actually available to python.  The interface functions are</span>
+<span class="s">    assumed to be in the file with their name, i.e. claw1 is located in</span>
+<span class="s">    &#39;claw1.f95&#39; or &#39;claw1.f&#39;.</span>
+<span class="s">    </span>
+<span class="s">    The interface from fortran may be different than the original function</span>
+<span class="s">    call in fortran so the user should make sure to check the automatically </span>
+<span class="s">    created doc string for the fortran module for proper use.</span>
+<span class="s">    </span>
+<span class="s">    Source files will not be recompiled if they have not been changed.</span>
+<span class="s">    </span>
+<span class="s">    One set of options of note is for enabling OpenMP, it requires the usual</span>
+<span class="s">    fortran flags but the OpenMP library also must be compiled in, this is</span>
+<span class="s">    done with the flag -lgomp.  The call to compile_library would then be:</span>
+<span class="s">    </span>
+<span class="s">    compile_library(src,module_name,f2py_flags=&#39;-lgomp&#39;,FFLAGS=&#39;-fopenmp&#39;)</span>
+<span class="s">    </span>
+<span class="s">    For complete optimization use:</span>
+<span class="s">    </span>
+<span class="s">    FFLAGS=&#39;-O3 -fopenmp -funroll-loops -finline-functions -fdefault-real-8&#39;</span>
+<span class="s">    </span>
+<span class="s">    :Input:</span>
+<span class="s">     - *source_list* - (list of strings) List of source files, if these are </span>
+<span class="s">       just names of the source files, i.e. &#39;bc1.f&#39; then they will be searched</span>
+<span class="s">       for in the default source resolution order, if an explicit path is </span>
+<span class="s">       given, i.e. &#39;./bc1.f&#39;, then the function will use that source if it can</span>
+<span class="s">       find it.</span>
+<span class="s">     - *module_name* - (string) Name of the resulting module</span>
+<span class="s">     - *interface_functions* - (list of strings) List of function names to </span>
+<span class="s">       provide access to, if empty, all functions are accessible to python.  </span>
+<span class="s">       Defaults to [].</span>
+<span class="s">     - *local_path* - (string) The base path for source resolution, defaults </span>
+<span class="s">       to &#39;./&#39;.</span>
+<span class="s">     - *library_path* - (string) The library path for source resolution, </span>
+<span class="s">       defaults to &#39;./&#39;.</span>
+<span class="s">     - *f2py_flags* - (string) f2py flags to be passed</span>
+<span class="s">     - *FC* - (string) Override the environment variable FC and use it to </span>
+<span class="s">       compile, note that this does not replace the compiler that f2py uses, </span>
+<span class="s">       only the object file compilation (functions that do not have </span>
+<span class="s">       interfaces)</span>
+<span class="s">     - *FFLAGS* - (string) Override the environment variable FFLAGS and pass </span>
+<span class="s">       them to the fortran compiler</span>
+<span class="s">     - *recompile* - (bool) Force recompilation of the library, defaults to </span>
+<span class="s">       False</span>
+<span class="s">     - *clean* - (bool) Force a clean build of all source files</span>
+<span class="s">    &quot;&quot;&quot;</span>
+    
+    <span class="c"># Setup logger    </span>
+    <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s">&#39;f2py&#39;</span><span class="p">)</span>
+    <span class="n">temp_file</span> <span class="o">=</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">TemporaryFile</span><span class="p">()</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&#39;Compiling </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="n">module_name</span><span class="p">)</span>
+    
+    <span class="c"># Force recompile if the clean flag is set</span>
+    <span class="k">if</span> <span class="n">clean</span><span class="p">:</span>
+        <span class="n">recompile</span> <span class="o">=</span> <span class="bp">True</span>
+    
+    <span class="c"># Expand local_path and library_path</span>
+    <span class="n">local_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">expandvars</span><span class="p">(</span><span class="n">local_path</span><span class="p">)</span>
+    <span class="n">local_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">expanduser</span><span class="p">(</span><span class="n">local_path</span><span class="p">)</span>
+    <span class="n">library_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">expandvars</span><span class="p">(</span><span class="n">library_path</span><span class="p">)</span>
+    <span class="n">library_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">expanduser</span><span class="p">(</span><span class="n">library_path</span><span class="p">)</span>
+    
+    <span class="c"># Fetch environment variables we need for compilation</span>
+    <span class="k">if</span> <span class="n">FC</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">has_key</span><span class="p">(</span><span class="s">&#39;FC&#39;</span><span class="p">):</span>
+            <span class="n">FC</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s">&#39;FC&#39;</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">FC</span> <span class="o">=</span> <span class="s">&#39;gfortran&#39;</span>
+      
+    <span class="k">if</span> <span class="n">FFLAGS</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>          
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">has_key</span><span class="p">(</span><span class="s">&#39;FFLAGS&#39;</span><span class="p">):</span>
+            <span class="n">FFLAGS</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s">&#39;FFLAGS&#39;</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">FFLAGS</span> <span class="o">=</span> <span class="s">&#39;&#39;</span>
+    
+    <span class="c"># Create the list of paths to sources</span>
+    <span class="n">path_list</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">source</span> <span class="ow">in</span> <span class="n">source_list</span><span class="p">:</span>
+        <span class="c"># Check to see if the source looks like a path, i.e. it contains the </span>
+        <span class="c"># os.path.sep character</span>
+        <span class="k">if</span> <span class="n">source</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">sep</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">source</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">expandvars</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>
+            <span class="n">source</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">expanduser</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>
+            <span class="c"># This is a path, check to see if it&#39;s valid</span>
+            <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">source</span><span class="p">):</span>
+                <span class="n">path_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>
+                <span class="k">continue</span>
+            <span class="c"># Otherwise, take the last part of the path and try searching for</span>
+            <span class="c"># it in the resolution order</span>
+            <span class="n">source</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>
+        
+        <span class="c"># Search for the source file in local_path and then library_path</span>
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">local_path</span><span class="p">,</span><span class="n">source</span><span class="p">)):</span>
+            <span class="n">path_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">local_path</span><span class="p">,</span><span class="n">source</span><span class="p">))</span>
+            <span class="k">continue</span>
+        <span class="k">elif</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">library_path</span><span class="p">,</span><span class="n">source</span><span class="p">)):</span>
+            <span class="n">path_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">library_path</span><span class="p">,</span><span class="n">source</span><span class="p">))</span>
+            <span class="k">continue</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="s">&#39;Could not find source file </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="n">source</span><span class="p">)</span>
+            
+    <span class="c"># Compile each of the source files if the object files are not present or</span>
+    <span class="c"># if the modification date of the source file is newer than the object</span>
+    <span class="c"># file&#39;s creation date</span>
+    <span class="n">object_list</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">src_list</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="n">path_list</span><span class="p">:</span>
+        <span class="n">object_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">path</span><span class="p">)[</span><span class="mi">0</span><span class="p">],</span>
+            <span class="s">&#39;.&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">((</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">path</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39;.&#39;</span><span class="p">)[:</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span><span class="s">&#39;o&#39;</span><span class="p">)))</span>
+        
+        <span class="c"># Check to see if this path contains one of the interface functions</span>
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">path</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39;.&#39;</span><span class="p">)[:</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="ow">in</span> <span class="n">interface_functions</span><span class="p">:</span>
+            <span class="n">src_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+            <span class="k">continue</span>
+        <span class="c"># If there are no interface functions specified, then all source files</span>
+        <span class="c"># must be included in the f2py call</span>
+        <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">interface_functions</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">src_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+            <span class="k">continue</span>
+            
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">object_path</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">clean</span><span class="p">:</span>
+            <span class="c"># Check to see if the modification date of the source file is</span>
+            <span class="c"># greater than the object file</span>
+            <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">getmtime</span><span class="p">(</span><span class="n">object_path</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">getmtime</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+                <span class="n">object_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">object_path</span><span class="p">)</span>
+                <span class="k">continue</span>
+        <span class="c"># Compile the source file into the object file</span>
+        <span class="n">command</span> <span class="o">=</span> <span class="s">&#39;</span><span class="si">%s</span><span class="s"> </span><span class="si">%s</span><span class="s"> -c </span><span class="si">%s</span><span class="s"> -o </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">FC</span><span class="p">,</span><span class="n">FFLAGS</span><span class="p">,</span><span class="n">path</span><span class="p">,</span><span class="n">object_path</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">command</span><span class="p">)</span>
+        <span class="n">subprocess</span><span class="o">.</span><span class="n">call</span><span class="p">(</span><span class="n">command</span><span class="p">,</span><span class="n">shell</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span><span class="n">stdout</span><span class="o">=</span><span class="n">temp_file</span><span class="p">)</span>
+        <span class="n">object_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">object_path</span><span class="p">)</span>
+        
+    <span class="c"># Check to see if recompile is needed</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">recompile</span><span class="p">:</span>
+        <span class="n">module_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s">&#39;.&#39;</span><span class="p">,</span><span class="s">&#39;.&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">((</span><span class="n">module_name</span><span class="p">,</span><span class="s">&#39;so&#39;</span><span class="p">)))</span>
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">module_path</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">src</span> <span class="ow">in</span> <span class="n">src_list</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">getmtime</span><span class="p">(</span><span class="n">module_path</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">getmtime</span><span class="p">(</span><span class="n">src</span><span class="p">):</span>
+                    <span class="n">recompile</span> <span class="o">=</span> <span class="bp">True</span>
+                    <span class="k">break</span>
+            <span class="k">for</span> <span class="n">obj</span> <span class="ow">in</span> <span class="n">object_list</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">getmtime</span><span class="p">(</span><span class="n">module_path</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">getmtime</span><span class="p">(</span><span class="n">obj</span><span class="p">):</span>
+                    <span class="n">recompile</span> <span class="o">=</span> <span class="bp">True</span>
+                    <span class="k">break</span>  
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">recompile</span> <span class="o">=</span> <span class="bp">True</span>
+
+    <span class="k">if</span> <span class="n">recompile</span><span class="p">:</span>
+        <span class="c"># Wrap the object files into a python module</span>
+        <span class="n">f2py_command</span> <span class="o">=</span> <span class="s">&quot;f2py -c&quot;</span>
+        <span class="c"># Add standard compiler flags</span>
+        <span class="n">f2py_command</span> <span class="o">=</span> <span class="s">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">((</span><span class="n">f2py_command</span><span class="p">,</span><span class="n">f2py_flags</span><span class="p">))</span>
+        <span class="n">f2py_command</span> <span class="o">=</span> <span class="s">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">((</span><span class="n">f2py_command</span><span class="p">,</span><span class="s">&quot;--f90flags=&#39;</span><span class="si">%s</span><span class="s">&#39;&quot;</span> <span class="o">%</span> <span class="n">FFLAGS</span><span class="p">))</span>
+        <span class="c"># Add module names</span>
+        <span class="n">f2py_command</span> <span class="o">=</span> <span class="s">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">((</span><span class="n">f2py_command</span><span class="p">,</span><span class="s">&#39;-m </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="n">module_name</span><span class="p">))</span>
+        <span class="c"># Add source files</span>
+        <span class="n">f2py_command</span> <span class="o">=</span> <span class="s">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">((</span><span class="n">f2py_command</span><span class="p">,</span><span class="s">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">src_list</span><span class="p">)))</span>
+        <span class="c"># Add object files</span>
+        <span class="n">f2py_command</span> <span class="o">=</span> <span class="s">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">((</span><span class="n">f2py_command</span><span class="p">,</span><span class="s">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">object_list</span><span class="p">)))</span>
+        <span class="c"># Add interface functions</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">interface_functions</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">f2py_command</span> <span class="o">=</span> <span class="s">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span> <span class="p">(</span><span class="n">f2py_command</span><span class="p">,</span><span class="s">&#39;only:&#39;</span><span class="p">)</span> <span class="p">)</span>
+            <span class="k">for</span> <span class="n">interface</span> <span class="ow">in</span> <span class="n">interface_functions</span><span class="p">:</span>
+                <span class="n">f2py_command</span> <span class="o">=</span> <span class="s">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span> <span class="p">(</span><span class="n">f2py_command</span><span class="p">,</span><span class="n">interface</span><span class="p">)</span> <span class="p">)</span>
+            <span class="n">f2py_command</span> <span class="o">=</span> <span class="s">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span> <span class="p">(</span><span class="n">f2py_command</span><span class="p">,</span><span class="s">&#39; :&#39;</span><span class="p">)</span> <span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">f2py_command</span><span class="p">)</span>
+        <span class="n">status</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">call</span><span class="p">(</span><span class="n">f2py_command</span><span class="p">,</span><span class="n">shell</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span><span class="n">stdout</span><span class="o">=</span><span class="n">temp_file</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">status</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;Module </span><span class="si">%s</span><span class="s"> compiled&quot;</span> <span class="o">%</span> <span class="n">module_name</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;Module </span><span class="si">%s</span><span class="s"> failed to compile with code </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">module_name</span><span class="p">,</span><span class="n">status</span><span class="p">))</span>
+            <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">13</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;Module </span><span class="si">%s</span><span class="s"> is up to date.&quot;</span> <span class="o">%</span> <span class="n">module_name</span><span class="p">)</span>
+
+    <span class="n">temp_file</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">temp_file</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
+    <span class="n">temp_file</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</div>
+<div class="viewcode-block" id="construct_function_handle"><a class="viewcode-back" href="../../util.html#pyclaw.util.construct_function_handle">[docs]</a><span class="k">def</span> <span class="nf">construct_function_handle</span><span class="p">(</span><span class="n">path</span><span class="p">,</span><span class="n">function_name</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="s">r&quot;&quot;&quot;</span>
+<span class="s">    Constructs a function handle from the file at path.</span>
+<span class="s">    </span>
+<span class="s">    This function will attempt to construct a function handle from the python</span>
+<span class="s">    file at path.</span>
+<span class="s">    </span>
+<span class="s">    :Input:</span>
+<span class="s">     - *path* - (string) Path to the file containing the function</span>
+<span class="s">     - *function_name* - (string) Name of the function defined in the file </span>
+<span class="s">       that the handle will point to.  Defaults to the same name as the file </span>
+<span class="s">       without the extension.</span>
+<span class="s">       </span>
+<span class="s">    :Output:</span>
+<span class="s">     - (func) Function handle to the constructed function, None if this has</span>
+<span class="s">       failed.</span>
+<span class="s">    &quot;&quot;&quot;</span>
+    <span class="c"># Determine the resulting function_name</span>
+    <span class="k">if</span> <span class="n">function_name</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="n">function_name</span> <span class="o">=</span> <span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39;/&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39;.&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+    
+    <span class="n">full_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">full_path</span><span class="p">):</span>
+        <span class="n">suffix</span> <span class="o">=</span> <span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39;.&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="c"># This is a python file and we just need to read it and map it</span>
+        <span class="k">if</span> <span class="n">suffix</span> <span class="ow">in</span> <span class="p">[</span><span class="s">&#39;py&#39;</span><span class="p">]:</span>
+            <span class="nb">execfile</span><span class="p">(</span><span class="n">full_path</span><span class="p">,</span><span class="nb">globals</span><span class="p">())</span>
+            <span class="k">return</span> <span class="nb">eval</span><span class="p">(</span><span class="s">&#39;</span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="n">function_name</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s">&quot;Invalid file type for function handle.&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s">&quot;Invalid file path </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">path</span><span class="p">)</span>
+
+<span class="c">#-----------------------------</span></div>
+<div class="viewcode-block" id="FrameCounter"><a class="viewcode-back" href="../../util.html#pyclaw.util.FrameCounter">[docs]</a><span class="k">class</span> <span class="nc">FrameCounter</span><span class="p">:</span>
+<span class="c">#-----------------------------</span>
+    <span class="s">r&quot;&quot;&quot;</span>
+<span class="s">    Simple frame counter</span>
+
+<span class="s">    Simple frame counter to keep track of current frame number.  This can</span>
+<span class="s">    also be used to keep multiple runs frames seperated by having multiple </span>
+<span class="s">    counters at once.</span>
+
+<span class="s">    Initializes to 0</span>
+<span class="s">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__frame</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__frame</span><span class="p">)</span>
+
+<div class="viewcode-block" id="FrameCounter.increment"><a class="viewcode-back" href="../../util.html#pyclaw.util.FrameCounter.increment">[docs]</a>    <span class="k">def</span> <span class="nf">increment</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="s">r&quot;&quot;&quot;</span>
+<span class="s">        Increment the counter by one</span>
+<span class="s">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__frame</span> <span class="o">+=</span> <span class="mi">1</span></div>
+<div class="viewcode-block" id="FrameCounter.set_counter"><a class="viewcode-back" href="../../util.html#pyclaw.util.FrameCounter.set_counter">[docs]</a>    <span class="k">def</span> <span class="nf">set_counter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">new_frame_num</span><span class="p">):</span>
+        <span class="s">r&quot;&quot;&quot;</span>
+<span class="s">        Set the counter to new_frame_num</span>
+<span class="s">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__frame</span> <span class="o">=</span> <span class="n">new_frame_num</span></div>
+<div class="viewcode-block" id="FrameCounter.get_counter"><a class="viewcode-back" href="../../util.html#pyclaw.util.FrameCounter.get_counter">[docs]</a>    <span class="k">def</span> <span class="nf">get_counter</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="s">r&quot;&quot;&quot;</span>
+<span class="s">        Get the current frame number</span>
+<span class="s">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__frame</span></div>
+<div class="viewcode-block" id="FrameCounter.reset_counter"><a class="viewcode-back" href="../../util.html#pyclaw.util.FrameCounter.reset_counter">[docs]</a>    <span class="k">def</span> <span class="nf">reset_counter</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="s">r&quot;&quot;&quot;</span>
+<span class="s">        Reset the counter to 0</span>
+<span class="s">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__frame</span> <span class="o">=</span> <span class="mi">0</span>
+
+
+<span class="c">#---------------------------------------------------------</span></div></div>
+<div class="viewcode-block" id="read_data_line"><a class="viewcode-back" href="../../util.html#pyclaw.util.read_data_line">[docs]</a><span class="k">def</span> <span class="nf">read_data_line</span><span class="p">(</span><span class="n">inputfile</span><span class="p">,</span><span class="n">num_entries</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="nb">type</span><span class="o">=</span><span class="s">&#39;float&#39;</span><span class="p">):</span>
+<span class="c">#---------------------------------------------------------</span>
+    <span class="s">r&quot;&quot;&quot;</span>
+<span class="s">    Read data a single line from an input file</span>
+
+<span class="s">    Reads one line from an input file and returns an array of values</span>
+
+<span class="s">    inputfile: a file pointer to an open file object</span>
+<span class="s">    num_entries: number of entries that should be read, defaults to only 1</span>
+<span class="s">    type: Type of the values to be read in, they all most be the same type</span>
+
+<span class="s">    This function will return either a single value or an array of values</span>
+<span class="s">    depending on if num_entries &gt; 1</span>
+
+<span class="s">    &quot;&quot;&quot;</span>
+    <span class="n">l</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">while</span>  <span class="n">l</span><span class="o">==</span><span class="p">[]:</span>  <span class="c"># skip over blank lines</span>
+        <span class="n">line</span> <span class="o">=</span> <span class="n">inputfile</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span>
+        <span class="n">l</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+    <span class="n">val</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">num_entries</span><span class="p">,</span><span class="nb">type</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">num_entries</span> <span class="o">&gt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">l</span><span class="p">):</span>
+        <span class="k">print</span> <span class="s">&#39;Error in read_data_line: num_entries = &#39;</span><span class="p">,</span> <span class="n">num_entries</span>
+        <span class="k">print</span> <span class="s">&#39;  is larger than length of l = &#39;</span><span class="p">,</span><span class="n">l</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_entries</span><span class="p">):</span>
+            <span class="k">exec</span><span class="p">(</span><span class="s">&quot;val[i] = </span><span class="si">%s</span><span class="s">(l[i])&quot;</span> <span class="o">%</span> <span class="nb">type</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">num_entries</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>  <span class="c"># This is a convenience for calling functions    </span>
+            <span class="k">return</span> <span class="n">val</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">val</span>
+    <span class="k">except</span><span class="p">(</span><span class="ne">ValueError</span><span class="p">):</span>
+        <span class="k">print</span> <span class="s">&quot;Invalid type for the </span><span class="si">%s</span><span class="s"> value in </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">l</span><span class="p">)</span>
+        <span class="k">print</span> <span class="s">&quot;  type = &quot;</span><span class="p">,</span><span class="nb">type</span>
+        <span class="k">return</span> <span class="bp">None</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="k">raise</span>
+
+<span class="c">#----------------------------------------</span></div>
+<div class="viewcode-block" id="convert_fort_double_to_float"><a class="viewcode-back" href="../../util.html#pyclaw.util.convert_fort_double_to_float">[docs]</a><span class="k">def</span> <span class="nf">convert_fort_double_to_float</span><span class="p">(</span><span class="n">number</span><span class="p">):</span>
+<span class="c">#----------------------------------------</span>
+    <span class="s">r&quot;&quot;&quot;</span>
+<span class="s">    Converts a fortran format double to a float</span>
+
+<span class="s">    Converts a fortran format double to a python float.</span>
+
+<span class="s">    number: is a string representation of the double.  Number should </span>
+<span class="s">    be of the form &quot;1.0d0&quot;</span>
+
+<span class="s">    &quot;&quot;&quot;</span>
+    <span class="n">a</span> <span class="o">=</span> <span class="n">number</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39;d&#39;</span><span class="p">)</span>
+    <span class="k">print</span> <span class="nb">float</span><span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">*</span><span class="mi">10</span><span class="o">**</span><span class="nb">float</span><span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+    <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">*</span><span class="mi">10</span><span class="o">**</span><span class="nb">float</span><span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+
+<span class="c">#-----------------------------</span></div>
+<span class="k">def</span> <span class="nf">current_time</span><span class="p">(</span><span class="n">addtz</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+<span class="c">#-----------------------------</span>
+    <span class="c"># determine current time and reformat:</span>
+    <span class="n">time1</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">asctime</span><span class="p">()</span>
+    <span class="n">year</span> <span class="o">=</span> <span class="n">time1</span><span class="p">[</span><span class="o">-</span><span class="mi">5</span><span class="p">:]</span>
+    <span class="n">day</span> <span class="o">=</span> <span class="n">time1</span><span class="p">[:</span><span class="o">-</span><span class="mi">14</span><span class="p">]</span>
+    <span class="n">hour</span> <span class="o">=</span> <span class="n">time1</span><span class="p">[</span><span class="o">-</span><span class="mi">13</span><span class="p">:</span><span class="o">-</span><span class="mi">5</span><span class="p">]</span>
+    <span class="n">current_time</span> <span class="o">=</span> <span class="n">day</span> <span class="o">+</span> <span class="n">year</span> <span class="o">+</span> <span class="s">&#39; at &#39;</span> <span class="o">+</span> <span class="n">hour</span>
+    <span class="k">if</span> <span class="n">addtz</span><span class="p">:</span>
+        <span class="n">current_time</span> <span class="o">=</span> <span class="n">current_time</span> <span class="o">+</span> <span class="s">&#39; &#39;</span> <span class="o">+</span> <span class="n">time</span><span class="o">.</span><span class="n">tzname</span><span class="p">[</span><span class="n">time</span><span class="o">.</span><span class="n">daylight</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">current_time</span>
+
+
+
+<span class="c">#---------------------------------</span>
+<div class="viewcode-block" id="svn_revision"><a class="viewcode-back" href="../../util.html#pyclaw.util.svn_revision">[docs]</a><span class="k">def</span> <span class="nf">svn_revision</span><span class="p">(</span><span class="nb">dir</span><span class="o">=</span><span class="s">&quot;CLAW&quot;</span><span class="p">):</span>
+<span class="c">#---------------------------------</span>
+    <span class="s">r&quot;&quot;&quot;</span>
+<span class="s">    Determine the svn revision number of the version of code being used.</span>
+<span class="s">    If dir=&quot;CLAW&quot; it returns the revision number of the claw directory.</span>
+<span class="s">    This only checks the top most level and assumes this is accurate.</span>
+<span class="s">    &quot;&quot;&quot;</span>
+   
+    <span class="k">if</span> <span class="nb">dir</span><span class="o">==</span><span class="s">&quot;CLAW&quot;</span><span class="p">:</span>
+        <span class="nb">dir</span>  <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s">&#39;CLAW&#39;</span><span class="p">]</span>
+    <span class="n">svn_entries</span> <span class="o">=</span> <span class="nb">dir</span> <span class="o">+</span> <span class="s">&#39;/.svn/entries&#39;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">svn_entries</span><span class="p">,</span><span class="s">&#39;r&#39;</span><span class="p">)</span>
+        <span class="n">lines</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">readlines</span><span class="p">()</span>
+        <span class="n">revision</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">lines</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span>  <span class="c"># fourth line of file, converted to int</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="n">revision</span> <span class="o">=</span> <span class="bp">None</span>
+    
+    <span class="k">return</span> <span class="n">revision</span>
+</div>
+<span class="k">def</span> <span class="nf">_method_info_from_argv</span><span class="p">(</span><span class="n">argv</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Command-line -&gt; method call arg processing.</span>
+<span class="sd">    </span>
+<span class="sd">    - positional args:</span>
+<span class="sd">            a b -&gt; method(&#39;a&#39;, &#39;b&#39;)</span>
+<span class="sd">    - intifying args:</span>
+<span class="sd">            a 123 -&gt; method(&#39;a&#39;, 123)</span>
+<span class="sd">    - json loading args:</span>
+<span class="sd">            a &#39;[&quot;pi&quot;, 3.14, null]&#39; -&gt; method(&#39;a&#39;, [&#39;pi&#39;, 3.14, None])</span>
+<span class="sd">    - keyword args:</span>
+<span class="sd">            a foo=bar -&gt; method(&#39;a&#39;, foo=&#39;bar&#39;)</span>
+<span class="sd">    - using more of the above</span>
+<span class="sd">            1234 &#39;extras=[&quot;r2&quot;]&#39;  -&gt; method(1234, extras=[&quot;r2&quot;])</span>
+<span class="sd">    </span>
+<span class="sd">    @param argv {list} Command line arg list. Defaults to `sys.argv`.</span>
+<span class="sd">    @returns (&lt;method-name&gt;, &lt;args&gt;, &lt;kwargs&gt;)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">import</span> <span class="nn">json</span>
+    <span class="kn">import</span> <span class="nn">sys</span>
+    <span class="k">if</span> <span class="n">argv</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="n">argv</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span>
+
+    <span class="n">method_name</span><span class="p">,</span> <span class="n">arg_strs</span> <span class="o">=</span> <span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">argv</span><span class="p">[</span><span class="mi">2</span><span class="p">:]</span>
+    <span class="n">args</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">kwargs</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">arg_strs</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">s</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="s">&#39;=&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39;=&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="o">=</span> <span class="bp">None</span><span class="p">,</span> <span class="n">s</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> 
+        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+            <span class="k">pass</span>
+        <span class="k">if</span> <span class="n">key</span><span class="p">:</span>
+            <span class="n">kwargs</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">args</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">method_name</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">kwargs</span>
+
+<span class="k">def</span> <span class="nf">_info_from_argv</span><span class="p">(</span><span class="n">argv</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Command-line -&gt; method call arg processing.</span>
+<span class="sd">    </span>
+<span class="sd">    - positional args:</span>
+<span class="sd">            a b -&gt; method(&#39;a&#39;, &#39;b&#39;)</span>
+<span class="sd">    - intifying args:</span>
+<span class="sd">            a 123 -&gt; method(&#39;a&#39;, 123)</span>
+<span class="sd">    - json loading args:</span>
+<span class="sd">            a &#39;[&quot;pi&quot;, 3.14, null]&#39; -&gt; method(&#39;a&#39;, [&#39;pi&#39;, 3.14, None])</span>
+<span class="sd">    - keyword args:</span>
+<span class="sd">            a foo=bar -&gt; method(&#39;a&#39;, foo=&#39;bar&#39;)</span>
+<span class="sd">    - using more of the above</span>
+<span class="sd">            1234 &#39;extras=[&quot;r2&quot;]&#39;  -&gt; method(1234, extras=[&quot;r2&quot;])</span>
+<span class="sd">    </span>
+<span class="sd">    @param argv {list} Command line arg list. Defaults to `sys.argv`.</span>
+<span class="sd">    @returns (&lt;method-name&gt;, &lt;args&gt;, &lt;kwargs&gt;)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">import</span> <span class="nn">json</span>
+    <span class="kn">import</span> <span class="nn">sys</span>
+    <span class="k">if</span> <span class="n">argv</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="n">argv</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span>
+
+    <span class="n">arg_strs</span> <span class="o">=</span> <span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+    <span class="n">args</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">kwargs</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">arg_strs</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">s</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="s">&#39;=&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39;=&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="o">=</span> <span class="bp">None</span><span class="p">,</span> <span class="n">s</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> 
+        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+            <span class="k">pass</span>
+        <span class="k">if</span> <span class="n">key</span><span class="p">:</span>
+            <span class="n">kwargs</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">args</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">args</span><span class="p">,</span> <span class="n">kwargs</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+<li><a href="http://www.clawpack.org"><font color="#7F0000">Clawpack Webpage</font></a>|&nbsp;</li>
+<li><a href="../../apps.html"><font color="#7F0000">Gallery</font></a>|&nbsp;</li>
+<li><a href="../../index.html"><font color="#7F0000">Contents</font></a>|&nbsp;</li>
+
+          <li><a href="../index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2010-2011, Kyle Mandli, David I. Ketcheson, Amal Alghamdi, and Aron Ahmadia.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.7.
+    </div>
+  </body>
+</html>
