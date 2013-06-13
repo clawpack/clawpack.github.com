@@ -3,13 +3,16 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
+
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>current_data &mdash; Clawpack v4.6.x documentation</title>
+    <title>current_data &mdash; Clawpack 4.6.x documentation</title>
+    
     <link rel="stylesheet" href="../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
@@ -24,7 +27,7 @@
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <link rel="shortcut icon" href="../_static/clawicon.ico"/>
     <link rel="author" title="About these documents" href="../about.html" />
-    <link rel="top" title="Clawpack v4.6.x documentation" href="../index.html" />
+    <link rel="top" title="Clawpack 4.6.x documentation" href="../index.html" />
     <link rel="up" title="VisClaw: Clawpack Plotting Tools" href="index.html" />
     <link rel="next" title="Plotting examples in 1d" href="plotexamples.html" />
     <link rel="prev" title="ClawPlotItem" href="ClawPlotItem.html" /> 
@@ -38,18 +41,17 @@
 <td>
 &nbsp;
 <br>
-<a href="http://www.clawpack.org/"><img src="../_static/clawlogo.jpg" border="0" alt="Clawpack logo"/></a>
+<a href="http://www.clawpack.org/"><img src="../_static/clawlogo.jpg" width=200 border="0" alt="Clawpack logo"/></a>
 </td>
 -->
 <td>
-<br>
 &nbsp;
 <br>
-<a href
-<font size="7"  color="#7F0000"> Clawpack Documentation</font>
+<p style="font-size:300%;color:#7F0000"> Clawpack Documentation</p>
 <br>
-&nbsp;
-<br>
+<p style="font-size:150%;color:#7F0000"> 
+Version 5.0 --- Under Construction!  Not yet accurate
+</p>
 </td>
 </tr>
 </table>
@@ -102,7 +104,7 @@
 <div id="searchbox" style="display: none">
   <h3>Quick search</h3>
     <form class="search" action="../search.html" method="get">
-      <input type="text" name="q" size="18" />
+      <input type="text" name="q" />
       <input type="submit" value="Go" />
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
@@ -134,7 +136,7 @@ solution, etc.</p>
 <div><ul class="simple">
 <li><em>beforeframe</em> and <em>afterframe</em> attributes of <a class="reference internal" href="ClawPlotData.html#clawplotdata"><em>ClawPlotData</em></a></li>
 <li><em>afteraxes</em> attribute of <a class="reference internal" href="ClawPlotAxes.html#clawplotaxes"><em>ClawPlotAxes</em></a></li>
-<li><em>afteritem</em>, <em>aftergrid</em>, <em>plot_var</em>, <em>map2d_to_1d</em> attributes of <a class="reference internal" href="ClawPlotItem.html#clawplotitem"><em>ClawPlotItem</em></a></li>
+<li><em>afteritem</em>, <em>afterpatch</em>, <em>plot_var</em>, <em>map2d_to_1d</em> attributes of <a class="reference internal" href="ClawPlotItem.html#clawplotitem"><em>ClawPlotItem</em></a></li>
 </ul>
 </div></blockquote>
 <p>All of these functions are designed to take a single argument
@@ -166,15 +168,15 @@ to add this to <em>current_data</em>.</p>
 
 <dl class="attribute">
 <dt>
-<tt class="descname">grid :</tt></dt>
-<dd><p>Object of <tt class="xref py py-class docutils literal"><span class="pre">pyclaw.solution.grid</span></tt> with data for the last grid
+<tt class="descname">patch :</tt></dt>
+<dd><p>Object of <tt class="xref py py-class docutils literal"><span class="pre">pyclaw.solution.patch</span></tt> with data for the last patch
 plotted.</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt>
-<tt class="descname">gridno :</tt></dt>
-<dd><p>Grid number of this grid, of interest only in AMR calculations.</p>
+<tt class="descname">patchno :</tt></dt>
+<dd><p>Grid number of this patch, of interest only in AMR calculations.</p>
 </dd></dl>
 
 <dl class="attribute">
@@ -183,7 +185,7 @@ plotted.</p>
 <dd><p>q array for current frame, so for example the in a scalar 2d problem the
 value in the (i,j) cell would be <em>current_data.q[i,j,0]</em> (remember that
 Python always indexes starting at 0).</p>
-<p>In an AMR calculation q will be from the last grid plotted.</p>
+<p>In an AMR calculation q will be from the last patch plotted.</p>
 </dd></dl>
 
 <dl class="attribute">
@@ -194,7 +196,7 @@ Fortran code.  At the moment this requires modifying the library routine
 <cite>outN.f</cite> to set outaux = .true.  so that fort.a files are produced along
 with fort.q files.  [This should be an input parameter!]</p>
 <p>If fort.a files are not found then current_data.aux will be None.</p>
-<p>In an AMR calculation aux will be from the last grid plotted.</p>
+<p>In an AMR calculation aux will be from the last patch plotted.</p>
 </dd></dl>
 
 <dl class="attribute">
@@ -208,9 +210,9 @@ current_data.q[i,j,0]</em>.</p>
 <dl class="attribute">
 <dt>
 <tt class="descname">level :</tt></dt>
-<dd><p>For AMR computations, where <em>current_data.grid</em> is for the last grid plotted,
-<em>current_data.level</em> is the AMR level of this grid.  Particularly useful
-in <cite>aftergrid</cite> functions.</p>
+<dd><p>For AMR computations, where <em>current_data.patch</em> is for the last patch plotted,
+<em>current_data.level</em> is the AMR level of this patch.  Particularly useful
+in <cite>afterpatch</cite> functions.</p>
 </dd></dl>
 
 <dl class="attribute">
@@ -234,13 +236,13 @@ in <cite>aftergrid</cite> functions.</p>
 <dl class="attribute">
 <dt>
 <tt class="descname">xlower :</tt></dt>
-<dd><p>left edge of current grid.</p>
+<dd><p>left edge of current patch.</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt>
 <tt class="descname">ylower :</tt></dt>
-<dd><p>left edge of current grid in y (only in 2d).</p>
+<dd><p>left edge of current patch in y (only in 2d).</p>
 </dd></dl>
 
 </div>
@@ -273,7 +275,7 @@ in <cite>aftergrid</cite> functions.</p>
     </div>
     <div class="footer">
         &copy; Copyright 2011, Randall J. LeVeque and others.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.7.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
     </div>
   </body>
 </html>
