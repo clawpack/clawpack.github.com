@@ -29,7 +29,7 @@
     <link rel="shortcut icon" href="_static/clawicon.ico"/>
     <link rel="author" title="About these documents" href="about.html" />
     <link rel="top" title="Clawpack 4.6.x documentation" href="index.html" />
-    <link rel="next" title="The mapc2p function" href="mapc2p.html" />
+    <link rel="next" title="Boundary conditions" href="bc.html" />
     <link rel="prev" title="Clawpack Makefiles" href="makefiles.html" /> 
   </head>
   <body>
@@ -64,7 +64,7 @@ Version 5.0 --- Under Construction!  Not yet accurate
           <a href="genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="mapc2p.html" title="The mapc2p function"
+          <a href="bc.html" title="Boundary conditions"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="makefiles.html" title="Clawpack Makefiles"
@@ -84,6 +84,8 @@ Version 5.0 --- Under Construction!  Not yet accurate
   <h3><a href="index.html">Table Of Contents</a></h3>
   <ul>
 <li><a class="reference internal" href="#">Specifying run-time parameters in <cite>setrun.py</cite></a><ul>
+<li><a class="reference internal" href="#input">Input</a></li>
+<li><a class="reference internal" href="#output">Output</a></li>
 <li><a class="reference internal" href="#run-time-parameters">Run-time parameters</a></li>
 </ul>
 </li>
@@ -93,8 +95,8 @@ Version 5.0 --- Under Construction!  Not yet accurate
   <p class="topless"><a href="makefiles.html"
                         title="previous chapter">Clawpack Makefiles</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="mapc2p.html"
-                        title="next chapter">The mapc2p function</a></p>
+  <p class="topless"><a href="bc.html"
+                        title="next chapter">Boundary conditions</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="_sources/setrun.txt"
@@ -123,12 +125,25 @@ Version 5.0 --- Under Construction!  Not yet accurate
             
   <div class="section" id="specifying-run-time-parameters-in-setrun-py">
 <span id="setrun"></span><h1>Specifying run-time parameters in <cite>setrun.py</cite><a class="headerlink" href="#specifying-run-time-parameters-in-setrun-py" title="Permalink to this headline">¶</a></h1>
-<div class="admonition warning">
-<p class="first admonition-title">Warning</p>
-<p class="last">Out of date!  Needs updating.
-Input parameter have changed drastically in 5.0.
-See <cite>$CLAW/amrclaw/Tests/example1/setplot.py</cite> for an example.</p>
+<p>It may be useful to look at a specific example, e.g.
+<em class="xref std std-ref">setrun__sample</em>.</p>
+<p><strong>Note:</strong> Many parameters have changed name since Version 4.X and some new
+ones have been added.  To convert a Version 4.x <cite>setrun.py</cite> file to Version
+5.0, see <a class="reference internal" href="claw46to50.html#claw46to50"><em>Converting from Clawpack 4.6 to 5.0</em></a>.</p>
+<div class="section" id="input">
+<h2>Input<a class="headerlink" href="#input" title="Permalink to this headline">¶</a></h2>
+<p><cite>setrun</cite> takes a single argument <cite>claw_pkg</cite> that should be set to <cite>amrclaw</cite>.</p>
 </div>
+<div class="section" id="output">
+<h2>Output<a class="headerlink" href="#output" title="Permalink to this headline">¶</a></h2>
+<p><cite>rundata</cite>, an object of class <cite>ClawRunData</cite>, created in the
+setrun file with the commands:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">clawpack.clawutil</span> <span class="kn">import</span> <span class="n">clawdata</span>
+<span class="n">rundata</span> <span class="o">=</span> <span class="n">clawdata</span><span class="o">.</span><span class="n">ClawRunData</span><span class="p">(</span><span class="n">claw_pkg</span><span class="p">,</span> <span class="n">num_dim</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The <cite>rundata</cite> object has an attribute <cite>rundata.clawdata</cite> whose
+attributes are described below.</p>
 <p>This section explains the parameters needed for the classic single-grid
 Clawpack code.  Additional parameters are needed by extensions of the code.
 For these, see:</p>
@@ -138,9 +153,7 @@ For these, see:</p>
 <li>GeoClaw (geophysical flows): <a class="reference internal" href="setrun_geoclaw.html#setrun-geoclaw"><em>Specifying GeoClaw parameters in setrun.py</em></a></li>
 </ul>
 </div></blockquote>
-<p><em>Describe setrun in general here!</em></p>
-<p>It may be useful to look at a specific example, e.g.
-<a class="reference internal" href="setrun_sample.html#setrun-sample"><em>Sample setrun.py module for classic Clawpack</em></a>.</p>
+</div>
 <div class="section" id="run-time-parameters">
 <h2>Run-time parameters<a class="headerlink" href="#run-time-parameters" title="Permalink to this headline">¶</a></h2>
 <p>The parameters needed in 1 space dimension (<em>ndim=1</em>) are described.  In 2d
@@ -148,46 +161,46 @@ and 3d there are analogous parameters in y and z required, as mentioned
 below.</p>
 <dl class="attribute">
 <dt>
-<tt class="descname">ndim : integer from [1,2,3]</tt></dt>
+<tt class="descname">num_dim : integer from [1,2,3]</tt></dt>
 <dd><p>number of space dimensions.</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt>
-<tt class="descname">xlower : float</tt></dt>
-<dd><p>lower limit in the x direction.
-For 2d or 3d, there are analogous parameters <em>ylower</em> and <em>zlower</em>.</p>
+<tt class="descname">lower : list of floats</tt></dt>
+<dd><p>lower limits in the x,y [,z]  directions.</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt>
-<tt class="descname">xupper : float</tt></dt>
-<dd><p>upper limit in the x direction.
-For 2d or 3d, there are analogous parameters <em>yupper</em> and <em>zupper</em>.</p>
+<tt class="descname">upper : list of floats</tt></dt>
+<dd><p>upper limits in the x,y [,z]  directions.</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt>
-<tt class="descname">mx : integer</tt></dt>
-<dd><p>The number of grid cells in the x direction.
-For 2d or 3d, there are analogous parameters <em>my</em> and <em>mz</em>.</p>
+<tt class="descname">num_cells : list of integers</tt></dt>
+<dd><p>The number of grid cells in the x, y, [,z]  directions.</p>
+<p>Note that when AMR is used, <cite>num_cells</cite> determines the number of cells in
+each dimension on the coarsest Level 1 grid.  Additional paramters
+described below determine refinement ratios to finer levels.</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt>
-<tt class="descname">meqn : integer</tt></dt>
-<dd><p>Number of equations in the system (e.g. <em>meqn=1</em> for a scalar problem).</p>
+<tt class="descname">num_eqn : integer</tt></dt>
+<dd><p>Number of equations in the system (e.g. <em>num_eqn=1</em> for a scalar problem).</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt>
-<tt class="descname">maux : integer</tt></dt>
-<dd><p>Number of auxiliary variables in the aux array (initialized in setaux.f)</p>
+<tt class="descname">num_aux : integer</tt></dt>
+<dd><p>Number of auxiliary variables in the aux array (initialized in <cite>setaux.f</cite>)</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt>
-<tt class="descname">mcapa : integer</tt></dt>
+<tt class="descname">capa_index : integer</tt></dt>
 <dd><p>Index of aux array corresponding to capacity function, if there is one.</p>
 </dd></dl>
 
@@ -199,8 +212,102 @@ For 2d or 3d, there are analogous parameters <em>my</em> and <em>mz</em>.</p>
 
 <dl class="attribute">
 <dt>
-<tt class="descname">dt_initial: float</tt></dt>
-<dd><p>Initial time step to try in first step.</p>
+<tt class="descname">output_style: integer</tt></dt>
+<dd><p>There are three possible ways to specify the output
+times.   This parameter selects the desired manner to specify the times,
+and affects what other attributes are required.</p>
+<blockquote>
+<div><ul>
+<li><p class="first"><em>output_style = 1</em> : Output at fixed time intervals.</p>
+<p>Requires additional parameters:</p>
+<ul class="simple">
+<li><cite>num_output_times</cite> : integer, number of output times</li>
+<li><cite>tfinal</cite> : float, final time</li>
+<li><cite>output_t0</cite> : boolean, whether to also output at initial time <cite>t0</cite>.</li>
+</ul>
+<p>The time steps will be adjusted to hit these times exactly. (Provided
+<em>dt_variable = True</em>.  Otherwise <em>dt_initial</em> must divide
+<em>tfinal/num_output_times</em> an integer number of times.)</p>
+</li>
+<li><p class="first"><em>output_style = 2</em>  : Output at specified times.</p>
+<p>Requires the additional parameter:</p>
+<ul class="simple">
+<li><cite>output_times</cite> : list of floats,
+times to output (include <cite>t0</cite> explicitly if desired)</li>
+</ul>
+</li>
+<li><p class="first"><em>output_style = 3</em>  : Output every so many steps.
+Most often used for debugging, e.g to output every time step.</p>
+<p>Requires additional parameters:</p>
+<ul class="simple">
+<li><cite>output_step_interval</cite> : integer, number of steps between outputs</li>
+<li><cite>total_steps</cite> : integer, total number of steps to take</li>
+<li><cite>output_t0</cite> : boolean, whether to also output at initial time <cite>t0</cite>.</li>
+</ul>
+</li>
+</ul>
+</div></blockquote>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<tt class="descname">output_format: str</tt></dt>
+<dd><p>Format of output.  Currently the following are supported:</p>
+<ul class="simple">
+<li><cite>&#8216;ascii&#8217;</cite> : the files <cite>fort.q0000</cite> etc. are ASCII files.</li>
+<li><cite>&#8216;binary&#8217;</cite> : Raw binary dump.  Working??</li>
+<li><cite>&#8216;netcdf&#8217;</cite> : NetCDF format.  Working??</li>
+</ul>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<tt class="descname">output_q_components: list of booleans or str</tt></dt>
+<dd><ul class="simple">
+<li>A list such as <cite>[1,0,1]</cite> would indicate to output <cite>q[0]</cite> and <cite>q[2]</cite> only.
+<em>This might not be working yet.</em></li>
+<li>The string <cite>&#8216;all&#8217;</cite> indicates that all components should be output</li>
+<li>The string <cite>&#8216;none&#8217;</cite> indicates that no components should be output</li>
+</ul>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<tt class="descname">output_aux_components: list of booleans or str</tt></dt>
+<dd><ul class="simple">
+<li>A list such as <cite>[1,0,1]</cite> would indicate to output <cite>aux[0]</cite> and <cite>aux[2]</cite> only.
+<em>This might not be working yet.</em></li>
+<li>The string <cite>&#8216;all&#8217;</cite> indicates that all components should be output</li>
+<li>The string <cite>&#8216;none&#8217;</cite> indicates that no components should be output</li>
+</ul>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<tt class="descname">output_aux_onlyonce: boolean</tt></dt>
+<dd><p>If <cite>output_aux_components</cite> is not <cite>&#8216;none&#8217;</cite> or an empty list, this
+indicates whether <cite>aux</cite> arrays should be only output at time <cite>t0</cite> or at
+every output time.  The latter is generally necessary for AMR
+applications unless the grids never change (and the component of <cite>aux</cite>
+are never modified except in <cite>setaux</cite>).</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<tt class="descname">verbosity: integer &gt;= 0</tt></dt>
+<dd><p>A line of output (reporting t, dt and CFL number) is written to the
+terminal every time step, but only at Level <cite>verbosity</cite> or coarser.</p>
+<p>Set to 0 to suppress all such output.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<tt class="descname">dt_initial: float &gt;= 0.</tt></dt>
+<dd><p>Initial time step to try in first step.  If using <cite>dt_variable == True</cite>
+and are unsure of an appropriate
+timestep, set to a very small value (e.g. <cite>1.e-10</cite>).  After the first
+step the wave speeds observed in all Riemann solutions will be used to
+set the time step appropriately for the next step.</p>
 </dd></dl>
 
 <dl class="attribute">
@@ -213,7 +320,7 @@ Courant number <em>cfl_desired</em>.</p>
 
 <dl class="attribute">
 <dt>
-<tt class="descname">dt_max: float</tt></dt>
+<tt class="descname">dt_max: float &gt;= 0.</tt></dt>
 <dd><p>If <em>dt_variable = True</em> then this is an upper bound on the allowable time
 step regardless of the Courant number.  Useful if there are other reasons
 to limit the time step (e.g. stiff source terms).</p>
@@ -221,12 +328,11 @@ to limit the time step (e.g. stiff source terms).</p>
 
 <dl class="attribute">
 <dt>
-<tt class="descname">cfl_desired: float</tt></dt>
+<tt class="descname">cfl_desired: float &gt;= 0.</tt></dt>
 <dd><p>If <em>dt_variable = True</em> then this is the desired Courant number.  Time
 steps will be adjusted based on the maximum wave speed seen in the <em>last</em>
 time step taken.  For a nonlinear problem this may not result in the
-Courant number being exactly the desired value in the next step, which is
-where the next attribute comes in...</p>
+Courant number being exactly the desired value in the next step.</p>
 <p>Usually <em>cfl_desired = 0.9</em> or less.</p>
 </dd></dl>
 
@@ -234,44 +340,178 @@ where the next attribute comes in...</p>
 <dt>
 <tt class="descname">cfl_max: float</tt></dt>
 <dd><p>If <em>dt_variable = True</em> then this is the maximum Courant number that can
-be allowed.  If a time step results in a Courant number that&#8217;s greater
-than <em>cfl_desired</em> but less than or equale to <em>cfl_max</em>, the step is
+be allowed.  If a time step results in a Courant number that is greater
+than <em>cfl_desired</em> but less than or equal to <em>cfl_max</em>, the step is
 accepted.  If the Courant number is greater than <em>cfl_max</em> then the step
 is rejected and a smaller step is taken.  (At this point the maximum wave
 speed from Riemann solutions is known, so the step can be adjusted to
 exactly hit the desired value <em>cfl_desired</em>.)</p>
-<p>Usually <em>cfl_max = 1.0</em> is fine.</p>
+<p><strong>Note:</strong> With AMRClaw it is impossible to retake a step and so if
+<cite>cfl &gt; cfl_max</cite> then a warning message is printed and the computation
+continues.  <em>Note that results may be contaminated if the Courant number
+is much above 1.</em>
+This means that with AMR it is important to choose an appropriate time
+step  <cite>dt_initial</cite> for the first time step, or use a very small value.</p>
+<p>Usually <em>cfl_max = 1.0</em> is fine, e.g. 500000.</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt>
-<tt class="descname">max_step: int</tt></dt>
+<tt class="descname">steps_max: int</tt></dt>
 <dd><p>Maximum number of time steps allowed between output times.  This is just
 to avoid infinite loops and generally a large value is fine.</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt>
-<tt class="descname">outstyle : integer</tt></dt>
-<dd><p>There are three possible ways to specify the output
-times.   This parameter selects the desired manner to specify the times,
-and affects what other attributes are required.</p>
+<tt class="descname">order : int</tt></dt>
+<dd><p><cite>order == 1</cite> : Use Godunov&#8217;s method</p>
+<p><cite>order == 2</cite> : Use second order corrections with limiters in normal
+direction.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<tt class="descname">dimensional_split : str</tt></dt>
+<dd><p><cite>dimensional_split == &#8216;unsplit&#8217;</cite>  is the only option currently allowed
+for AMRClaw.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<tt class="descname">transverse_waves : int or str</tt></dt>
+<dd><p><cite>transverse_waves == 0 or &#8216;none&#8217;</cite> : No transverse correction terms
+(Donor cell upwind if also <cite>order == 1</cite>).</p>
+<p><cite>transverse_waves == 1 or &#8216;increment&#8217;</cite> : Only the increment waves are
+transmitted transversely.
+(Corner transport upwind if also <cite>order == 1</cite>,  should be second order
+accurate if <cite>order == 2</cite>).</p>
+<p><cite>transverse_waves == 2 or &#8216;all&#8217;</cite> : Corner tranpsort of second order
+corrections as well.  (Somewhat improved stability.)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<tt class="descname">num_waves : int</tt></dt>
+<dd><p>Number of waves the Riemann solver returns.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<tt class="descname">limiter : list of int or str, of length num_waves</tt></dt>
+<dd><p>Each element of the list can take the values:</p>
 <blockquote>
 <div><ul class="simple">
-<li><em>outstyle = 1</em> Requires <em>nout</em> and <em>tfinal</em>, the number of output
-times to produce up to time <em>tfinal</em>.  They will be equally spaced.
-The time steps will be adjusted to hit these times exactly. (Provided
-<em>dt_variable = True</em>.  Otherwise <em>dt_initial</em> must divide
-<em>tfinal/nout</em> an integer number of times.)</li>
-<li><em>outstyle = 2</em> Requires <em>nout</em> and <em>tout</em>, where <em>tout</em> is a list
-of <em>nout</em> desired output times.</li>
-<li><em>outstyle = 3</em> Requires <em>nout</em> and <em>iout</em>, and the solution is output
-every <em>iout</em> time steps for a total of <em>nout</em> steps.</li>
+<li>0 or &#8216;none&#8217;     : no limiter (Lax-Wendroff)</li>
+<li>1 or &#8216;minmod&#8217;   : minmod</li>
+<li>2 or &#8216;superbee&#8217; : superbee</li>
+<li>3 or &#8216;mc&#8217;       : monotonized central (MC) limiter</li>
+<li>4 or &#8216;vanleer&#8217;  : van Leer</li>
+</ul>
+</div></blockquote>
+<p>See Chapter 6 of <a class="reference internal" href="biblio.html#leveque-fvmhp">[LeVeque-FVMHP]</a> for details.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<tt class="descname">use_fwaves : boolean</tt></dt>
+<dd><p>If True, the Riemann solvers should return f-waves (a decomposition of
+the the flux difference) rather than the usual waves (which give
+a decomposition of the jump in Q between adjacent states).
+See Section ?? of <a class="reference internal" href="biblio.html#leveque-fvmhp">[LeVeque-FVMHP]</a>
+or <a class="reference internal" href="biblio.html#balelevmitross">[BaleLevMitRoss]</a> for details.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<tt class="descname">source_split : list of int or str, of length num_waves</tt></dt>
+<dd><p>Determines form of fractional step algorithm used to apply source terms
+(if any).  Source terms must be implemented by providing a subroutine
+<cite>srcN.f</cite> (in <cite>N</cite> space dimensions) that is called each time step
+and should advance the solution by solving the source term equations
+(the PDE after dropping the hyperolic terms).</p>
+<blockquote>
+<div><ul class="simple">
+<li>src_split == 0 or &#8216;none&#8217;    : no source term (<cite>srcN</cite> routine never called)</li>
+<li>src_split == 1 or &#8216;godunov&#8217; : Godunov (1st order) splitting used,</li>
+<li>src_split == 2 or &#8216;strang&#8217;  : Strang (2nd order) splitting used.</li>
+</ul>
+</div></blockquote>
+<p>The Strang splitting requires calling the source term routine twice each
+time step (before and after the hyperbolic step, with half the time step)
+and is generally not recommended.  It is often no more accurate thn the
+Godunov splitting, requires more work, and can make it harder to properly
+set ghost cells for boundary conditions.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<tt class="descname">num_ghost : int</tt></dt>
+<dd><p>number of ghost cells at each boundary.  Should be at least 1 if
+<cite>order == 1</cite> and at least 2 if <cite>order == 2</cite>.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<tt class="descname">bc_lower : list of int or str, of length num_ghost</tt></dt>
+<dd><p>Choice of boundary conditions at the lower boundary in each dimension.
+Each element can take the following values:</p>
+<blockquote>
+<div><ul class="simple">
+<li>0 or &#8216;user&#8217;     : user specified (must modify <cite>bcNamr.f</cite> to use this option)</li>
+<li>1 or &#8216;extrap&#8217;   : extrapolation (non-reflecting outflow)</li>
+<li>2 or &#8216;periodic&#8217; : periodic (must specify this at both boundaries)</li>
+<li>3 or &#8216;wall&#8217;     : solid wall for systems where q(2) is normal velocity</li>
+</ul>
+<p>If the value is 0 or &#8216;user&#8217;, then the user must modify the boundary
+condition routine <cite>bcNamr.f</cite> to fill ghost cells in the desired manner.
+See <a class="reference internal" href="bc.html#bc"><em>Boundary conditions</em></a> for more details.</p>
+</div></blockquote>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<tt class="descname">bc_upper : list of int or str, of length num_ghost</tt></dt>
+<dd><p>Choice of boundary conditions at the upper boundary in each dimension.
+The same choices are available as for <cite>bc_lower</cite>.</p>
+<p>Note that if periodic boundary conditions are specified at the lower
+boundary in some dimension then the same should be specified at the upper.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<tt class="descname">checkpt_style :: int</tt></dt>
+<dd><p>Specify how often checkpoint files should be created that can be used to
+restart a computation.</p>
+<blockquote>
+<div><ul>
+<li><p class="first"><em>checkpt_style = 0</em> : Do not checkpoint at all</p>
+</li>
+<li><p class="first"><em>checkpt_style = 1</em> : Checkpoint only at the final time.</p>
+</li>
+<li><p class="first"><em>checkpt_style = 2</em> : Specify a list of checkpoint times.</p>
+<p>This is generally <strong>not</strong> recommended because time steps will be
+adjusted to hit the checkpoint times, but may be useful in order to
+create a checkpoint file just before some event of interest (e.g.
+when debugging a code that is known to crash at a certain time).</p>
+<p>Requires additional parameter:</p>
+<ul class="simple">
+<li>checkpt_times : list of floats</li>
+</ul>
+</li>
+<li><p class="first"><em>checkpt_style = 3</em> : Specify an interval for checkpointing.</p>
+<p>Requires additional parameter:</p>
+<ul>
+<li><p class="first">checkpt_interval : int</p>
+<p>Checkpoint every <cite>checkpt_interval</cite> time steps on Level 1 (coarsest
+level).</p>
+</li>
+</ul>
+</li>
 </ul>
 </div></blockquote>
 </dd></dl>
 
-<p>To be continued...</p>
 </div>
 </div>
 
@@ -288,7 +528,7 @@ every <em>iout</em> time steps for a total of <em>nout</em> steps.</li>
           <a href="genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
-          <a href="mapc2p.html" title="The mapc2p function"
+          <a href="bc.html" title="Boundary conditions"
              >next</a> |</li>
         <li class="right" >
           <a href="makefiles.html" title="Clawpack Makefiles"
