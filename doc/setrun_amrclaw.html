@@ -1,0 +1,739 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Specifying AMRClaw run-time parameters in setrun.py &mdash; Clawpack 4.6.x documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '4.6.x',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="shortcut icon" href="_static/clawicon.ico"/>
+    <link rel="author" title="About these documents" href="about.html" />
+    <link rel="top" title="Clawpack 4.6.x documentation" href="index.html" />
+    <link rel="next" title="Flagging cells for adaptive refinement" href="flag.html" />
+    <link rel="prev" title="GeoClaw plotting tools" href="visclaw_doc/geoplot.html" /> 
+  </head>
+  <body>
+
+<div style="background-color: #FFFFE8; text-align: left; padding: 10px 10px 15px 15px">
+<table>
+<tr>
+<!--
+<td>
+&nbsp;
+<br>
+<a href="http://www.clawpack.org/"><img src="_static/clawlogo.jpg" width=200 border="0" alt="Clawpack logo"/></a>
+</td>
+-->
+<td>
+&nbsp;
+<br>
+<p style="font-size:300%;color:#7F0000"> Clawpack Documentation</p>
+<br>
+<p style="font-size:150%;color:#7F0000"> 
+Version 5.0 --- Under Construction!  Not yet accurate
+</p>
+</td>
+</tr>
+</table>
+</div>
+
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="flag.html" title="Flagging cells for adaptive refinement"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="visclaw_doc/geoplot.html" title="GeoClaw plotting tools"
+             accesskey="P">previous</a> |</li>
+<li><a href="http://www.clawpack.org"><font color="#7F0000">Clawpack Webpage</font></a>|&nbsp;</li>
+<li><a href="apps.html"><font color="#7F0000">Gallery</font></a>|&nbsp;</li>
+<li><a href="index.html"><font color="#7F0000">Contents</font></a>|&nbsp;</li>
+ 
+      </ul>
+    </div>
+
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="index.html">
+              <img class="logo" src="_static/clawlogo.jpg" alt="Logo"/>
+            </a></p>
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Specifying AMRClaw run-time parameters in <cite>setrun.py</cite></a><ul>
+<li><a class="reference internal" href="#input">Input</a></li>
+<li><a class="reference internal" href="#output">Output</a></li>
+<li><a class="reference internal" href="#run-time-parameters">Run-time parameters</a></li>
+<li><a class="reference internal" href="#special-amr-parameters">Special AMR parameters</a></li>
+<li><a class="reference internal" href="#debugging-flags-for-additional-printing">Debugging flags for additional printing</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="visclaw_doc/geoplot.html"
+                        title="previous chapter">GeoClaw plotting tools</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="flag.html"
+                        title="next chapter">Flagging cells for adaptive refinement</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/setrun_amrclaw.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="specifying-amrclaw-run-time-parameters-in-setrun-py">
+<span id="setrun-amrclaw"></span><h1>Specifying AMRClaw run-time parameters in <cite>setrun.py</cite><a class="headerlink" href="#specifying-amrclaw-run-time-parameters-in-setrun-py" title="Permalink to this headline">¶</a></h1>
+<p>It may be useful to look at a specific example, e.g.
+<a class="reference internal" href="setrun_amrclaw_sample.html#setrun-amrclaw-sample"><em>Sample setrun.py module for AMRClaw</em></a>.</p>
+<p><strong>Note:</strong> Many parameters have changed name since Version 4.X and some new
+ones have been added.  To convert a Version 4.x <cite>setrun.py</cite> file to Version
+5.0, see <a class="reference internal" href="claw46to50.html#claw46to50"><em>Converting from Clawpack 4.6 to 5.0</em></a>.</p>
+<div class="section" id="input">
+<h2>Input<a class="headerlink" href="#input" title="Permalink to this headline">¶</a></h2>
+<p><cite>setrun</cite> takes a single argument <cite>claw_pkg</cite> that should be set to <cite>amrclaw</cite>.</p>
+</div>
+<div class="section" id="output">
+<h2>Output<a class="headerlink" href="#output" title="Permalink to this headline">¶</a></h2>
+<p><cite>rundata</cite>, an object of class <cite>ClawRunData</cite>, created in the
+setrun file with the commands:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">clawpack.clawutil</span> <span class="kn">import</span> <span class="n">clawdata</span>
+<span class="n">rundata</span> <span class="o">=</span> <span class="n">clawdata</span><span class="o">.</span><span class="n">ClawRunData</span><span class="p">(</span><span class="n">claw_pkg</span><span class="p">,</span> <span class="n">num_dim</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The <cite>rundata</cite> object has an attribute <cite>rundata.clawdata</cite> that whose
+attributes are described below.</p>
+</div>
+<div class="section" id="run-time-parameters">
+<h2>Run-time parameters<a class="headerlink" href="#run-time-parameters" title="Permalink to this headline">¶</a></h2>
+<p>The parameters needed in 2 space dimensions (<em>ndim=2</em>) are described.  In 3d
+there are analogous parameters in z required, as mentioned below.</p>
+<p>The parameters that can be set are the following attributes of
+<cite>rundata.clawdata</cite>:</p>
+<dl class="attribute">
+<dt>
+<tt class="descname">num_dim : integer from [1,2,3]</tt></dt>
+<dd><p>number of space dimensions.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<tt class="descname">lower : list of floats</tt></dt>
+<dd><p>lower limits in the x,y [,z]  directions.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<tt class="descname">upper : list of floats</tt></dt>
+<dd><p>upper limits in the x,y [,z]  directions.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<tt class="descname">num_cells : list of integers</tt></dt>
+<dd><p>The number of grid cells in the x, y, [,z]  directions.</p>
+<p>Note that when AMR is used, <cite>num_cells</cite> determines the number of cells in
+each dimension on the coarsest Level 1 grid.  Additional paramters
+described below determine refinement ratios to finer levels.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<tt class="descname">num_eqn : integer</tt></dt>
+<dd><p>Number of equations in the system (e.g. <em>num_eqn=1</em> for a scalar problem).</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<tt class="descname">num_aux : integer</tt></dt>
+<dd><p>Number of auxiliary variables in the aux array (initialized in <cite>setaux.f</cite>)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<tt class="descname">capa_index : integer</tt></dt>
+<dd><p>Index of aux array corresponding to capacity function, if there is one.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<tt class="descname">t0 : float</tt></dt>
+<dd><p>Initial time, often <em>t0 = 0.</em></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<tt class="descname">output_style: integer</tt></dt>
+<dd><p>There are three possible ways to specify the output
+times.   This parameter selects the desired manner to specify the times,
+and affects what other attributes are required.</p>
+<blockquote>
+<div><ul>
+<li><p class="first"><em>output_style = 1</em> : Output at fixed time intervals.</p>
+<p>Requires additional parameters:</p>
+<ul class="simple">
+<li><cite>num_output_times</cite> : integer, number of output times</li>
+<li><cite>tfinal</cite> : float, final time</li>
+<li><cite>output_t0</cite> : boolean, whether to also output at initial time <cite>t0</cite>.</li>
+</ul>
+<p>The time steps will be adjusted to hit these times exactly. (Provided
+<em>dt_variable = True</em>.  Otherwise <em>dt_initial</em> must divide
+<em>tfinal/num_output_times</em> an integer number of times.)</p>
+</li>
+<li><p class="first"><em>output_style = 2</em>  : Output at specified times.</p>
+<p>Requires the additional parameter:</p>
+<ul class="simple">
+<li><cite>output_times</cite> : list of floats,
+times to output (include <cite>t0</cite> explicitly if desired)</li>
+</ul>
+</li>
+<li><p class="first"><em>output_style = 3</em>  : Output every so many steps.
+Most often used for debugging, e.g to output every time step.</p>
+<p>Requires additional parameters:</p>
+<ul class="simple">
+<li><cite>output_step_interval</cite> : integer, number of steps between outputs</li>
+<li><cite>total_steps</cite> : integer, total number of steps to take</li>
+<li><cite>output_t0</cite> : boolean, whether to also output at initial time <cite>t0</cite>.</li>
+</ul>
+</li>
+</ul>
+</div></blockquote>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<tt class="descname">output_format: str</tt></dt>
+<dd><p>Format of output.  Currently the following are supported:</p>
+<ul class="simple">
+<li><cite>&#8216;ascii&#8217;</cite> : the files <cite>fort.q0000</cite> etc. are ASCII files.</li>
+<li><cite>&#8216;binary&#8217;</cite> : Raw binary dump.  Working??</li>
+<li><cite>&#8216;netcdf&#8217;</cite> : NetCDF format.  Working??</li>
+</ul>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<tt class="descname">output_q_components: list of booleans or str</tt></dt>
+<dd><ul class="simple">
+<li>A list such as <cite>[1,0,1]</cite> would indicate to output <cite>q[0]</cite> and <cite>q[2]</cite> only.
+<em>This might not be working yet.</em></li>
+<li>The string <cite>&#8216;all&#8217;</cite> indicates that all components should be output</li>
+<li>The string <cite>&#8216;none&#8217;</cite> indicates that no components should be output</li>
+</ul>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<tt class="descname">output_aux_components: list of booleans or str</tt></dt>
+<dd><ul class="simple">
+<li>A list such as <cite>[1,0,1]</cite> would indicate to output <cite>aux[0]</cite> and <cite>aux[2]</cite> only.
+<em>This might not be working yet.</em></li>
+<li>The string <cite>&#8216;all&#8217;</cite> indicates that all components should be output</li>
+<li>The string <cite>&#8216;none&#8217;</cite> indicates that no components should be output</li>
+</ul>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<tt class="descname">output_aux_onlyonce: boolean</tt></dt>
+<dd><p>If <cite>output_aux_components</cite> is not <cite>&#8216;none&#8217;</cite> or an empty list, this
+indicates whether <cite>aux</cite> arrays should be only output at time <cite>t0</cite> or at
+every output time.  The latter is generally necessary for AMR
+applications unless the grids never change (and the component of <cite>aux</cite>
+are never modified except in <cite>setaux</cite>).</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<tt class="descname">verbosity: integer &gt;= 0</tt></dt>
+<dd><p>A line of output (reporting t, dt and CFL number) is written to the
+terminal every time step, but only at Level <cite>verbosity</cite> or coarser.</p>
+<p>Set to 0 to suppress all such output.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<tt class="descname">dt_initial: float &gt;= 0.</tt></dt>
+<dd><p>Initial time step to try in first step.  If using <cite>dt_variable == True</cite>
+and are unsure of an appropriate
+timestep, set to a very small value (e.g. <cite>1.e-10</cite>).  After the first
+step the wave speeds observed in all Riemann solutions will be used to
+set the time step appropriately for the next step.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<tt class="descname">dt_variable: boolean</tt></dt>
+<dd><p>If True, time steps are adjusted automatically based on the desired
+Courant number <em>cfl_desired</em>.</p>
+<p>If False, fixed time steps of lenght <em>dt_initial</em> are used.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<tt class="descname">dt_max: float &gt;= 0.</tt></dt>
+<dd><p>If <em>dt_variable = True</em> then this is an upper bound on the allowable time
+step regardless of the Courant number.  Useful if there are other reasons
+to limit the time step (e.g. stiff source terms).</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<tt class="descname">cfl_desired: float &gt;= 0.</tt></dt>
+<dd><p>If <em>dt_variable = True</em> then this is the desired Courant number.  Time
+steps will be adjusted based on the maximum wave speed seen in the <em>last</em>
+time step taken.  For a nonlinear problem this may not result in the
+Courant number being exactly the desired value in the next step.</p>
+<p>Usually <em>cfl_desired = 0.9</em> or less.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<tt class="descname">cfl_max: float</tt></dt>
+<dd><p>If <em>dt_variable = True</em> then this is the maximum Courant number that can
+be allowed.  If a time step results in a Courant number that is greater
+than <em>cfl_desired</em> but less than or equal to <em>cfl_max</em>, the step is
+accepted.  If the Courant number is greater than <em>cfl_max</em> then the step
+is rejected and a smaller step is taken.  (At this point the maximum wave
+speed from Riemann solutions is known, so the step can be adjusted to
+exactly hit the desired value <em>cfl_desired</em>.)</p>
+<p><strong>Note:</strong> With AMRClaw it is impossible to retake a step and so if
+<cite>cfl &gt; cfl_max</cite> then a warning message is printed and the computation
+continues.  <em>Note that results may be contaminated if the Courant number
+is much above 1.</em>
+This means that with AMR it is important to choose an appropriate time
+step  <cite>dt_initial</cite> for the first time step, or use a very small value.</p>
+<p>Usually <em>cfl_max = 1.0</em> is fine, e.g. 500000.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<tt class="descname">steps_max: int</tt></dt>
+<dd><p>Maximum number of time steps allowed between output times.  This is just
+to avoid infinite loops and generally a large value is fine.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<tt class="descname">order : int</tt></dt>
+<dd><p><cite>order == 1</cite> : Use Godunov&#8217;s method</p>
+<p><cite>order == 2</cite> : Use second order corrections with limiters in normal
+direction.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<tt class="descname">dimensional_split : str</tt></dt>
+<dd><p><cite>dimensional_split == &#8216;unsplit&#8217;</cite>  is the only option currently allowed
+for AMRClaw.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<tt class="descname">transverse_waves : int or str</tt></dt>
+<dd><p><cite>transverse_waves == 0 or &#8216;none&#8217;</cite> : No transverse correction terms
+(Donor cell upwind if also <cite>order == 1</cite>).</p>
+<p><cite>transverse_waves == 1 or &#8216;increment&#8217;</cite> : Only the increment waves are
+transmitted transversely.
+(Corner transport upwind if also <cite>order == 1</cite>,  should be second order
+accurate if <cite>order == 2</cite>).</p>
+<p><cite>transverse_waves == 2 or &#8216;all&#8217;</cite> : Corner tranpsort of second order
+corrections as well.  (Somewhat improved stability.)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<tt class="descname">num_waves : int</tt></dt>
+<dd><p>Number of waves the Riemann solver returns.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<tt class="descname">limiter : list of int or str, of length num_waves</tt></dt>
+<dd><p>Each element of the list can take the values:</p>
+<blockquote>
+<div><ul class="simple">
+<li>0 or &#8216;none&#8217;     : no limiter (Lax-Wendroff)</li>
+<li>1 or &#8216;minmod&#8217;   : minmod</li>
+<li>2 or &#8216;superbee&#8217; : superbee</li>
+<li>3 or &#8216;mc&#8217;       : monotonized central (MC) limiter</li>
+<li>4 or &#8216;vanleer&#8217;  : van Leer</li>
+</ul>
+</div></blockquote>
+<p>See Chapter 6 of <a class="reference internal" href="biblio.html#leveque-fvmhp">[LeVeque-FVMHP]</a> for details.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<tt class="descname">use_fwaves : boolean</tt></dt>
+<dd><p>If True, the Riemann solvers should return f-waves (a decomposition of
+the the flux difference) rather than the usual waves (which give
+a decomposition of the jump in Q between adjacent states).
+See Section ?? of <a class="reference internal" href="biblio.html#leveque-fvmhp">[LeVeque-FVMHP]</a>
+or <a class="reference internal" href="biblio.html#balelevmitross">[BaleLevMitRoss]</a> for details.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<tt class="descname">source_split : list of int or str, of length num_waves</tt></dt>
+<dd><p>Determines form of fractional step algorithm used to apply source terms
+(if any).  Source terms must be implemented by providing a subroutine
+<cite>srcN.f</cite> (in <cite>N</cite> space dimensions) that is called each time step
+and should advance the solution by solving the source term equations
+(the PDE after dropping the hyperolic terms).</p>
+<blockquote>
+<div><ul class="simple">
+<li>src_split == 0 or &#8216;none&#8217;    : no source term (<cite>srcN</cite> routine never called)</li>
+<li>src_split == 1 or &#8216;godunov&#8217; : Godunov (1st order) splitting used,</li>
+<li>src_split == 2 or &#8216;strang&#8217;  : Strang (2nd order) splitting used.</li>
+</ul>
+</div></blockquote>
+<p>The Strang splitting requires calling the source term routine twice each
+time step (before and after the hyperbolic step, with half the time step)
+and is generally not recommended.  It is often no more accurate thn the
+Godunov splitting, requires more work, and can make it harder to properly
+set ghost cells for boundary conditions.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<tt class="descname">num_ghost : int</tt></dt>
+<dd><p>number of ghost cells at each boundary.  Should be at least 1 if
+<cite>order == 1</cite> and at least 2 if <cite>order == 2</cite>.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<tt class="descname">bc_lower : list of int or str, of length num_ghost</tt></dt>
+<dd><p>Choice of boundary conditions at the lower boundary in each dimension.
+Each element can take the following values:</p>
+<blockquote>
+<div><ul class="simple">
+<li>0 or &#8216;user&#8217;     : user specified (must modify <cite>bcNamr.f</cite> to use this option)</li>
+<li>1 or &#8216;extrap&#8217;   : extrapolation (non-reflecting outflow)</li>
+<li>2 or &#8216;periodic&#8217; : periodic (must specify this at both boundaries)</li>
+<li>3 or &#8216;wall&#8217;     : solid wall for systems where q(2) is normal velocity</li>
+</ul>
+<p>If the value is 0 or &#8216;user&#8217;, then the user must modify the boundary
+condition routine <cite>bcNamr.f</cite> to fill ghost cells in the desired manner.
+See <a class="reference internal" href="bc.html#bc"><em>Boundary conditions</em></a> for more details.</p>
+</div></blockquote>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<tt class="descname">bc_upper : list of int or str, of length num_ghost</tt></dt>
+<dd><p>Choice of boundary conditions at the upper boundary in each dimension.
+The same choices are available as for <cite>bc_lower</cite>.</p>
+<p>Note that if periodic boundary conditions are specified at the lower
+boundary in some dimension then the same should be specified at the upper.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="special-amr-parameters">
+<h2>Special AMR parameters<a class="headerlink" href="#special-amr-parameters" title="Permalink to this headline">¶</a></h2>
+<dl class="attribute">
+<dt>
+<tt class="descname">amr_levels_max : int</tt></dt>
+<dd><p>Maximum levels of refinement to use.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<tt class="descname">refinement_ratios_x : list of int</tt></dt>
+<dd><p>Refinement ratios to use in the <cite>x</cite> direction.</p>
+<p><em>Example:</em>  If <cite>num_cells[0] = 10</cite> and <cite>refinement_ratios_x = [2,4]</cite>
+then the Level 1 grid will have 10 cells in the x-direction,
+Level 2 patches will be refined by a factor of 2,
+and Level 3 will be refined by 4 relative to Level 2
+(by 8 relative to Level 1).</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<tt class="descname">refinement_ratios_y : list of int</tt></dt>
+<dd><p>Refinement ratios to use in the <cite>y</cite> direction.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<tt class="descname">refinement_ratios_t : list of int</tt></dt>
+<dd><p>Refinement ratios to use in time.  For an explicit method, maintaining
+the Courant number usually requires refining in time by the same factor as
+in space (or the maximum of the refinement ratio in the different space
+directions).</p>
+<p><strong>Note:</strong> Rather than specifying this list, in GeoClaw it is possible to set
+to set <cite>variable_dt_refinement_ratios = True</cite> so refinement ratios in
+time are chosen automatically.  This might be ported to AMRClaw?</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<tt class="descname">aux_type : list of str, of length num_aux</tt></dt>
+<dd><p>Specifies the type of variable stored in each aux variable.
+These are used when coarsening aux arrays.  Each
+element can be one of the following (but at most one can be &#8216;capacity&#8217;):</p>
+<blockquote>
+<div><ul class="simple">
+<li>&#8216;center&#8217; for cell-centered values (e.g. density)</li>
+<li>&#8216;capacity&#8217; for a cell-centered capacity function (e.g. cell volume)</li>
+<li>&#8216;xleft&#8217; for a value centered on the left edge in x (e.g. normal velocity u)</li>
+<li>&#8216;yleft&#8217; for a value centered on the left edge in y (e.g. normal velocity v)</li>
+</ul>
+</div></blockquote>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<tt class="descname">flag_richardson : boolean</tt></dt>
+<dd><p>Determines whether Richardson extrapolation will be used as an error
+estimator.  If <cite>True</cite>, patches will be coarsened by a factor of 2 each
+time regridding is done and  the result from a single step on the
+coarsened patch with double the time step will be compared to the
+solution after 2 steps on the original patch in order to estimate the error.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<tt class="descname">flag_richardson_tol : float</tt></dt>
+<dd><p>When <cite>flag_richardson == True</cite>, cells will be flagged for refinement
+if the absolute value of the estimated error exceeds this value.</p>
+<p>When <cite>flag_richardson == False</cite>, this value is not used.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<tt class="descname">flag2refine : boolean</tt></dt>
+<dd><p>Determines whether the subroutine <cite>flag2refine</cite> is used to flag cells
+for refinement.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<tt class="descname">flag2refine_tol : float</tt></dt>
+<dd><p>When <cite>flag2refine == True</cite>, the default library version <cite>flag2refine.f</cite>
+checks the maximum absolute value of the difference between any component
+of q in this cell with the corresponding component in any of the
+neighboring cells.  The cell is flagged for refinement if the maximum
+value is greater than this tolerance.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<tt class="descname">regrid_interval : int</tt></dt>
+<dd><p>The number of time steps to take on each level between regridding to the
+next finer level.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<tt class="descname">regrid_buffer_width : int</tt></dt>
+<dd><p>The number of points to flag for refining around any point flagged by
+error estimation or <cite>flag2refine</cite>.  This buffer zone is to insure that
+waves do not leave the refined region before the next regridding and so
+is generally chosen based on the value of <cite>regrid_interval</cite>, typically to
+be the same value since waves can travel at most one grid cell per time
+step.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<tt class="descname">clustering_cutoff  : float between 0 and 1</tt></dt>
+<dd><p>Cut-off used in clustering flagged points into rectangular patches for
+refinement.  Clusters are chosen to minimize the number of patches
+subject to the constraint:</p>
+<div class="highlight-python"><pre>(# flagged pts) / (total # of cells refined) &lt; clustering_cutoff</pre>
+</div>
+<p>If <cite>clustering_cutoff</cite> is close to 1, only flagged cells will be refined,
+which could lead to many <cite>1 x 1</cite> patches.</p>
+<p>The default value 0.7 usually works well.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<tt class="descname">verbosity_regrid : int</tt></dt>
+<dd><p>Additional information is printed to the terminal each time regridding is
+done at this level or coarser.  Set to 0 to suppress regridding output.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<tt class="descname">regions **Regions**</tt></dt>
+<dd><p>See <a class="reference internal" href="flag.html#flag-regions"><em>Refinement regions</em></a></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<tt class="descname">checkpt_style :: int</tt></dt>
+<dd><p>Specify how often checkpoint files should be created that can be used to
+restart a computation.</p>
+<blockquote>
+<div><ul>
+<li><p class="first"><em>checkpt_style = 0</em> : Do not checkpoint at all</p>
+</li>
+<li><p class="first"><em>checkpt_style = 1</em> : Checkpoint only at the final time.</p>
+</li>
+<li><p class="first"><em>checkpt_style = 2</em> : Specify a list of checkpoint times.</p>
+<p>This is generally <strong>not</strong> recommended because time steps will be
+adjusted to hit the checkpoint times, but may be useful in order to
+create a checkpoint file just before some event of interest (e.g.
+when debugging a code that is known to crash at a certain time).</p>
+<p>Requires additional parameter:</p>
+<ul class="simple">
+<li>checkpt_times : list of floats</li>
+</ul>
+</li>
+<li><p class="first"><em>checkpt_style = 3</em> : Specify an interval for checkpointing.</p>
+<p>Requires additional parameter:</p>
+<ul>
+<li><p class="first">checkpt_interval : int</p>
+<p>Checkpoint every <cite>checkpt_interval</cite> time steps on Level 1 (coarsest
+level).</p>
+</li>
+</ul>
+</li>
+</ul>
+</div></blockquote>
+</dd></dl>
+
+</div>
+<div class="section" id="debugging-flags-for-additional-printing">
+<h2>Debugging flags for additional printing<a class="headerlink" href="#debugging-flags-for-additional-printing" title="Permalink to this headline">¶</a></h2>
+<p>Setting one or more of these to <cite>True</cite> will cause additional information to
+be written to the file <cite>fort.amr</cite> in the output directory.</p>
+<dl class="attribute">
+<dt>
+<tt class="descname">dprint : boolean</tt></dt>
+<dd><p>Print domain flags</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<tt class="descname">eprint : boolean</tt></dt>
+<dd><p>Print error estimation flags</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<tt class="descname">edebug : boolean</tt></dt>
+<dd><p>Print even more error estimation flags</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<tt class="descname">gprint : boolean</tt></dt>
+<dd><p>Print grid bisection and clustering information</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<tt class="descname">nprint : boolean</tt></dt>
+<dd><p>Print proper nesting output</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<tt class="descname">pprint : boolean</tt></dt>
+<dd><p>Print projection of tagged points</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<tt class="descname">rprint : boolean</tt></dt>
+<dd><p>Print regridding summary</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<tt class="descname">sprint : boolean</tt></dt>
+<dd><p>Print space/memory output</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<tt class="descname">tprint : boolean</tt></dt>
+<dd><p>Print time step info on each level</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<tt class="descname">uprint : boolean</tt></dt>
+<dd><p>Print update/upbnd information</p>
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="flag.html" title="Flagging cells for adaptive refinement"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="visclaw_doc/geoplot.html" title="GeoClaw plotting tools"
+             >previous</a> |</li>
+<li><a href="http://www.clawpack.org"><font color="#7F0000">Clawpack Webpage</font></a>|&nbsp;</li>
+<li><a href="apps.html"><font color="#7F0000">Gallery</font></a>|&nbsp;</li>
+<li><a href="index.html"><font color="#7F0000">Contents</font></a>|&nbsp;</li>
+ 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2011, Randall J. LeVeque and others.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>

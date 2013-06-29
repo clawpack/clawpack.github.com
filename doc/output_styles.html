@@ -1,0 +1,254 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Output data formats &mdash; Clawpack 4.6.x documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '4.6.x',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="shortcut icon" href="_static/clawicon.ico"/>
+    <link rel="author" title="About these documents" href="about.html" />
+    <link rel="top" title="Clawpack 4.6.x documentation" href="index.html" />
+    <link rel="next" title="The mapc2p function" href="mapc2p.html" />
+    <link rel="prev" title="Boundary conditions" href="bc.html" /> 
+  </head>
+  <body>
+
+<div style="background-color: #FFFFE8; text-align: left; padding: 10px 10px 15px 15px">
+<table>
+<tr>
+<!--
+<td>
+&nbsp;
+<br>
+<a href="http://www.clawpack.org/"><img src="_static/clawlogo.jpg" width=200 border="0" alt="Clawpack logo"/></a>
+</td>
+-->
+<td>
+&nbsp;
+<br>
+<p style="font-size:300%;color:#7F0000"> Clawpack Documentation</p>
+<br>
+<p style="font-size:150%;color:#7F0000"> 
+Version 5.0 --- Under Construction!  Not yet accurate
+</p>
+</td>
+</tr>
+</table>
+</div>
+
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="mapc2p.html" title="The mapc2p function"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="bc.html" title="Boundary conditions"
+             accesskey="P">previous</a> |</li>
+<li><a href="http://www.clawpack.org"><font color="#7F0000">Clawpack Webpage</font></a>|&nbsp;</li>
+<li><a href="apps.html"><font color="#7F0000">Gallery</font></a>|&nbsp;</li>
+<li><a href="index.html"><font color="#7F0000">Contents</font></a>|&nbsp;</li>
+ 
+      </ul>
+    </div>
+
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="index.html">
+              <img class="logo" src="_static/clawlogo.jpg" alt="Logo"/>
+            </a></p>
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Output data formats</a><ul>
+<li><a class="reference internal" href="#ascii-output-data-format">ASCII output data format</a><ul>
+<li><a class="reference internal" href="#fort-t0002"><cite>fort.t0002</cite></a></li>
+<li><a class="reference internal" href="#fort-q0002"><cite>fort.q0002</cite></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#raw-binary-output-data-format">Raw binary output data format</a></li>
+<li><a class="reference internal" href="#netcdf-output-data-format">NetCDF output data format</a></li>
+<li><a class="reference internal" href="#output-of-aux-arrays">Output of aux arrays</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="bc.html"
+                        title="previous chapter">Boundary conditions</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="mapc2p.html"
+                        title="next chapter">The mapc2p function</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/output_styles.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="output-data-formats">
+<span id="output-styles"></span><h1>Output data formats<a class="headerlink" href="#output-data-formats" title="Permalink to this headline">¶</a></h1>
+<p>In <a class="reference internal" href="setrun.html#setrun"><em>Specifying run-time parameters in setrun.py</em></a>, the format for the output data (solutions) can be
+specified by setting the parameter <cite>output_style</cite>.</p>
+<p>To read the solution stored in these files into Python for plotting or other
+postprocessing purposes, utilities are provided that are described in
+<em class="xref std std-ref">python_io</em>.</p>
+<p>Setting <cite>output_style = &#8216;ascii&#8217;</cite> gives ASCII text output.  The data files
+can then be viewed with any standard text editor, which is particularly
+useful for debugging.  However, ASCII files are generally much larger than
+is necessary to store the original data in binary form, and so when grid
+have many grid cells or when many output frames are saved it is often better
+to use some form of binary output, e.g. <a class="reference internal" href="#output-binary"><em>Raw binary output data format</em></a> or
+<a class="reference internal" href="#output-netcdf"><em>NetCDF output data format</em></a>.</p>
+<p>In AMRClaw, ASCII and binary output are both written by the library routine
+<cite>valout.f</cite>.  The aux arrays are also dumped if requested, see
+<a class="reference internal" href="#output-aux"><em>Output of aux arrays</em></a>.</p>
+<div class="section" id="ascii-output-data-format">
+<span id="output-ascii"></span><h2>ASCII output data format<a class="headerlink" href="#ascii-output-data-format" title="Permalink to this headline">¶</a></h2>
+<p>Two output files are created at each output time (each frame).  The frames
+are generally numbered 0, 1, 2, etc.  The two files, at frame 2, for
+example, are called <cite>fort.t0002</cite> and <cite>fort.q0002</cite>.</p>
+<div class="section" id="fort-t0002">
+<h3><cite>fort.t0002</cite><a class="headerlink" href="#fort-t0002" title="Permalink to this headline">¶</a></h3>
+<p>This file has the typical form:</p>
+<div class="highlight-python"><pre> 0.40000000E+00    time
+ 1                 meqn
+36                 ngrids
+ 0                 naux
+ 2                 ndim
+ 2                 nghost</pre>
+</div>
+<p>This file contains only 6 lines with information about the current time the
+number of AMR patches at this time.</p>
+<p>In the above example, Frame 2 contains 36 patches.
+If you are using the classic code
+or PyClaw with only a single patch, then <cite>ngrids</cite> would be 1.</p>
+<p>The data for all 36 patches is contained in <cite>fort.q0002</cite>.  The data from each
+patch is preceeded by a header that tells where the patch is located in the
+domain, how many grid cells it contains, and what the cell size is, e.g.</p>
+</div>
+<div class="section" id="fort-q0002">
+<h3><cite>fort.q0002</cite><a class="headerlink" href="#fort-q0002" title="Permalink to this headline">¶</a></h3>
+<p>This header has the typical form:</p>
+<div class="highlight-python"><pre>1                 grid_number
+1                 AMR_level
+40                mx
+40                my
+0.00000000E+00    xlow
+0.00000000E+00    ylow
+0.25000000E-01    dx
+0.25000000E-01    dy</pre>
+</div>
+<p>This would be followed by 40*40 = 1600 lines with the data from cells (i,j).
+The order they are written is (in Fortran style):</p>
+<div class="highlight-python"><pre>do j = 1,my
+    do i = 1,mx
+        write (q(i,j,m), m=1,meqn)</pre>
+</div>
+<p>Each line has <cite>meqn</cite> (change to <cite>num_eqn</cite>?) values, for the components of
+the system in this grid cell.</p>
+<p>After the data for this patch, there would be another header for the next
+patch, followed by its data, etc.</p>
+<p>In the header, <cite>xlow</cite> and <cite>ylow</cite> are the coordinates of the lower left
+corner of the patch, <cite>dx</cite> and <cite>dy</cite> are the cell width in <cite>x</cite> and <cite>y</cite>, and
+<cite>AMR_level</cite> is the level of refinement, where 1 is the coarsest level.
+Each patch has a unique <cite>grid_number</cite> that usually isn&#8217;t needed for
+visualization purposes.</p>
+</div>
+</div>
+<div class="section" id="raw-binary-output-data-format">
+<span id="output-binary"></span><h2>Raw binary output data format<a class="headerlink" href="#raw-binary-output-data-format" title="Permalink to this headline">¶</a></h2>
+<p>The files for each frame are numbered as for the ASCII file and the
+<cite>fort.t0002</cite> file, for example, is still an ASCII file with 6 lines of
+metadata.  There are also ASCII files such as <cite>fort.q0002</cite>, but these now
+contain only the headers for each grid patch and not the solution on each
+patch.  In addition there are files such as
+<cite>fort.b0002</cite> that contain a raw binary dump of the data from all of the
+grid patches at this time, one after another.  In order to decompose this
+data into patches for plotting, the <cite>fort.q0002</cite> file must be used.</p>
+<p>Unlike the ASCII data files, the binary output
+files contain ghost cells as well as the interior cells (since a contiguous
+block of memory is dumped for each patch with a single <cite>write</cite> statement).</p>
+</div>
+<div class="section" id="netcdf-output-data-format">
+<span id="output-netcdf"></span><h2>NetCDF output data format<a class="headerlink" href="#netcdf-output-data-format" title="Permalink to this headline">¶</a></h2>
+<p>Describe...</p>
+</div>
+<div class="section" id="output-of-aux-arrays">
+<span id="output-aux"></span><h2>Output of aux arrays<a class="headerlink" href="#output-of-aux-arrays" title="Permalink to this headline">¶</a></h2>
+<p>Describe...</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="mapc2p.html" title="The mapc2p function"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="bc.html" title="Boundary conditions"
+             >previous</a> |</li>
+<li><a href="http://www.clawpack.org"><font color="#7F0000">Clawpack Webpage</font></a>|&nbsp;</li>
+<li><a href="apps.html"><font color="#7F0000">Gallery</font></a>|&nbsp;</li>
+<li><a href="index.html"><font color="#7F0000">Contents</font></a>|&nbsp;</li>
+ 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2011, Randall J. LeVeque and others.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>

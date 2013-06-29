@@ -1,0 +1,377 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Plotting options in Python &mdash; Clawpack 4.6.x documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '4.6.x',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="shortcut icon" href="_static/clawicon.ico"/>
+    <link rel="author" title="About these documents" href="about.html" />
+    <link rel="top" title="Clawpack 4.6.x documentation" href="index.html" />
+    <link rel="next" title="Using setplot.py to specify the desired plots" href="setplot.html" />
+    <link rel="prev" title="Plotting options" href="plotting.html" /> 
+  </head>
+  <body>
+
+<div style="background-color: #FFFFE8; text-align: left; padding: 10px 10px 15px 15px">
+<table>
+<tr>
+<!--
+<td>
+&nbsp;
+<br>
+<a href="http://www.clawpack.org/"><img src="_static/clawlogo.jpg" width=200 border="0" alt="Clawpack logo"/></a>
+</td>
+-->
+<td>
+&nbsp;
+<br>
+<p style="font-size:300%;color:#7F0000"> Clawpack Documentation</p>
+<br>
+<p style="font-size:150%;color:#7F0000"> 
+Version 5.0 --- Under Construction!  Not yet accurate
+</p>
+</td>
+</tr>
+</table>
+</div>
+
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="setplot.html" title="Using setplot.py to specify the desired plots"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="plotting.html" title="Plotting options"
+             accesskey="P">previous</a> |</li>
+<li><a href="http://www.clawpack.org"><font color="#7F0000">Clawpack Webpage</font></a>|&nbsp;</li>
+<li><a href="apps.html"><font color="#7F0000">Gallery</font></a>|&nbsp;</li>
+<li><a href="index.html"><font color="#7F0000">Contents</font></a>|&nbsp;</li>
+ 
+      </ul>
+    </div>
+
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="index.html">
+              <img class="logo" src="_static/clawlogo.jpg" alt="Logo"/>
+            </a></p>
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Plotting options in Python</a><ul>
+<li><a class="reference internal" href="#producing-html-plots-from-the-command-line">Producing html plots from the command line</a></li>
+<li><a class="reference internal" href="#viewing-plots-via-a-local-web-server">Viewing plots via a local web server</a></li>
+<li><a class="reference internal" href="#producing-a-latex-file-with-plots-from-the-command-line">Producing a latex file with plots from the command line</a></li>
+<li><a class="reference internal" href="#setting-plot-parameters-with-a-setplot-function">Setting plot parameters with a setplot function</a></li>
+<li><a class="reference internal" href="#interactive-plotting-with-iplotclaw">Interactive plotting with <tt class="docutils literal"><span class="pre">Iplotclaw</span></tt></a><ul>
+<li><a class="reference internal" href="#access-to-current-data">Access to current_data</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#ipyclaw">ipyclaw</a></li>
+<li><a class="reference internal" href="#printframes">printframes</a></li>
+<li><a class="reference internal" href="#specifying-what-and-how-to-plot">Specifying what and how to plot</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="plotting.html"
+                        title="previous chapter">Plotting options</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="setplot.html"
+                        title="next chapter">Using setplot.py to specify the desired plots</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/plotting_python.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="plotting-options-in-python">
+<span id="plotting-python"></span><h1>Plotting options in Python<a class="headerlink" href="#plotting-options-in-python" title="Permalink to this headline">¶</a></h1>
+<p>Clawpack  includes utilities for plotting using Python.  Most of these
+are defined in the <cite>clawpack.visclaw</cite> module.
+In order to use these you will need to insure that you have the required
+modules installed (see <a class="reference internal" href="python.html#python-install"><em>Installation of required modules</em></a>).</p>
+<p>See <a class="reference internal" href="python.html#python"><em>Python Hints</em></a> for more information on Python and pointers to many tutorials.</p>
+<div class="section" id="producing-html-plots-from-the-command-line">
+<h2>Producing html plots from the command line<a class="headerlink" href="#producing-html-plots-from-the-command-line" title="Permalink to this headline">¶</a></h2>
+<p>In most Clawpack directories, typing:</p>
+<div class="highlight-python"><pre>$  make .plots</pre>
+</div>
+<p>will compile the code and run it (if necessary) and then
+produce a set of html files that can be
+used to view the resulting plots.  These will be in a subdirectory
+of the current directory as specified by PLOTDIR in the Makefile.</p>
+</div>
+<div class="section" id="viewing-plots-via-a-local-web-server">
+<h2>Viewing plots via a local web server<a class="headerlink" href="#viewing-plots-via-a-local-web-server" title="Permalink to this headline">¶</a></h2>
+<p><strong>Need to update this section</strong></p>
+</div>
+<div class="section" id="producing-a-latex-file-with-plots-from-the-command-line">
+<h2>Producing a latex file with plots from the command line<a class="headerlink" href="#producing-a-latex-file-with-plots-from-the-command-line" title="Permalink to this headline">¶</a></h2>
+<p>A latex file with all the plots can also be produced by <a class="reference internal" href="#printframes"><em>printframes</em></a>,
+and is also typically controlled by options set in the file setplot.py.</p>
+</div>
+<div class="section" id="setting-plot-parameters-with-a-setplot-function">
+<h2>Setting plot parameters with a setplot function<a class="headerlink" href="#setting-plot-parameters-with-a-setplot-function" title="Permalink to this headline">¶</a></h2>
+<p>Typically each applications directory contains a file <tt class="file docutils literal"><span class="pre">setplot.py</span></tt>, see for
+example <a class="reference internal" href="visclaw_doc/plotexamples.html#plotexamples"><em>Plotting examples in 1d</em></a>.
+This file should define a function <cite>setplot(plotdata)</cite> that sets various
+attributes of an object plotdata of class <a class="reference internal" href="ClawPlotData.html#clawplotdata"><em>ClawPlotData</em></a>.</p>
+<p>Documentation on how to create a setplot function and the various plotting
+parameters that can be set can be found in the section <a class="reference internal" href="setplot.html#setplot"><em>Using setplot.py to specify the desired plots</em></a>.</p>
+<p>Examples can be found at <a class="reference internal" href="visclaw_doc/plotexamples.html#plotexamples"><em>Plotting examples in 1d</em></a>.</p>
+</div>
+<div class="section" id="interactive-plotting-with-iplotclaw">
+<span id="plotting-iplotclaw"></span><h2>Interactive plotting with <tt class="docutils literal"><span class="pre">Iplotclaw</span></tt><a class="headerlink" href="#interactive-plotting-with-iplotclaw" title="Permalink to this headline">¶</a></h2>
+<p>For interactive plotting we suggest using <a class="reference external" href="http://ipython.scipy.org/moin/">IPython</a>, which is a nicer shell
+than the pure python shell, with things like command completion and history.
+See the <a class="reference external" href="http://ipython.scipy.org/doc/manual/html/interactive/tutorial.html">Quick IPython Tutorial</a></p>
+<p>Here&#8217;s an example:</p>
+<div class="highlight-python"><pre>$  ipython
+In [1]: from pyclaw.plotters.Iplotclaw import Iplotclaw
+In [2]: ip = Iplotclaw()
+In [3]: ip.plotloop()
+Executing setplot ...
+
+Interactive plotclaw with ndim = 1 ...
+Type ? at PLOTCLAW prompt for list of commands
+
+    Start at which frame [default=0] ?
+    Plotting frame 0 ...
+PLOTCLAW &gt;  n
+    Plotting frame 1 ...
+PLOTCLAW &gt; q
+quitting...
+In [4]:</pre>
+</div>
+<p>Type <cite>?</cite> at the PLOTCLAW prompt or <cite>?command-name</cite> for more
+information.  Most commonly used are n for next frame, p for previous frame
+and j to jump to a different frame.  Hitting return at the prompt repeats
+the previous command.</p>
+<p>You can restart the plotloop later by doing:</p>
+<div class="highlight-python"><pre>In [4]: ip.plotloop()
+
+Interactive plotclaw with ndim = 1 ...
+Type ? at PLOTCLAW prompt for list of commands
+
+    Start at which frame [default=1] ?
+    Replot data for frame 1 [no] ?
+PLOTCLAW &gt;</pre>
+</div>
+<p>By default it starts at the frame where you previously left off.</p>
+<p>If you want to change plot parameters, the easiest way is to edit the file
+setplot.py, either in a different window or, if you use vi, by:</p>
+<div class="highlight-python"><pre>PLOTCLAW &gt; vi setplot.py</pre>
+</div>
+<p>and then re-execute the setplot function using:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">PLOTCLAW</span> <span class="o">&gt;</span> <span class="n">resetplot</span>
+</pre></div>
+</div>
+<p>If you recompute results by running the fortran code again and want to plot
+the new results (from this same directory), you may have to clear the frames
+that have already been viewed using:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">PLOTCLAW</span> <span class="o">&gt;</span> <span class="n">clearframes</span>
+</pre></div>
+</div>
+<p>Or you can redraw the frame you&#8217;re currently looking at without clearing the
+rest of the cached frame data by doing:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">PLOTCLAW</span> <span class="o">&gt;</span> <span class="n">rr</span>
+</pre></div>
+</div>
+<p>To see what figures, axes, and items have been defined by <em>setplot</em>:</p>
+<div class="highlight-python"><pre>PLOTCLAW &gt; show
+
+Current plot figures, axes, and items:
+---------------------------------------
+  figname = Pressure, figno = 1
+     axesname = AXES1, axescmd = subplot(1,1,1)
+        itemname = ITEM1,  plot_type = 1d_plot
+
+  figname = Velocity, figno = 2
+     axesname = AXES1, axescmd = subplot(1,1,1)
+        itemname = ITEM1,  plot_type = 1d_plot</pre>
+</div>
+<p>Type &#8220;help&#8221; or &#8220;help command-name&#8221; at the prompt for more options.</p>
+<div class="section" id="access-to-current-data">
+<h3>Access to current_data<a class="headerlink" href="#access-to-current-data" title="Permalink to this headline">¶</a></h3>
+<p>If you are viewing plots in using Iplotclaw and want to explore the data for
+some frame or make plots directly in your Python shell, the data that is
+being plotted is available to you in attributes of the Iplotclaw instance.
+For example:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">ip</span> <span class="o">=</span> <span class="n">Iplotclaw</span><span class="p">();</span>  <span class="n">ip</span><span class="o">.</span><span class="n">plotloop</span><span class="p">()</span>
+
+<span class="go">Interactive plotting for Clawpack output...</span>
+
+<span class="go">Plotting data from outdir =  _output</span>
+<span class="go">    ...</span>
+<span class="go">    Plotting Frame 0 at t = 0.0</span>
+<span class="go">PLOTCLAW &gt; q</span>
+<span class="go">quitting...</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pd</span> <span class="o">=</span> <span class="n">ip</span><span class="o">.</span><span class="n">plotdata</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cd</span> <span class="o">=</span> <span class="n">ip</span><span class="o">.</span><span class="n">current_data</span>
+</pre></div>
+</div>
+<p>The <em>cd</em> object contains the <a class="reference internal" href="current_data.html#current-data"><em>current_data</em></a> used for the most recent
+plot, while <em>pd</em> is the <a class="reference internal" href="ClawPlotData.html#clawplotdata"><em>ClawPlotData</em></a> object that
+gives access to all the plotting parameters currently being used as well as
+to methods such as <em>getframe</em> for retrieving other frames of data from this
+computation.</p>
+<p>If you want to change the directory <em>outdir</em> where the frame data is coming
+from, you could do, for example:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">pd</span><span class="o">.</span><span class="n">outdir</span> <span class="o">=</span> <span class="s">&quot;_output2&quot;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ip</span><span class="o">.</span><span class="n">plotloop</span><span class="p">()</span>
+<span class="gp">...</span>
+<span class="go">PLOTCLAW &gt; clearframes    # to remove old frames from cache</span>
+<span class="go">PLOTCLAW &gt; rr             # to redraw current frame number but with new data</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="ipyclaw">
+<span id="id1"></span><h2>ipyclaw<a class="headerlink" href="#ipyclaw" title="Permalink to this headline">¶</a></h2>
+<p><strong>Need to update for new profiles?</strong></p>
+</div>
+<div class="section" id="printframes">
+<span id="id2"></span><h2>printframes<a class="headerlink" href="#printframes" title="Permalink to this headline">¶</a></h2>
+<p><strong>Need to update</strong></p>
+<p>The function pyclaw.plotters.frametools.printframes can be used to produce html and
+latex versions of the plots:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">pyclaw.plotters.data</span> <span class="kn">import</span> <span class="n">ClawPlotData</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">pyclaw.plotters</span> <span class="kn">import</span> <span class="n">frametools</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">plotclaw</span> <span class="o">=</span> <span class="n">ClawPlotData</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c"># set attributes as desired</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">frametools</span><span class="o">.</span><span class="n">printframes</span><span class="p">(</span><span class="n">plotclaw</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>A convenience method of ClawPlotData is defined to apply this function,
+e.g.:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">plotclaw</span><span class="o">.</span><span class="n">printframes</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>This function is automatically called by the &#8220;make .plots&#8221; option available
+in most examples.</p>
+</div>
+<div class="section" id="specifying-what-and-how-to-plot">
+<span id="plot-files"></span><h2>Specifying what and how to plot<a class="headerlink" href="#specifying-what-and-how-to-plot" title="Permalink to this headline">¶</a></h2>
+<p>The first step in specifying how to plot is to create a <a class="reference internal" href="ClawPlotData.html#clawplotdata"><em>ClawPlotData</em></a>
+object to hold all the data required for plotting.  This is generally done
+one of two ways:</p>
+<blockquote>
+<div><ol class="arabic">
+<li><p class="first">In a script such as the plotclaw.py script included in most example
+directories, e.g.,
+<a class="reference external" href="claw/examples/acoustics/1d/example1/plotclaw.py.html">claw/examples/acoustics/1d/example1/plotclaw.py.html</a>.</p>
+</li>
+<li><p class="first">By creating an instance of Iplotclaw to do interactive plotting, e.g.:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">ip</span> <span class="o">=</span> <span class="n">Iplotclaw</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>Then ip will have an attribute plotdata that is a <a class="reference internal" href="ClawPlotData.html#clawplotdata"><em>ClawPlotData</em></a>
+object.  This object will have attribute setplot initialized to
+&#8216;setplot.py&#8217;, indicating that other attributes should be set by
+executing the setplot function defined in the file &#8216;setplot.py&#8217; in this
+directory.</p>
+</li>
+</ol>
+</div></blockquote>
+<p>Once you have a <a class="reference internal" href="ClawPlotData.html#clawplotdata"><em>ClawPlotData</em></a> object you can set various attributes to
+control what is plotted.  For example,:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">plotdata</span><span class="o">.</span><span class="n">plotdir</span> <span class="o">=</span> <span class="s">&#39;_plots&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">plotdata</span><span class="o">.</span><span class="n">setplot</span> <span class="o">=</span> <span class="s">&#39;my_setplot_file.py&#39;</span>
+</pre></div>
+</div>
+<p>will cause hardcopy to go to subdirectory _plots of the current directory and
+will cause the plotting routines to execute:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">my_setplot_file</span> <span class="kn">import</span> <span class="n">setplot</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">plotdata</span> <span class="o">=</span> <span class="n">setplot</span><span class="p">(</span><span class="n">plotdata</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>before doing the plotting.</p>
+<p>There are many other <a class="reference internal" href="ClawPlotData.html#clawplotdata"><em>ClawPlotData</em></a> attributes and methods.</p>
+<p>Most example directories contain a file setplot.py that contains a
+function setplot(). This function
+sets various attributes of the <a class="reference internal" href="ClawPlotData.html#clawplotdata"><em>ClawPlotData</em></a>
+object to control what figures, axes, and items should be plotted for each
+frame of the solution.</p>
+<p>For an outline of how a typical set of plots is specified, see
+<a class="reference internal" href="setplot.html#setplot"><em>Using setplot.py to specify the desired plots</em></a>.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="setplot.html" title="Using setplot.py to specify the desired plots"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="plotting.html" title="Plotting options"
+             >previous</a> |</li>
+<li><a href="http://www.clawpack.org"><font color="#7F0000">Clawpack Webpage</font></a>|&nbsp;</li>
+<li><a href="apps.html"><font color="#7F0000">Gallery</font></a>|&nbsp;</li>
+<li><a href="index.html"><font color="#7F0000">Contents</font></a>|&nbsp;</li>
+ 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2011, Randall J. LeVeque and others.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>

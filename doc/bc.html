@@ -1,0 +1,258 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Boundary conditions &mdash; Clawpack 4.6.x documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '4.6.x',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="shortcut icon" href="_static/clawicon.ico"/>
+    <link rel="author" title="About these documents" href="about.html" />
+    <link rel="top" title="Clawpack 4.6.x documentation" href="index.html" />
+    <link rel="next" title="Output data formats" href="output_styles.html" />
+    <link rel="prev" title="Specifying run-time parameters in setrun.py" href="setrun.html" /> 
+  </head>
+  <body>
+
+<div style="background-color: #FFFFE8; text-align: left; padding: 10px 10px 15px 15px">
+<table>
+<tr>
+<!--
+<td>
+&nbsp;
+<br>
+<a href="http://www.clawpack.org/"><img src="_static/clawlogo.jpg" width=200 border="0" alt="Clawpack logo"/></a>
+</td>
+-->
+<td>
+&nbsp;
+<br>
+<p style="font-size:300%;color:#7F0000"> Clawpack Documentation</p>
+<br>
+<p style="font-size:150%;color:#7F0000"> 
+Version 5.0 --- Under Construction!  Not yet accurate
+</p>
+</td>
+</tr>
+</table>
+</div>
+
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="output_styles.html" title="Output data formats"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="setrun.html" title="Specifying run-time parameters in setrun.py"
+             accesskey="P">previous</a> |</li>
+<li><a href="http://www.clawpack.org"><font color="#7F0000">Clawpack Webpage</font></a>|&nbsp;</li>
+<li><a href="apps.html"><font color="#7F0000">Gallery</font></a>|&nbsp;</li>
+<li><a href="index.html"><font color="#7F0000">Contents</font></a>|&nbsp;</li>
+ 
+      </ul>
+    </div>
+
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="index.html">
+              <img class="logo" src="_static/clawlogo.jpg" alt="Logo"/>
+            </a></p>
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Boundary conditions</a><ul>
+<li><a class="reference internal" href="#boundary-conditions-for-adaptive-refinement">Boundary conditions for adaptive refinement</a></li>
+<li><a class="reference internal" href="#boundary-conditions-for-geoclaw">Boundary conditions for GeoClaw</a></li>
+<li><a class="reference internal" href="#boundary-conditions-for-clamshell-grids-on-the-sphere">Boundary conditions for clamshell grids on the sphere</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="setrun.html"
+                        title="previous chapter">Specifying run-time parameters in <cite>setrun.py</cite></a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="output_styles.html"
+                        title="next chapter">Output data formats</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/bc.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="boundary-conditions">
+<span id="bc"></span><h1>Boundary conditions<a class="headerlink" href="#boundary-conditions" title="Permalink to this headline">¶</a></h1>
+<p>Boundary conditions are imposed each time step by filling ghost cells
+adjacent to the edge of each grid patch.  See Chapter 4 of <a class="reference internal" href="biblio.html#leveque-fvmhp">[LeVeque-FVMHP]</a>
+for more details.</p>
+<p>Several standard choices of boundary condition procedures are provided in
+the library routine <cite>bcN.f</cite> (in <cite>N</cite> space dimensions).  These can be
+selected at each boundary by setting the input paramters <cite>bc_lower</cite> and
+<cite>bc_upper</cite> in each dimension (see <a class="reference internal" href="setrun.html#setrun"><em>Specifying run-time parameters in setrun.py</em></a>) to one of the following:</p>
+<ul>
+<li><p class="first">1 or &#8216;extrap&#8217;   : extrapolation (non-reflecting outflow)</p>
+<p>In this case values from the grid cell adjacent to the boundary
+are copied into all ghost cells moving in the direction normal to
+the boundary.  This gives a fairly good approximation to a
+non-reflecting or outgoing boundary condition that lets waves pass
+out of the boundary without reflection, particularly in one space
+dimension.  In more than one direction this is not perfect for waves
+that hit the boundary at an oblique angle.</p>
+</li>
+<li><p class="first">2 or &#8216;periodic&#8217; : periodic boundary conditions</p>
+<p>In this case ghost cell values are set by copying from interior
+cells at the opposite boundary so that periodic boundary conditions
+are perfectly imposed.  Normally periodic boundary conditions would
+be imposed by setting this value for both <cite>bc_lower</cite> and <cite>bc_upper</cite>
+in some dimension, but this is not required.</p>
+</li>
+<li><p class="first">3 or &#8216;wall&#8217;     : solid wall boundary conditions are imposed
+for systems where the second component of <cite>q</cite>  is the <cite>x</cite> velocity
+or momentum in one dimension (and where the third component
+of <cite>q</cite> is also the <cite>y</cite> velocity/momentum in more dimensions,
+etc.)  This is true, for example, if the acoustics equations
+are solved with components <cite>q = (p, u, v)</cite> or shallow water
+equations with <cite>q = (h, hu, hv)</cite>.</p>
+<p>In this case the normal velocity/momentum at a wall is
+reflected about the boundary (copied to a ghost cell from
+the cell equally far from the boundary on the interior side)
+while all other components are extrapolated.</p>
+<p>Reflecting boundary conditions can also often be used on a line of
+symmetry of a solution in order to reduce the computational domain
+to be only half of the physical domain.</p>
+<p>Note that this option does not work on a mapped grid...
+<strong>Add pointer to modified version</strong></p>
+</li>
+</ul>
+<p>If none of the above boundary conditions are desired, the user can modify
+the subroutine <cite>bcN</cite> so that setting the appropriate component of <cite>bc_lower</cite>
+or <cite>bc_upper</cite> to 0 will execute code added by the user.  In this case it is
+best to put the modified version of <cite>bcN.f</cite> in the application directory and
+modify the <cite>Makefile</cite> to point to the modified version.</p>
+<p>For an example, see ??  <strong>Add pointer</strong></p>
+<div class="section" id="boundary-conditions-for-adaptive-refinement">
+<span id="bc-amr"></span><h2>Boundary conditions for adaptive refinement<a class="headerlink" href="#boundary-conditions-for-adaptive-refinement" title="Permalink to this headline">¶</a></h2>
+<p>When AMR is used, any interior patch edges (not at a domain boundary) are
+filled automatically each time step, either by copying from adjacent
+patches at the same level or by interpolating (in both space and
+time) from coarser levels if needed.</p>
+<p>The user must still specify boundary conditions at the edges of the
+computational domain.  The same set of choices for standard boundary
+conditions as described above are implemented in the library routine
+<cite>bcNamr.f</cite>, and so specifying these boundary conditions requires no change
+to <cite>setrun.py</cite> when going from Classic Clawpack to AMRClaw.  However, if
+special boundary conditions have been implemented in a custom version of
+<cite>bcN.f</cite> then the same procedure for setting ghost cells will have to be
+implemented in a custom version of <cite>bcNamr.f</cite>.  This routine is slightly
+more complicated than the single-grid Classic version, since one must always
+check whether each ghost cell lies outside the computational domain (in
+which case the custom boundary condition procedure must be applied) or lies
+within the domain (in which case ghost cell values are automatically set by
+the AMR code and the user   <cite>bcNamr</cite> routine should leave these values
+alone.</p>
+</div>
+<div class="section" id="boundary-conditions-for-geoclaw">
+<span id="bc-geoclaw"></span><h2>Boundary conditions for GeoClaw<a class="headerlink" href="#boundary-conditions-for-geoclaw" title="Permalink to this headline">¶</a></h2>
+<p>For tsunami modeling or other geophysical flows over topography the
+computational domain has artificial boundaries that are placed sufficiently
+far from the region of interest that any flow or waves leaving the domain
+can be ignored and there should be no incoming waves.  Extrapolation
+boundary conditions are then appropriate.  If the ocean is truncated at some
+point then these generally have been found to give very small spurious
+reflection of outgoing tsunami waves.  Extroplation boundary conditions can
+also be used on dry land (where the depth <cite>h</cite> is zero).</p>
+<p>In some cases reflecting boundary conditions might be more appropriate,
+e.g. along the walls of a wave tank.</p>
+</div>
+<div class="section" id="boundary-conditions-for-clamshell-grids-on-the-sphere">
+<span id="bc-sphere"></span><h2>Boundary conditions for clamshell grids on the sphere<a class="headerlink" href="#boundary-conditions-for-clamshell-grids-on-the-sphere" title="Permalink to this headline">¶</a></h2>
+<p>In 2D AMRClaw and  GeoClaw, an additional option is available for <cite>bc_lower</cite>
+and <cite>bc_upper</cite> that is implemented in the library routines:</p>
+<ul>
+<li><p class="first">4 or &#8216;sphere&#8217;   : sphere boundary conditions</p>
+<p>Must set <cite>bc_lower[0:2] = bc_upper[0:2] = 4</cite> (i.e. at all 4 boundaries)</p>
+<p>These boundary conditions are similar to periodic boundary conditions,
+but for the clamshell grid introduced in [CalhounHelzelLeVeque]
+for solving problems on the sphere using a single logically rectangular
+grid.  This is best envisioned by folding a rectangular piece of paper
+in half, gluing the edges together, and inflating to a sphere.  See the
+animations on the <a class="reference external" href="?">website for the original paper</a>
+See also [BergerCalhounHelzelLeVeque] for further examples.</p>
+</li>
+</ul>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="output_styles.html" title="Output data formats"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="setrun.html" title="Specifying run-time parameters in setrun.py"
+             >previous</a> |</li>
+<li><a href="http://www.clawpack.org"><font color="#7F0000">Clawpack Webpage</font></a>|&nbsp;</li>
+<li><a href="apps.html"><font color="#7F0000">Gallery</font></a>|&nbsp;</li>
+<li><a href="index.html"><font color="#7F0000">Contents</font></a>|&nbsp;</li>
+ 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2011, Randall J. LeVeque and others.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>
