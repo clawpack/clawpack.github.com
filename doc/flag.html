@@ -124,14 +124,14 @@ Version 5.0 --- Under Construction!  Not yet accurate
   <div class="section" id="flagging-cells-for-adaptive-refinement">
 <span id="flag"></span><h1>Flagging cells for adaptive refinement<a class="headerlink" href="#flagging-cells-for-adaptive-refinement" title="Permalink to this headline">¶</a></h1>
 <p><strong>Describe flagging  and clustering algorithms in more detail.</strong></p>
-<p>See <a class="reference internal" href="setrun.html#setrun"><em>Specifying run-time parameters in setrun.py</em></a> for a description of the input parameters that define how
+<p>See <a class="reference internal" href="setrun_amrclaw.html#setrun-amrclaw"><em>Specifying AMRClaw run-time parameters in setrun.py</em></a> for a description of the input parameters that define how
 Richardson extrapolation and/or the <cite>flag2refine</cite> subroutine work.</p>
 <div class="section" id="refinement-regions">
 <span id="flag-regions"></span><h2>Refinement regions<a class="headerlink" href="#refinement-regions" title="Permalink to this headline">¶</a></h2>
 <p>In AMRClaw and GeoClaw it is possible to specify space-time regions in which
 refinement to a certain level is forced or a level beyond which refinement if
 forbidden.  These are specified through the parameter <cite>rundata.regiondata.regions</cite> in
-<cite>setrun.py</cite>.  See <a class="reference internal" href="setrun.html#setrun"><em>Specifying run-time parameters in setrun.py</em></a>.  <strong>Is this right?</strong>
+<cite>setrun.py</cite>.
 This is a list of lists, each of which specifies a region in the form
 <cite>[minlevel,maxlevel,t1,t2,x1,x2,y1,y2]</cite>.</p>
 <p>For example, suppose that <cite>amr_levels_max = 6</cite> has been specified along
@@ -161,21 +161,21 @@ routine <cite>flag2refine</cite>.  The parameters for these are described in
 regions.  They might
 be refined to any level from 1 to 6 depending on the error flagging criteria.</p>
 <p>It is easiest to explain how this works by summarizing the implementation:</p>
-<p>The regridding algorithm from level L to L+1 first loops over all grid cells
+<p>The regridding algorithm from level L to L+1 loops over all grid cells
 at Level L and flags them or not based on the following criteria, where
 <cite>(xc,yc)</cite> represents the cell center and <cite>t</cite> is the current regridding time:</p>
 <ul class="simple">
-<li>Initialize <cite>flag = False</cite> for this cell.</li>
-<li>Loop over all regions (if any) for which <cite>(xc,yc,t)</cite> lies in the region
-specified.
-If <cite>L &gt;= maxlevel</cite> for <em>any</em> such region, go on to the next grid cell
-(with <cite>flag == False</cite> for this cell).
-If <cite>L &lt; minlevel</cite> for <em>every</em> such region, set <cite>flag = True</cite> and
-go on to the next grid cell.</li>
-<li>Otherwise, none of the regions either require or forbid
-refinement of this cell.  In this case, apply the error flagging criteria
+<li>Initialize the flag by applying the error flagging criteria
 specified by Richardson extrapolation and/or the default or user-supplied
 routine <cite>flag2refine</cite> to determine whether this cell should be flagged.</li>
+<li>Loop over all regions (if any) for which <cite>(xc,yc,t)</cite> lies in the region
+specified.<ul>
+<li>If <cite>L &gt;= maxlevel</cite> for <em>any</em> such region, set <cite>flag = False</cite> for this
+cell and go on to the next cell.</li>
+<li>If <cite>L &lt; minlevel</cite> for <em>every</em> such region, set <cite>flag = True</cite> and
+go on to the next grid cell.</li>
+</ul>
+</li>
 </ul>
 </div>
 </div>
