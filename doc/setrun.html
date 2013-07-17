@@ -126,7 +126,7 @@ Version 5.0 --- Under Construction!  Not yet accurate
   <div class="section" id="specifying-run-time-parameters-in-setrun-py">
 <span id="setrun"></span><h1>Specifying run-time parameters in <cite>setrun.py</cite><a class="headerlink" href="#specifying-run-time-parameters-in-setrun-py" title="Permalink to this headline">¶</a></h1>
 <p>It may be useful to look at a specific example, e.g.
-<em class="xref std std-ref">setrun__sample</em>.</p>
+<a class="reference internal" href="setrun_sample.html#setrun-sample"><em>Sample setrun.py module for classic Clawpack</em></a>.</p>
 <p><strong>Note:</strong> Many parameters have changed name since Version 4.X and some new
 ones have been added.  See <a class="reference internal" href="setrun_changes.html#setrun-changes"><em>Changes to input parameters in setrun.py from 4.x to 5.0</em></a> for a summary.</p>
 <p>To convert a Version 4.x <cite>setrun.py</cite> file to Version 5.0, see <a class="reference internal" href="claw46to50.html#claw46to50"><em>Converting from Clawpack 4.6 to 5.0</em></a>.</p>
@@ -208,6 +208,27 @@ described below determine refinement ratios to finer levels.</p>
 <dt>
 <tt class="descname">t0 : float</tt></dt>
 <dd><p>Initial time, often <em>t0 = 0.</em></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<tt class="descname">restart : boolean</tt></dt>
+<dd><p><strong>Currently only available in amrclaw and geoclaw.</strong></p>
+<p>Set True to restart a previous computation.  To use this option,
+see <a class="reference internal" href="restart.html#restart"><em>Checkpointing and restarting</em></a>.  Note that a change in the <cite>Makefile</cite> is also
+required.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<tt class="descname">restart_file : str</tt></dt>
+<dd><p>If <cite>restart == True</cite> then this should be the name of the checkpoint
+file containing all the information needed to do a restart.  This will
+generally be of the form <cite>fort.chkNNNNN</cite> where <cite>NNNNN</cite> is the (coarse
+grid) timestep from the previous computation to restart from.
+This file is assumed to be in the directory specified for output from
+this run.
+See <a class="reference internal" href="restart.html#restart"><em>Checkpointing and restarting</em></a> for more details.</p>
 </dd></dl>
 
 <dl class="attribute">
@@ -481,8 +502,10 @@ boundary in some dimension then the same should be specified at the upper.</p>
 <dl class="attribute">
 <dt>
 <tt class="descname">checkpt_style :: int</tt></dt>
-<dd><p>Specify how often checkpoint files should be created that can be used to
-restart a computation.</p>
+<dd><p><strong>Currently only available in amrclaw and geoclaw.</strong></p>
+<p>Specify how often checkpoint files should be created that can be used to
+restart a computation.
+See <a class="reference internal" href="restart.html#restart"><em>Checkpointing and restarting</em></a> for more details.</p>
 <blockquote>
 <div><ul>
 <li><p class="first"><em>checkpt_style = 0</em> : Do not checkpoint at all</p>

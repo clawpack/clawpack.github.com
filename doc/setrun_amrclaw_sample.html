@@ -101,6 +101,8 @@ Version 5.0 --- Under Construction!  Not yet accurate
             
   <div class="section" id="sample-setrun-py-module-for-amrclaw">
 <span id="setrun-amrclaw-sample"></span><h1>Sample <cite>setrun.py</cite> module for AMRClaw<a class="headerlink" href="#sample-setrun-py-module-for-amrclaw" title="Permalink to this headline">¶</a></h1>
+<p>This sample <cite>setrun.py</cite> module is for two-dimensional acoustics, from the
+example in <cite>$CLAW/amrclaw/tests/acoustics-example1</cite>.</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">Module to set up run time parameters for Clawpack.</span>
 
@@ -217,8 +219,8 @@ Version 5.0 --- Under Construction!  Not yet accurate
     <span class="k">if</span> <span class="n">clawdata</span><span class="o">.</span><span class="n">output_style</span><span class="o">==</span><span class="mi">1</span><span class="p">:</span>
         <span class="c"># Output ntimes frames at equally spaced times up to tfinal:</span>
         <span class="c"># Can specify num_output_times = 0 for no output</span>
-        <span class="n">clawdata</span><span class="o">.</span><span class="n">num_output_times</span> <span class="o">=</span> <span class="mi">10</span>
-        <span class="n">clawdata</span><span class="o">.</span><span class="n">tfinal</span> <span class="o">=</span> <span class="mf">0.5</span>
+        <span class="n">clawdata</span><span class="o">.</span><span class="n">num_output_times</span> <span class="o">=</span> <span class="mi">20</span>
+        <span class="n">clawdata</span><span class="o">.</span><span class="n">tfinal</span> <span class="o">=</span> <span class="mf">1.0</span>
         <span class="n">clawdata</span><span class="o">.</span><span class="n">output_t0</span> <span class="o">=</span> <span class="bp">True</span>  <span class="c"># output at initial (or restart) time?</span>
 
     <span class="k">elif</span> <span class="n">clawdata</span><span class="o">.</span><span class="n">output_style</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
@@ -233,7 +235,7 @@ Version 5.0 --- Under Construction!  Not yet accurate
         <span class="n">clawdata</span><span class="o">.</span><span class="n">output_t0</span> <span class="o">=</span> <span class="bp">True</span>  <span class="c"># output at initial (or restart) time?</span>
 
 
-    <span class="n">clawdata</span><span class="o">.</span><span class="n">output_format</span> <span class="o">==</span> <span class="s">&#39;ascii&#39;</span>      <span class="c"># &#39;ascii&#39; or &#39;netcdf&#39;</span>
+    <span class="n">clawdata</span><span class="o">.</span><span class="n">output_format</span> <span class="o">=</span> <span class="s">&#39;ascii&#39;</span>       <span class="c"># &#39;ascii&#39;, &#39;binary&#39;, &#39;netcdf&#39;</span>
 
     <span class="n">clawdata</span><span class="o">.</span><span class="n">output_q_components</span> <span class="o">=</span> <span class="s">&#39;all&#39;</span>   <span class="c"># could be list such as [True,True]</span>
     <span class="n">clawdata</span><span class="o">.</span><span class="n">output_aux_components</span> <span class="o">=</span> <span class="s">&#39;none&#39;</span>  <span class="c"># could be list</span>
@@ -337,64 +339,11 @@ Version 5.0 --- Under Construction!  Not yet accurate
     <span class="c"># ---------------</span>
     <span class="c"># Gauges:</span>
     <span class="c"># ---------------</span>
-    <span class="c">#clawdata.gauges = []</span>
+    <span class="n">rundata</span><span class="o">.</span><span class="n">gaugedata</span><span class="o">.</span><span class="n">gauges</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="c"># for gauges append lines of the form  [gaugeno, x, y, t1, t2]</span>
-
-
-
-    <span class="c"># ---------------</span>
-    <span class="c"># AMR parameters:</span>
-    <span class="c"># ---------------</span>
-
-
-    <span class="c"># max number of refinement levels:</span>
-    <span class="n">clawdata</span><span class="o">.</span><span class="n">amr_levels_max</span> <span class="o">=</span> <span class="mi">3</span>
-
-    <span class="c"># List of refinement ratios at each level (length at least amr_level_max-1)</span>
-    <span class="n">clawdata</span><span class="o">.</span><span class="n">refinement_ratios_x</span> <span class="o">=</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span>
-    <span class="n">clawdata</span><span class="o">.</span><span class="n">refinement_ratios_y</span> <span class="o">=</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span>
-    <span class="n">clawdata</span><span class="o">.</span><span class="n">refinement_ratios_t</span> <span class="o">=</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span>
-
-
-    <span class="c"># Specify type of each aux variable in clawdata.auxtype.</span>
-    <span class="c"># This must be a list of length num_aux, each element of which is one of:</span>
-    <span class="c">#   &#39;center&#39;,  &#39;capacity&#39;, &#39;xleft&#39;, or &#39;yleft&#39;  (see documentation).</span>
-    <span class="n">clawdata</span><span class="o">.</span><span class="n">aux_type</span> <span class="o">=</span> <span class="p">[]</span>
-
-
-    <span class="c"># Flag for refinement based on Richardson error estimater:</span>
-    <span class="n">clawdata</span><span class="o">.</span><span class="n">flag_richardson</span> <span class="o">=</span> <span class="bp">False</span>    <span class="c"># use Richardson?</span>
-    <span class="n">clawdata</span><span class="o">.</span><span class="n">flag_richardson_tol</span> <span class="o">=</span> <span class="mf">1.000000e+00</span>  <span class="c"># Richardson tolerance</span>
-
-    <span class="c"># Flag for refinement using routine flag2refine:</span>
-    <span class="n">clawdata</span><span class="o">.</span><span class="n">flag2refine</span> <span class="o">=</span> <span class="bp">True</span>      <span class="c"># use this?</span>
-    <span class="n">clawdata</span><span class="o">.</span><span class="n">flag2refine_tol</span> <span class="o">=</span> <span class="mf">0.2</span> <span class="c"># tolerance used in this routine</span>
-    <span class="c"># User can modify flag2refine to change the criterion for flagging.</span>
-    <span class="c"># Default: check maximum absolute difference of first component of q</span>
-    <span class="c"># between a cell and each of its neighbors.</span>
-
-    <span class="c"># steps to take on each level L between regriddings of level L+1:</span>
-    <span class="n">clawdata</span><span class="o">.</span><span class="n">regrid_interval</span> <span class="o">=</span> <span class="mi">2</span>
-
-    <span class="c"># width of buffer zone around flagged points:</span>
-    <span class="c"># (typically the same as regrid_interval so waves don&#39;t escape):</span>
-    <span class="n">clawdata</span><span class="o">.</span><span class="n">regrid_buffer_width</span>  <span class="o">=</span> <span class="mi">2</span>
-
-    <span class="c"># clustering alg. cutoff for (# flagged pts) / (total # of cells refined)</span>
-    <span class="c"># (closer to 1.0 =&gt; more small grids may be needed to cover flagged cells)</span>
-    <span class="n">clawdata</span><span class="o">.</span><span class="n">clustering_cutoff</span> <span class="o">=</span> <span class="mf">0.7</span>
-
-    <span class="c"># print info about each regridding up to this level:</span>
-    <span class="n">clawdata</span><span class="o">.</span><span class="n">verbosity_regrid</span> <span class="o">=</span> <span class="mi">0</span>
-
-
-    <span class="c"># ---------------</span>
-    <span class="c"># Regions:</span>
-    <span class="c"># ---------------</span>
-    <span class="c">#clawdata.regions = []</span>
-    <span class="c"># to specify regions of refinement append lines of the form</span>
-    <span class="c">#  [minlevel,maxlevel,t1,t2,x1,x2,y1,y2]</span>
-
+    <span class="n">rundata</span><span class="o">.</span><span class="n">gaugedata</span><span class="o">.</span><span class="n">gauges</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">10.</span><span class="p">])</span>
+    <span class="n">rundata</span><span class="o">.</span><span class="n">gaugedata</span><span class="o">.</span><span class="n">gauges</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mf">0.7</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">10.</span><span class="p">])</span>
+    <span class="n">rundata</span><span class="o">.</span><span class="n">gaugedata</span><span class="o">.</span><span class="n">gauges</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span> <span class="mf">0.7</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">2.</span><span class="p">),</span> <span class="mf">0.7</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">2.</span><span class="p">),</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">10.</span><span class="p">])</span>
 
     <span class="c"># --------------</span>
     <span class="c"># Checkpointing:</span>
@@ -423,18 +372,74 @@ Version 5.0 --- Under Construction!  Not yet accurate
         <span class="n">clawdata</span><span class="o">.</span><span class="n">checkpt_interval</span> <span class="o">=</span> <span class="mi">5</span>
 
 
+
+    <span class="c"># ---------------</span>
+    <span class="c"># AMR parameters:</span>
+    <span class="c"># ---------------</span>
+
+    <span class="n">amrdata</span> <span class="o">=</span> <span class="n">rundata</span><span class="o">.</span><span class="n">amrdata</span>
+
+    <span class="c"># max number of refinement levels:</span>
+    <span class="n">amrdata</span><span class="o">.</span><span class="n">amr_levels_max</span> <span class="o">=</span> <span class="mi">3</span>
+
+    <span class="c"># List of refinement ratios at each level (length at least amr_level_max-1)</span>
+    <span class="n">amrdata</span><span class="o">.</span><span class="n">refinement_ratios_x</span> <span class="o">=</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span>
+    <span class="n">amrdata</span><span class="o">.</span><span class="n">refinement_ratios_y</span> <span class="o">=</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span>
+    <span class="n">amrdata</span><span class="o">.</span><span class="n">refinement_ratios_t</span> <span class="o">=</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span>
+
+
+    <span class="c"># Specify type of each aux variable in clawdata.auxtype.</span>
+    <span class="c"># This must be a list of length num_aux, each element of which is one of:</span>
+    <span class="c">#   &#39;center&#39;,  &#39;capacity&#39;, &#39;xleft&#39;, or &#39;yleft&#39;  (see documentation).</span>
+    <span class="n">amrdata</span><span class="o">.</span><span class="n">aux_type</span> <span class="o">=</span> <span class="p">[]</span>
+
+
+    <span class="c"># Flag for refinement based on Richardson error estimater:</span>
+    <span class="n">amrdata</span><span class="o">.</span><span class="n">flag_richardson</span> <span class="o">=</span> <span class="bp">False</span>    <span class="c"># use Richardson?</span>
+    <span class="n">amrdata</span><span class="o">.</span><span class="n">flag_richardson_tol</span> <span class="o">=</span> <span class="mf">0.001000e+00</span>  <span class="c"># Richardson tolerance</span>
+
+    <span class="c"># Flag for refinement using routine flag2refine:</span>
+    <span class="n">amrdata</span><span class="o">.</span><span class="n">flag2refine</span> <span class="o">=</span> <span class="bp">True</span>      <span class="c"># use this?</span>
+    <span class="n">amrdata</span><span class="o">.</span><span class="n">flag2refine_tol</span> <span class="o">=</span> <span class="mf">0.2</span> <span class="c"># tolerance used in this routine</span>
+    <span class="c"># User can modify flag2refine to change the criterion for flagging.</span>
+    <span class="c"># Default: check maximum absolute difference of first component of q</span>
+    <span class="c"># between a cell and each of its neighbors.</span>
+
+    <span class="c"># steps to take on each level L between regriddings of level L+1:</span>
+    <span class="n">amrdata</span><span class="o">.</span><span class="n">regrid_interval</span> <span class="o">=</span> <span class="mi">2</span>
+
+    <span class="c"># width of buffer zone around flagged points:</span>
+    <span class="c"># (typically the same as regrid_interval so waves don&#39;t escape):</span>
+    <span class="n">amrdata</span><span class="o">.</span><span class="n">regrid_buffer_width</span>  <span class="o">=</span> <span class="mi">2</span>
+
+    <span class="c"># clustering alg. cutoff for (# flagged pts) / (total # of cells refined)</span>
+    <span class="c"># (closer to 1.0 =&gt; more small grids may be needed to cover flagged cells)</span>
+    <span class="n">amrdata</span><span class="o">.</span><span class="n">clustering_cutoff</span> <span class="o">=</span> <span class="mf">0.7</span>
+
+    <span class="c"># print info about each regridding up to this level:</span>
+    <span class="n">amrdata</span><span class="o">.</span><span class="n">verbosity_regrid</span> <span class="o">=</span> <span class="mi">0</span>
+
+
+    <span class="c"># ---------------</span>
+    <span class="c"># Regions:</span>
+    <span class="c"># ---------------</span>
+    <span class="n">rundata</span><span class="o">.</span><span class="n">regiondata</span><span class="o">.</span><span class="n">regions</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="c"># to specify regions of refinement append lines of the form</span>
+    <span class="c">#  [minlevel,maxlevel,t1,t2,x1,x2,y1,y2]</span>
+
+
     <span class="c">#  ----- For developers -----</span>
     <span class="c"># Toggle debugging print statements:</span>
-    <span class="n">clawdata</span><span class="o">.</span><span class="n">dprint</span> <span class="o">=</span> <span class="bp">False</span>      <span class="c"># print domain flags</span>
-    <span class="n">clawdata</span><span class="o">.</span><span class="n">eprint</span> <span class="o">=</span> <span class="bp">False</span>      <span class="c"># print err est flags</span>
-    <span class="n">clawdata</span><span class="o">.</span><span class="n">edebug</span> <span class="o">=</span> <span class="bp">False</span>      <span class="c"># even more err est flags</span>
-    <span class="n">clawdata</span><span class="o">.</span><span class="n">gprint</span> <span class="o">=</span> <span class="bp">False</span>      <span class="c"># grid bisection/clustering</span>
-    <span class="n">clawdata</span><span class="o">.</span><span class="n">nprint</span> <span class="o">=</span> <span class="bp">False</span>      <span class="c"># proper nesting output</span>
-    <span class="n">clawdata</span><span class="o">.</span><span class="n">pprint</span> <span class="o">=</span> <span class="bp">False</span>      <span class="c"># proj. of tagged points</span>
-    <span class="n">clawdata</span><span class="o">.</span><span class="n">rprint</span> <span class="o">=</span> <span class="bp">False</span>      <span class="c"># print regridding summary</span>
-    <span class="n">clawdata</span><span class="o">.</span><span class="n">sprint</span> <span class="o">=</span> <span class="bp">False</span>      <span class="c"># space/memory output</span>
-    <span class="n">clawdata</span><span class="o">.</span><span class="n">tprint</span> <span class="o">=</span> <span class="bp">False</span>      <span class="c"># time step reporting each level</span>
-    <span class="n">clawdata</span><span class="o">.</span><span class="n">uprint</span> <span class="o">=</span> <span class="bp">False</span>      <span class="c"># update/upbnd reporting</span>
+    <span class="n">amrdata</span><span class="o">.</span><span class="n">dprint</span> <span class="o">=</span> <span class="bp">False</span>      <span class="c"># print domain flags</span>
+    <span class="n">amrdata</span><span class="o">.</span><span class="n">eprint</span> <span class="o">=</span> <span class="bp">False</span>      <span class="c"># print err est flags</span>
+    <span class="n">amrdata</span><span class="o">.</span><span class="n">edebug</span> <span class="o">=</span> <span class="bp">False</span>      <span class="c"># even more err est flags</span>
+    <span class="n">amrdata</span><span class="o">.</span><span class="n">gprint</span> <span class="o">=</span> <span class="bp">False</span>      <span class="c"># grid bisection/clustering</span>
+    <span class="n">amrdata</span><span class="o">.</span><span class="n">nprint</span> <span class="o">=</span> <span class="bp">False</span>      <span class="c"># proper nesting output</span>
+    <span class="n">amrdata</span><span class="o">.</span><span class="n">pprint</span> <span class="o">=</span> <span class="bp">False</span>      <span class="c"># proj. of tagged points</span>
+    <span class="n">amrdata</span><span class="o">.</span><span class="n">rprint</span> <span class="o">=</span> <span class="bp">False</span>      <span class="c"># print regridding summary</span>
+    <span class="n">amrdata</span><span class="o">.</span><span class="n">sprint</span> <span class="o">=</span> <span class="bp">False</span>      <span class="c"># space/memory output</span>
+    <span class="n">amrdata</span><span class="o">.</span><span class="n">tprint</span> <span class="o">=</span> <span class="bp">False</span>      <span class="c"># time step reporting each level</span>
+    <span class="n">amrdata</span><span class="o">.</span><span class="n">uprint</span> <span class="o">=</span> <span class="bp">False</span>      <span class="c"># update/upbnd reporting</span>
 
     <span class="k">return</span> <span class="n">rundata</span>
 
