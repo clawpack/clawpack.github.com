@@ -1,0 +1,187 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Troubleshooting &mdash; Clawpack 4.6.x documentation</title>
+    
+    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '4.6.x',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="shortcut icon" href="../_static/clawicon.ico"/>
+    <link rel="author" title="About these documents" href="../about.html" />
+    <link rel="top" title="Clawpack 4.6.x documentation" href="../index.html" /> 
+  </head>
+  <body>
+
+<div style="background-color: #FFFFE8; text-align: left; padding: 10px 10px 15px 15px">
+<table>
+<tr>
+<!--
+<td>
+&nbsp;
+<br>
+<a href="http://www.clawpack.org/"><img src="../_static/clawlogo.jpg" width=200 border="0" alt="Clawpack logo"/></a>
+</td>
+-->
+<td>
+&nbsp;
+<br>
+<p style="font-size:300%;color:#7F0000"> Clawpack Documentation
+: PyClaw
+
+</p>
+<br>
+<p style="font-size:150%;color:#7F0000"> 
+Version 5.0 --- Under Construction!  Not yet accurate
+</p>
+
+</td>
+</tr>
+</table>
+</div>
+
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+<li><a href="http://www.clawpack.org"><font color="#7F0000">Clawpack Webpage</font></a>|&nbsp;</li>
+<li><a href="../apps.html"><font color="#7F0000">Gallery</font></a>|&nbsp;</li>
+<li><a href="index.html"><font color="#7F0000">Contents</font></a>|&nbsp;</li>
+
+ 
+      </ul>
+    </div>
+
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/clawlogo.jpg" alt="Logo"/>
+            </a></p>
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Troubleshooting</a><ul>
+<li><a class="reference internal" href="#compilation-errors">Compilation errors</a></li>
+<li><a class="reference internal" href="#use-fortran-ordered-arrays">Use Fortran-ordered arrays</a></li>
+</ul>
+</li>
+</ul>
+
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../_sources/pyclaw/troubleshooting.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="troubleshooting">
+<span id="id1"></span><h1>Troubleshooting<a class="headerlink" href="#troubleshooting" title="Permalink to this headline">¶</a></h1>
+<p>This page lists some of the most common difficulties encountered in
+installing and running PyClaw.  If you do not find a solution for your
+problem here, please e-mail the
+<a class="reference external" href="http://http://groups.google.com/group/claw-users">claw-users Google group</a>.
+You may also wish to consult the <a class="reference external" href="https://github.com/clawpack/pyclaw/issues">list of known issues</a>.</p>
+<div class="section" id="compilation-errors">
+<h2>Compilation errors<a class="headerlink" href="#compilation-errors" title="Permalink to this headline">¶</a></h2>
+<p>Two frequent sources of compilation error are:</p>
+<blockquote>
+<div><ul>
+<li><p class="first">Your environment variable FC is set to g77 or another Fortran 77 compiler.
+FC should be undefined or set to a Fortran 90 compiler.
+If you have installed gfortran, you could set:</p>
+<div class="highlight-python"><pre>$ export FC = gfortran</pre>
+</div>
+</li>
+</ul>
+<blockquote>
+<div>in your .bash_profile (in mac) or .bashrc (in linux).</div></blockquote>
+<ul class="simple">
+<li>Conflicts between 32-bit and 64-bit files.  This has been encountered on
+Mac OS X with 32-bit Enthought Python.  We recommend using a 64-bit Python
+install, such as that available from Enthought (free for academics).
+The 32-bit EPD has also been known to cause a plotting issue with PyClaw
+in which plotting becomes extremely slow.</li>
+</ul>
+</div></blockquote>
+</div>
+<div class="section" id="use-fortran-ordered-arrays">
+<h2>Use Fortran-ordered arrays<a class="headerlink" href="#use-fortran-ordered-arrays" title="Permalink to this headline">¶</a></h2>
+<p>By default, Numpy arrays use C-ordering.  But the arrays that store the solution
+and coefficients in PyClaw (i.e., q and aux) must be initialized using Fortran
+ordering, for compatibility with the Fortran routines and PETSc.  Ordinarily,
+this is handled automatically when you create a State or Solution object.
+If you are manually creating arrays, be sure to pass the flag &#8216;F&#8217; to specify
+Fortran ordering.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+<li><a href="http://www.clawpack.org"><font color="#7F0000">Clawpack Webpage</font></a>|&nbsp;</li>
+<li><a href="../apps.html"><font color="#7F0000">Gallery</font></a>|&nbsp;</li>
+<li><a href="index.html"><font color="#7F0000">Contents</font></a>|&nbsp;</li>
+
+ 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2011, Randall J. LeVeque and others.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>

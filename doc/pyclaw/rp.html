@@ -1,0 +1,272 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Riemann Solver Package &mdash; Clawpack 4.6.x documentation</title>
+    
+    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '4.6.x',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="shortcut icon" href="../_static/clawicon.ico"/>
+    <link rel="author" title="About these documents" href="../about.html" />
+    <link rel="top" title="Clawpack 4.6.x documentation" href="../index.html" /> 
+  </head>
+  <body>
+
+<div style="background-color: #FFFFE8; text-align: left; padding: 10px 10px 15px 15px">
+<table>
+<tr>
+<!--
+<td>
+&nbsp;
+<br>
+<a href="http://www.clawpack.org/"><img src="../_static/clawlogo.jpg" width=200 border="0" alt="Clawpack logo"/></a>
+</td>
+-->
+<td>
+&nbsp;
+<br>
+<p style="font-size:300%;color:#7F0000"> Clawpack Documentation
+: PyClaw
+
+</p>
+<br>
+<p style="font-size:150%;color:#7F0000"> 
+Version 5.0 --- Under Construction!  Not yet accurate
+</p>
+
+</td>
+</tr>
+</table>
+</div>
+
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+<li><a href="http://www.clawpack.org"><font color="#7F0000">Clawpack Webpage</font></a>|&nbsp;</li>
+<li><a href="../apps.html"><font color="#7F0000">Gallery</font></a>|&nbsp;</li>
+<li><a href="index.html"><font color="#7F0000">Contents</font></a>|&nbsp;</li>
+
+ 
+      </ul>
+    </div>
+
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/clawlogo.jpg" alt="Logo"/>
+            </a></p>
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Riemann Solver Package</a><ul>
+<li><a class="reference internal" href="#acoustics"><tt class="docutils literal"><span class="pre">Acoustics</span></tt></a></li>
+<li><a class="reference internal" href="#advection"><tt class="docutils literal"><span class="pre">Advection</span></tt></a></li>
+<li><a class="reference internal" href="#burgers-equation"><tt class="docutils literal"><span class="pre">Burgers</span> <span class="pre">Equation</span></tt></a></li>
+<li><a class="reference internal" href="#euler-equations"><tt class="docutils literal"><span class="pre">Euler</span> <span class="pre">Equations</span></tt></a></li>
+<li><a class="reference internal" href="#shallow-water-equations"><tt class="docutils literal"><span class="pre">Shallow</span> <span class="pre">Water</span> <span class="pre">Equations</span></tt></a></li>
+</ul>
+</li>
+</ul>
+
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../_sources/pyclaw/rp.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="riemann-solver-package">
+<span id="pyclaw-rp"></span><h1>Riemann Solver Package<a class="headerlink" href="#riemann-solver-package" title="Permalink to this headline">¶</a></h1>
+<p>This package contains all of the Python-based Riemann solvers.  Each
+module solves the Riemann solver for a particular system of hyperbolic
+equations.  The solvers all have a common function signature:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">rp_</span><span class="o">&lt;</span><span class="n">name</span><span class="o">&gt;</span><span class="n">_</span><span class="o">&lt;</span><span class="n">dim</span><span class="o">&gt;</span><span class="n">d</span><span class="p">(</span><span class="n">q_l</span><span class="p">,</span><span class="n">q_r</span><span class="p">,</span><span class="n">aux_l</span><span class="p">,</span><span class="n">aux_r</span><span class="p">,</span><span class="n">problem_data</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>with <tt class="docutils literal"><span class="pre">&lt;name&gt;</span></tt> replaced with the appropriate solver name and <tt class="docutils literal"><span class="pre">&lt;dim&gt;</span></tt> with
+the appropriate dimension.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Input:</th><td class="field-body"><ul class="first">
+<li><p class="first"><em>q_l</em> - (ndarray(...,num_eqn)) Contains the left states of the Riemann problem</p>
+</li>
+<li><p class="first"><em>q_r</em> - (ndarray(...,num_eqn)) Contains the right states of the Riemann problem</p>
+</li>
+<li><p class="first"><em>aux_l</em> - (ndarray(...,num_aux)) Contains the left values of the auxiliary array</p>
+</li>
+<li><p class="first"><em>aux_r</em> - (ndarray(...,num_aux)) Contains the right values oft he auxiliary array</p>
+</li>
+<li><dl class="first docutils">
+<dt><em>problem_data</em> - (dict) Dictionary containing miscellaneous data which is</dt>
+<dd><p class="first last">usually problem dependent.</p>
+</dd>
+</dl>
+</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Output:</th><td class="field-body"><ul class="first last">
+<li><dl class="first docutils">
+<dt><em>wave</em> - (ndarray(...,num_eqn,num_waves)) Contains the resulting waves from the cell</dt>
+<dd><p class="first last">edge</p>
+</dd>
+</dl>
+</li>
+<li><p class="first"><em>s</em> - (ndarray(...,num_waves)) Speeds of each wave</p>
+</li>
+<li><p class="first"><em>amdq</em> - (ndarray(...,num_eqn)) Left going fluctuation</p>
+</li>
+<li><p class="first"><em>apdq</em> - (ndarray(...,num_eqn)) Right going fluctuation</p>
+</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p>Except for <em>problem_data</em>, all of the input and output values are arrays whose
+elements represent grid values with locations indicated by the following scheme</p>
+<div class="highlight-python"><pre>Indexing works like this:  here num_ghost=2 as an example
+ 0     1     2     3     4     mx+num_ghost-2     mx+num_ghost      mx+num_ghost+2
+             |                        mx+num_ghost-1 |  mx+num_ghost+1
+ |     |     |     |     |   ...   |     |     |     |     |
+    0     1  |  2     3            mx+num_ghost-2    |mx+num_ghost
+                                          mx+num_ghost-1   mx+num_ghost+1
+
+The top indices represent the values that are located on the grid
+cell boundaries such as waves, s and other Riemann problem values,
+the bottom for the cell centered values.  In particular the ith grid cell
+boundary has the following related information:
+                  i-1         i         i+1
+                   |          |          |
+                   |   i-1    |     i    |
+                   |          |          |
+Again, grid cell boundary quantities are at the top, cell centered
+values are in the cell.</pre>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">The values <tt class="docutils literal"><span class="pre">q_l[i]</span></tt>, <tt class="docutils literal"><span class="pre">q_r[i]</span></tt> are the left and right states, respectively, of
+the <tt class="docutils literal"><span class="pre">ith</span></tt> Riemann problem.  This convention is different than that used in
+the Fortran Riemann solvers, where <tt class="docutils literal"><span class="pre">q_l[i]</span></tt>, <tt class="docutils literal"><span class="pre">q_r[i]</span></tt> are the values at the
+left and right edges of a cell.</p>
+</div>
+<p>All of the return values (waves, speeds, and fluctuations) are indexed by cell edge
+(Riemann problem being solved), with <tt class="docutils literal"><span class="pre">s[i]</span></tt> referring to the wave speed at interface
+$i-1/2$.  This follows the same convention used in the Fortran solvers.</p>
+<p>See [LeVeque_book_2002] for more details.</p>
+<p>List of available Riemann solvers:</p>
+<blockquote>
+<div><ul class="simple">
+<li><a class="reference internal" href="#acoustics">Acoustics</a></li>
+<li><a class="reference internal" href="#advection">Advection</a></li>
+<li><a class="reference internal" href="#burgers-equation">Burgers Equation</a></li>
+<li><a class="reference internal" href="#euler-equations">Euler Equations</a></li>
+<li><a class="reference internal" href="#shallow-water-equations">Shallow Water Equations</a></li>
+</ul>
+</div></blockquote>
+<div class="section" id="acoustics">
+<span id="id2"></span><h2><tt class="xref py py-mod docutils literal"><span class="pre">Acoustics</span></tt><a class="headerlink" href="#acoustics" title="Permalink to this headline">¶</a></h2>
+<div class="system-message">
+<p class="system-message-title">System Message: WARNING/2 (<tt class="docutils">/Users/ketch/Research/Software/clawpack/doc/doc/pyclaw/rp.rst</tt>, line 81)</p>
+autodoc can&#8217;t import/find module &#8216;clawpack.riemann.rp_acoustics&#8217;, it reported error: &#8220;No module named rp_acoustics&#8221;, please check your spelling and sys.path</div>
+</div>
+<div class="section" id="advection">
+<span id="id3"></span><h2><tt class="xref py py-mod docutils literal"><span class="pre">Advection</span></tt><a class="headerlink" href="#advection" title="Permalink to this headline">¶</a></h2>
+<div class="system-message">
+<p class="system-message-title">System Message: WARNING/2 (<tt class="docutils">/Users/ketch/Research/Software/clawpack/doc/doc/pyclaw/rp.rst</tt>, line 89)</p>
+autodoc can&#8217;t import/find module &#8216;clawpack.riemann.rp_advection&#8217;, it reported error: &#8220;No module named rp_advection&#8221;, please check your spelling and sys.path</div>
+</div>
+<div class="section" id="burgers-equation">
+<span id="id4"></span><h2><tt class="xref py py-mod docutils literal"><span class="pre">Burgers</span> <span class="pre">Equation</span></tt><a class="headerlink" href="#burgers-equation" title="Permalink to this headline">¶</a></h2>
+<div class="system-message">
+<p class="system-message-title">System Message: WARNING/2 (<tt class="docutils">/Users/ketch/Research/Software/clawpack/doc/doc/pyclaw/rp.rst</tt>, line 97)</p>
+autodoc can&#8217;t import/find module &#8216;clawpack.riemann.rp_burgers&#8217;, it reported error: &#8220;No module named rp_burgers&#8221;, please check your spelling and sys.path</div>
+</div>
+<div class="section" id="euler-equations">
+<span id="id5"></span><h2><tt class="xref py py-mod docutils literal"><span class="pre">Euler</span> <span class="pre">Equations</span></tt><a class="headerlink" href="#euler-equations" title="Permalink to this headline">¶</a></h2>
+<div class="system-message">
+<p class="system-message-title">System Message: WARNING/2 (<tt class="docutils">/Users/ketch/Research/Software/clawpack/doc/doc/pyclaw/rp.rst</tt>, line 105)</p>
+autodoc can&#8217;t import/find module &#8216;clawpack.riemann.rp_euler&#8217;, it reported error: &#8220;No module named rp_euler&#8221;, please check your spelling and sys.path</div>
+</div>
+<div class="section" id="shallow-water-equations">
+<span id="id6"></span><h2><tt class="xref py py-mod docutils literal"><span class="pre">Shallow</span> <span class="pre">Water</span> <span class="pre">Equations</span></tt><a class="headerlink" href="#shallow-water-equations" title="Permalink to this headline">¶</a></h2>
+<div class="system-message">
+<p class="system-message-title">System Message: WARNING/2 (<tt class="docutils">/Users/ketch/Research/Software/clawpack/doc/doc/pyclaw/rp.rst</tt>, line 113)</p>
+autodoc can&#8217;t import/find module &#8216;clawpack.riemann.rp_shallow&#8217;, it reported error: &#8220;No module named rp_shallow&#8221;, please check your spelling and sys.path</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+<li><a href="http://www.clawpack.org"><font color="#7F0000">Clawpack Webpage</font></a>|&nbsp;</li>
+<li><a href="../apps.html"><font color="#7F0000">Gallery</font></a>|&nbsp;</li>
+<li><a href="index.html"><font color="#7F0000">Contents</font></a>|&nbsp;</li>
+
+ 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2011, Randall J. LeVeque and others.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>
