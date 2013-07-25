@@ -28,7 +28,10 @@
     <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="shortcut icon" href="../_static/clawicon.ico"/>
     <link rel="author" title="About these documents" href="../about.html" />
-    <link rel="top" title="Clawpack 4.6.x documentation" href="../index.html" /> 
+    <link rel="top" title="Clawpack 4.6.x documentation" href="../index.html" />
+    <link rel="up" title="Quickstart" href="index.html" />
+    <link rel="next" title="Pyclaw Utility Module" href="util.html" />
+    <link rel="prev" title="PyClaw State" href="state.html" /> 
   </head>
   <body>
 
@@ -68,11 +71,18 @@ Version 5.0 --- Under Construction!  Not yet accurate
         <li class="right" >
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
+        <li class="right" >
+          <a href="util.html" title="Pyclaw Utility Module"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="state.html" title="PyClaw State"
+             accesskey="P">previous</a> |</li>
 <li><a href="http://www.clawpack.org"><font color="#7F0000">Clawpack Webpage</font></a>|&nbsp;</li>
 <li><a href="../apps.html"><font color="#7F0000">Gallery</font></a>|&nbsp;</li>
 <li><a href="index.html"><font color="#7F0000">Contents</font></a>|&nbsp;</li>
 
- 
+
+          <li><a href="index.html" accesskey="U">Quickstart</a> &raquo;</li> 
       </ul>
     </div>
 
@@ -100,6 +110,12 @@ Version 5.0 --- Under Construction!  Not yet accurate
 </li>
 </ul>
 
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="state.html"
+                        title="previous chapter">PyClaw State</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="util.html"
+                        title="next chapter">Pyclaw Utility Module</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="../_sources/pyclaw/geometry.txt"
@@ -188,22 +204,6 @@ have the following:</p>
 </li>
 </ol>
 </div></blockquote>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Examples :</th><td class="field-body"><div class="first last highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">clawpack</span> <span class="kn">import</span> <span class="n">pyclaw</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">domain</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">Domain</span><span class="p">(</span> <span class="p">(</span><span class="mf">0.</span><span class="p">,</span><span class="mf">0.</span><span class="p">),</span> <span class="p">(</span><span class="mf">1.</span><span class="p">,</span><span class="mf">1.</span><span class="p">),</span> <span class="p">(</span><span class="mi">100</span><span class="p">,</span><span class="mi">100</span><span class="p">))</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">domain</span><span class="o">.</span><span class="n">num_dim</span>
-<span class="go">2</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">domain</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">num_cells</span>
-<span class="go">[100, 100]</span>
-</pre></div>
-</div>
-</td>
-</tr>
-</tbody>
-</table>
 <dl class="attribute">
 <dt id="pyclaw.geometry.Domain.grid">
 <tt class="descname">grid</tt><a class="headerlink" href="#pyclaw.geometry.Domain.grid" title="Permalink to this definition">¶</a></dt>
@@ -373,7 +373,7 @@ be associated with this grid</li>
 <span class="go">[10, 25]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">grid</span><span class="o">.</span><span class="n">lower</span>
 <span class="go">[0.0, -1.0]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">grid</span><span class="o">.</span><span class="n">delta</span> <span class="c"># Returns [dx, dy]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">grid</span><span class="o">.</span><span class="n">delta</span>
 <span class="go">[0.1, 0.08]</span>
 </pre></div>
 </div>
@@ -414,6 +414,8 @@ be associated with this grid</li>
 <tt class="descname">add_gauges</tt><big>(</big><em>gauge_coords</em><big>)</big><a class="headerlink" href="#pyclaw.geometry.Grid.add_gauges" title="Permalink to this definition">¶</a></dt>
 <dd><p>Determine the cell indices of each gauge and make a list of all gauges
 with their cell indices.</p>
+<p>For PetClaw, first check whether each gauge is in the part of the grid
+corresponding to this grid.</p>
 </dd></dl>
 
 <dl class="method">
@@ -517,7 +519,7 @@ dimensions or via the computational grid properties <tt class="xref py py-attr d
 <dl class="method">
 <dt id="pyclaw.geometry.Grid.setup_gauge_files">
 <tt class="descname">setup_gauge_files</tt><big>(</big><em>outdir</em><big>)</big><a class="headerlink" href="#pyclaw.geometry.Grid.setup_gauge_files" title="Permalink to this definition">¶</a></dt>
-<dd><p>Creates and opens file objects for gauges.</p>
+<dd><p>Creates and opens file objects for gauges</p>
 </dd></dl>
 
 <dl class="attribute">
@@ -657,13 +659,6 @@ the physical locations of cell edges, see
 <span class="go">101</span>
 </pre></div>
 </div>
-<dl class="method">
-<dt id="pyclaw.geometry.Dimension.centers_with_ghost">
-<tt class="descname">centers_with_ghost</tt><big>(</big><em>nghost</em><big>)</big><a class="headerlink" href="#pyclaw.geometry.Dimension.centers_with_ghost" title="Permalink to this definition">¶</a></dt>
-<dd><p>(ndarrary(:)) - Location of all cell center coordinates
-for this dimension, including centers of ghost cells.</p>
-</dd></dl>
-
 <dl class="attribute">
 <dt id="pyclaw.geometry.Dimension.centers">
 <tt class="descname">centers</tt><a class="headerlink" href="#pyclaw.geometry.Dimension.centers" title="Permalink to this definition">¶</a></dt>
@@ -734,24 +729,16 @@ for this dimension</p>
 <div class="section" id="parallel-geometry-objects">
 <span id="pyclaw-parallel-geometry"></span><h2>Parallel Geometry Objects<a class="headerlink" href="#parallel-geometry-objects" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="petclaw-geometry-domain">
-<h3><a class="reference internal" href="#petclaw.geometry.Domain" title="petclaw.geometry.Domain"><tt class="xref py py-class docutils literal"><span class="pre">petclaw.geometry.Domain</span></tt></a><a class="headerlink" href="#petclaw-geometry-domain" title="Permalink to this headline">¶</a></h3>
-<dl class="class">
-<dt id="petclaw.geometry.Domain">
-<em class="property">class </em><tt class="descclassname">petclaw.geometry.</tt><tt class="descname">Domain</tt><big>(</big><em>geom</em><big>)</big><a class="headerlink" href="#petclaw.geometry.Domain" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">clawpack.pyclaw.geometry.Domain</span></tt></p>
-<p>A Domain is a list of Patches.</p>
-<p>Need to add functionality to accept a list of patches as input.</p>
-</dd></dl>
-
+<h3><tt class="xref py py-class docutils literal"><span class="pre">petclaw.geometry.Domain</span></tt><a class="headerlink" href="#petclaw-geometry-domain" title="Permalink to this headline">¶</a></h3>
+<div class="system-message">
+<p class="system-message-title">System Message: WARNING/2 (<tt class="docutils">/Users/rjl/git/rjleveque/doc/doc/pyclaw/geometry.rst</tt>, line 92)</p>
+autodoc can&#8217;t import/find class &#8216;petclaw.geometry.Domain&#8217;, it reported error: &#8220;No module named petclaw.geometry&#8221;, please check your spelling and sys.path</div>
 </div>
 <div class="section" id="petclaw-geometry-patch">
-<h3><a class="reference internal" href="#petclaw.geometry.Patch" title="petclaw.geometry.Patch"><tt class="xref py py-class docutils literal"><span class="pre">petclaw.geometry.Patch</span></tt></a><a class="headerlink" href="#petclaw-geometry-patch" title="Permalink to this headline">¶</a></h3>
-<dl class="class">
-<dt id="petclaw.geometry.Patch">
-<em class="property">class </em><tt class="descclassname">petclaw.geometry.</tt><tt class="descname">Patch</tt><big>(</big><em>dimensions</em><big>)</big><a class="headerlink" href="#petclaw.geometry.Patch" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">clawpack.pyclaw.geometry.Patch</span></tt></p>
-</dd></dl>
-
+<h3><tt class="xref py py-class docutils literal"><span class="pre">petclaw.geometry.Patch</span></tt><a class="headerlink" href="#petclaw-geometry-patch" title="Permalink to this headline">¶</a></h3>
+<div class="system-message">
+<p class="system-message-title">System Message: WARNING/2 (<tt class="docutils">/Users/rjl/git/rjleveque/doc/doc/pyclaw/geometry.rst</tt>, line 100)</p>
+autodoc can&#8217;t import/find class &#8216;petclaw.geometry.Patch&#8217;, it reported error: &#8220;No module named petclaw.geometry&#8221;, please check your spelling and sys.path</div>
 </div>
 </div>
 </div>
@@ -771,11 +758,18 @@ for this dimension</p>
         <li class="right" >
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
+        <li class="right" >
+          <a href="util.html" title="Pyclaw Utility Module"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="state.html" title="PyClaw State"
+             >previous</a> |</li>
 <li><a href="http://www.clawpack.org"><font color="#7F0000">Clawpack Webpage</font></a>|&nbsp;</li>
 <li><a href="../apps.html"><font color="#7F0000">Gallery</font></a>|&nbsp;</li>
 <li><a href="index.html"><font color="#7F0000">Contents</font></a>|&nbsp;</li>
 
- 
+
+          <li><a href="index.html" >Quickstart</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">

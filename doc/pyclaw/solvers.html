@@ -331,6 +331,16 @@ computes its contribution must be provided.
 </dd></dl>
 
 <dl class="method">
+<dt id="pyclaw.sharpclaw.solver.SharpClawSolver.allocate_rk_stages">
+<tt class="descname">allocate_rk_stages</tt><big>(</big><em>solution</em><big>)</big><a class="headerlink" href="#pyclaw.sharpclaw.solver.SharpClawSolver.allocate_rk_stages" title="Permalink to this definition">¶</a></dt>
+<dd><p>Instantiate State objects for Runge&#8211;Kutta stages.</p>
+<p>This routine is only used by method-of-lines solvers (SharpClaw),
+not by the Classic solvers.  It allocates additional State objects
+to store the intermediate stages used by Runge&#8211;Kutta time integrators.</p>
+<p>If we create a MethodOfLinesSolver subclass, this should be moved there.</p>
+</dd></dl>
+
+<dl class="method">
 <dt id="pyclaw.sharpclaw.solver.SharpClawSolver.dq">
 <tt class="descname">dq</tt><big>(</big><em>state</em><big>)</big><a class="headerlink" href="#pyclaw.sharpclaw.solver.SharpClawSolver.dq" title="Permalink to this definition">¶</a></dt>
 <dd><p>Evaluate dq/dt * (delta t)</p>
@@ -340,6 +350,13 @@ computes its contribution must be provided.
 <dt id="pyclaw.sharpclaw.solver.SharpClawSolver.dqdt">
 <tt class="descname">dqdt</tt><big>(</big><em>state</em><big>)</big><a class="headerlink" href="#pyclaw.sharpclaw.solver.SharpClawSolver.dqdt" title="Permalink to this definition">¶</a></dt>
 <dd><p>Evaluate dq/dt.  This routine is used for implicit time stepping.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyclaw.sharpclaw.solver.SharpClawSolver.set_fortran_parameters">
+<tt class="descname">set_fortran_parameters</tt><big>(</big><em>state</em>, <em>clawparams</em>, <em>workspace</em>, <em>reconstruct</em><big>)</big><a class="headerlink" href="#pyclaw.sharpclaw.solver.SharpClawSolver.set_fortran_parameters" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set parameters for Fortran modules used by SharpClaw.
+The modules should be imported and passed as arguments to this function.</p>
 </dd></dl>
 
 <dl class="method">
@@ -471,6 +488,27 @@ or pure Python (&#8216;Python&#8217;).  <tt class="docutils literal"><span class
 </ul>
 </dd>
 </dl>
+<dl class="method">
+<dt id="clawpack.pyclaw.classic.solver.ClawSolver.set_fortran_parameters">
+<tt class="descname">set_fortran_parameters</tt><big>(</big><em>solution</em><big>)</big><a class="headerlink" href="#clawpack.pyclaw.classic.solver.ClawSolver.set_fortran_parameters" title="Permalink to this definition">¶</a></dt>
+<dd><p>Pack parameters into format recognized by Clawpack (Fortran) code.</p>
+<p>Sets the solver._method array and the cparam common block for the Riemann solver.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="clawpack.pyclaw.classic.solver.ClawSolver.set_method">
+<tt class="descname">set_method</tt><big>(</big><em>state</em><big>)</big><a class="headerlink" href="#clawpack.pyclaw.classic.solver.ClawSolver.set_method" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set values of the solver._method array required by the Fortran code.
+These are algorithmic parameters.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="clawpack.pyclaw.classic.solver.ClawSolver.set_mthlim">
+<tt class="descname">set_mthlim</tt><big>(</big><big>)</big><a class="headerlink" href="#clawpack.pyclaw.classic.solver.ClawSolver.set_mthlim" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convenience routine to convert users limiter specification to 
+the format understood by the Fortran code (i.e., a list of length num_waves).</p>
+</dd></dl>
+
 <dl class="method">
 <dt id="clawpack.pyclaw.classic.solver.ClawSolver.setup">
 <tt class="descname">setup</tt><big>(</big><em>solution</em><big>)</big><a class="headerlink" href="#clawpack.pyclaw.classic.solver.ClawSolver.setup" title="Permalink to this definition">¶</a></dt>

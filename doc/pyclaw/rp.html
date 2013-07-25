@@ -212,33 +212,286 @@ $i-1/2$.  This follows the same convention used in the Fortran solvers.</p>
 </div></blockquote>
 <div class="section" id="acoustics">
 <span id="id2"></span><h2><tt class="xref py py-mod docutils literal"><span class="pre">Acoustics</span></tt><a class="headerlink" href="#acoustics" title="Permalink to this headline">¶</a></h2>
-<div class="system-message">
-<p class="system-message-title">System Message: WARNING/2 (<tt class="docutils">/Users/ketch/Research/Software/clawpack/doc/doc/pyclaw/rp.rst</tt>, line 81)</p>
-autodoc can&#8217;t import/find module &#8216;clawpack.riemann.rp_acoustics&#8217;, it reported error: &#8220;No module named rp_acoustics&#8221;, please check your spelling and sys.path</div>
+<span class="target" id="module-clawpack.riemann.rp_acoustics"></span><p>Riemann solvers for constant coefficient acoustics.</p>
+<div class="math">
+\[q_t + A q_x = 0\]</div>
+<p>where</p>
+<div class="math">
+\[\begin{split}q(x,t) = \left [ \begin{array}{c} p(x,t) \\ u(x,t) \end{array} \right ]\end{split}\]</div>
+<p>and the coefficient matrix is</p>
+<div class="math">
+\[\begin{split}A = \left [\begin{matrix}
+0      &amp; K\\
+1/\rho &amp; 0 
+\end{matrix} \right ]\end{split}\]</div>
+<p>The parameters <span class="math">\(\rho =\)</span> density and <span class="math">\(K =\)</span> bulk modulus are used
+to calculate the impedence <span class="math">\(= Z\)</span> and speed of sound <cite>= c</cite>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Authors:</th><td class="field-body">Kyle T. Mandli (2009-02-03): Initial version</td>
+</tr>
+</tbody>
+</table>
+<dl class="function">
+<dt id="clawpack.riemann.rp_acoustics.rp_acoustics_1d">
+<tt class="descclassname">clawpack.riemann.rp_acoustics.</tt><tt class="descname">rp_acoustics_1d</tt><big>(</big><em>q_l</em>, <em>q_r</em>, <em>aux_l</em>, <em>aux_r</em>, <em>problem_data</em><big>)</big><a class="headerlink" href="#clawpack.riemann.rp_acoustics.rp_acoustics_1d" title="Permalink to this definition">¶</a></dt>
+<dd><p>Basic 1d acoustics riemann solver, with interleaved arrays</p>
+<dl class="docutils">
+<dt><em>problem_data</em> is expected to contain -</dt>
+<dd><ul class="first last simple">
+<li><em>zz</em> - (float) Impedence</li>
+<li><em>cc</em> - (float) Speed of sound</li>
+</ul>
+</dd>
+</dl>
+<p>See <a class="reference internal" href="#pyclaw-rp"><em>Riemann Solver Package</em></a> for more details.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Version :</th><td class="field-body">1.0 (2009-02-03)</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
 </div>
 <div class="section" id="advection">
 <span id="id3"></span><h2><tt class="xref py py-mod docutils literal"><span class="pre">Advection</span></tt><a class="headerlink" href="#advection" title="Permalink to this headline">¶</a></h2>
-<div class="system-message">
-<p class="system-message-title">System Message: WARNING/2 (<tt class="docutils">/Users/ketch/Research/Software/clawpack/doc/doc/pyclaw/rp.rst</tt>, line 89)</p>
-autodoc can&#8217;t import/find module &#8216;clawpack.riemann.rp_advection&#8217;, it reported error: &#8220;No module named rp_advection&#8221;, please check your spelling and sys.path</div>
+<span class="target" id="module-clawpack.riemann.rp_advection"></span><p>Simple advection Riemann solvers</p>
+<p>Basic advection Riemann solvers of the form (1d)</p>
+<div class="math">
+\[q_t + A q_x = 0.\]</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Authors:</th><td class="field-body">Kyle T. Mandli (2008-2-20): Initial version</td>
+</tr>
+</tbody>
+</table>
+<dl class="function">
+<dt id="clawpack.riemann.rp_advection.rp_advection_1d">
+<tt class="descclassname">clawpack.riemann.rp_advection.</tt><tt class="descname">rp_advection_1d</tt><big>(</big><em>q_l</em>, <em>q_r</em>, <em>aux_l</em>, <em>aux_r</em>, <em>problem_data</em><big>)</big><a class="headerlink" href="#clawpack.riemann.rp_advection.rp_advection_1d" title="Permalink to this definition">¶</a></dt>
+<dd><p>Basic 1d advection riemann solver</p>
+<dl class="docutils">
+<dt><em>problem_data</em> should contain -</dt>
+<dd><ul class="first last simple">
+<li><em>u</em> - (float) Determines advection speed</li>
+</ul>
+</dd>
+</dl>
+<p>See <a class="reference internal" href="#pyclaw-rp"><em>Riemann Solver Package</em></a> for more details.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Version :</th><td class="field-body">1.0 (2008-2-20)</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
 </div>
 <div class="section" id="burgers-equation">
 <span id="id4"></span><h2><tt class="xref py py-mod docutils literal"><span class="pre">Burgers</span> <span class="pre">Equation</span></tt><a class="headerlink" href="#burgers-equation" title="Permalink to this headline">¶</a></h2>
-<div class="system-message">
-<p class="system-message-title">System Message: WARNING/2 (<tt class="docutils">/Users/ketch/Research/Software/clawpack/doc/doc/pyclaw/rp.rst</tt>, line 97)</p>
-autodoc can&#8217;t import/find module &#8216;clawpack.riemann.rp_burgers&#8217;, it reported error: &#8220;No module named rp_burgers&#8221;, please check your spelling and sys.path</div>
+<span class="target" id="module-clawpack.riemann.rp_burgers"></span><p>Riemann solvers for Burgers equation</p>
+<div class="math">
+\[u_t + \left ( \frac{1}{2} u^2 \right)_x = 0\]</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Authors:</th><td class="field-body">Kyle T. Mandli (2009-2-4): Initial version</td>
+</tr>
+</tbody>
+</table>
+<dl class="function">
+<dt id="clawpack.riemann.rp_burgers.rp_burgers_1d">
+<tt class="descclassname">clawpack.riemann.rp_burgers.</tt><tt class="descname">rp_burgers_1d</tt><big>(</big><em>q_l</em>, <em>q_r</em>, <em>aux_l</em>, <em>aux_r</em>, <em>problem_data</em><big>)</big><a class="headerlink" href="#clawpack.riemann.rp_burgers.rp_burgers_1d" title="Permalink to this definition">¶</a></dt>
+<dd><p>Riemann solver for Burgers equation in 1d</p>
+<dl class="docutils">
+<dt><em>problem_data</em> should contain -</dt>
+<dd><ul class="first last simple">
+<li><em>efix</em> - (bool) Whether a entropy fix should be used, if not present, 
+false is assumed</li>
+</ul>
+</dd>
+</dl>
+<p>See <a class="reference internal" href="#pyclaw-rp"><em>Riemann Solver Package</em></a> for more details.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Version :</th><td class="field-body">1.0 (2009-2-4)</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
 </div>
 <div class="section" id="euler-equations">
 <span id="id5"></span><h2><tt class="xref py py-mod docutils literal"><span class="pre">Euler</span> <span class="pre">Equations</span></tt><a class="headerlink" href="#euler-equations" title="Permalink to this headline">¶</a></h2>
-<div class="system-message">
-<p class="system-message-title">System Message: WARNING/2 (<tt class="docutils">/Users/ketch/Research/Software/clawpack/doc/doc/pyclaw/rp.rst</tt>, line 105)</p>
-autodoc can&#8217;t import/find module &#8216;clawpack.riemann.rp_euler&#8217;, it reported error: &#8220;No module named rp_euler&#8221;, please check your spelling and sys.path</div>
+<span class="target" id="module-clawpack.riemann.rp_euler"></span><p>Riemann solvers for the Euler equations</p>
+<p>This module contains Riemann solvers for the Euler equations which have the
+form (in 1d):</p>
+<div class="math">
+\[q_t + f(q)_x = 0\]</div>
+<p>where</p>
+<div class="math">
+\[\begin{split}q(x,t) = \left [ \begin{array}{c} \rho \\ \rho u \\ E \end{array} \right ],\end{split}\]</div>
+<p>the flux function is</p>
+<div class="math">
+\[\begin{split}f(q) = \left [ \begin{array}{c} \rho u \\ \rho u^2 + p \\ u(E+p) \end{array}\right ].\end{split}\]</div>
+<p>and <span class="math">\(\rho\)</span> is the density, <span class="math">\(u\)</span> the velocity, <span class="math">\(E\)</span> is the 
+energy and <span class="math">\(p\)</span> is the pressure.</p>
+<p>Unless otherwise noted, the ideal gas equation of state is used:</p>
+<div class="math">
+\[E = (\gamma - 1) \left (E - \frac{1}{2}\rho u^2 \right)\]</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Authors:</th><td class="field-body">Kyle T. Mandli (2009-06-26): Initial version
+Kyle T. Mandli (2011-03-28): Interleaved version</td>
+</tr>
+</tbody>
+</table>
+<dl class="function">
+<dt id="clawpack.riemann.rp_euler.rp_euler_roe_1d">
+<tt class="descclassname">clawpack.riemann.rp_euler.</tt><tt class="descname">rp_euler_roe_1d</tt><big>(</big><em>q_l</em>, <em>q_r</em>, <em>aux_l</em>, <em>aux_r</em>, <em>problem_data</em><big>)</big><a class="headerlink" href="#clawpack.riemann.rp_euler.rp_euler_roe_1d" title="Permalink to this definition">¶</a></dt>
+<dd><p>Roe Euler solver in 1d</p>
+<dl class="docutils">
+<dt><em>aug_global</em> should contain -</dt>
+<dd><ul class="first last simple">
+<li><em>gamma</em> - (float) Ratio of the heat capacities</li>
+<li><em>gamma1</em> - (float) <span class="math">\(1 - \gamma\)</span></li>
+<li><em>efix</em> - (bool) Whether to use an entropy fix or not</li>
+</ul>
+</dd>
+</dl>
+<p>See <a class="reference internal" href="#pyclaw-rp"><em>Riemann Solver Package</em></a> for more details.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Version :</th><td class="field-body">1.0 (2009-6-26)</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
 </div>
 <div class="section" id="shallow-water-equations">
 <span id="id6"></span><h2><tt class="xref py py-mod docutils literal"><span class="pre">Shallow</span> <span class="pre">Water</span> <span class="pre">Equations</span></tt><a class="headerlink" href="#shallow-water-equations" title="Permalink to this headline">¶</a></h2>
-<div class="system-message">
-<p class="system-message-title">System Message: WARNING/2 (<tt class="docutils">/Users/ketch/Research/Software/clawpack/doc/doc/pyclaw/rp.rst</tt>, line 113)</p>
-autodoc can&#8217;t import/find module &#8216;clawpack.riemann.rp_shallow&#8217;, it reported error: &#8220;No module named rp_shallow&#8221;, please check your spelling and sys.path</div>
+<span class="target" id="module-clawpack.riemann.rp_shallow"></span><p>Riemann solvers for the shallow water equations.</p>
+<dl class="docutils">
+<dt>The available solvers are:</dt>
+<dd><ul class="first last">
+<li><p class="first">Roe - Use Roe averages to caluclate the solution to the Riemann problem</p>
+</li>
+<li><p class="first">HLL - Use a HLL solver</p>
+</li>
+<li><dl class="first docutils">
+<dt>Exact - Use a newton iteration to calculate the exact solution to the </dt>
+<dd><p class="first last">Riemann problem</p>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+</dl>
+<div class="math">
+\[q_t + f(q)_x = 0\]</div>
+<p>where</p>
+<div class="math">
+\[\begin{split}q(x,t) = \left [ \begin{array}{c} h \\ h u \end{array} \right ],\end{split}\]</div>
+<p>the flux function is</p>
+<div class="math">
+\[\begin{split}f(q) = \left [ \begin{array}{c} h u \\ hu^2 + 1/2 g h^2 \end{array}\right ].\end{split}\]</div>
+<p>and <span class="math">\(h\)</span> is the water column height, <span class="math">\(u\)</span> the velocity and <span class="math">\(g\)</span>
+is the gravitational acceleration.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Authors:</th><td class="field-body">Kyle T. Mandli (2009-02-05): Initial version</td>
+</tr>
+</tbody>
+</table>
+<dl class="function">
+<dt id="clawpack.riemann.rp_shallow.rp_shallow_exact_1d">
+<tt class="descclassname">clawpack.riemann.rp_shallow.</tt><tt class="descname">rp_shallow_exact_1d</tt><big>(</big><em>q_l</em>, <em>q_r</em>, <em>aux_l</em>, <em>aux_r</em>, <em>problem_data</em><big>)</big><a class="headerlink" href="#clawpack.riemann.rp_shallow.rp_shallow_exact_1d" title="Permalink to this definition">¶</a></dt>
+<dd><p>Exact shallow water Riemann solver</p>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">This solver has not been implemented.</p>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="clawpack.riemann.rp_shallow.rp_shallow_hll_1d">
+<tt class="descclassname">clawpack.riemann.rp_shallow.</tt><tt class="descname">rp_shallow_hll_1d</tt><big>(</big><em>q_l</em>, <em>q_r</em>, <em>aux_l</em>, <em>aux_r</em>, <em>problem_data</em><big>)</big><a class="headerlink" href="#clawpack.riemann.rp_shallow.rp_shallow_hll_1d" title="Permalink to this definition">¶</a></dt>
+<dd><p>HLL shallow water solver</p>
+<div class="highlight-python"><pre>W_1 = Q_hat - Q_l    s_1 = min(u_l-c_l,u_l+c_l,lambda_roe_1,lambda_roe_2)
+W_2 = Q_r - Q_hat    s_2 = max(u_r-c_r,u_r+c_r,lambda_roe_1,lambda_roe_2)
+
+Q_hat = ( f(q_r) - f(q_l) - s_2 * q_r + s_1 * q_l ) / (s_1 - s_2)</pre>
+</div>
+<dl class="docutils">
+<dt><em>problem_data</em> should contain:</dt>
+<dd><ul class="first last simple">
+<li><em>g</em> - (float) Gravitational constant</li>
+</ul>
+</dd>
+</dl>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Version :</th><td class="field-body">1.0 (2009-02-05)</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="clawpack.riemann.rp_shallow.rp_shallow_roe_1d">
+<tt class="descclassname">clawpack.riemann.rp_shallow.</tt><tt class="descname">rp_shallow_roe_1d</tt><big>(</big><em>q_l</em>, <em>q_r</em>, <em>aux_l</em>, <em>aux_r</em>, <em>problem_data</em><big>)</big><a class="headerlink" href="#clawpack.riemann.rp_shallow.rp_shallow_roe_1d" title="Permalink to this definition">¶</a></dt>
+<dd><p>Roe shallow water solver in 1d:</p>
+<div class="highlight-python"><pre>ubar = (sqrt(u_l) + sqrt(u_r)) / (sqrt(h_l) + sqrt(h_r))
+cbar = sqrt( 0.5 * g * (h_l + h_r))
+ 
+W_1 = |      1      |  s_1 = ubar - cbar
+      | ubar - cbar |
+ 
+W_2 = |      1      |  s_1 = ubar + cbar
+      | ubar + cbar |
+  
+a1 = 0.5 * ( - delta_hu + (ubar + cbar) * delta_h ) / cbar
+a2 = 0.5 * (   delta_hu - (ubar - cbar) * delta_h ) / cbar</pre>
+</div>
+<dl class="docutils">
+<dt><em>problem_data</em> should contain:</dt>
+<dd><ul class="first last simple">
+<li><em>g</em> - (float) Gravitational constant</li>
+<li><em>efix</em> - (bool) Boolean as to whether a entropy fix should be used, if 
+not present, false is assumed</li>
+</ul>
+</dd>
+</dl>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Version :</th><td class="field-body">1.0 (2009-02-05)</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
 </div>
 </div>
 
