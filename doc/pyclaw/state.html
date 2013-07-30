@@ -78,8 +78,8 @@ Version 5.0 --- Under Construction!  Not yet accurate
           <a href="solution.html" title="PyClaw Solutions"
              accesskey="P">previous</a> |</li>
 <li><a href="http://www.clawpack.org"><font color="#7F0000">Clawpack Webpage</font></a>|&nbsp;</li>
-<li><a href="../apps.html"><font color="#7F0000">Gallery</font></a>|&nbsp;</li>
 <li><a href="index.html"><font color="#7F0000">Contents</font></a>|&nbsp;</li>
+<li><a href="gallery/gallery_all.html"><font color="#7F0000">Gallery</font></a>|&nbsp;</li>
 
 
           <li><a href="index.html" accesskey="U">Quickstart</a> &raquo;</li> 
@@ -138,11 +138,11 @@ Version 5.0 --- Under Construction!  Not yet accurate
 <a class="reference internal" href="geometry.html#pyclaw.geometry.Patch" title="pyclaw.geometry.Patch"><tt class="xref py py-class docutils literal"><span class="pre">Patch</span></tt></a>.  These fields include <tt class="docutils literal"><span class="pre">q</span></tt> and <tt class="docutils literal"><span class="pre">aux</span></tt>.  The
 <a class="reference internal" href="#pyclaw.state.State" title="pyclaw.state.State"><tt class="xref py py-class docutils literal"><span class="pre">State</span></tt></a> also includes references to the
 <a class="reference internal" href="geometry.html#pyclaw.geometry.Patch" title="pyclaw.geometry.Patch"><tt class="xref py py-class docutils literal"><span class="pre">Patch</span></tt></a> that the state belongs to.</p>
-<p>In parallel the <tt class="xref py py-class docutils literal"><span class="pre">State</span></tt>
+<p>In parallel the <a class="reference internal" href="#petclaw.state.State" title="petclaw.state.State"><tt class="xref py py-class docutils literal"><span class="pre">State</span></tt></a>
 object also handles some of the parallel communication required of the state on the
 given patch such that only the parts of the fields local to the process.  If you
 are interested in the geometry of the local state you can find it through the
-<tt class="xref py py-class docutils literal"><span class="pre">Patch</span></tt> object&#8217;s reference to its own
+<a class="reference internal" href="geometry.html#petclaw.geometry.Patch" title="petclaw.geometry.Patch"><tt class="xref py py-class docutils literal"><span class="pre">Patch</span></tt></a> object&#8217;s reference to its own
 <tt class="xref py py-class docutils literal"><span class="pre">Grid</span></tt>.</p>
 <div class="section" id="serial-pyclaw-state-state">
 <span id="state"></span><h2>Serial <a class="reference internal" href="#pyclaw.state.State" title="pyclaw.state.State"><tt class="xref py py-class docutils literal"><span class="pre">pyclaw.state.State</span></tt></a><a class="headerlink" href="#serial-pyclaw-state-state" title="Permalink to this headline">¶</a></h2>
@@ -188,25 +188,25 @@ can be set using the dictionary state.problem_data.</p>
 <dl class="method">
 <dt id="pyclaw.state.State.get_aux_global">
 <tt class="descname">get_aux_global</tt><big>(</big><big>)</big><a class="headerlink" href="#pyclaw.state.State.get_aux_global" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns a copy of the global aux array</p>
+<dd><p>Returns a copy of state.aux.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="pyclaw.state.State.get_auxbc_from_aux">
 <tt class="descname">get_auxbc_from_aux</tt><big>(</big><em>num_ghost</em>, <em>auxbc</em><big>)</big><a class="headerlink" href="#pyclaw.state.State.get_auxbc_from_aux" title="Permalink to this definition">¶</a></dt>
-<dd><p>Fills in the interior of auxbc (local vector) by copying aux (global vector) to it.</p>
+<dd><p>Fills in the interior of auxbc by copying aux to it.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="pyclaw.state.State.get_q_global">
 <tt class="descname">get_q_global</tt><big>(</big><big>)</big><a class="headerlink" href="#pyclaw.state.State.get_q_global" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns a copy of the global q array</p>
+<dd><p>Returns a copy of state.q.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="pyclaw.state.State.get_qbc_from_q">
 <tt class="descname">get_qbc_from_q</tt><big>(</big><em>num_ghost</em>, <em>qbc</em><big>)</big><a class="headerlink" href="#pyclaw.state.State.get_qbc_from_q" title="Permalink to this definition">¶</a></dt>
-<dd><p>Fills in the interior of qbc (local vector) by copying q (global vector) to it.</p>
+<dd><p>Fills in the interior of qbc by copying q to it.</p>
 </dd></dl>
 
 <dl class="method">
@@ -239,9 +239,7 @@ valid.</p>
 <dl class="method">
 <dt id="pyclaw.state.State.set_aux_from_auxbc">
 <tt class="descname">set_aux_from_auxbc</tt><big>(</big><em>num_ghost</em>, <em>auxbc</em><big>)</big><a class="headerlink" href="#pyclaw.state.State.set_aux_from_auxbc" title="Permalink to this definition">¶</a></dt>
-<dd><p>Set the value of aux using the array auxbc. for PetSolver, this
-involves setting auxbc as the local vector array then perform
-a local to global communication.</p>
+<dd><p>Set the value of aux using the array auxbc.</p>
 </dd></dl>
 
 <dl class="method">
@@ -252,7 +250,7 @@ patch.problem_data.  This is the mechanism for passing scalar variables to the
 Fortran Riemann solvers; cparam must be defined as a common block in the
 Riemann solver.</p>
 <p>This function should be called from solver.setup().  This seems like a fragile
-interdependency between solver and patch; perhaps problem_data should belong
+interdependency between solver and state; perhaps problem_data should belong
 to solver instead of state.</p>
 <p>This function also checks that the set of variables defined in cparam 
 all appear in problem_data.</p>
@@ -261,15 +259,14 @@ all appear in problem_data.</p>
 <dl class="method">
 <dt id="pyclaw.state.State.set_num_ghost">
 <tt class="descname">set_num_ghost</tt><big>(</big><em>num_ghost</em><big>)</big><a class="headerlink" href="#pyclaw.state.State.set_num_ghost" title="Permalink to this definition">¶</a></dt>
-<dd><p>Virtual routine (does nothing).  Overridden in the parallel class.</p>
+<dd><p>Virtual routine (does nothing).  Overridden in the petclaw.state class.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="pyclaw.state.State.set_q_from_qbc">
 <tt class="descname">set_q_from_qbc</tt><big>(</big><em>num_ghost</em>, <em>qbc</em><big>)</big><a class="headerlink" href="#pyclaw.state.State.set_q_from_qbc" title="Permalink to this definition">¶</a></dt>
-<dd><p>Set the value of q using the array qbc. for PetSolver, this
-involves setting qbc as the local vector array then perform
-a local to global communication.</p>
+<dd><p>Set the value of q using the array qbc.  This is called after
+qbc is updated by the solver.</p>
 </dd></dl>
 
 <dl class="attribute">
@@ -341,10 +338,157 @@ to <tt class="docutils literal"><span class="pre">True</span></tt></p>
 
 </div>
 <div class="section" id="parallel-petclaw-state-state">
-<h2>Parallel <tt class="xref py py-class docutils literal"><span class="pre">petclaw.state.State</span></tt><a class="headerlink" href="#parallel-petclaw-state-state" title="Permalink to this headline">¶</a></h2>
-<div class="system-message">
-<p class="system-message-title">System Message: WARNING/2 (<tt class="docutils">/Users/rjl/git/rjleveque/doc/doc/pyclaw/state.rst</tt>, line 33)</p>
-autodoc can&#8217;t import/find class &#8216;petclaw.state.State&#8217;, it reported error: &#8220;No module named petclaw.geometry&#8221;, please check your spelling and sys.path</div>
+<h2>Parallel <a class="reference internal" href="#petclaw.state.State" title="petclaw.state.State"><tt class="xref py py-class docutils literal"><span class="pre">petclaw.state.State</span></tt></a><a class="headerlink" href="#parallel-petclaw-state-state" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="petclaw.state.State">
+<em class="property">class </em><tt class="descclassname">petclaw.state.</tt><tt class="descname">State</tt><big>(</big><em>geom</em>, <em>num_eqn</em>, <em>num_aux=0</em><big>)</big><a class="headerlink" href="#petclaw.state.State" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="docutils">
+<dt>Parallel State class</dt>
+<dd><div class="first last system-message">
+<p class="system-message-title">System Message: SEVERE/4 (<tt class="docutils">/Users/rjl/git/rjleveque/pyclaw/src/petclaw/state.py:docstring of petclaw.state.State</tt>, line 3)</p>
+<p>Unexpected section title.</p>
+<div class="highlight-python"><pre>Parent Class Documentation
+==========================</pre>
+</div>
+</div>
+</dd>
+</dl>
+<p>Module containing all Pyclaw solution objects</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Authors :</th><td class="field-body">David I. Ketcheson &#8211; Initial version (June 2011)</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="petclaw.state.State.get_aux_global">
+<tt class="descname">get_aux_global</tt><big>(</big><big>)</big><a class="headerlink" href="#petclaw.state.State.get_aux_global" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a copy of the global aux array on process 0, otherwise returns None</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="petclaw.state.State.get_auxbc_from_aux">
+<tt class="descname">get_auxbc_from_aux</tt><big>(</big><em>num_ghost</em>, <em>auxbc</em><big>)</big><a class="headerlink" href="#petclaw.state.State.get_auxbc_from_aux" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns aux with ghost cells attached, by accessing the local vector.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="petclaw.state.State.get_q_global">
+<tt class="descname">get_q_global</tt><big>(</big><big>)</big><a class="headerlink" href="#petclaw.state.State.get_q_global" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a copy of the global q array on process 0, otherwise returns None</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="petclaw.state.State.get_qbc_from_q">
+<tt class="descname">get_qbc_from_q</tt><big>(</big><em>num_ghost</em>, <em>qbc</em><big>)</big><a class="headerlink" href="#petclaw.state.State.get_qbc_from_q" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns q with ghost cells attached, by accessing the local vector.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="petclaw.state.State.set_num_ghost">
+<tt class="descname">set_num_ghost</tt><big>(</big><em>num_ghost</em><big>)</big><a class="headerlink" href="#petclaw.state.State.set_num_ghost" title="Permalink to this definition">¶</a></dt>
+<dd><p>This is a hack to deal with the fact that petsc4py
+doesn&#8217;t allow us to change the stencil_width (num_ghost).</p>
+<p>Instead, we initially create DAs with stencil_width=0.
+Then, in solver.setup(), we call this function to replace
+those DAs with new ones that have the right stencil width.</p>
+<p>This could be made more efficient using some PETSc calls,
+but it only happens once so it seems not to be worth it.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="petclaw.state.State.F">
+<tt class="descname">F</tt><a class="headerlink" href="#petclaw.state.State.F" title="Permalink to this definition">¶</a></dt>
+<dd><p>Array containing pointwise values (densities) of output functionals.
+This is just used as temporary workspace before summing.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="petclaw.state.State.aux">
+<tt class="descname">aux</tt><a class="headerlink" href="#petclaw.state.State.aux" title="Permalink to this definition">¶</a></dt>
+<dd><p>We never communicate aux values; every processor should set its own ghost cell
+values for the aux array.  The global aux vector is used only for outputting
+the aux values to file; everywhere else we use the local vector.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="petclaw.state.State.fset">
+<tt class="descname">fset</tt><a class="headerlink" href="#petclaw.state.State.fset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Array containing pointwise values (densities) of output functionals.
+This is just used as temporary workspace before summing.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="petclaw.state.State.gauge_data">
+<tt class="descname">gauge_data</tt><em class="property"> = None</em><a class="headerlink" href="#petclaw.state.State.gauge_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>(list) - List of numpy.ndarray objects. Each element of the list
+stores the values of the corresponding gauge if <tt class="docutils literal"><span class="pre">keep_gauges</span></tt> is set
+to <tt class="docutils literal"><span class="pre">True</span></tt></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="petclaw.state.State.keep_gauges">
+<tt class="descname">keep_gauges</tt><em class="property"> = None</em><a class="headerlink" href="#petclaw.state.State.keep_gauges" title="Permalink to this definition">¶</a></dt>
+<dd><p>(bool) - Keep gauge values in memory for every time step,
+<tt class="docutils literal"><span class="pre">default</span> <span class="pre">=</span> <span class="pre">False</span></tt></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="petclaw.state.State.mF">
+<tt class="descname">mF</tt><a class="headerlink" href="#petclaw.state.State.mF" title="Permalink to this definition">¶</a></dt>
+<dd><p>(int) - Number of derived quantities (components of p)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="petclaw.state.State.mp">
+<tt class="descname">mp</tt><a class="headerlink" href="#petclaw.state.State.mp" title="Permalink to this definition">¶</a></dt>
+<dd><p>(int) - Number of derived quantities (components of p)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="petclaw.state.State.num_aux">
+<tt class="descname">num_aux</tt><a class="headerlink" href="#petclaw.state.State.num_aux" title="Permalink to this definition">¶</a></dt>
+<dd><p>(int) - Number of auxiliary fields</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="petclaw.state.State.num_eqn">
+<tt class="descname">num_eqn</tt><a class="headerlink" href="#petclaw.state.State.num_eqn" title="Permalink to this definition">¶</a></dt>
+<dd><p>(int) - Number of unknowns (components of q)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="petclaw.state.State.p">
+<tt class="descname">p</tt><a class="headerlink" href="#petclaw.state.State.p" title="Permalink to this definition">¶</a></dt>
+<dd><p>Array containing values of derived quantities for output.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="petclaw.state.State.problem_data">
+<tt class="descname">problem_data</tt><em class="property"> = None</em><a class="headerlink" href="#petclaw.state.State.problem_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>(dict) - Dictionary of global values for this patch,
+<tt class="docutils literal"><span class="pre">default</span> <span class="pre">=</span> <span class="pre">{}</span></tt></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="petclaw.state.State.q">
+<tt class="descname">q</tt><a class="headerlink" href="#petclaw.state.State.q" title="Permalink to this definition">¶</a></dt>
+<dd><p>Array to store solution (q) values.</p>
+<p>Settting state.num_eqn automatically allocates space for q, as does
+setting q itself.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="petclaw.state.State.t">
+<tt class="descname">t</tt><em class="property"> = None</em><a class="headerlink" href="#petclaw.state.State.t" title="Permalink to this definition">¶</a></dt>
+<dd><p>(float) - Current time represented on this patch,
+<tt class="docutils literal"><span class="pre">default</span> <span class="pre">=</span> <span class="pre">0.0</span></tt></p>
+</dd></dl>
+
+</dd></dl>
+
 </div>
 </div>
 
@@ -370,8 +514,8 @@ autodoc can&#8217;t import/find class &#8216;petclaw.state.State&#8217;, it repo
           <a href="solution.html" title="PyClaw Solutions"
              >previous</a> |</li>
 <li><a href="http://www.clawpack.org"><font color="#7F0000">Clawpack Webpage</font></a>|&nbsp;</li>
-<li><a href="../apps.html"><font color="#7F0000">Gallery</font></a>|&nbsp;</li>
 <li><a href="index.html"><font color="#7F0000">Contents</font></a>|&nbsp;</li>
+<li><a href="gallery/gallery_all.html"><font color="#7F0000">Gallery</font></a>|&nbsp;</li>
 
 
           <li><a href="index.html" >Quickstart</a> &raquo;</li> 
