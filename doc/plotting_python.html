@@ -91,14 +91,12 @@ Version 5.0 --- Under Construction!  Not yet accurate
   <ul>
 <li><a class="reference internal" href="#">Plotting options in Python</a><ul>
 <li><a class="reference internal" href="#producing-html-plots-from-the-command-line">Producing html plots from the command line</a></li>
-<li><a class="reference internal" href="#viewing-plots-via-a-local-web-server">Viewing plots via a local web server</a></li>
 <li><a class="reference internal" href="#producing-a-latex-file-with-plots-from-the-command-line">Producing a latex file with plots from the command line</a></li>
 <li><a class="reference internal" href="#setting-plot-parameters-with-a-setplot-function">Setting plot parameters with a setplot function</a></li>
 <li><a class="reference internal" href="#interactive-plotting-with-iplotclaw">Interactive plotting with <tt class="docutils literal"><span class="pre">Iplotclaw</span></tt></a><ul>
 <li><a class="reference internal" href="#access-to-current-data">Access to current_data</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#ipyclaw">ipyclaw</a></li>
 <li><a class="reference internal" href="#printframes">printframes</a></li>
 <li><a class="reference internal" href="#specifying-what-and-how-to-plot">Specifying what and how to plot</a></li>
 </ul>
@@ -154,10 +152,6 @@ produce a set of html files that can be
 used to view the resulting plots.  These will be in a subdirectory
 of the current directory as specified by PLOTDIR in the Makefile.</p>
 </div>
-<div class="section" id="viewing-plots-via-a-local-web-server">
-<h2>Viewing plots via a local web server<a class="headerlink" href="#viewing-plots-via-a-local-web-server" title="Permalink to this headline">¶</a></h2>
-<p><strong>Need to update this section</strong></p>
-</div>
 <div class="section" id="producing-a-latex-file-with-plots-from-the-command-line">
 <h2>Producing a latex file with plots from the command line<a class="headerlink" href="#producing-a-latex-file-with-plots-from-the-command-line" title="Permalink to this headline">¶</a></h2>
 <p>A latex file with all the plots can also be produced by <a class="reference internal" href="#printframes"><em>printframes</em></a>,
@@ -175,12 +169,11 @@ parameters that can be set can be found in the section <a class="reference inter
 </div>
 <div class="section" id="interactive-plotting-with-iplotclaw">
 <span id="plotting-iplotclaw"></span><h2>Interactive plotting with <tt class="docutils literal"><span class="pre">Iplotclaw</span></tt><a class="headerlink" href="#interactive-plotting-with-iplotclaw" title="Permalink to this headline">¶</a></h2>
-<p>For interactive plotting we suggest using <a class="reference external" href="http://ipython.scipy.org/moin/">IPython</a>, which is a nicer shell
-than the pure python shell, with things like command completion and history.
-See the <a class="reference external" href="http://ipython.scipy.org/doc/manual/html/interactive/tutorial.html">Quick IPython Tutorial</a></p>
+<p>For interactive plotting we suggest using <a class="reference external" href="http://ipython.org">IPython</a>, which is a nicer shell
+than the pure python shell, with things like command completion and history.</p>
 <p>Here&#8217;s an example:</p>
 <div class="highlight-python"><pre>$  ipython
-In [1]: from pyclaw.plotters.Iplotclaw import Iplotclaw
+In [1]: from clawpack.visclaw.Iplotclaw import Iplotclaw
 In [2]: ip = Iplotclaw()
 In [3]: ip.plotloop()
 Executing setplot ...
@@ -280,17 +273,13 @@ from, you could do, for example:</p>
 </div>
 </div>
 </div>
-<div class="section" id="ipyclaw">
-<span id="id1"></span><h2>ipyclaw<a class="headerlink" href="#ipyclaw" title="Permalink to this headline">¶</a></h2>
-<p><strong>Need to update for new profiles?</strong></p>
-</div>
 <div class="section" id="printframes">
-<span id="id2"></span><h2>printframes<a class="headerlink" href="#printframes" title="Permalink to this headline">¶</a></h2>
+<span id="ipyclaw"></span><span id="id1"></span><h2>printframes<a class="headerlink" href="#printframes" title="Permalink to this headline">¶</a></h2>
 <p><strong>Need to update</strong></p>
 <p>The function pyclaw.plotters.frametools.printframes can be used to produce html and
 latex versions of the plots:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">pyclaw.plotters.data</span> <span class="kn">import</span> <span class="n">ClawPlotData</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">pyclaw.plotters</span> <span class="kn">import</span> <span class="n">frametools</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">clawpack.visclaw.data</span> <span class="kn">import</span> <span class="n">ClawPlotData</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">clawpack.visclaw</span> <span class="kn">import</span> <span class="n">frametools</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">plotclaw</span> <span class="o">=</span> <span class="n">ClawPlotData</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c"># set attributes as desired</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">frametools</span><span class="o">.</span><span class="n">printframes</span><span class="p">(</span><span class="n">plotclaw</span><span class="p">)</span>
@@ -308,27 +297,18 @@ in most examples.</p>
 <span id="plot-files"></span><h2>Specifying what and how to plot<a class="headerlink" href="#specifying-what-and-how-to-plot" title="Permalink to this headline">¶</a></h2>
 <p>The first step in specifying how to plot is to create a <a class="reference internal" href="ClawPlotData.html#clawplotdata"><em>ClawPlotData</em></a>
 object to hold all the data required for plotting.  This is generally done
-one of two ways:</p>
-<blockquote>
-<div><ol class="arabic">
-<li><p class="first">In a script such as the plotclaw.py script included in most example
-directories, e.g.,
-<a class="reference external" href="claw/examples/acoustics/1d/example1/plotclaw.py.html">claw/examples/acoustics/1d/example1/plotclaw.py.html</a>.</p>
-</li>
-<li><p class="first">By creating an instance of Iplotclaw to do interactive plotting, e.g.:</p>
+by creating a file <cite>setplot.py</cite> (see below).</p>
+<p>Note that when you use Iplotclaw to do interactive plotting, e.g.:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">ip</span> <span class="o">=</span> <span class="n">Iplotclaw</span><span class="p">()</span>
 </pre></div>
 </div>
-<p>Then ip will have an attribute plotdata that is a <a class="reference internal" href="ClawPlotData.html#clawplotdata"><em>ClawPlotData</em></a>
+<p>Then object <cite>ip</cite> will have an attribute plotdata that is a <a class="reference internal" href="ClawPlotData.html#clawplotdata"><em>ClawPlotData</em></a>
 object.  This object will have attribute setplot initialized to
 &#8216;setplot.py&#8217;, indicating that other attributes should be set by
 executing the setplot function defined in the file &#8216;setplot.py&#8217; in this
 directory.</p>
-</li>
-</ol>
-</div></blockquote>
 <p>Once you have a <a class="reference internal" href="ClawPlotData.html#clawplotdata"><em>ClawPlotData</em></a> object you can set various attributes to
-control what is plotted.  For example,:</p>
+control what is plotted interactively if you want.  For example,:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">plotdata</span><span class="o">.</span><span class="n">plotdir</span> <span class="o">=</span> <span class="s">&#39;_plots&#39;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">plotdata</span><span class="o">.</span><span class="n">setplot</span> <span class="o">=</span> <span class="s">&#39;my_setplot_file.py&#39;</span>
 </pre></div>

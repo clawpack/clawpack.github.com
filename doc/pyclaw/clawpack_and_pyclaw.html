@@ -152,7 +152,7 @@ are complicated and implement time consuming algorithms, and the performance
 of the overall procedure (porting and running into PyClaw a new problem) is one
 of the main user&#8217;s concern, one should consider directly using the f2py
 interface in the initialization script (see <a class="reference internal" href="problem.html#problem-setup"><em>Setting up your own problem</em></a>).
-The shallow water equations solved on a sphere <a class="reference external" href="http://numerics.kaust.edu.sa/pyclaw/apps/shallow-sphere/shallow_4_Rossby_Haurwitz_wave.py">(code here)</a> represent a
+The shallow water equations solved on a sphere <a class="reference external" href="http://numerics.kaust.edu.sa/pyclaw/examples/shallow-sphere/shallow_4_Rossby_Haurwitz_wave.py">(code here)</a> represent a
 useful and complete example to understand the simplicity of the procedure.
 In that problem setup, a few Fortran routines have been used to provide the
 following functionality:</p>
@@ -169,7 +169,7 @@ variables</li>
 </div></blockquote>
 <p>The first step to succesfully interface the Fortran functions with PyClaw
 is to automate the extension module generation of these routines through f2py.
-<a class="reference external" href="http://numerics.kaust.edu.sa/pyclaw/apps/shallow-sphere/shallow_4_Rossby_Haurwitz_wave.py">This Makefile</a>
+<a class="reference external" href="http://numerics.kaust.edu.sa/pyclaw/examples/shallow-sphere/shallow_4_Rossby_Haurwitz_wave.py">This Makefile</a>
 shows how to do it:</p>
 <div class="highlight-python"><pre># Problem's source Fortran files
 INITIALIZE_SOURCE = mapc2p.f setaux.f qinit.f src2.f
@@ -202,7 +202,7 @@ the following output:</p>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">Base</span> <span class="n">Class</span><span class="p">:</span>     <span class="o">&lt;</span><span class="nb">type</span> <span class="s">&#39;module&#39;</span><span class="o">&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">String</span> <span class="n">Form</span><span class="p">:</span>    <span class="o">&lt;</span><span class="n">module</span> <span class="s">&#39;problem&#39;</span> <span class="kn">from</span> <span class="s">&#39;problem.so&#39;</span><span class="o">&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">Namespace</span><span class="p">:</span>      <span class="n">Interactive</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">File</span><span class="p">:</span>           <span class="o">/</span><span class="n">Users</span><span class="o">/../../../</span><span class="n">clawpack</span><span class="o">/</span><span class="n">pyclaw</span><span class="o">/</span><span class="n">apps</span><span class="o">/</span><span class="n">shallow</span><span class="o">-</span><span class="n">sphere</span><span class="o">/</span><span class="n">problem</span><span class="o">.</span><span class="n">so</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">File</span><span class="p">:</span>           <span class="o">/</span><span class="n">Users</span><span class="o">/../../../</span><span class="n">clawpack</span><span class="o">/</span><span class="n">pyclaw</span><span class="o">/</span><span class="n">examples</span><span class="o">/</span><span class="n">shallow</span><span class="o">-</span><span class="n">sphere</span><span class="o">/</span><span class="n">problem</span><span class="o">.</span><span class="n">so</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">Docstring</span><span class="p">:</span>
 <span class="go">    This module &#39;problem&#39; is auto-generated with f2py (version:1).</span>
 <span class="go">    Functions:</span>
@@ -237,7 +237,7 @@ arguments since their values can be retrieved by looking at the dimensions of
 other multidimensional arrays, i.e. <tt class="docutils literal"><span class="pre">q</span></tt> and <tt class="docutils literal"><span class="pre">aux</span></tt>.</p>
 <p>We are now ready to call and use the Fortran functions in the initialization
 script. For instance, the <tt class="docutils literal"><span class="pre">src2</span></tt> function is called in the
-<a class="reference external" href="http://numerics.kaust.edu.sa/pyclaw/apps/shallow-sphere/shallow_4_Rossby_Haurwitz_wave.py">script</a> by using a fortran_src_wrapper function whose main part reads:</p>
+<a class="reference external" href="http://numerics.kaust.edu.sa/pyclaw/examples/shallow-sphere/shallow_4_Rossby_Haurwitz_wave.py">script</a> by using a fortran_src_wrapper function whose main part reads:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="c"># Call src2 function</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">problem</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">state</span><span class="o">.</span><span class="n">q</span> <span class="o">=</span> <span class="n">problem</span><span class="o">.</span><span class="n">src2</span><span class="p">(</span><span class="n">mx</span><span class="p">,</span><span class="n">my</span><span class="p">,</span><span class="n">num_ghost</span><span class="p">,</span><span class="n">xlowerg</span><span class="p">,</span><span class="n">ylowerg</span><span class="p">,</span><span class="n">dx</span><span class="p">,</span><span class="n">dy</span><span class="p">,</span><span class="n">q</span><span class="p">,</span><span class="n">aux</span><span class="p">,</span><span class="n">t</span><span class="p">,</span><span class="n">dt</span><span class="p">,</span><span class="n">Rsphere</span><span class="p">)</span>
@@ -252,7 +252,7 @@ standard ones is very easy; the user just needs to modify the problem-specific
 Makefile. The shallow water equations on a sphere is again a
 typical example that uses this nice feature. Indeed, to run correctly the problem an
 ad-hoc <tt class="docutils literal"><span class="pre">step2</span></tt> function (i.e. the <tt class="docutils literal"><span class="pre">step2qcor</span></tt>) is required. For that problem
-the interesting part of the <a class="reference external" href="http://numerics.kaust.edu.sa/pyclaw/apps/shallow-sphere/shallow_4_Rossby_Haurwitz_wave.py">Makefile</a>
+the interesting part of the <a class="reference external" href="http://numerics.kaust.edu.sa/pyclaw/examples/shallow-sphere/shallow_4_Rossby_Haurwitz_wave.py">Makefile</a>
 reads:</p>
 <div class="highlight-python"><pre># Override step2.f with a new function that contains a call to an additional
 # function, i.e. qcor.f
