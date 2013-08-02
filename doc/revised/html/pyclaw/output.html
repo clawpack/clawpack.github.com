@@ -1,0 +1,227 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Advanced output options &mdash; Clawpack 5.0.0rc-alpha documentation</title>
+    
+    <link rel="stylesheet" href="../_static/flasky.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/base.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/layout.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '5.0.0rc-alpha',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="shortcut icon" href="../_static/clawicon.ico"/>
+    <link rel="author" title="About these documents" href="../about.html" />
+    <link rel="top" title="Clawpack 5.0.0rc-alpha documentation" href="../index.html" />
+    <link rel="up" title="Going Further" href="going_further.html" />
+    <link rel="next" title="Understanding Pyclaw Classes" href="classes.html" />
+    <link rel="prev" title="Running in parallel" href="parallel.html" /> 
+  </head>
+  <body>
+<div id="main-wrapper" class="sphinx">
+<div id="header-wrapper">
+  <section id="header">
+    <h1><a href="http://clawpack.org/">Clawpack</a></h1>
+    <nav>
+      <ul>
+        <li>
+          <a href="../index.html">Docs</a>
+        </li>
+        <li>
+          <a href="../installing.html">Install</a>
+        </li>
+        <li>
+          <a class="" href="gallery/gallery_all.html">Gallery</a>
+        </li>
+        <li>
+          <a class="active" href="https://groups.google.com/forum/#!forum/claw-users">Support</a>
+        </li>
+        <li>
+          <a class="active" href="http://github.com/clawpack">Source</a>
+        </li>
+        <li>
+          <a class="" href="../developers.html">Develop</a>
+        </li>
+      </ul>
+    </nav>
+  </section>
+<div class="decoration"></div>
+</div>
+
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="classes.html" title="Understanding Pyclaw Classes"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="parallel.html" title="Running in parallel"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../contents.html">Clawpack 5.0.0rc-alpha documentation</a> &raquo;</li>
+          <li><a href="index.html" >Quickstart</a> &raquo;</li>
+          <li><a href="going_further.html" accesskey="U">Going Further</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="advanced-output-options">
+<span id="output"></span><h1>Advanced output options<a class="headerlink" href="#advanced-output-options" title="Permalink to this headline">¶</a></h1>
+<p>PyClaw supports options to output more
+than just the solution <span class="math">\(q\)</span>.  It can provide:</p>
+<blockquote>
+<div><ul class="simple">
+<li>Output of derived quantities computed from <span class="math">\(q\)</span>; for instance,
+pressure (not a conserved quantity) could be computed from density
+and energy.</li>
+<li>Output of scalar functionals, such as the total mass summed over the whole grid.</li>
+<li>Output of gauge values, which are time traces of the solution at a
+single point.</li>
+</ul>
+</div></blockquote>
+<p>Derived quantities and functionals are written out at the same times that the solution
+<span class="math">\(q\)</span> is written.  While these could be computed in postprocessing, it is more efficient
+to compute them at run-time for large parallel runs.</p>
+<p>Gauge output is written at every timestep.  In order to get this data without a
+gauge, one would otherwise have to write the full solution out at every
+timestep, which might be very slow.</p>
+<div class="section" id="outputting-derived-quantities">
+<h2>Outputting derived quantities<a class="headerlink" href="#outputting-derived-quantities" title="Permalink to this headline">¶</a></h2>
+<p>It is sometimes desirable to output quantities other than those
+in the vector q.  To do so, just add a function <cite>p_function</cite> to
+the controller that accepts the state and sets the derived quantities
+in state.p</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">stress</span><span class="p">(</span><span class="n">state</span><span class="p">):</span>
+<span class="gp">... </span>   <span class="n">state</span><span class="o">.</span><span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">,:,:]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">state</span><span class="o">.</span><span class="n">q</span><span class="p">[</span><span class="mi">0</span><span class="p">,:,:]</span><span class="o">*</span><span class="n">state</span><span class="o">.</span><span class="n">aux</span><span class="p">[</span><span class="mi">1</span><span class="p">,:,:])</span> <span class="o">-</span> <span class="mf">1.</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">state</span><span class="o">.</span><span class="n">mp</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">claw</span><span class="o">.</span><span class="n">p_function</span> <span class="o">=</span> <span class="n">stress</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="outputting-functionals">
+<h2>Outputting functionals<a class="headerlink" href="#outputting-functionals" title="Permalink to this headline">¶</a></h2>
+<p>In PyClaw a functional is a scalar quantity computed from <span class="math">\(q\)</span> that is written
+to file at each output time.  For now, only functionals of the form</p>
+<div class="math">
+\[\begin{equation}
+     F(q) = \int |f(q)| dx dy
+\end{equation}\]</div>
+<p>are supported.  In other words, the functional must be the absolute
+integral of some function of <span class="math">\(q\)</span>.  To enable writing functionals, simply
+set state.mf to the number of functionals and point the controller to a
+function that computes <span class="math">\(f(q)\)</span></p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">compute_f</span><span class="p">(</span><span class="n">state</span><span class="p">):</span>
+<span class="gp">... </span>   <span class="n">state</span><span class="o">.</span><span class="n">F</span><span class="p">[</span><span class="mi">0</span><span class="p">,:,:]</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">q</span><span class="p">[</span><span class="mi">0</span><span class="p">,:,:]</span><span class="o">*</span><span class="n">state</span><span class="o">.</span><span class="n">q</span><span class="p">[</span><span class="mi">1</span><span class="p">,:,:]</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">state</span><span class="o">.</span><span class="n">mf</span> <span class="o">=</span> <span class="mi">1</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="using-gauges">
+<h2>Using gauges<a class="headerlink" href="#using-gauges" title="Permalink to this headline">¶</a></h2>
+<p>A gauge in PyClaw is a single grid location for which output is written at
+every time step.  This can be very useful in some applications, like comparing
+with data from tidal gauges (from whence the name is derived) in tsunami modeling.
+The gauges are managed by the grid object, and a grid at location <span class="math">\((x,y)\)</span>
+may be added simply by calling <cite>grid.add_gauges((x,y))</cite>.  Multiple gauges
+can be set at once by providing a list of coordinate tuples</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">state</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">add_gauges</span><span class="p">([(</span><span class="n">x1</span><span class="p">,</span><span class="n">y1</span><span class="p">),(</span><span class="n">x2</span><span class="p">,</span><span class="n">y2</span><span class="p">),(</span><span class="n">x3</span><span class="p">,</span><span class="n">y3</span><span class="p">)])</span>
+</pre></div>
+</div>
+<p>By default, the solution values are written out at each gauge location.
+To write some other quantity, simply provide a function
+<span class="math">\(f(q,aux)\)</span> and point the solver to it</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">f</span><span class="p">(</span><span class="n">q</span><span class="p">,</span><span class="n">aux</span><span class="p">):</span>
+<span class="gp">... </span>   <span class="k">return</span> <span class="n">q</span><span class="p">[</span><span class="mi">1</span><span class="p">,:,:]</span><span class="o">/</span><span class="n">q</span><span class="p">[</span><span class="mi">0</span><span class="p">,:,:]</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">solver</span><span class="o">.</span><span class="n">compute_gauge_values</span> <span class="o">=</span> <span class="n">f</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../contents.html">
+              <img class="logo" src="../_static/clawlogo.jpg" alt="Logo"/>
+            </a></p>
+  <h3><a href="../contents.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Advanced output options</a><ul>
+<li><a class="reference internal" href="#outputting-derived-quantities">Outputting derived quantities</a></li>
+<li><a class="reference internal" href="#outputting-functionals">Outputting functionals</a></li>
+<li><a class="reference internal" href="#using-gauges">Using gauges</a></li>
+</ul>
+</li>
+</ul>
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../contents.html">Documentation overview</a><ul>
+  <li><a href="index.html">Quickstart</a><ul>
+  <li><a href="going_further.html">Going Further</a><ul>
+      <li>Previous: <a href="parallel.html" title="previous chapter">Running in parallel</a></li>
+      <li>Next: <a href="classes.html" title="next chapter">Understanding Pyclaw Classes</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../_sources/pyclaw/output.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+  <div class="footer">
+    &copy; Copyright 2011, Randall J. LeVeque and others.
+    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
+  </div>
+  
+  </body>
+</html>

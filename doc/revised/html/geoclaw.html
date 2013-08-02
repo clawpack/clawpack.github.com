@@ -1,0 +1,235 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>GeoClaw &mdash; Clawpack 5.0.0rc-alpha documentation</title>
+    
+    <link rel="stylesheet" href="_static/flasky.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/base.css" type="text/css" />
+    <link rel="stylesheet" href="_static/layout.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '5.0.0rc-alpha',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="shortcut icon" href="_static/clawicon.ico"/>
+    <link rel="author" title="About these documents" href="about.html" />
+    <link rel="top" title="Clawpack 5.0.0rc-alpha documentation" href="index.html" />
+    <link rel="next" title="Cautionary Hints on using GeoClaw" href="geohints.html" />
+    <link rel="prev" title="AMR refinement criteria" href="regions.html" /> 
+  </head>
+  <body>
+<div id="main-wrapper" class="sphinx">
+<div id="header-wrapper">
+  <section id="header">
+    <h1><a href="http://clawpack.org/">Clawpack</a></h1>
+    <nav>
+      <ul>
+        <li>
+          <a href="index.html">Docs</a>
+        </li>
+        <li>
+          <a href="installing.html">Install</a>
+        </li>
+        <li>
+          <a class="" href="pyclaw/gallery/gallery_all.html">Gallery</a>
+        </li>
+        <li>
+          <a class="active" href="https://groups.google.com/forum/#!forum/claw-users">Support</a>
+        </li>
+        <li>
+          <a class="active" href="http://github.com/clawpack">Source</a>
+        </li>
+        <li>
+          <a class="" href="developers.html">Develop</a>
+        </li>
+      </ul>
+    </nav>
+  </section>
+<div class="decoration"></div>
+</div>
+
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="geohints.html" title="Cautionary Hints on using GeoClaw"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="regions.html" title="AMR refinement criteria"
+             accesskey="P">previous</a> |</li>
+        <li><a href="contents.html">Clawpack 5.0.0rc-alpha documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="geoclaw">
+<span id="id1"></span><h1>GeoClaw<a class="headerlink" href="#geoclaw" title="Permalink to this headline">¶</a></h1>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">As with all of Clawpack, this code is provided as a research
+and teaching tool with no guarantee of suitability for any particular
+purpose, and no liability on the part of the authors.  See the
+<a class="reference internal" href="license.html#license"><em>License</em></a> for more details and <a class="reference internal" href="geohints.html#geohints"><em>Cautionary Hints on using GeoClaw</em></a> for tips on
+exercising appropriate care in using the code.</p>
+</div>
+<p><strong>See also:</strong></p>
+<ul class="simple">
+<li><a class="reference internal" href="geohints.html#geohints"><em>Cautionary Hints on using GeoClaw</em></a></li>
+<li><a class="reference internal" href="topo.html#topo"><em>Topography data</em></a></li>
+<li><a class="reference internal" href="setrun_geoclaw.html#setrun-geoclaw"><em>Specifying GeoClaw parameters in setrun.py</em></a></li>
+<li><a class="reference internal" href="plotting_geoclaw.html#plotting-geoclaw"><em>Plotting routines for GeoClaw</em></a></li>
+<li><a class="reference internal" href="quick_tsunami.html#quick-tsunami"><em>Quick start guide for tsunami modeling</em></a></li>
+<li><a class="reference internal" href="okada.html#okada"><em>Earthquake sources: Fault slip and the Okada model</em></a></li>
+<li><a class="reference internal" href="sealevel.html#sealevel"><em>Setting sealevel</em></a></li>
+<li><a class="reference internal" href="manning.html#manning"><em>Manning friction term</em></a></li>
+<li><a class="reference internal" href="tsunamidata.html#tsunamidata"><em>Some sources of tsunami data</em></a></li>
+</ul>
+<div class="section" id="overview">
+<h2>Overview<a class="headerlink" href="#overview" title="Permalink to this headline">¶</a></h2>
+<p>The <cite>$CLAW/geoclaw</cite> directory contains a specialized version of some Clawpack
+and AMRClaw routines that have been modified to work well for certain
+geophysical flow problems.</p>
+<p>Currently the focus is on 2d depth-averaged
+shallow water equations for flow over varying topography.  The term
+<em>bathymetry</em> is often used for underwater topography (sea floor or lake
+bottom), but in this documentation and in the code the term <em>topography</em> is
+often used to refer to either.</p>
+<p>A primary concern with such flows is handling the margins of the flow where
+the depth goes to 0, for example at the shore line.  In GeoClaw this is
+handled by letting the depth variable <em>h</em> in the shallow water equations be
+0 in some cells.  Robust Riemann solvers are used that allow for dry cells
+adjacent to wet cells and that allow wetting and drying, for example as a
+tsunami inundates dry land.</p>
+<p>Some sample calculations can be viewed in the <a class="reference internal" href="apps.html#apps"><em>Applications gallery</em></a>.</p>
+</div>
+<div class="section" id="running-a-geoclaw-code">
+<span id="geoclaw-run"></span><h2>Running a GeoClaw code<a class="headerlink" href="#running-a-geoclaw-code" title="Permalink to this headline">¶</a></h2>
+<p>Setting up, running, and plotting a GeoClaw application follows the same pattern
+as other AMRClaw applications, which in turn use many of the same
+conventions as the classic single grid Clawpack code, in particular:</p>
+<blockquote>
+<div><ul class="simple">
+<li>Setting parameters is done in <cite>setrun.py</cite>, as for other versions
+of Clawpack, as described in <a class="reference internal" href="setrun.html#setrun"><em>Specifying run-time parameters in setrun.py</em></a>.  However, there are several
+new parameters that may or must be set for GeoClaw.  See
+<a class="reference internal" href="setrun_geoclaw.html#setrun-geoclaw"><em>Specifying GeoClaw parameters in setrun.py</em></a> for more details on these.</li>
+<li>The program can be compiled and run using <em>make</em> and <em>make .output</em> as
+for other versions, see <a class="reference internal" href="fortran.html#fortran"><em>Fortran version</em></a>.</li>
+<li>Plots of results can be created either as a set of webpages via
+<em>make .plots</em> or interactively using <em>Iplotclaw</em>.  See
+<a class="reference internal" href="plotting.html#plotting"><em>Plotting options</em></a> for more details.  Some additional Python plotting tools
+that are useful for GeoClaw output (e.g. plotting land and water with
+different colormaps) are described in the section
+<a class="reference internal" href="plotting_geoclaw.html#plotting-geoclaw"><em>Plotting routines for GeoClaw</em></a>.</li>
+</ul>
+</div></blockquote>
+</div>
+<div class="section" id="topography">
+<span id="topo-intro"></span><h2>Topography<a class="headerlink" href="#topography" title="Permalink to this headline">¶</a></h2>
+<p>To simulate  flow over topography it is of course necessary to specify
+the topography.  This is usually done by providing one or more files of
+surface elevation (relative to some reference, e.g. sea level) at a set of
+points on a rectangular grid (with x-y locations in Cartesian units or in
+latitude-longitude, depending on the application).</p>
+<p>Several file formats are recognized by GeoClaw.  See <a class="reference internal" href="topo.html#topo"><em>Topography data</em></a> for more
+information on how to specify topography and some on-line resources for
+obtaining topography.</p>
+</div>
+<div class="section" id="plotting-geoclaw-results">
+<span id="geoclaw-plotting"></span><h2>Plotting GeoClaw results<a class="headerlink" href="#plotting-geoclaw-results" title="Permalink to this headline">¶</a></h2>
+<p>GeoClaw results can be plotted with the usual Python plotting tools (see
+<a class="reference internal" href="plotting.html#plotting"><em>Plotting options</em></a>).</p>
+<p>Some special tools and colormaps are available, see <a class="reference internal" href="geoplot.html#geoplot"><em>GeoClaw plotting tools</em></a>.</p>
+</div>
+<div class="section" id="setting-up-a-new-example">
+<h2>Setting up a new example<a class="headerlink" href="#setting-up-a-new-example" title="Permalink to this headline">¶</a></h2>
+<blockquote>
+<div><ul class="simple">
+<li><a class="reference internal" href="quick_tsunami.html#quick-tsunami"><em>Quick start guide for tsunami modeling</em></a></li>
+</ul>
+</div></blockquote>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="contents.html">
+              <img class="logo" src="_static/clawlogo.jpg" alt="Logo"/>
+            </a></p>
+  <h3><a href="contents.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">GeoClaw</a><ul>
+<li><a class="reference internal" href="#overview">Overview</a></li>
+<li><a class="reference internal" href="#running-a-geoclaw-code">Running a GeoClaw code</a></li>
+<li><a class="reference internal" href="#topography">Topography</a></li>
+<li><a class="reference internal" href="#plotting-geoclaw-results">Plotting GeoClaw results</a></li>
+<li><a class="reference internal" href="#setting-up-a-new-example">Setting up a new example</a></li>
+</ul>
+</li>
+</ul>
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="contents.html">Documentation overview</a><ul>
+      <li>Previous: <a href="regions.html" title="previous chapter">AMR refinement criteria</a></li>
+      <li>Next: <a href="geohints.html" title="next chapter">Cautionary Hints on using GeoClaw</a></li>
+  </ul></li>
+</ul>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/geoclaw.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+  <div class="footer">
+    &copy; Copyright 2011, Randall J. LeVeque and others.
+    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
+  </div>
+  
+  </body>
+</html>

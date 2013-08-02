@@ -1,0 +1,223 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Troubleshooting &mdash; Clawpack 5.0.0rc-alpha documentation</title>
+    
+    <link rel="stylesheet" href="_static/flasky.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/base.css" type="text/css" />
+    <link rel="stylesheet" href="_static/layout.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '5.0.0rc-alpha',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="shortcut icon" href="_static/clawicon.ico"/>
+    <link rel="author" title="About these documents" href="about.html" />
+    <link rel="top" title="Clawpack 5.0.0rc-alpha documentation" href="index.html" />
+    <link rel="next" title="Clawpack Virtual Machine" href="vm.html" />
+    <link rel="prev" title="License" href="license.html" /> 
+  </head>
+  <body>
+<div id="main-wrapper" class="sphinx">
+<div id="header-wrapper">
+  <section id="header">
+    <h1><a href="http://clawpack.org/">Clawpack</a></h1>
+    <nav>
+      <ul>
+        <li>
+          <a href="index.html">Docs</a>
+        </li>
+        <li>
+          <a href="installing.html">Install</a>
+        </li>
+        <li>
+          <a class="" href="pyclaw/gallery/gallery_all.html">Gallery</a>
+        </li>
+        <li>
+          <a class="active" href="https://groups.google.com/forum/#!forum/claw-users">Support</a>
+        </li>
+        <li>
+          <a class="active" href="http://github.com/clawpack">Source</a>
+        </li>
+        <li>
+          <a class="" href="developers.html">Develop</a>
+        </li>
+      </ul>
+    </nav>
+  </section>
+<div class="decoration"></div>
+</div>
+
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="vm.html" title="Clawpack Virtual Machine"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="license.html" title="License"
+             accesskey="P">previous</a> |</li>
+        <li><a href="contents.html">Clawpack 5.0.0rc-alpha documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="troubleshooting">
+<span id="trouble"></span><h1>Troubleshooting<a class="headerlink" href="#troubleshooting" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="installation">
+<h2>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="trouble-running-make-exe">
+<span id="trouble-makeexe"></span><h3>Trouble running &#8220;make .exe&#8221;<a class="headerlink" href="#trouble-running-make-exe" title="Permalink to this headline">¶</a></h3>
+<p>If the code does not compile, check the following:</p>
+<blockquote>
+<div><ul>
+<li><p class="first">Make sure your environment variable <cite>CLAW</cite> is set properly:</p>
+<div class="highlight-python"><pre>$ printenv CLAW</pre>
+</div>
+<p>to print the value.
+The Makefiles use this variable to find the common Makefile and
+library routines.</p>
+</li>
+<li><p class="first">Make sure your environment variable <cite>FC</cite> is set properly.  This
+should be set to
+the command used to invoke the Fortran compiler, e.g. <em>gfortran</em>.</p>
+<p>If you get an error like:</p>
+<div class="highlight-python"><pre>make[1]: gfortran: No such file or directory</pre>
+</div>
+<p>then the gfortran compiler is not being found.</p>
+</li>
+</ul>
+</div></blockquote>
+</div>
+<div class="section" id="trouble-running-make-data">
+<span id="trouble-makedata"></span><h3>Trouble running &#8220;make .data&#8221;<a class="headerlink" href="#trouble-running-make-data" title="Permalink to this headline">¶</a></h3>
+<p>If you get the Python error:</p>
+<div class="highlight-python"><pre>ImportError: No module named pyclaw</pre>
+</div>
+<p>it&#8217;s possible that your environment variable <cite>PYTHONPATH</cite> does not
+include $CLAW/python in the path.  If you followed the instructions
+at <a class="reference internal" href="installing.html#setenv"><em>Setting environment variables</em></a> then this variable should be set properly.   Recall
+that this has to be set in any new shell you use for Clawpack.</p>
+<p>If there are errors in the <cite>setrun</cite> function (usually defined in
+<cite>setrun.py</cite>) then the these may show up when you try to &#8220;make .data&#8221;
+since this function must be executed.</p>
+</div>
+<div class="section" id="trouble-running-make-output">
+<span id="trouble-makeoutput"></span><h3>Trouble running &#8220;make .output&#8221;<a class="headerlink" href="#trouble-running-make-output" title="Permalink to this headline">¶</a></h3>
+<p>If you want to re-run the code and you get:</p>
+<div class="highlight-python"><pre>$ make .output
+make: `.output' is up to date.</pre>
+</div>
+<p>then you can force it to run again by removing the file <cite>.output</cite>:</p>
+<div class="highlight-python"><pre>$ rm -f .output
+$ make .output</pre>
+</div>
+<p>This happens for example if you changed something that you know
+will affect the output but that isn&#8217;t in the Makefile&#8217;s set of
+dependencies.</p>
+<p>Starting in 4.5.1, you can also do</p>
+<blockquote>
+<div>$ make output</div></blockquote>
+<p>(with no dot before <tt class="docutils literal"><span class="pre">output</span></tt>) to run the code without checking dependencies.
+See <a class="reference internal" href="makefiles.html#makefiles"><em>Clawpack Makefiles</em></a> for more details and warnings.</p>
+</div>
+<div class="section" id="trouble-running-make-plots">
+<span id="trouble-makeplots"></span><h3>Trouble running &#8220;make .plots&#8221;<a class="headerlink" href="#trouble-running-make-plots" title="Permalink to this headline">¶</a></h3>
+<p>The Python plotting routines require <cite>NumPy</cite> and <cite>matplotlib</cite>.  See
+<a class="reference internal" href="python.html#python"><em>Python Hints</em></a> for information on installing this.</p>
+<p>If there are errors in the <cite>setplot</cite> function (usually defined in
+<cite>setplot.py</cite>) then the these may show up when you try to &#8220;make .output&#8221;
+since this function must be executed.</p>
+<p>Starting in 4.5.1, you can also do</p>
+<blockquote>
+<div>$ make plots</div></blockquote>
+<p>(with no dot before <tt class="docutils literal"><span class="pre">plots</span></tt>) to plot the output without checking dependencies.
+See <a class="reference internal" href="makefiles.html#makefiles"><em>Clawpack Makefiles</em></a> for more details and warnings.</p>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="contents.html">
+              <img class="logo" src="_static/clawlogo.jpg" alt="Logo"/>
+            </a></p>
+  <h3><a href="contents.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Troubleshooting</a><ul>
+<li><a class="reference internal" href="#installation">Installation</a><ul>
+<li><a class="reference internal" href="#trouble-running-make-exe">Trouble running &#8220;make .exe&#8221;</a></li>
+<li><a class="reference internal" href="#trouble-running-make-data">Trouble running &#8220;make .data&#8221;</a></li>
+<li><a class="reference internal" href="#trouble-running-make-output">Trouble running &#8220;make .output&#8221;</a></li>
+<li><a class="reference internal" href="#trouble-running-make-plots">Trouble running &#8220;make .plots&#8221;</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="contents.html">Documentation overview</a><ul>
+      <li>Previous: <a href="license.html" title="previous chapter">License</a></li>
+      <li>Next: <a href="vm.html" title="next chapter">Clawpack Virtual Machine</a></li>
+  </ul></li>
+</ul>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/trouble.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+  <div class="footer">
+    &copy; Copyright 2011, Randall J. LeVeque and others.
+    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
+  </div>
+  
+  </body>
+</html>

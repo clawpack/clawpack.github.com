@@ -1,0 +1,507 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>PyClaw State &mdash; Clawpack 5.0.0rc-alpha documentation</title>
+    
+    <link rel="stylesheet" href="../_static/flasky.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/base.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/layout.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '5.0.0rc-alpha',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="shortcut icon" href="../_static/clawicon.ico"/>
+    <link rel="author" title="About these documents" href="../about.html" />
+    <link rel="top" title="Clawpack 5.0.0rc-alpha documentation" href="../index.html" />
+    <link rel="up" title="Quickstart" href="index.html" />
+    <link rel="next" title="PyClaw Geometry" href="geometry.html" />
+    <link rel="prev" title="PyClaw Solutions" href="solution.html" /> 
+  </head>
+  <body>
+<div id="main-wrapper" class="sphinx">
+<div id="header-wrapper">
+  <section id="header">
+    <h1><a href="http://clawpack.org/">Clawpack</a></h1>
+    <nav>
+      <ul>
+        <li>
+          <a href="../index.html">Docs</a>
+        </li>
+        <li>
+          <a href="../installing.html">Install</a>
+        </li>
+        <li>
+          <a class="" href="gallery/gallery_all.html">Gallery</a>
+        </li>
+        <li>
+          <a class="active" href="https://groups.google.com/forum/#!forum/claw-users">Support</a>
+        </li>
+        <li>
+          <a class="active" href="http://github.com/clawpack">Source</a>
+        </li>
+        <li>
+          <a class="" href="../developers.html">Develop</a>
+        </li>
+      </ul>
+    </nav>
+  </section>
+<div class="decoration"></div>
+</div>
+
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="geometry.html" title="PyClaw Geometry"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="solution.html" title="PyClaw Solutions"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../contents.html">Clawpack 5.0.0rc-alpha documentation</a> &raquo;</li>
+          <li><a href="index.html" accesskey="U">Quickstart</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="pyclaw-state">
+<span id="id1"></span><h1>PyClaw State<a class="headerlink" href="#pyclaw-state" title="Permalink to this headline">¶</a></h1>
+<p>The <a class="reference internal" href="#pyclaw.state.State" title="pyclaw.state.State"><tt class="xref py py-class docutils literal"><span class="pre">State</span></tt></a> object records the fields that exist on a given
+<a class="reference internal" href="geometry.html#pyclaw.geometry.Patch" title="pyclaw.geometry.Patch"><tt class="xref py py-class docutils literal"><span class="pre">Patch</span></tt></a>.  These fields include <tt class="docutils literal"><span class="pre">q</span></tt> and <tt class="docutils literal"><span class="pre">aux</span></tt>.  The
+<a class="reference internal" href="#pyclaw.state.State" title="pyclaw.state.State"><tt class="xref py py-class docutils literal"><span class="pre">State</span></tt></a> also includes references to the
+<a class="reference internal" href="geometry.html#pyclaw.geometry.Patch" title="pyclaw.geometry.Patch"><tt class="xref py py-class docutils literal"><span class="pre">Patch</span></tt></a> that the state belongs to.</p>
+<p>In parallel the <a class="reference internal" href="#petclaw.state.State" title="petclaw.state.State"><tt class="xref py py-class docutils literal"><span class="pre">State</span></tt></a>
+object also handles some of the parallel communication required of the state on the
+given patch such that only the parts of the fields local to the process.  If you
+are interested in the geometry of the local state you can find it through the
+<a class="reference internal" href="geometry.html#petclaw.geometry.Patch" title="petclaw.geometry.Patch"><tt class="xref py py-class docutils literal"><span class="pre">Patch</span></tt></a> object&#8217;s reference to its own
+<tt class="xref py py-class docutils literal"><span class="pre">Grid</span></tt>.</p>
+<div class="section" id="serial-pyclaw-state-state">
+<span id="state"></span><h2>Serial <a class="reference internal" href="#pyclaw.state.State" title="pyclaw.state.State"><tt class="xref py py-class docutils literal"><span class="pre">pyclaw.state.State</span></tt></a><a class="headerlink" href="#serial-pyclaw-state-state" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="pyclaw.state.State">
+<em class="property">class </em><tt class="descclassname">pyclaw.state.</tt><tt class="descname">State</tt><big>(</big><em>geom</em>, <em>num_eqn</em>, <em>num_aux=0</em><big>)</big><a class="headerlink" href="#pyclaw.state.State" title="Permalink to this definition">¶</a></dt>
+<dd><p>A PyClaw State object contains the current state on a particular patch,
+including the unkowns q, the time t, and the auxiliary coefficients aux.</p>
+<p>Both q and aux are initialized to None.  They cannot be accessed until
+num_eqn and num_aux (respectively) are set.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">State Data:</th><td class="field-body">The arrays <tt class="xref py py-attr docutils literal"><span class="pre">q</span></tt>, and <tt class="xref py py-attr docutils literal"><span class="pre">aux</span></tt> have variable 
+extents based on the patch dimensions and the values of 
+<tt class="xref py py-attr docutils literal"><span class="pre">num_eqn</span></tt> and <tt class="xref py py-attr docutils literal"><span class="pre">num_aux</span></tt>.  Note that these are initialy set to 
+None and later set to appropriately sized empty numpy arrays when
+<tt class="xref py py-attr docutils literal"><span class="pre">num_eqn</span></tt> and <tt class="xref py py-attr docutils literal"><span class="pre">num_aux</span></tt> are set.</td>
+</tr>
+</tbody>
+</table>
+<p>To instantiate a State, we first need a patch:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">clawpack</span> <span class="kn">import</span> <span class="n">pyclaw</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">Dimension</span><span class="p">(</span><span class="s">&#39;x&#39;</span><span class="p">,</span><span class="mf">0.</span><span class="p">,</span><span class="mf">1.</span><span class="p">,</span><span class="mi">100</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">patch</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">Patch</span><span class="p">((</span><span class="n">x</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>The arguments to the constructor are the patch, the number of equations,
+and the number of auxiliary fields:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">state</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">State</span><span class="p">(</span><span class="n">patch</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">state</span><span class="o">.</span><span class="n">q</span><span class="o">.</span><span class="n">shape</span>
+<span class="go">(3, 100)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">state</span><span class="o">.</span><span class="n">aux</span><span class="o">.</span><span class="n">shape</span>
+<span class="go">(2, 100)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">state</span><span class="o">.</span><span class="n">t</span>
+<span class="go">0.0</span>
+</pre></div>
+</div>
+<p>Note that state.q and state.aux are initialized as empty arrays (not zeroed).
+Additional parameters, such as scalar values that are used in the Riemann solver,
+can be set using the dictionary state.problem_data.</p>
+<dl class="method">
+<dt id="pyclaw.state.State.get_aux_global">
+<tt class="descname">get_aux_global</tt><big>(</big><big>)</big><a class="headerlink" href="#pyclaw.state.State.get_aux_global" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a copy of state.aux.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyclaw.state.State.get_auxbc_from_aux">
+<tt class="descname">get_auxbc_from_aux</tt><big>(</big><em>num_ghost</em>, <em>auxbc</em><big>)</big><a class="headerlink" href="#pyclaw.state.State.get_auxbc_from_aux" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fills in the interior of auxbc by copying aux to it.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyclaw.state.State.get_q_global">
+<tt class="descname">get_q_global</tt><big>(</big><big>)</big><a class="headerlink" href="#pyclaw.state.State.get_q_global" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a copy of state.q.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyclaw.state.State.get_qbc_from_q">
+<tt class="descname">get_qbc_from_q</tt><big>(</big><em>num_ghost</em>, <em>qbc</em><big>)</big><a class="headerlink" href="#pyclaw.state.State.get_qbc_from_q" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fills in the interior of qbc by copying q to it.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyclaw.state.State.is_valid">
+<tt class="descname">is_valid</tt><big>(</big><big>)</big><a class="headerlink" href="#pyclaw.state.State.is_valid" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks to see if this state is valid</p>
+<dl class="docutils">
+<dt>The state is declared valid based on the following criteria:</dt>
+<dd><ul class="first last simple">
+<li><tt class="xref py py-attr docutils literal"><span class="pre">q</span></tt> is not None</li>
+<li><tt class="xref py py-attr docutils literal"><span class="pre">num_eqn</span></tt> &gt; 0</li>
+</ul>
+</dd>
+</dl>
+<p>A debug logger message will be sent documenting exactly what was not 
+valid.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Output :</th><td class="field-body"><ul class="first last simple">
+<li>(bool) - True if valid, false otherwise.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyclaw.state.State.set_aux_from_auxbc">
+<tt class="descname">set_aux_from_auxbc</tt><big>(</big><em>num_ghost</em>, <em>auxbc</em><big>)</big><a class="headerlink" href="#pyclaw.state.State.set_aux_from_auxbc" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the value of aux using the array auxbc.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyclaw.state.State.set_cparam">
+<tt class="descname">set_cparam</tt><big>(</big><em>fortran_module</em><big>)</big><a class="headerlink" href="#pyclaw.state.State.set_cparam" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the variables in fortran_module.cparam to the corresponding values in
+patch.problem_data.  This is the mechanism for passing scalar variables to the
+Fortran Riemann solvers; cparam must be defined as a common block in the
+Riemann solver.</p>
+<p>This function should be called from solver.setup().  This seems like a fragile
+interdependency between solver and state; perhaps problem_data should belong
+to solver instead of state.</p>
+<p>This function also checks that the set of variables defined in cparam 
+all appear in problem_data.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyclaw.state.State.set_num_ghost">
+<tt class="descname">set_num_ghost</tt><big>(</big><em>num_ghost</em><big>)</big><a class="headerlink" href="#pyclaw.state.State.set_num_ghost" title="Permalink to this definition">¶</a></dt>
+<dd><p>Virtual routine (does nothing).  Overridden in the petclaw.state class.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyclaw.state.State.set_q_from_qbc">
+<tt class="descname">set_q_from_qbc</tt><big>(</big><em>num_ghost</em>, <em>qbc</em><big>)</big><a class="headerlink" href="#pyclaw.state.State.set_q_from_qbc" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the value of q using the array qbc.  This is called after
+qbc is updated by the solver.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pyclaw.state.State.F">
+<tt class="descname">F</tt><em class="property"> = None</em><a class="headerlink" href="#pyclaw.state.State.F" title="Permalink to this definition">¶</a></dt>
+<dd><p>(ndarray(mF,...)) - Cell averages of output functional densities.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pyclaw.state.State.gauge_data">
+<tt class="descname">gauge_data</tt><em class="property"> = None</em><a class="headerlink" href="#pyclaw.state.State.gauge_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>(list) - List of numpy.ndarray objects. Each element of the list
+stores the values of the corresponding gauge if <tt class="docutils literal"><span class="pre">keep_gauges</span></tt> is set
+to <tt class="docutils literal"><span class="pre">True</span></tt></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pyclaw.state.State.keep_gauges">
+<tt class="descname">keep_gauges</tt><em class="property"> = None</em><a class="headerlink" href="#pyclaw.state.State.keep_gauges" title="Permalink to this definition">¶</a></dt>
+<dd><p>(bool) - Keep gauge values in memory for every time step,
+<tt class="docutils literal"><span class="pre">default</span> <span class="pre">=</span> <span class="pre">False</span></tt></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pyclaw.state.State.mF">
+<tt class="descname">mF</tt><a class="headerlink" href="#pyclaw.state.State.mF" title="Permalink to this definition">¶</a></dt>
+<dd><p>(int) - Number of output functionals</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pyclaw.state.State.mp">
+<tt class="descname">mp</tt><a class="headerlink" href="#pyclaw.state.State.mp" title="Permalink to this definition">¶</a></dt>
+<dd><p>(int) - Number of derived quantities</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pyclaw.state.State.num_aux">
+<tt class="descname">num_aux</tt><a class="headerlink" href="#pyclaw.state.State.num_aux" title="Permalink to this definition">¶</a></dt>
+<dd><p>(int) - Number of auxiliary fields</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pyclaw.state.State.num_eqn">
+<tt class="descname">num_eqn</tt><a class="headerlink" href="#pyclaw.state.State.num_eqn" title="Permalink to this definition">¶</a></dt>
+<dd><p>(int) - Number of unknowns (components of q)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pyclaw.state.State.p">
+<tt class="descname">p</tt><em class="property"> = None</em><a class="headerlink" href="#pyclaw.state.State.p" title="Permalink to this definition">¶</a></dt>
+<dd><p>(ndarray(mp,...)) - Cell averages of derived quantities.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pyclaw.state.State.problem_data">
+<tt class="descname">problem_data</tt><em class="property"> = None</em><a class="headerlink" href="#pyclaw.state.State.problem_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>(dict) - Dictionary of global values for this patch,
+<tt class="docutils literal"><span class="pre">default</span> <span class="pre">=</span> <span class="pre">{}</span></tt></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pyclaw.state.State.t">
+<tt class="descname">t</tt><em class="property"> = None</em><a class="headerlink" href="#pyclaw.state.State.t" title="Permalink to this definition">¶</a></dt>
+<dd><p>(float) - Current time represented on this patch,
+<tt class="docutils literal"><span class="pre">default</span> <span class="pre">=</span> <span class="pre">0.0</span></tt></p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="parallel-petclaw-state-state">
+<h2>Parallel <a class="reference internal" href="#petclaw.state.State" title="petclaw.state.State"><tt class="xref py py-class docutils literal"><span class="pre">petclaw.state.State</span></tt></a><a class="headerlink" href="#parallel-petclaw-state-state" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="petclaw.state.State">
+<em class="property">class </em><tt class="descclassname">petclaw.state.</tt><tt class="descname">State</tt><big>(</big><em>geom</em>, <em>num_eqn</em>, <em>num_aux=0</em><big>)</big><a class="headerlink" href="#petclaw.state.State" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="docutils">
+<dt>Parallel State class</dt>
+<dd><div class="first last system-message">
+<p class="system-message-title">System Message: SEVERE/4 (<tt class="docutils">/Users/ketch/Research/Software/clawpack/pyclaw/src/petclaw/state.py:docstring of petclaw.state.State</tt>, line 3)</p>
+<p>Unexpected section title.</p>
+<div class="highlight-python"><pre>Parent Class Documentation
+==========================</pre>
+</div>
+</div>
+</dd>
+</dl>
+<p>Module containing all Pyclaw solution objects</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Authors :</th><td class="field-body">David I. Ketcheson &#8211; Initial version (June 2011)</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="petclaw.state.State.get_aux_global">
+<tt class="descname">get_aux_global</tt><big>(</big><big>)</big><a class="headerlink" href="#petclaw.state.State.get_aux_global" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a copy of the global aux array on process 0, otherwise returns None</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="petclaw.state.State.get_auxbc_from_aux">
+<tt class="descname">get_auxbc_from_aux</tt><big>(</big><em>num_ghost</em>, <em>auxbc</em><big>)</big><a class="headerlink" href="#petclaw.state.State.get_auxbc_from_aux" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns aux with ghost cells attached, by accessing the local vector.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="petclaw.state.State.get_q_global">
+<tt class="descname">get_q_global</tt><big>(</big><big>)</big><a class="headerlink" href="#petclaw.state.State.get_q_global" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a copy of the global q array on process 0, otherwise returns None</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="petclaw.state.State.get_qbc_from_q">
+<tt class="descname">get_qbc_from_q</tt><big>(</big><em>num_ghost</em>, <em>qbc</em><big>)</big><a class="headerlink" href="#petclaw.state.State.get_qbc_from_q" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns q with ghost cells attached, by accessing the local vector.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="petclaw.state.State.set_num_ghost">
+<tt class="descname">set_num_ghost</tt><big>(</big><em>num_ghost</em><big>)</big><a class="headerlink" href="#petclaw.state.State.set_num_ghost" title="Permalink to this definition">¶</a></dt>
+<dd><p>This is a hack to deal with the fact that petsc4py
+doesn&#8217;t allow us to change the stencil_width (num_ghost).</p>
+<p>Instead, we initially create DAs with stencil_width=0.
+Then, in solver.setup(), we call this function to replace
+those DAs with new ones that have the right stencil width.</p>
+<p>This could be made more efficient using some PETSc calls,
+but it only happens once so it seems not to be worth it.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="petclaw.state.State.F">
+<tt class="descname">F</tt><a class="headerlink" href="#petclaw.state.State.F" title="Permalink to this definition">¶</a></dt>
+<dd><p>Array containing pointwise values (densities) of output functionals.
+This is just used as temporary workspace before summing.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="petclaw.state.State.aux">
+<tt class="descname">aux</tt><a class="headerlink" href="#petclaw.state.State.aux" title="Permalink to this definition">¶</a></dt>
+<dd><p>We never communicate aux values; every processor should set its own ghost cell
+values for the aux array.  The global aux vector is used only for outputting
+the aux values to file; everywhere else we use the local vector.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="petclaw.state.State.fset">
+<tt class="descname">fset</tt><a class="headerlink" href="#petclaw.state.State.fset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Array containing pointwise values (densities) of output functionals.
+This is just used as temporary workspace before summing.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="petclaw.state.State.gauge_data">
+<tt class="descname">gauge_data</tt><em class="property"> = None</em><a class="headerlink" href="#petclaw.state.State.gauge_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>(list) - List of numpy.ndarray objects. Each element of the list
+stores the values of the corresponding gauge if <tt class="docutils literal"><span class="pre">keep_gauges</span></tt> is set
+to <tt class="docutils literal"><span class="pre">True</span></tt></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="petclaw.state.State.keep_gauges">
+<tt class="descname">keep_gauges</tt><em class="property"> = None</em><a class="headerlink" href="#petclaw.state.State.keep_gauges" title="Permalink to this definition">¶</a></dt>
+<dd><p>(bool) - Keep gauge values in memory for every time step,
+<tt class="docutils literal"><span class="pre">default</span> <span class="pre">=</span> <span class="pre">False</span></tt></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="petclaw.state.State.mF">
+<tt class="descname">mF</tt><a class="headerlink" href="#petclaw.state.State.mF" title="Permalink to this definition">¶</a></dt>
+<dd><p>(int) - Number of derived quantities (components of p)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="petclaw.state.State.mp">
+<tt class="descname">mp</tt><a class="headerlink" href="#petclaw.state.State.mp" title="Permalink to this definition">¶</a></dt>
+<dd><p>(int) - Number of derived quantities (components of p)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="petclaw.state.State.num_aux">
+<tt class="descname">num_aux</tt><a class="headerlink" href="#petclaw.state.State.num_aux" title="Permalink to this definition">¶</a></dt>
+<dd><p>(int) - Number of auxiliary fields</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="petclaw.state.State.num_eqn">
+<tt class="descname">num_eqn</tt><a class="headerlink" href="#petclaw.state.State.num_eqn" title="Permalink to this definition">¶</a></dt>
+<dd><p>(int) - Number of unknowns (components of q)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="petclaw.state.State.p">
+<tt class="descname">p</tt><a class="headerlink" href="#petclaw.state.State.p" title="Permalink to this definition">¶</a></dt>
+<dd><p>Array containing values of derived quantities for output.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="petclaw.state.State.problem_data">
+<tt class="descname">problem_data</tt><em class="property"> = None</em><a class="headerlink" href="#petclaw.state.State.problem_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>(dict) - Dictionary of global values for this patch,
+<tt class="docutils literal"><span class="pre">default</span> <span class="pre">=</span> <span class="pre">{}</span></tt></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="petclaw.state.State.q">
+<tt class="descname">q</tt><a class="headerlink" href="#petclaw.state.State.q" title="Permalink to this definition">¶</a></dt>
+<dd><p>Array to store solution (q) values.</p>
+<p>Settting state.num_eqn automatically allocates space for q, as does
+setting q itself.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="petclaw.state.State.t">
+<tt class="descname">t</tt><em class="property"> = None</em><a class="headerlink" href="#petclaw.state.State.t" title="Permalink to this definition">¶</a></dt>
+<dd><p>(float) - Current time represented on this patch,
+<tt class="docutils literal"><span class="pre">default</span> <span class="pre">=</span> <span class="pre">0.0</span></tt></p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../contents.html">
+              <img class="logo" src="../_static/clawlogo.jpg" alt="Logo"/>
+            </a></p>
+  <h3><a href="../contents.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">PyClaw State</a><ul>
+<li><a class="reference internal" href="#serial-pyclaw-state-state">Serial <tt class="docutils literal"><span class="pre">pyclaw.state.State</span></tt></a></li>
+<li><a class="reference internal" href="#parallel-petclaw-state-state">Parallel <tt class="docutils literal"><span class="pre">petclaw.state.State</span></tt></a></li>
+</ul>
+</li>
+</ul>
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../contents.html">Documentation overview</a><ul>
+  <li><a href="index.html">Quickstart</a><ul>
+      <li>Previous: <a href="solution.html" title="previous chapter">PyClaw Solutions</a></li>
+      <li>Next: <a href="geometry.html" title="next chapter">PyClaw Geometry</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../_sources/pyclaw/state.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+  <div class="footer">
+    &copy; Copyright 2011, Randall J. LeVeque and others.
+    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
+  </div>
+  
+  </body>
+</html>

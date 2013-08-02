@@ -1,0 +1,314 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Tutorial: Solve the acoustics equations &mdash; Clawpack 5.0.0rc-alpha documentation</title>
+    
+    <link rel="stylesheet" href="../_static/flasky.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/base.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/layout.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '5.0.0rc-alpha',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="shortcut icon" href="../_static/clawicon.ico"/>
+    <link rel="author" title="About these documents" href="../about.html" />
+    <link rel="top" title="Clawpack 5.0.0rc-alpha documentation" href="../index.html" />
+    <link rel="up" title="The Basics" href="basics.html" />
+    <link rel="next" title="Solving other hyperbolic PDEs" href="examples.html" />
+    <link rel="prev" title="Installation" href="started.html" /> 
+  </head>
+  <body>
+<div id="main-wrapper" class="sphinx">
+<div id="header-wrapper">
+  <section id="header">
+    <h1><a href="http://clawpack.org/">Clawpack</a></h1>
+    <nav>
+      <ul>
+        <li>
+          <a href="../index.html">Docs</a>
+        </li>
+        <li>
+          <a href="../installing.html">Install</a>
+        </li>
+        <li>
+          <a class="" href="gallery/gallery_all.html">Gallery</a>
+        </li>
+        <li>
+          <a class="active" href="https://groups.google.com/forum/#!forum/claw-users">Support</a>
+        </li>
+        <li>
+          <a class="active" href="http://github.com/clawpack">Source</a>
+        </li>
+        <li>
+          <a class="" href="../developers.html">Develop</a>
+        </li>
+      </ul>
+    </nav>
+  </section>
+<div class="decoration"></div>
+</div>
+
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="examples.html" title="Solving other hyperbolic PDEs"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="started.html" title="Installation"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../contents.html">Clawpack 5.0.0rc-alpha documentation</a> &raquo;</li>
+          <li><a href="index.html" >Quickstart</a> &raquo;</li>
+          <li><a href="basics.html" accesskey="U">The Basics</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="tutorial-solve-the-acoustics-equations">
+<span id="pyclaw-tutorial"></span><h1><a class="toc-backref" href="#id1">Tutorial: Solve the acoustics equations</a><a class="headerlink" href="#tutorial-solve-the-acoustics-equations" title="Permalink to this headline">¶</a></h1>
+<div class="contents topic" id="contents">
+<p class="topic-title first">Contents</p>
+<ul class="simple">
+<li><a class="reference internal" href="#tutorial-solve-the-acoustics-equations" id="id1">Tutorial: Solve the acoustics equations</a><ul>
+<li><a class="reference internal" href="#the-solver" id="id2">The Solver</a></li>
+<li><a class="reference internal" href="#dimension-domain-and-state" id="id3">Dimension, Domain, and State</a></li>
+<li><a class="reference internal" href="#initial-condition" id="id4">Initial condition</a></li>
+<li><a class="reference internal" href="#problem-specific-parameters" id="id5">Problem-specific parameters</a></li>
+<li><a class="reference internal" href="#the-controller" id="id6">The controller</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<p>PyClaw is designed to solve general systems of hyperbolic PDEs of the form</p>
+<div class="math">
+\[\begin{equation}
+     \kappa(x) q_t + A(q,x) q_x = 0.
+ \end{equation}\]</div>
+<p>As an example, in this tutorial we&#8217;ll set up a simulation that solves
+the acoustics equations in one dimension:</p>
+<div class="math">
+\[\begin{split}\begin{eqnarray}
+     &amp;p_t + K u_x = 0\\
+     &amp;u_t + \frac{1}{\rho} p_x = 0
+ \end{eqnarray}\end{split}\]</div>
+<p>The key to solving a particular system of equations with PyClaw or other similar
+codes is a Riemann solver.  Riemann solvers for many systems are available as part
+of the clawpack/riemann package.</p>
+<p>We&#8217;ll assume that you&#8217;ve already followed the <a class="reference internal" href="started.html#installation"><em>Installation</em></a> instructions.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p>The following instructions show how to set up a problem step-by-step in an
+interactive shell.  If you don&#8217;t want to type all these commands, you can
+instead:</p>
+<div class="last highlight-python"><pre>$ cd $PYCLAW/examples/acoustics/1d/homogeneous
+$ python acoustics.py iplot=1</pre>
+</div>
+</div>
+<p>Now launch an iPython session and import pyclaw</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">clawpack</span> <span class="kn">import</span> <span class="n">pyclaw</span>
+</pre></div>
+</div>
+<div class="section" id="the-solver">
+<h2><a class="toc-backref" href="#id2">The Solver</a><a class="headerlink" href="#the-solver" title="Permalink to this headline">¶</a></h2>
+<p>PyClaw includes various algorithms for solving hyperbolic PDEs; each is implemented
+in a <tt class="xref py py-class docutils literal"><span class="pre">Solver</span></tt> object.  So the first step is to create a solver</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">solver</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">ClawSolver1D</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>In order to avoid the complication of compiling Fortran code, we&#8217;ll use a
+Riemann solver implemented in Python</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">solver</span><span class="o">.</span><span class="n">kernel_language</span> <span class="o">=</span> <span class="s">&#39;Python&#39;</span>
+</pre></div>
+</div>
+<p>Now we import the appropriate solver from the <cite>riemann</cite> package and set the
+<tt class="docutils literal"><span class="pre">solver.rp</span></tt> attribute, which is a function handle</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">clawpack.riemann</span> <span class="kn">import</span> <span class="n">rp_acoustics</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">solver</span><span class="o">.</span><span class="n">rp</span> <span class="o">=</span> <span class="n">rp_acoustics</span><span class="o">.</span><span class="n">rp_acoustics_1d</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">solver</span><span class="o">.</span><span class="n">num_waves</span> <span class="o">=</span> <span class="mi">2</span>
+</pre></div>
+</div>
+<p>The <tt class="docutils literal"><span class="pre">num_waves</span></tt> property indicates the number of waves used in the Riemann solver.</p>
+<p>Finally, we set the boundary conditions.  We&#8217;ll use a wall (wall)
+condition at the left boundary and a non-wall (zero-order extrapolation)
+condition at the right boundary</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">solver</span><span class="o">.</span><span class="n">bc_lower</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">BC</span><span class="o">.</span><span class="n">wall</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">solver</span><span class="o">.</span><span class="n">bc_upper</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">BC</span><span class="o">.</span><span class="n">extrap</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="dimension-domain-and-state">
+<h2><a class="toc-backref" href="#id3">Dimension, Domain, and State</a><a class="headerlink" href="#dimension-domain-and-state" title="Permalink to this headline">¶</a></h2>
+<p>Next we need to set up the grid.  A PyClaw grid is built from dimensions;
+a 1D grid requires only 1 dimension</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">Dimension</span><span class="p">(</span><span class="s">&#39;x&#39;</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mi">200</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>This creates a <a class="reference internal" href="geometry.html#pyclaw.geometry.Dimension" title="pyclaw.geometry.Dimension"><tt class="xref py py-class docutils literal"><span class="pre">Dimension</span></tt></a> object named <tt class="docutils literal"><span class="pre">x</span></tt>  on the interval <tt class="docutils literal"><span class="pre">[-1.0,</span> <span class="pre">1.0]</span></tt> with <tt class="docutils literal"><span class="pre">200</span></tt>
+cells.  Notice that the calling sequence is similar to numpy&#8217;s <tt class="docutils literal"><span class="pre">linspace</span></tt>
+command, except that the first argument is the name of the dimension.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">domain</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">Domain</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>This creates a <a class="reference internal" href="geometry.html#pyclaw.geometry.Domain" title="pyclaw.geometry.Domain"><tt class="xref py py-class docutils literal"><span class="pre">Domain</span></tt></a> object, which holds information about the cell center
+and edge coordinates.  Finally, we set up a <a class="reference internal" href="state.html#pyclaw.state.State" title="pyclaw.state.State"><tt class="xref py py-class docutils literal"><span class="pre">State</span></tt></a>
+=======
+object, which will hold the solution values:</p>
+<div class="highlight-python"><pre>.. doctest::</pre>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">state</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">State</span><span class="p">(</span><span class="n">domain</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The second argument indicates the number of equations in the hyperbolic
+system we&#8217;re solving: in this case, two.</p>
+</div>
+<div class="section" id="initial-condition">
+<h2><a class="toc-backref" href="#id4">Initial condition</a><a class="headerlink" href="#initial-condition" title="Permalink to this headline">¶</a></h2>
+<p>Now we will set the initial value of the solution</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">xc</span> <span class="o">=</span> <span class="n">domain</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">centers</span>              <span class="c"># Array containing the cell center coordinates</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="n">exp</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">state</span><span class="o">.</span><span class="n">q</span><span class="p">[</span><span class="mi">0</span><span class="p">,:]</span> <span class="o">=</span> <span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="mi">100</span> <span class="o">*</span> <span class="p">(</span><span class="n">xc</span><span class="o">-</span><span class="mf">0.75</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="c"># Pressure: Gaussian centered at x=0.75.</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">state</span><span class="o">.</span><span class="n">q</span><span class="p">[</span><span class="mi">1</span><span class="p">,:]</span> <span class="o">=</span> <span class="mf">0.</span>                       <span class="c"># Velocity: zero.</span>
+</pre></div>
+</div>
+<p>Finally, we put the state into a <a class="reference internal" href="solution.html#pyclaw.solution.Solution" title="pyclaw.solution.Solution"><tt class="xref py py-class docutils literal"><span class="pre">Solution</span></tt></a> object:</p>
+<div class="highlight-python"><pre>.. doctest::</pre>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">solution</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">Solution</span><span class="p">(</span><span class="n">state</span><span class="p">,</span><span class="n">domain</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="problem-specific-parameters">
+<h2><a class="toc-backref" href="#id5">Problem-specific parameters</a><a class="headerlink" href="#problem-specific-parameters" title="Permalink to this headline">¶</a></h2>
+<p>The acoustics equations above have some coefficients &#8211; namely, the
+bulk modulus <span class="math">\(K\)</span> and density <span class="math">\(\rho\)</span> &#8211; that must be defined.
+Furthermore, checking the code for the Riemann solver we&#8217;ve chosen
+reveals that it expects us to provide values for the impedance <span class="math">\(Z\)</span>
+and sound speed <span class="math">\(c\)</span>.  These values are stored in a Python dictionary
+called problem_data that is a member of the <a class="reference internal" href="state.html#pyclaw.state.State" title="pyclaw.state.State"><tt class="xref py py-class docutils literal"><span class="pre">State</span></tt></a></p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">math</span> <span class="kn">import</span> <span class="n">sqrt</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">rho</span> <span class="o">=</span> <span class="mf">1.0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">bulk</span> <span class="o">=</span> <span class="mf">1.0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">state</span><span class="o">.</span><span class="n">problem_data</span><span class="p">[</span><span class="s">&#39;rho&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">rho</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">state</span><span class="o">.</span><span class="n">problem_data</span><span class="p">[</span><span class="s">&#39;bulk&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">bulk</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">state</span><span class="o">.</span><span class="n">problem_data</span><span class="p">[</span><span class="s">&#39;zz&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">sqrt</span><span class="p">(</span><span class="n">rho</span><span class="o">*</span><span class="n">bulk</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">state</span><span class="o">.</span><span class="n">problem_data</span><span class="p">[</span><span class="s">&#39;cc&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">sqrt</span><span class="p">(</span><span class="n">bulk</span><span class="o">/</span><span class="n">rho</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="the-controller">
+<h2><a class="toc-backref" href="#id6">The controller</a><a class="headerlink" href="#the-controller" title="Permalink to this headline">¶</a></h2>
+<p>The most convenient way to run a PyClaw simulation is by using a
+<a class="reference internal" href="controller.html#pyclaw.controller.Controller" title="pyclaw.controller.Controller"><tt class="xref py py-class docutils literal"><span class="pre">Controller</span></tt></a> object.  The controller
+directs the solver in advancing the solution and handles output.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">controller</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">Controller</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">controller</span><span class="o">.</span><span class="n">solution</span> <span class="o">=</span> <span class="n">solution</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">controller</span><span class="o">.</span><span class="n">solver</span> <span class="o">=</span> <span class="n">solver</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">controller</span><span class="o">.</span><span class="n">tfinal</span> <span class="o">=</span> <span class="mf">1.0</span>
+</pre></div>
+</div>
+<p>At last everything is set up!  Now run the simulation</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">controller</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+<span class="go">{&#39;dtmin&#39;: 0.0010000000000000009, &#39;dtmax&#39;: 0.0090000000000000011, &#39;numsteps&#39;: 12, &#39;cflmax&#39;: 0.90000000000000013}</span>
+</pre></div>
+</div>
+<p>This should print out a few lines indicating the output times. It also prints the minimum and maximum tipe-step used, the number of steps required for the computation and the maximum CFL number. The simplest way to plot the solution is</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">clawpack.pyclaw</span> <span class="kn">import</span> <span class="n">plot</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">plot</span><span class="o">.</span><span class="n">interactive_plot</span><span class="p">()</span> 
+</pre></div>
+</div>
+<p>That&#8217;s it!  Your first PyClaw simulation.  Of course, we&#8217;ve only
+scratched the surface of what PyClaw can do, and there are many
+important options that haven&#8217;t been discussed here.  To get an
+idea, take a look through the pyclaw/examples directory and try running
+some other examples.  It&#8217;s also a good idea to get more deeply
+acquainted with the main <a class="reference internal" href="classes.html#pyclaw-classes"><em>Understanding Pyclaw Classes</em></a>.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../contents.html">
+              <img class="logo" src="../_static/clawlogo.jpg" alt="Logo"/>
+            </a></p>
+  <h3><a href="../contents.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Tutorial: Solve the acoustics equations</a><ul>
+<li><a class="reference internal" href="#the-solver">The Solver</a></li>
+<li><a class="reference internal" href="#dimension-domain-and-state">Dimension, Domain, and State</a></li>
+<li><a class="reference internal" href="#initial-condition">Initial condition</a></li>
+<li><a class="reference internal" href="#problem-specific-parameters">Problem-specific parameters</a></li>
+<li><a class="reference internal" href="#the-controller">The controller</a></li>
+</ul>
+</li>
+</ul>
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../contents.html">Documentation overview</a><ul>
+  <li><a href="index.html">Quickstart</a><ul>
+  <li><a href="basics.html">The Basics</a><ul>
+      <li>Previous: <a href="started.html" title="previous chapter">Installation</a></li>
+      <li>Next: <a href="examples.html" title="next chapter">Solving other hyperbolic PDEs</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../_sources/pyclaw/tutorial.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+  <div class="footer">
+    &copy; Copyright 2011, Randall J. LeVeque and others.
+    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
+  </div>
+  
+  </body>
+</html>

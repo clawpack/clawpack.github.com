@@ -1,0 +1,229 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Recent changes &mdash; Clawpack 5.0.0rc-alpha documentation</title>
+    
+    <link rel="stylesheet" href="_static/flasky.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/base.css" type="text/css" />
+    <link rel="stylesheet" href="_static/layout.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '5.0.0rc-alpha',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="shortcut icon" href="_static/clawicon.ico"/>
+    <link rel="author" title="About these documents" href="about.html" />
+    <link rel="top" title="Clawpack 5.0.0rc-alpha documentation" href="index.html" />
+    <link rel="next" title="Clawpack 4.x documentation" href="claw4x.html" />
+    <link rel="prev" title="Clawpack Virtual Machine" href="vm.html" /> 
+  </head>
+  <body>
+<div id="main-wrapper" class="sphinx">
+<div id="header-wrapper">
+  <section id="header">
+    <h1><a href="http://clawpack.org/">Clawpack</a></h1>
+    <nav>
+      <ul>
+        <li>
+          <a href="index.html">Docs</a>
+        </li>
+        <li>
+          <a href="installing.html">Install</a>
+        </li>
+        <li>
+          <a class="" href="pyclaw/gallery/gallery_all.html">Gallery</a>
+        </li>
+        <li>
+          <a class="active" href="https://groups.google.com/forum/#!forum/claw-users">Support</a>
+        </li>
+        <li>
+          <a class="active" href="http://github.com/clawpack">Source</a>
+        </li>
+        <li>
+          <a class="" href="developers.html">Develop</a>
+        </li>
+      </ul>
+    </nav>
+  </section>
+<div class="decoration"></div>
+</div>
+
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="claw4x.html" title="Clawpack 4.x documentation"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="vm.html" title="Clawpack Virtual Machine"
+             accesskey="P">previous</a> |</li>
+        <li><a href="contents.html">Clawpack 5.0.0rc-alpha documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="recent-changes">
+<span id="changes"></span><h1>Recent changes<a class="headerlink" href="#recent-changes" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="changes-in-clawpack-5-0">
+<span id="planned-for-50"></span><h2>Changes in Clawpack 5.0<a class="headerlink" href="#changes-in-clawpack-5-0" title="Permalink to this headline">¶</a></h2>
+<p>Clawpack 5.0 is a major reorganization of the Clawpack code base that has
+been going on for several years.  We hope to release a version soon that ill
+be easy to install and use for general users.  Currently it still in a state
+of flux but developers and other brave souls can use it by following the
+instructions found at <a class="reference internal" href="developers.html#setup-dev"><em>Installation instructions for developers</em></a>.
+Note that in order to use Clawpack 5.0 currently you need to clone a number
+of github repositories.</p>
+<p>This documentation is also under construction and parts of it have not yet been
+updated to Clawpack 5.0.</p>
+<p>Substantial changes are planned for Clawpack 5.0.  See the
+<a class="reference external" href="https://github.com/clawpack/doc/wiki">Clawpack wiki</a> for
+details.  <strong>This is out of date</strong></p>
+<p>Note that Clawpack is an <em>organization</em> on GitHub, meaning that it is
+comprised of several repositories.  Go to the
+<a class="reference external" href="https://github.com/organizations/clawpack">Clawpack GitHub</a>
+webpage to view all the repositories.</p>
+<p>You might also view the
+<a class="reference external" href="https://github.com/organizations/clawpack/dashboard/issues">issues</a>
+associated with each Clawpack repository on
+GitHub to see what bugs and features we are working on.</p>
+<p><strong>Some of the major changes:</strong></p>
+<ul>
+<li><p class="first">In all of the Clawpack codes, indices of the primary arrays <cite>q</cite> (for
+the solution) and <cite>aux</cite> (for auxiliary variables) have been reordered for
+better cache performance and to interface better with the PETSc code (used
+in as an option in PyClaw).  For example, in the two-dimensional Clawpack
+4.x code, <cite>q(i,j,m)</cite> denoted the m&#8217;th component of the solution vector in
+the <cite>(i,j)</cite> grid cell.  With this convention the various components of the
+solution in a single grid cell are scattered in memory with a stride of
+<cite>mx*my</cite>.
+In Clawpack 5.0, the indexing for the same value is <cite>q(m,i,j)</cite> so that
+the components of <cite>q</cite> in a single grid cell are continguous in memory.</p>
+<p>Note that this means user routines such as <cite>qinit.f</cite>, <cite>setaux.f</cite>,
+and Riemann solvers must be modified.</p>
+</li>
+<li><p class="first">The calling sequence of Riemann solvers has been modified by adding
+<cite>maux</cite> (the number of auxiliary variables) as another paramter at the end.
+This is required because of the reordering of indices so that
+<cite>aux(ma,i,j)</cite> is now the <cite>ma</cite> element of the <cite>aux</cite> vector in the <cite>(i,j)</cite>
+cell.  The leading dimension of <cite>aux</cite> is assumed to be <cite>maux</cite> and is
+required in declaring this variable.</p>
+</li>
+<li><p class="first">Many Riemann solvers for different applications are now found in the
+<a class="reference external" href="https://github.com/clawpack/riemann">riemann repository</a>.
+In the future major changes may be made to the form of the Riemann solvers
+to allow more flexibility.</p>
+</li>
+<li><p class="first">The names of many input variables in <cite>setrun.py</cite> have been changed to
+clean things up and be more systematic.  Several options that used to be
+specified by obscure means have clarified, and some new options have been
+added.  For details and documentation on the new parameters, see:</p>
+<blockquote>
+<div><ul class="simple">
+<li><a class="reference internal" href="setrun_changes.html#setrun-changes"><em>Changes to input parameters in setrun.py from 4.x to 5.0</em></a></li>
+<li><a class="reference internal" href="setrun.html#setrun"><em>Specifying run-time parameters in setrun.py</em></a></li>
+<li><a class="reference internal" href="setrun_amrclaw.html#setrun-amrclaw"><em>Specifying AMRClaw run-time parameters in setrun.py</em></a></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p class="first">The single-grid Clawpack code (no AMR) is now in the
+<a class="reference external" href="https://github.com/clawpack/classic">classic repository</a>
+This is being rewritten in Fortran 90 (still in progress).</p>
+</li>
+<li><p class="first">The AMRClaw code is now in the
+<a class="reference external" href="https://github.com/clawpack/amrclaw">amrclaw repository</a>.
+Some new capabilities have been added:</p>
+<blockquote>
+<div><ul class="simple">
+<li>It is now possible to specify refinement <em>regions</em>, previously only
+supported in GeoClaw.  For a description, see <a class="reference internal" href="flag.html#flag"><em>Flagging cells for adaptive refinement</em></a>.</li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+</div>
+<div class="section" id="clawpack-4-x">
+<span id="new-in-claw4x"></span><h2>Clawpack 4.x<a class="headerlink" href="#clawpack-4-x" title="Permalink to this headline">¶</a></h2>
+<p>For documentation and recent changes to the Clawpack 4.x version, please see
+<a class="reference external" href="http://depts.washington.edu/clawpack/users-4.x/index.html">Clawpack 4.x documentation</a></p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="contents.html">
+              <img class="logo" src="_static/clawlogo.jpg" alt="Logo"/>
+            </a></p>
+  <h3><a href="contents.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Recent changes</a><ul>
+<li><a class="reference internal" href="#changes-in-clawpack-5-0">Changes in Clawpack 5.0</a></li>
+<li><a class="reference internal" href="#clawpack-4-x">Clawpack 4.x</a></li>
+</ul>
+</li>
+</ul>
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="contents.html">Documentation overview</a><ul>
+      <li>Previous: <a href="vm.html" title="previous chapter">Clawpack Virtual Machine</a></li>
+      <li>Next: <a href="claw4x.html" title="next chapter">Clawpack 4.x documentation</a></li>
+  </ul></li>
+</ul>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/changes.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+  <div class="footer">
+    &copy; Copyright 2011, Randall J. LeVeque and others.
+    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
+  </div>
+  
+  </body>
+</html>
