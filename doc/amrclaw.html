@@ -7,7 +7,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Clawpack 4.x documentation &mdash; Clawpack 5.0.0rc-alpha documentation</title>
+    <title>AMRClaw Software &mdash; Clawpack 5.0.0rc-alpha documentation</title>
     
     <link rel="stylesheet" href="_static/flasky.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -30,8 +30,8 @@
     <link rel="shortcut icon" href="_static/clawicon.ico"/>
     <link rel="author" title="About these documents" href="about.html" />
     <link rel="top" title="Clawpack 5.0.0rc-alpha documentation" href="index.html" />
-    <link rel="next" title="Converting from Clawpack 4.6 to 5.0" href="claw46to50.html" />
-    <link rel="prev" title="Recent changes" href="changes.html" /> 
+    <link rel="next" title="Specifying AMRClaw run-time parameters in setrun.py" href="setrun_amrclaw.html" />
+    <link rel="prev" title="Plotting using Matlab" href="matlab_plotting.html" /> 
   </head>
   <body>
 <div id="main-wrapper" class="sphinx">
@@ -74,10 +74,10 @@
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="claw46to50.html" title="Converting from Clawpack 4.6 to 5.0"
+          <a href="setrun_amrclaw.html" title="Specifying AMRClaw run-time parameters in setrun.py"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="changes.html" title="Recent changes"
+          <a href="matlab_plotting.html" title="Plotting using Matlab"
              accesskey="P">previous</a> |</li>
         <li><a href="contents.html">Clawpack 5.0.0rc-alpha documentation</a> &raquo;</li> 
       </ul>
@@ -88,10 +88,38 @@
         <div class="bodywrapper">
           <div class="body">
             
-  <div class="section" id="clawpack-4-x-documentation">
-<span id="claw4x"></span><h1>Clawpack 4.x documentation<a class="headerlink" href="#clawpack-4-x-documentation" title="Permalink to this headline">¶</a></h1>
-<p>For documentation and recent changes to the Clawpack 4.x version, please see
-<a class="reference external" href="http://depts.washington.edu/clawpack/users-4.x/index.html">Clawpack 4.x documentation</a></p>
+  <div class="section" id="amrclaw-software">
+<span id="amrclaw"></span><h1>AMRClaw Software<a class="headerlink" href="#amrclaw-software" title="Permalink to this headline">¶</a></h1>
+<p>The AMRClaw version of Clawpack provides Adaptive Mesh Refinement (AMR)
+capabilities in 2 and 3 space dimensions.  (The two-dimensional code can
+also be used for 1-dimensional problems, see <a class="reference internal" href="#amrclaw-1d"><em>AMRClaw for 1d problems</em></a>.)</p>
+<p>Block-structured AMR is implemented, in which rectangular patches of the
+grid at level <cite>L</cite> are refined to level <cite>L+1</cite>.
+See <a class="reference internal" href="setrun_amrclaw.html#setrun-amrclaw"><em>Specifying AMRClaw run-time parameters in setrun.py</em></a> for a list of the input parameters that can be
+specified to help control how refinement is done.
+The general algorithms are described in <a class="reference internal" href="biblio.html#bergerleveque98">[BergerLeVeque98]</a>.</p>
+<p>See <a class="reference internal" href="ClawPlotItem.html#clawplotitem"><em>ClawPlotItem</em></a> for a list of 2d plot types that can be used to
+create a <cite>setplot</cite> function to control plotting of two-dimensional results.
+Some of the attribute names start with the string <cite>amr_</cite>, indicating that a
+list of different values can be specified for each AMR level.
+See  <a class="reference internal" href="plotting.html#plotting"><em>Plotting options</em></a> and <a class="reference internal" href="setplot.html#setplot"><em>Using setplot.py to specify the desired plots</em></a> for more about plotting.</p>
+<p>Python plotting tools for 3d are still under development.  For now, the
+Matlab tools from Clawpack 4.3 can still be used, see
+<em class="xref std std-ref">matlab_plotting</em>.</p>
+<div class="section" id="amrclaw-for-1d-problems">
+<span id="amrclaw-1d"></span><h2>AMRClaw for 1d problems<a class="headerlink" href="#amrclaw-for-1d-problems" title="Permalink to this headline">¶</a></h2>
+<p>The two-dimensional code can also be used for 1-dimensional problems, by
+setting <cite>num_cells[1] = 1</cite> so there is only one cell in the <cite>y</cite> direction.
+Also set <cite>refinement_ratios_y = [1,1,1, ...]</cite> so that refinement is not done
+in this direction.</p>
+<p>In this case the code will automatically do sweeps only in the x-direction
+and not attempt to solve any Riemann problems in the y-direction, or
+transverse Riemann problems.</p>
+<p>The output in the <em>fort.q000N</em> files will be suitable for plotting with the
+one-dimensional Python plotting tools, e.g. these files will list the number
+of cells in <em>x</em> but not in <em>y</em>.</p>
+<p>For an example, see ??.</p>
+</div>
 </div>
 
 
@@ -102,16 +130,24 @@
         <div class="sphinxsidebarwrapper">
             <p class="logo"><a href="contents.html">
               <img class="logo" src="_static/clawlogo.jpg" alt="Logo"/>
-            </a></p><h3>Related Topics</h3>
+            </a></p>
+  <h3><a href="contents.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">AMRClaw Software</a><ul>
+<li><a class="reference internal" href="#amrclaw-for-1d-problems">AMRClaw for 1d problems</a></li>
+</ul>
+</li>
+</ul>
+<h3>Related Topics</h3>
 <ul>
   <li><a href="contents.html">Documentation overview</a><ul>
-      <li>Previous: <a href="changes.html" title="previous chapter">Recent changes</a></li>
-      <li>Next: <a href="claw46to50.html" title="next chapter">Converting from Clawpack 4.6 to 5.0</a></li>
+      <li>Previous: <a href="matlab_plotting.html" title="previous chapter">Plotting using Matlab</a></li>
+      <li>Next: <a href="setrun_amrclaw.html" title="next chapter">Specifying AMRClaw run-time parameters in <cite>setrun.py</cite></a></li>
   </ul></li>
 </ul>
   <h3>This Page</h3>
   <ul class="this-page-menu">
-    <li><a href="_sources/claw4x.txt"
+    <li><a href="_sources/amrclaw.txt"
            rel="nofollow">Show Source</a></li>
   </ul>
 <div id="searchbox" style="display: none">
