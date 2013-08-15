@@ -90,7 +90,7 @@
             
   <div class="section" id="developers-guide">
 <span id="developers"></span><h1>Developers&#8217; Guide<a class="headerlink" href="#developers-guide" title="Permalink to this headline">¶</a></h1>
-<p>See <em class="xref std std-ref">git_resources</em> for some useful links.</p>
+<p>See <a class="reference internal" href="git_resources.html#git-resources"><em>git resources</em></a> for some useful links.</p>
 <div class="section" id="cloning-the-most-recent-code-from-github">
 <span id="developers-gitclone"></span><h2>Cloning the most recent code from Github<a class="headerlink" href="#cloning-the-most-recent-code-from-github" title="Permalink to this headline">¶</a></h2>
 <p>You can create a read-only development version of Clawpack via:</p>
@@ -127,7 +127,7 @@ etc., you need to set environment variables and proceed as described at
 <span id="setup-dev"></span><h2>Installation instructions for developers<a class="headerlink" href="#installation-instructions-for-developers" title="Permalink to this headline">¶</a></h2>
 <p>Install a read-only copy of all the main repositories as described above in
 <a class="reference internal" href="#developers-gitclone"><em>Cloning the most recent code from Github</em></a>.</p>
-<p>Note that the repositories will each be checked out to a specific commit and
+<p><strong>Important Note:</strong> The repositories will each be checked out to a specific commit and
 will probably be in a detached-head state.  You will need to checkout
 <cite>master</cite> in each repository to see the current head of the master branch.</p>
 <p>You should never commit to <cite>master</cite>, only to a feature branch, so
@@ -135,9 +135,6 @@ the <cite>master</cite> branch should always reflect what&#8217;s in the main
 <em>clawpack</em> repository.  You can update it to reflect any changes via:</p>
 <div class="highlight-python"><pre>git checkout master
 git pull</pre>
-</div>
-<p>or simply:</p>
-<div class="highlight-python"><pre>git pull origin master</pre>
 </div>
 <p>If you plan to make changes and issue pull requests to one or more
 repositories, you will need to do the following steps for each such
@@ -174,20 +171,39 @@ repository if you plan to modify and issue pull requests.</p>
 <h2>Modifying code<a class="headerlink" href="#modifying-code" title="Permalink to this headline">¶</a></h2>
 <p>Before making changes, you generally want to make sure <em>master</em> is up to
 date:</p>
-<div class="highlight-python"><pre>git pull origin master</pre>
+<div class="highlight-python"><pre>git checkout master
+git pull</pre>
 </div>
-<p>Then create a new branch based on <cite>origin/master</cite> and
-commit to this branch:</p>
-<div class="highlight-python"><pre>git checkout -b new_feature origin/master
-# make some changes
-git commit - "describe the changes"</pre>
+<p>Then create a new branch based on <cite>master</cite> for any new commits:</p>
+<div class="highlight-python"><pre>git checkout -b new_feature master</pre>
 </div>
-<p>then push to your own fork:</p>
+<p>(You don&#8217;t need to the final <cite>master</cite> if this branch  is currently checked out.)</p>
+<p>Now make changes, add and commit them,
+and then push to your own fork:</p>
 <div class="highlight-python"><pre>git push username new_feature</pre>
 </div>
 <p>If you want these changes pulled into <em>master</em>,
 you can issue a pull request from the github page for your fork of this
 repository (make sure to select the correct branch of your repository).</p>
+<p><strong>Note:</strong> If you accidentally commit to <cite>master</cite> rather than creating a
+feature branch first, you can easily recover:</p>
+<div class="highlight-python"><pre>git checkout -b new_feature</pre>
+</div>
+<p>will create a new branch based on the current state and history (including
+your commits to <cite>master</cite>) and you can just continue adding additional
+commits.</p>
+<p>The only problem is your <cite>master</cite> branch no longer agrees with the history
+on Github and you want to throw away the commits you made to <cite>master</cite>.  The
+easiest way to do this is just to make sure you&#8217;re on a different branch,
+e.g.,</p>
+<div class="highlight-python"><pre>git checkout new_feature</pre>
+</div>
+<p>and then:</p>
+<div class="highlight-python"><pre>git branch -D master
+git checkout -b master origin/master</pre>
+</div>
+<p>This deletes your local branch named <cite>master</cite> and recreates a branch with
+the same name based on <cite>origin/master</cite>, which is what you want.</p>
 </div>
 <div class="section" id="pull-requests">
 <span id="developers-pr"></span><h2>Pull requests<a class="headerlink" href="#pull-requests" title="Permalink to this headline">¶</a></h2>
@@ -195,13 +211,15 @@ repository (make sure to select the correct branch of your repository).</p>
 anything:</p>
 <ol class="arabic">
 <li><p class="first">Make sure you are up to date with <em>master</em>:</p>
-<div class="highlight-python"><pre>git pull origin master</pre>
+<div class="highlight-python"><pre>git checkout master
+git pull</pre>
 </div>
 <p>If this does not say &#8220;Already up-to-date&#8221; then you might want to rebase
 your modified code onto the updated master.  With your feature branch
 checked out, you can see what newer commits have been added to <em>master</em>
 via:</p>
-<div class="highlight-python"><pre>git log HEAD..master</pre>
+<div class="highlight-python"><pre>git checkout new_feature
+git log HEAD..master</pre>
 </div>
 <p>If your new feature can be added on to the updated master, you can rebase:</p>
 <div class="highlight-python"><pre>git rebase master</pre>
@@ -227,9 +245,8 @@ request to originate, and then click the <em>Pull Request</em> button.</p>
 </div>
 <div class="section" id="testing-out-a-pull-request">
 <span id="test-pr"></span><h2>Testing out a pull request<a class="headerlink" href="#testing-out-a-pull-request" title="Permalink to this headline">¶</a></h2>
-<p>To test out someone else pull request, follow the instructions on the
-webpage for the pull request, where it says &#8220;You can also merge branches on
-the command line&#8221;.  Click on <em>command line</em> and follow steps 1 and 2.  For
+<p>To test out someone else&#8217;s pull request, follow these  instructions:
+For
 example, if you want to try out a pull request coming from a branch named
 <em>bug-fix</em> from user <em>rjleveque</em> to the <em>master</em> branch of
 the <em>amrclaw</em> repository, you would do:</p>
@@ -265,7 +282,7 @@ git push username pyclaw-riemann-changes</pre>
 </div>
 <div class="section" id="git-workflow">
 <h2>Git workflow<a class="headerlink" href="#git-workflow" title="Permalink to this headline">¶</a></h2>
-<p>The sections <a class="reference internal" href="git_and_github.html#git-and-github"><em>Using Git and GitHub</em></a> and <a class="reference internal" href="gitwash/index.html#using-git"><em>Gitwash version of developer guide</em></a> need to be updated.</p>
+<p>See <a class="reference internal" href="git_resources.html#git-resources"><em>git resources</em></a> for useful links.</p>
 </div>
 </div>
 
