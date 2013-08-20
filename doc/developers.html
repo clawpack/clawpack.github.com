@@ -30,7 +30,7 @@
     <link rel="shortcut icon" href="_static/clawicon.ico"/>
     <link rel="author" title="About these documents" href="about.html" />
     <link rel="top" title="Clawpack 5.0.0rc-alpha documentation" href="index.html" />
-    <link rel="next" title="git resources" href="git_resources.html" />
+    <link rel="next" title="Using Git and GitHub" href="git_and_github.html" />
     <link rel="prev" title="Changes to input parameters in setrun.py from 4.x to 5.0" href="setrun_changes.html" /> 
   </head>
   <body>
@@ -53,7 +53,7 @@
           <a class="active" href="https://groups.google.com/forum/#!forum/claw-users">Support</a>
         </li>
         <li>
-          <a class="active" href="http://github.com/organizations/clawpack">Source</a>
+          <a class="active" href="http://github.com/clawpack">Source</a>
         </li>
         <li>
           <a class="" href="#">Develop</a>
@@ -74,7 +74,7 @@
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="git_resources.html" title="git resources"
+          <a href="git_and_github.html" title="Using Git and GitHub"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="setrun_changes.html" title="Changes to input parameters in setrun.py from 4.x to 5.0"
@@ -90,7 +90,10 @@
             
   <div class="section" id="developers-guide">
 <span id="developers"></span><h1>Developers&#8217; Guide<a class="headerlink" href="#developers-guide" title="Permalink to this headline">¶</a></h1>
-<p>See <a class="reference internal" href="git_resources.html#git-resources"><em>git resources</em></a> for some useful links.</p>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">Draft version, subject to change.</p>
+</div>
 <div class="section" id="cloning-the-most-recent-code-from-github">
 <span id="developers-gitclone"></span><h2>Cloning the most recent code from Github<a class="headerlink" href="#cloning-the-most-recent-code-from-github" title="Permalink to this headline">¶</a></h2>
 <p>You can create a read-only development version of Clawpack via:</p>
@@ -127,7 +130,7 @@ etc., you need to set environment variables and proceed as described at
 <span id="setup-dev"></span><h2>Installation instructions for developers<a class="headerlink" href="#installation-instructions-for-developers" title="Permalink to this headline">¶</a></h2>
 <p>Install a read-only copy of all the main repositories as described above in
 <a class="reference internal" href="#developers-gitclone"><em>Cloning the most recent code from Github</em></a>.</p>
-<p><strong>Important Note:</strong> The repositories will each be checked out to a specific commit and
+<p>Note that the repositories will each be checked out to a specific commit and
 will probably be in a detached-head state.  You will need to checkout
 <cite>master</cite> in each repository to see the current head of the master branch.</p>
 <p>You should never commit to <cite>master</cite>, only to a feature branch, so
@@ -135,6 +138,9 @@ the <cite>master</cite> branch should always reflect what&#8217;s in the main
 <em>clawpack</em> repository.  You can update it to reflect any changes via:</p>
 <div class="highlight-python"><pre>git checkout master
 git pull</pre>
+</div>
+<p>or simply:</p>
+<div class="highlight-python"><pre>git pull origin master</pre>
 </div>
 <p>If you plan to make changes and issue pull requests to one or more
 repositories, you will need to do the following steps for each such
@@ -171,39 +177,20 @@ repository if you plan to modify and issue pull requests.</p>
 <h2>Modifying code<a class="headerlink" href="#modifying-code" title="Permalink to this headline">¶</a></h2>
 <p>Before making changes, you generally want to make sure <em>master</em> is up to
 date:</p>
-<div class="highlight-python"><pre>git checkout master
-git pull</pre>
+<div class="highlight-python"><pre>git pull origin master</pre>
 </div>
-<p>Then create a new branch based on <cite>master</cite> for any new commits:</p>
-<div class="highlight-python"><pre>git checkout -b new_feature master</pre>
+<p>Then create a new branch based on <cite>origin/master</cite> and
+commit to this branch:</p>
+<div class="highlight-python"><pre>git checkout -b new_feature origin/master
+# make some changes
+git commit - "describe the changes"</pre>
 </div>
-<p>(You don&#8217;t need to the final <cite>master</cite> if this branch  is currently checked out.)</p>
-<p>Now make changes, add and commit them,
-and then push to your own fork:</p>
+<p>then push to your own fork:</p>
 <div class="highlight-python"><pre>git push username new_feature</pre>
 </div>
 <p>If you want these changes pulled into <em>master</em>,
 you can issue a pull request from the github page for your fork of this
 repository (make sure to select the correct branch of your repository).</p>
-<p><strong>Note:</strong> If you accidentally commit to <cite>master</cite> rather than creating a
-feature branch first, you can easily recover:</p>
-<div class="highlight-python"><pre>git checkout -b new_feature</pre>
-</div>
-<p>will create a new branch based on the current state and history (including
-your commits to <cite>master</cite>) and you can just continue adding additional
-commits.</p>
-<p>The only problem is your <cite>master</cite> branch no longer agrees with the history
-on Github and you want to throw away the commits you made to <cite>master</cite>.  The
-easiest way to do this is just to make sure you&#8217;re on a different branch,
-e.g.,</p>
-<div class="highlight-python"><pre>git checkout new_feature</pre>
-</div>
-<p>and then:</p>
-<div class="highlight-python"><pre>git branch -D master
-git checkout -b master origin/master</pre>
-</div>
-<p>This deletes your local branch named <cite>master</cite> and recreates a branch with
-the same name based on <cite>origin/master</cite>, which is what you want.</p>
 </div>
 <div class="section" id="pull-requests">
 <span id="developers-pr"></span><h2>Pull requests<a class="headerlink" href="#pull-requests" title="Permalink to this headline">¶</a></h2>
@@ -211,15 +198,13 @@ the same name based on <cite>origin/master</cite>, which is what you want.</p>
 anything:</p>
 <ol class="arabic">
 <li><p class="first">Make sure you are up to date with <em>master</em>:</p>
-<div class="highlight-python"><pre>git checkout master
-git pull</pre>
+<div class="highlight-python"><pre>git pull origin master</pre>
 </div>
 <p>If this does not say &#8220;Already up-to-date&#8221; then you might want to rebase
 your modified code onto the updated master.  With your feature branch
 checked out, you can see what newer commits have been added to <em>master</em>
 via:</p>
-<div class="highlight-python"><pre>git checkout new_feature
-git log HEAD..master</pre>
+<div class="highlight-python"><pre>git log HEAD..master</pre>
 </div>
 <p>If your new feature can be added on to the updated master, you can rebase:</p>
 <div class="highlight-python"><pre>git rebase master</pre>
@@ -242,32 +227,6 @@ nosetests</pre>
 <p>To issue a pull request (PR), go to the Github page for your fork of the
 repository in question, select the branch from which you want the pull
 request to originate, and then click the <em>Pull Request</em> button.</p>
-</div>
-<div class="section" id="testing-out-a-pull-request">
-<span id="test-pr"></span><h2>Testing out a pull request<a class="headerlink" href="#testing-out-a-pull-request" title="Permalink to this headline">¶</a></h2>
-<p>To test out someone else&#8217;s pull request, follow these  instructions:
-For
-example, if you want to try out a pull request coming from a branch named
-<em>bug-fix</em> from user <em>rjleveque</em> to the <em>master</em> branch of
-the <em>amrclaw</em> repository, you would do:</p>
-<div class="highlight-python"><pre>cd $CLAW/amrclaw   # (and make sure you don't have uncommitted changes)
-git checkout master
-git pull  # to make sure you are up to date
-
-git checkout -b rjleveque-bug-fix master
-git pull https://github.com/rjleveque/amrclaw.git bug-fix</pre>
-</div>
-<p>This puts you on a new branch of your own repository named
-<em>rjleveque-bug-fix</em> that has the proposed changes pulled into it.</p>
-<p>Once you are done testing, you can get rid of this branch via:</p>
-<div class="highlight-python"><pre>git checkout master
-git branch -D rjleveque-bug-fix</pre>
-</div>
-</div>
-<div class="section" id="top-level-pull-requests">
-<span id="toplevel-pr"></span><h2>Top level pull requests<a class="headerlink" href="#top-level-pull-requests" title="Permalink to this headline">¶</a></h2>
-<p>The top level <em>clawpack</em> repository keeps track of what versions of the
-subrepositories work well together.</p>
 <p>If you make pull requests in two different repositories that are linked, say
 to both <em>pyclaw</em> and <em>riemann</em>, then you should also push these changes to
 the top-level <em>clawpack</em> repository and issue a PR for this change:</p>
@@ -282,7 +241,7 @@ git push username pyclaw-riemann-changes</pre>
 </div>
 <div class="section" id="git-workflow">
 <h2>Git workflow<a class="headerlink" href="#git-workflow" title="Permalink to this headline">¶</a></h2>
-<p>See <a class="reference internal" href="git_resources.html#git-resources"><em>git resources</em></a> for useful links.</p>
+<p>The sections <a class="reference internal" href="git_and_github.html#git-and-github"><em>Using Git and GitHub</em></a> and <a class="reference internal" href="gitwash/index.html#using-git"><em>Gitwash version of developer guide</em></a> need to be updated.</p>
 </div>
 </div>
 
@@ -302,8 +261,6 @@ git push username pyclaw-riemann-changes</pre>
 <li><a class="reference internal" href="#installation-instructions-for-developers">Installation instructions for developers</a></li>
 <li><a class="reference internal" href="#modifying-code">Modifying code</a></li>
 <li><a class="reference internal" href="#pull-requests">Pull requests</a></li>
-<li><a class="reference internal" href="#testing-out-a-pull-request">Testing out a pull request</a></li>
-<li><a class="reference internal" href="#top-level-pull-requests">Top level pull requests</a></li>
 <li><a class="reference internal" href="#git-workflow">Git workflow</a></li>
 </ul>
 </li>
@@ -312,7 +269,7 @@ git push username pyclaw-riemann-changes</pre>
 <ul>
   <li><a href="contents.html">Documentation overview</a><ul>
       <li>Previous: <a href="setrun_changes.html" title="previous chapter">Changes to input parameters in setrun.py from 4.x to 5.0</a></li>
-      <li>Next: <a href="git_resources.html" title="next chapter">git resources</a></li>
+      <li>Next: <a href="git_and_github.html" title="next chapter">Using Git and GitHub</a></li>
   </ul></li>
 </ul>
   <h3>This Page</h3>
@@ -338,7 +295,7 @@ git push username pyclaw-riemann-changes</pre>
       <div class="clearer"></div>
     </div>
   <div class="footer">
-    &copy; Copyright 2013, The Clawpack Development Team.
+    &copy; Copyright 2011, Randall J. LeVeque and others.
     Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
   </div>
   
