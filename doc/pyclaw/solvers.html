@@ -114,13 +114,17 @@
 Runge-Kutta integration, in 1/2D</li>
 </ul>
 </div></blockquote>
-<p>Typically, all that is needed to select a different solver is to specify
+<p>Solver initialization takes one argument: a Riemann solver, usually
+from the Riemann repository.
+Typically, all that is needed to select a different solver is to specify
 it in the problem script, e.g.</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">solver</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">ClawSolver2D</span><span class="p">()</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">clawpack</span> <span class="kn">import</span> <span class="n">pyclaw</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">clawpack</span> <span class="kn">import</span> <span class="n">riemann</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">solver</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">ClawSolver2D</span><span class="p">(</span><span class="n">riemann</span><span class="o">.</span><span class="n">acoustics_2D</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>for the Classic solver or</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">solver</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">SharpClawSolver2D</span><span class="p">()</span>
+<p>for the 2D acoustics equations and the Classic Clawpack solver or</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">solver</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">SharpClawSolver2D</span><span class="p">(</span><span class="n">riemann</span><span class="o">.</span><span class="n">acoustics_2D</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>for the SharpClaw solver.  Most of the applications distributed with PyClaw
@@ -167,8 +171,8 @@ later time <span class="math">\(\text{t_end}\)</span> using the 1D acoustics Rie
 </tr>
 </tbody>
 </table>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">pyclaw</span> <span class="kn">import</span> <span class="n">SharpClawSolver1D</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">solver</span> <span class="o">=</span> <span class="n">SharpClawSolver1D</span><span class="p">()</span>           <span class="c"># Instantiate a default, 1d solver</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">clawpack</span> <span class="kn">import</span> <span class="n">pyclaw</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">solver</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">SharpClawSolver1D</span><span class="p">()</span>           <span class="c"># Instantiate a default, 1d solver</span>
 
 <span class="gp">&gt;&gt;&gt; </span><span class="n">solver</span><span class="o">.</span><span class="n">evolve_to_time</span><span class="p">(</span><span class="n">solution</span><span class="p">,</span><span class="n">t_end</span><span class="p">)</span>  <span class="c"># Evolve the solution to t_end </span>
 </pre></div>
@@ -351,7 +355,7 @@ later time <span class="math">\(\text{t_end}\)</span> using the linearized 1d ac
 </table>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">clawpack</span> <span class="kn">import</span> <span class="n">pyclaw</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">solver</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">ClawSolver1D</span><span class="p">()</span>                   <span class="c"># Instantiate a default, 1d solver</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">solver</span><span class="o">.</span><span class="n">set_mthlim</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">limiters</span><span class="o">.</span><span class="n">tvd</span><span class="o">.</span><span class="n">vanleer</span>  <span class="c"># Use the van Leer limiter</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">solver</span><span class="o">.</span><span class="n">limiters</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">limiters</span><span class="o">.</span><span class="n">tvd</span><span class="o">.</span><span class="n">vanleer</span>  <span class="c"># Use the van Leer limiter</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">solver</span><span class="o">.</span><span class="n">dt</span> <span class="o">=</span> <span class="mf">0.0001</span>                               <span class="c"># Set the initial time step</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">solver</span><span class="o">.</span><span class="n">max_steps</span> <span class="o">=</span> <span class="mi">500</span>                           <span class="c"># Set the maximum number of time steps</span>
 </pre></div>

@@ -7,7 +7,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Plotting &mdash; Clawpack 5.0.0rc-alpha documentation</title>
+    <title>Plotting PyClaw results &mdash; Clawpack 5.0.0rc-alpha documentation</title>
     
     <link rel="stylesheet" href="../_static/flasky.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -30,7 +30,7 @@
     <link rel="shortcut icon" href="../_static/clawicon.ico"/>
     <link rel="author" title="About these documents" href="../about.html" />
     <link rel="top" title="Clawpack 5.0.0rc-alpha documentation" href="../index.html" />
-    <link rel="up" title="The Basics" href="basics.html" />
+    <link rel="up" title="PyClaw Basics" href="basics.html" />
     <link rel="next" title="Going Further" href="going_further.html" />
     <link rel="prev" title="Solving other hyperbolic PDEs" href="examples.html" /> 
   </head>
@@ -81,8 +81,8 @@
           <a href="examples.html" title="Solving other hyperbolic PDEs"
              accesskey="P">previous</a> |</li>
         <li><a href="../contents.html">Clawpack 5.0.0rc-alpha documentation</a> &raquo;</li>
-          <li><a href="index.html" >Quickstart</a> &raquo;</li>
-          <li><a href="basics.html" accesskey="U">The Basics</a> &raquo;</li> 
+          <li><a href="index.html" >Pyclaw Quickstart</a> &raquo;</li>
+          <li><a href="basics.html" accesskey="U">PyClaw Basics</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -91,60 +91,48 @@
         <div class="bodywrapper">
           <div class="body">
             
-  <div class="section" id="plotting">
-<h1>Plotting<a class="headerlink" href="#plotting" title="Permalink to this headline">¶</a></h1>
-<p>PyClaw currently supports two output formats: ASCII and a custom binary format
-referred to internally as <cite>format=petsc</cite>.  PyClaw relies on the
+  <div class="section" id="plotting-pyclaw-results">
+<span id="pyclaw-plotting"></span><h1>Plotting PyClaw results<a class="headerlink" href="#plotting-pyclaw-results" title="Permalink to this headline">¶</a></h1>
+<p>PyClaw relies on the
 <a class="reference external" href="http://github.com/clawpack/visclaw/">VisClaw package</a> for easy plotting, although
 it is of course possible to load the output into other visualization packages.
 VisClaw supports 1D and 2D plotting; for 3D plotting, we recommend using the
 <a class="reference external" href="http://depts.washington.edu/clawpack/users-4.6/matlab_plotting.html">old Clawpack MATLAB routines</a>
 for now.</p>
+<p>This page gives some very basic information; for more detail, see <a class="reference internal" href="../plotting.html#plotting"><em>Plotting options</em></a>
+in VisClaw&#8217;s documentation.</p>
 <div class="section" id="basics">
 <h2>Basics<a class="headerlink" href="#basics" title="Permalink to this headline">¶</a></h2>
-<p>Pyclaw includes routines for creating HTML and LaTex plot pages or plotting interactively.
+<p>VisClaw includes routines for creating HTML and LaTex plot pages or plotting interactively.
 These require a <cite>setplot.py</cite> file that defines the plotting parameters;
-see <a class="reference external" href="http://kingkong.amath.washington.edu/clawpack/users/setplot.html">this help page</a>
+see <a class="reference internal" href="../plotting_python.html#plotting-python"><em>Plotting options in Python</em></a>.
 for more information.  Once you have an appropriate <cite>setplot.py</cite> file,
 there are some convenience functions in <cite>$PYCLAW/src/petclaw/plot.py</cite>
 for generating these plots.  Assuming you have output files in <cite>./_output</cite>
-(which is the default), you can generate HTML plots from Python via</p>
-<p><strong>Comment: Check the plot.py path</strong></p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">pyclaw</span> <span class="kn">import</span> <span class="n">plot</span>
+(which is the default), you can generate HTML pages with plots from Python via</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">clawpack.pyclaw</span> <span class="kn">import</span> <span class="n">plot</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">plot</span><span class="o">.</span><span class="n">html_plot</span><span class="p">()</span> 
 </pre></div>
 </div>
 <p>This will generate HTML pages with plots and print out a message with the
 location of the HTML file.  To launch an interactive plotting session
 from within Python, do</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">pyclaw</span> <span class="kn">import</span> <span class="n">plot</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">clawpack.pyclaw</span> <span class="kn">import</span> <span class="n">plot</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">plot</span><span class="o">.</span><span class="n">interactive_plot</span><span class="p">()</span> 
 </pre></div>
 </div>
 <p>To see a list of commands available in the resulting interactive environment,
-type &#8221;?&#8221;.</p>
+type &#8221;?&#8221; or see <a class="reference internal" href="../plotting_python.html#plotting-iplotclaw"><em>Interactive plotting with Iplotclaw</em></a>.</p>
 </div>
 <div class="section" id="plotting-result-from-parallel-runs">
 <h2>Plotting result from parallel runs<a class="headerlink" href="#plotting-result-from-parallel-runs" title="Permalink to this headline">¶</a></h2>
 <p>By default, when running in parallel, PyClaw outputs data in a binary format.
-In order to plot from such files, just replace pyclaw with petclaw in the
+In order to plot from such files, just replace <tt class="docutils literal"><span class="pre">pyclaw</span></tt> with <tt class="docutils literal"><span class="pre">petclaw</span></tt> in the
 commands above; e.g.</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">petclaw</span> <span class="kn">import</span> <span class="n">plot</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">clawpack.petclaw</span> <span class="kn">import</span> <span class="n">plot</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">plot</span><span class="o">.</span><span class="n">interactive_plot</span><span class="p">()</span> 
 </pre></div>
 </div>
-</div>
-<div class="section" id="more-advanced-plotting">
-<h2>More advanced plotting<a class="headerlink" href="#more-advanced-plotting" title="Permalink to this headline">¶</a></h2>
-<p>The plot commands above make use of a file <cite>setplot.py</cite> that is expected to
-be found in the current directory and specifies what and how to plot the
-results.  If this file is not found, VisClaw will attempt to plot using some
-default parameters.  The commands above also assume that the output files
-are in a subdirectory of the current directory named <cite>_output</cite>.</p>
-<p>For more information on writing your own <cite>setplot.py</cite> file, see the
-<a class="reference external" href="http://depts.washington.edu/clawpack/users-4.6/index.html">Clawpack documentation</a>
-and especially the page on <a class="reference external" href="http://depts.washington.edu/clawpack/users-4.6/plotting.html">setplot.py</a>,
-as well as the <a class="reference external" href="http://depts.washington.edu/clawpack/users-4.6/plotting_faq.html">FAQ</a>.</p>
 </div>
 </div>
 
@@ -159,18 +147,17 @@ as well as the <a class="reference external" href="http://depts.washington.edu/c
             </a></p>
   <h3><a href="../contents.html">Table Of Contents</a></h3>
   <ul>
-<li><a class="reference internal" href="#">Plotting</a><ul>
+<li><a class="reference internal" href="#">Plotting PyClaw results</a><ul>
 <li><a class="reference internal" href="#basics">Basics</a></li>
 <li><a class="reference internal" href="#plotting-result-from-parallel-runs">Plotting result from parallel runs</a></li>
-<li><a class="reference internal" href="#more-advanced-plotting">More advanced plotting</a></li>
 </ul>
 </li>
 </ul>
 <h3>Related Topics</h3>
 <ul>
   <li><a href="../contents.html">Documentation overview</a><ul>
-  <li><a href="index.html">Quickstart</a><ul>
-  <li><a href="basics.html">The Basics</a><ul>
+  <li><a href="index.html">Pyclaw Quickstart</a><ul>
+  <li><a href="basics.html">PyClaw Basics</a><ul>
       <li>Previous: <a href="examples.html" title="previous chapter">Solving other hyperbolic PDEs</a></li>
       <li>Next: <a href="going_further.html" title="next chapter">Going Further</a></li>
   </ul></li>
