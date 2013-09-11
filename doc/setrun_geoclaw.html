@@ -202,20 +202,37 @@ It is important to set this properly for tsunami applications, see
 <dl class="attribute">
 <dt>
 <tt class="descname">friction_forcing : bool</tt></dt>
-<dd><p>Whether to apply friction source terms in momentum equations.</p>
+<dd><p>Whether to apply friction source terms in momentum equations.
+See <a class="reference internal" href="manning.html#manning"><em>Manning friction term</em></a> for more discussion of the next four parameters.</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt>
-<tt class="descname">manning_coefficient : float</tt></dt>
-<dd><p>For friction source terms, the Manning coefficient.
-See <a class="reference internal" href="manning.html#manning"><em>Manning friction term</em></a>.</p>
+<tt class="descname">friction_shore_level : float</tt></dt>
+<dd><p>For friction source terms, the value used to determine whether a cell
+is &#8220;onshore&#8221; or &#8220;offshore&#8221;, in cases where different Manning coefficients
+are desired in the two cases.  The default value is 0.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<tt class="descname">manning_coefficient_offshore : float</tt></dt>
+<dd><p>For friction source terms, the Manning coefficient to be used &#8220;offshore&#8221;,
+where the topo satisfies <cite>B &gt; friction_shore_level</cite>.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<tt class="descname">manning_coefficient_onshore : float</tt></dt>
+<dd><p>Manning coefficient to use &#8220;onshore&#8221;,
+where the topo satisfies <cite>B &lt;= friction_shore_level</cite>.</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt>
 <tt class="descname">friction_depth : float</tt></dt>
 <dd><p>Friction source terms are only applied in water shallower than this,
+i.e. if <cite>h &lt; friction_depth</cite>,
 since they have negligible effect in deeper water.</p>
 </dd></dl>
 

@@ -126,15 +126,28 @@ problems  --- need to clarify this!).
 .. attribute:: friction_forcing : bool
 
    Whether to apply friction source terms in momentum equations.
+   See :ref:`manning` for more discussion of the next four parameters.
 
-.. attribute:: manning_coefficient : float
+.. attribute:: friction_shore_level : float
 
-   For friction source terms, the Manning coefficient.
-   See :ref:`manning`.
+   For friction source terms, the value used to determine whether a cell
+   is "onshore" or "offshore", in cases where different Manning coefficients
+   are desired in the two cases.  The default value is 0.
+
+.. attribute:: manning_coefficient_offshore : float
+
+   For friction source terms, the Manning coefficient to be used "offshore",
+   where the topo satisfies `B > friction_shore_level`.
+
+.. attribute:: manning_coefficient_onshore : float
+
+   Manning coefficient to use "onshore", 
+   where the topo satisfies `B <= friction_shore_level`.
 
 .. attribute:: friction_depth : float
 
    Friction source terms are only applied in water shallower than this,
+   i.e. if `h < friction_depth`, 
    since they have negligible effect in deeper water.
 
 .. _setrun_topo:
