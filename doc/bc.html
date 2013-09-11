@@ -53,7 +53,7 @@
           <a class="active" href="https://groups.google.com/forum/#!forum/claw-users">Support</a>
         </li>
         <li>
-          <a class="active" href="http://github.com/clawpack">Source</a>
+          <a class="active" href="http://github.com/organizations/clawpack">Source</a>
         </li>
         <li>
           <a class="" href="developers.html">Develop</a>
@@ -93,10 +93,15 @@
 <p>Boundary conditions are imposed each time step by filling ghost cells
 adjacent to the edge of each grid patch.  See Chapter 4 of <a class="reference internal" href="biblio.html#leveque-fvmhp">[LeVeque-FVMHP]</a>
 for more details.</p>
+<p>Boundary conditions are set by the library routines:</p>
+<ul class="simple">
+<li><cite>$CLAW/classic/src/Nd/bcN.f</cite> for the classic code (N = 1, 2, 3).</li>
+<li><cite>$CLAW/amrclaw/src/Nd/bcNamr.f</cite> for the amrclaw code (N = 2, 3).</li>
+</ul>
 <p>Several standard choices of boundary condition procedures are provided in
-the library routine <cite>bcN.f</cite> (in <cite>N</cite> space dimensions).  These can be
+these routines, and can be
 selected at each boundary by setting the input paramters <cite>bc_lower</cite> and
-<cite>bc_upper</cite> in each dimension (see <a class="reference internal" href="setrun.html#setrun"><em>Specifying run-time parameters in setrun.py</em></a>) to one of the following:</p>
+<cite>bc_upper</cite> in each dimension (see <a class="reference internal" href="setrun.html#setrun"><em>Specifying classic run-time parameters in setrun.py</em></a>) to one of the following:</p>
 <ul>
 <li><p class="first">1 or &#8216;extrap&#8217;   : extrapolation (non-reflecting outflow)</p>
 <p>In this case values from the grid cell adjacent to the boundary
@@ -171,6 +176,9 @@ reflection of outgoing tsunami waves.  Extroplation boundary conditions can
 also be used on dry land (where the depth <cite>h</cite> is zero).</p>
 <p>In some cases reflecting boundary conditions might be more appropriate,
 e.g. along the walls of a wave tank.</p>
+<p>The library routine <cite>$CLAW/geoclaw/src/2d/shallow/bc2amr.f</cite> is modified from
+the  <cite>amrclaw</cite> version only by extrapolating the depth at the boundaries
+into ghost cells.</p>
 </div>
 <div class="section" id="boundary-conditions-for-clamshell-grids-on-the-sphere">
 <span id="bc-sphere"></span><h2>Boundary conditions for clamshell grids on the sphere<a class="headerlink" href="#boundary-conditions-for-clamshell-grids-on-the-sphere" title="Permalink to this headline">¶</a></h2>
@@ -239,7 +247,7 @@ See also [BergerCalhounHelzelLeVeque] for further examples.</p>
       <div class="clearer"></div>
     </div>
   <div class="footer">
-    &copy; Copyright 2011, Randall J. LeVeque and others.
+    &copy; Copyright 2013, The Clawpack Development Team.
     Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
   </div>
   

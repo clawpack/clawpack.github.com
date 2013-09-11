@@ -53,7 +53,7 @@
           <a class="active" href="https://groups.google.com/forum/#!forum/claw-users">Support</a>
         </li>
         <li>
-          <a class="active" href="http://github.com/clawpack">Source</a>
+          <a class="active" href="http://github.com/organizations/clawpack">Source</a>
         </li>
         <li>
           <a class="" href="developers.html">Develop</a>
@@ -90,16 +90,17 @@
             
   <div class="section" id="specifying-geoclaw-parameters-in-setrun-py">
 <span id="setrun-geoclaw"></span><h1>Specifying GeoClaw parameters in <cite>setrun.py</cite><a class="headerlink" href="#specifying-geoclaw-parameters-in-setrun-py" title="Permalink to this headline">¶</a></h1>
-<p>Since <a class="reference internal" href="geoclaw.html#geoclaw"><em>GeoClaw</em></a> is a modified version of <em class="xref std std-ref">amrclaw</em>,
+<p>Since <a class="reference internal" href="geoclaw.html#geoclaw"><em>GeoClaw</em></a> is a modified version of <a class="reference internal" href="amrclaw.html#amrclaw"><em>AMRClaw Software</em></a>,
 all of the parameters that
 are required for AMRClaw are also needed by GeoClaw.  See
-<a class="reference internal" href="setrun_amrclaw.html#setrun-amrclaw"><em>Specifying AMRClaw run-time parameters in setrun.py</em></a> for a discussion of these, and <a class="reference internal" href="setrun.html#setrun"><em>Specifying run-time parameters in setrun.py</em></a> for a
+<a class="reference internal" href="setrun_amrclaw.html#setrun-amrclaw"><em>Specifying AMRClaw run-time parameters in setrun.py</em></a> for a discussion of these, and <a class="reference internal" href="setrun.html#setrun"><em>Specifying classic run-time parameters in setrun.py</em></a> for a
 description of <cite>setrun.py</cite> input scripts more generally.</p>
 <p>In addition, a number of other parameters should be set in the <cite>setrun.py</cite>
 file in any <a class="reference internal" href="geoclaw.html#geoclaw"><em>GeoClaw</em></a> application.
 See also the <a class="reference internal" href="geohints.html#geohints"><em>Cautionary Hints on using GeoClaw</em></a> for more about parameter choices.</p>
 <p>It is best to look at a specific example while reading this section, for
 example  <a class="reference internal" href="setrun_geoclaw_sample.html#setrun-geoclaw-sample"><em>Sample GeoClaw setrun.py module</em></a>.</p>
+<p>See also the sample codes in the directory <cite>$CLAW/geoclaw/examples/tsunami</cite>.</p>
 <p>The function <cite>setrun</cite> in this module is essentially the same as for AMRClaw,
 except that it expects to be called with <em>claw_pkg = &#8216;geoclaw&#8217;</em>.  This call
 should be performed properly by the Makefile if you have <em>CLAW_PKG =
@@ -107,72 +108,28 @@ geoclaw</em> set properly there.</p>
 <p>The new section <a class="reference internal" href="setrun_geoclaw_sample.html#setrun-setgeo"><em>setgeo function</em></a>
 in this module contains the new GeoClaw parameters.</p>
 <p>A brief summary of these:</p>
-<div class="section" id="refinement-factors-in-time">
-<h2>Refinement factors in time<a class="headerlink" href="#refinement-factors-in-time" title="Permalink to this headline">¶</a></h2>
-<p>New in 4.6.0: It is now possible to have GeoClaw automatically choose
+<div class="section" id="additional-amr-parameters">
+<h2>Additional AMR parameters<a class="headerlink" href="#additional-amr-parameters" title="Permalink to this headline">¶</a></h2>
+<p>In addition to the standard AMRClaw parameters described in
+<a class="reference internal" href="setrun_amrclaw.html#setrun-amrclaw"><em>Specifying AMRClaw run-time parameters in setrun.py</em></a>, some additional parameters governing how refinement
+is done should be specified for GeoClaw applications:</p>
+<dl class="attribute">
+<dt>
+<tt class="descname">rundata.refinement_data.variable_dt_refinement_ratios : bool</tt></dt>
+<dd><p>The default is False, in which case refinement factors in time
+are specified by the user as usual in the array
+<cite>rundata.amrdata.refinement_ratios_t</cite>.</p>
+<p>When True, this indicates that GeoClaw should automatically choose
 refinement factors in time on each level based on an estimate of the maximum
 wave speed on all grids at this level.  For most hyperbolic problems the CFL
 condition suggests that one should refine in time by the same factor as in
 space.  However, for GeoClaw applications where fine grids appear only in
-shallow coastal regions this may not be the case.  Automatic choice of
-refinement factors is used if</p>
-<dl class="attribute">
-<dt>
-<tt class="descname">variable_dt_refinement_ratios : bool</tt></dt>
-<dd></dd></dl>
-
-<p>is set to True.  The default is False, in which case refinement factors in time
-are specified by the user as usual.</p>
-</div>
-<div class="section" id="general-geo-parameters">
-<h2>General geo parameters<a class="headerlink" href="#general-geo-parameters" title="Permalink to this headline">¶</a></h2>
-<dl class="attribute">
-<dt>
-<tt class="descname">igravity : integer</tt></dt>
-<dd><p><em>igravity = 1</em> should be set in general.</p>
+shallow coastal regions this may not be the case.</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt>
-<tt class="descname">gravity : float</tt></dt>
-<dd><p>gravitational constant in m/s**2, e.g.  <em>gravity = 9.81</em>.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt>
-<tt class="descname">icoordsys : integer</tt></dt>
-<dd><p><em>icoordsys = 1</em> for Cartesian x-y in meters,</p>
-<p><em>icoordsys = 2</em> for latitude-longitude on the sphere.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt>
-<tt class="descname">Rearth : float</tt></dt>
-<dd><p>radius of the earth in meters, e.g.  <em>Rearth = 6367.5e3</em>.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt>
-<tt class="descname">icoriolis : integer</tt></dt>
-<dd><p><em>icoriolis = 1</em> to include Coriolis terms in momentum equations</p>
-<p><em>icoriolis = 0</em> to omit Coriolis terms (usually fine for tsunami modeling)</p>
-</dd></dl>
-
-</div>
-<div class="section" id="tsunami-parameters">
-<span id="setrun-tsunami"></span><h2>Tsunami parameters<a class="headerlink" href="#tsunami-parameters" title="Permalink to this headline">¶</a></h2>
-<p>These parameters are used for tsunami modeling (can also be used for other
-problems  &#8212; need to clarify this!).</p>
-<dl class="attribute">
-<dt>
-<tt class="descname">sealevel : float</tt></dt>
-<dd><p>sea level (often <em>sealevel = 0.</em>)
-This is relative to the 0 vertical datum of the topography files used.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt>
-<tt class="descname">wavetolerance : float</tt></dt>
+<tt class="descname">rundata.refinement_data.wave_tolerance : float</tt></dt>
 <dd><p>Cells are flagged for refinement if the difference between the surface
 elevation and sea level is larger than this tolerance.  Note that whether
 refinement is actually done depends also on how various AMR regions have
@@ -183,9 +140,9 @@ maximum refinement allowed in various regions.</p>
 
 <dl class="attribute">
 <dt>
-<tt class="descname">maxleveldeep : float</tt></dt>
+<tt class="descname">rundata.refinement_data.max_level_deep : int</tt></dt>
 <dd><p>For simulations over the ocean, it is often useful to specify
-a maximum refinement level allowed in deep parts of the ocean.  This is
+a <em>maximum refinement level</em> allowed in deep parts of the ocean.  This is
 useful if a high level of refinement is specified on some rectangular
 region but only the parts of this region near the shore actually need to
 be refined.</p>
@@ -193,32 +150,71 @@ be refined.</p>
 
 <dl class="attribute">
 <dt>
-<tt class="descname">depthdeep : float</tt></dt>
+<tt class="descname">rundata.refinement_data.max_level_deep : float</tt></dt>
 <dd><p>The deepness that triggers the refinement limitation imposed by
-<em>maxleveldeep</em> above.</p>
+<cite>max_level_deep</cite> above.</p>
 </dd></dl>
 
-<dl class="attribute">
-<dt>
-<tt class="descname">ifriction : integer</tt></dt>
-<dd><div class="admonition warning">
-<p class="first admonition-title">Warning</p>
-<p><strong>This is not actually used in the code and will be deprecated.</strong></p>
-<p class="last">If <em>coeffmanning &gt; 0</em> then friction terms will be applied, regardless
-of the value of <em>ifriction</em>.</p>
 </div>
+<div class="section" id="general-geo-parameters">
+<h2>General geo parameters<a class="headerlink" href="#general-geo-parameters" title="Permalink to this headline">¶</a></h2>
+<p><cite>rundata.geo_data</cite> has the following additional attributes:</p>
+<dl class="attribute">
+<dt>
+<tt class="descname">gravity : float</tt></dt>
+<dd><p>gravitational constant in m/s**2, e.g.  <em>gravity = 9.81</em>.</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt>
-<tt class="descname">coeffmanning : float</tt></dt>
+<tt class="descname">coordinate_system : integer</tt></dt>
+<dd><p><em>coordinate_system = 1</em> for Cartesian x-y in meters,</p>
+<p><em>coordinate_system = 2</em> for latitude-longitude on the sphere.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<tt class="descname">earth_radius : float</tt></dt>
+<dd><p>radius of the earth in meters, e.g.  <em>earth_radius = 6367.5e3</em>.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<tt class="descname">coriolis_forcing : bool</tt></dt>
+<dd><p><em>coriolis_forcing = True</em> to include Coriolis terms in momentum equations</p>
+<p><em>coriolis_forcing = False</em> to omit Coriolis terms (usually fine for tsunami modeling)</p>
+</dd></dl>
+
+</div>
+<div class="section" id="tsunami-parameters">
+<span id="setrun-tsunami"></span><h2>Tsunami parameters<a class="headerlink" href="#tsunami-parameters" title="Permalink to this headline">¶</a></h2>
+<p>These parameters are used for tsunami modeling (can also be used for other
+problems  &#8212; need to clarify this!).</p>
+<dl class="attribute">
+<dt>
+<tt class="descname">sea_level : float</tt></dt>
+<dd><p>sea level (often <em>sea_level = 0.</em>)
+This is relative to the 0 vertical datum of the topography files used.
+It is important to set this properly for tsunami applications, see
+<a class="reference internal" href="sealevel.html#sealevel"><em>Setting sealevel</em></a>.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<tt class="descname">friction_forcing : bool</tt></dt>
+<dd><p>Whether to apply friction source terms in momentum equations.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<tt class="descname">manning_coefficient : float</tt></dt>
 <dd><p>For friction source terms, the Manning coefficient.
 See <a class="reference internal" href="manning.html#manning"><em>Manning friction term</em></a>.</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt>
-<tt class="descname">frictiondepth : float</tt></dt>
+<tt class="descname">friction_depth : float</tt></dt>
 <dd><p>Friction source terms are only applied in water shallower than this,
 since they have negligible effect in deeper water.</p>
 </dd></dl>
@@ -230,7 +226,7 @@ since they have negligible effect in deeper water.</p>
 bathymetry) data files in GeoClaw.</p>
 <dl class="attribute">
 <dt>
-<tt class="descname">topofiles : list of lists</tt></dt>
+<tt class="descname">rundata.topo_data.topofiles : list of lists</tt></dt>
 <dd><p><em>topofiles</em> should be a list of the form <em>[file1info, file2info, etc.]</em>
 where each element is itself a list of the form</p>
 <blockquote>
@@ -454,7 +450,7 @@ include <em>x1</em>, <em>x2</em> and <em>xpoints-2</em> points in between, for e
   <h3><a href="contents.html">Table Of Contents</a></h3>
   <ul>
 <li><a class="reference internal" href="#">Specifying GeoClaw parameters in <cite>setrun.py</cite></a><ul>
-<li><a class="reference internal" href="#refinement-factors-in-time">Refinement factors in time</a></li>
+<li><a class="reference internal" href="#additional-amr-parameters">Additional AMR parameters</a></li>
 <li><a class="reference internal" href="#general-geo-parameters">General geo parameters</a></li>
 <li><a class="reference internal" href="#tsunami-parameters">Tsunami parameters</a></li>
 <li><a class="reference internal" href="#topography-data-file-parameters">Topography data file parameters</a></li>
@@ -496,7 +492,7 @@ include <em>x1</em>, <em>x2</em> and <em>xpoints-2</em> points in between, for e
       <div class="clearer"></div>
     </div>
   <div class="footer">
-    &copy; Copyright 2011, Randall J. LeVeque and others.
+    &copy; Copyright 2013, The Clawpack Development Team.
     Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
   </div>
   
