@@ -185,11 +185,6 @@ be refined.</p>
 <p><em>coriolis_forcing = False</em> to omit Coriolis terms (usually fine for tsunami modeling)</p>
 </dd></dl>
 
-</div>
-<div class="section" id="tsunami-parameters">
-<span id="setrun-tsunami"></span><h2>Tsunami parameters<a class="headerlink" href="#tsunami-parameters" title="Permalink to this headline">¶</a></h2>
-<p>These parameters are used for tsunami modeling (can also be used for other
-problems  &#8212; need to clarify this!).</p>
 <dl class="attribute">
 <dt>
 <tt class="descname">sea_level : float</tt></dt>
@@ -208,24 +203,27 @@ See <a class="reference internal" href="manning.html#manning"><em>Manning fricti
 
 <dl class="attribute">
 <dt>
-<tt class="descname">friction_shore_level : float</tt></dt>
-<dd><p>For friction source terms, the value used to determine whether a cell
-is &#8220;onshore&#8221; or &#8220;offshore&#8221;, in cases where different Manning coefficients
-are desired in the two cases.  The default value is 0.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt>
-<tt class="descname">manning_coefficient_offshore : float</tt></dt>
-<dd><p>For friction source terms, the Manning coefficient to be used &#8220;offshore&#8221;,
-where the topo satisfies <cite>B &gt; friction_shore_level</cite>.</p>
+<tt class="descname">manning_coefficient : float</tt></dt>
+<dd><p>For friction source terms, the Manning coefficient.  By default this
+value will be used everywhere unless <cite>manning_coefficient_onshore</cite> is
+set to a different value, in which case this value will be used only
+where the topo satisfies <cite>B &lt; friction_shore_level</cite>.</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt>
 <tt class="descname">manning_coefficient_onshore : float</tt></dt>
-<dd><p>Manning coefficient to use &#8220;onshore&#8221;,
-where the topo satisfies <cite>B &lt;= friction_shore_level</cite>.</p>
+<dd><p>Optional second Manning coefficient to use &#8220;onshore&#8221;,
+where the topo satisfies <cite>B &gt;= friction_shore_level</cite>.
+If not set, it will default to the same value as <cite>manning_coefficient</cite>.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<tt class="descname">friction_shore_level : float</tt></dt>
+<dd><p>For friction source terms, the value used to determine whether a cell
+is &#8220;onshore&#8221; or &#8220;offshore&#8221;, in cases where different Manning coefficients
+are desired in the two cases.  The default value is 0.</p>
 </dd></dl>
 
 <dl class="attribute">
@@ -469,7 +467,6 @@ include <em>x1</em>, <em>x2</em> and <em>xpoints-2</em> points in between, for e
 <li><a class="reference internal" href="#">Specifying GeoClaw parameters in <cite>setrun.py</cite></a><ul>
 <li><a class="reference internal" href="#additional-amr-parameters">Additional AMR parameters</a></li>
 <li><a class="reference internal" href="#general-geo-parameters">General geo parameters</a></li>
-<li><a class="reference internal" href="#tsunami-parameters">Tsunami parameters</a></li>
 <li><a class="reference internal" href="#topography-data-file-parameters">Topography data file parameters</a></li>
 <li><a class="reference internal" href="#qinit-data-file-parameters">qinit data file parameters</a></li>
 <li><a class="reference internal" href="#amr-refinement-region-parameters">AMR refinement region parameters</a></li>
