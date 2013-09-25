@@ -203,27 +203,27 @@ See <a class="reference internal" href="manning.html#manning"><em>Manning fricti
 
 <dl class="attribute">
 <dt>
-<tt class="descname">manning_coefficient : float</tt></dt>
-<dd><p>For friction source terms, the Manning coefficient.  By default this
-value will be used everywhere unless <cite>manning_coefficient_onshore</cite> is
-set to a different value, in which case this value will be used only
-where the topo satisfies <cite>B &lt; friction_shore_level</cite>.</p>
+<tt class="descname">manning_coefficient : float or list of floats</tt></dt>
+<dd><p>For friction source terms, the Manning coefficient.  If a single value
+is given, this value will be used where ever h &lt; friction_depth.
+If a list of values is given, then the next parameter delineates the
+regions where each is used based on values of the topography B.</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt>
-<tt class="descname">manning_coefficient_onshore : float</tt></dt>
-<dd><p>Optional second Manning coefficient to use &#8220;onshore&#8221;,
-where the topo satisfies <cite>B &gt;= friction_shore_level</cite>.
-If not set, it will default to the same value as <cite>manning_coefficient</cite>.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt>
-<tt class="descname">friction_shore_level : float</tt></dt>
-<dd><p>For friction source terms, the value used to determine whether a cell
-is &#8220;onshore&#8221; or &#8220;offshore&#8221;, in cases where different Manning coefficients
-are desired in the two cases.  The default value is 0.</p>
+<tt class="descname">manning_break : list of floats</tt></dt>
+<dd><p>If manning_coefficient is a list of length N, then this should be a list
+of length N-1 giving break points in the topo B used to determine where
+each Manning coefficient is used.</p>
+<p>For example, if</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">manning_coefficient</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.025</span><span class="p">,</span> <span class="mf">0.06</span><span class="p">]</span>
+<span class="n">manning_break</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>then 0.025 will be used where B&lt;0 and 0.06 used where B&gt;0.
+(Subject still to the restriction that no friction is applied
+where h &gt;= friction_depth.)</p>
 </dd></dl>
 
 <dl class="attribute">
