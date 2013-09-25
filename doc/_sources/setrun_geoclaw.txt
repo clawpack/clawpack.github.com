@@ -117,7 +117,13 @@ General geo parameters
 .. attribute:: friction_forcing : bool
 
    Whether to apply friction source terms in momentum equations.
-   See :ref:`manning` for more discussion of the next four parameters.
+   See :ref:`manning` for more discussion of the next three parameters.
+
+.. attribute:: friction_depth : float
+
+   Friction source terms are only applied in water shallower than this,
+   i.e. if `h < friction_depth`, 
+   assuming they have negligible effect in deeper water.
 
 .. attribute:: manning_coefficient : float or list of floats
 
@@ -128,7 +134,8 @@ General geo parameters
 
 .. attribute:: manning_break : list of floats
 
-   If manning_coefficient is a list of length N, then this should be a list
+   If manning_coefficient is a list of length N, then this should be a 
+   monotonically increasing list
    of length N-1 giving break points in the topo B used to determine where
    each Manning coefficient is used.
 
@@ -141,12 +148,6 @@ General geo parameters
    (Subject still to the restriction that no friction is applied 
    where h >= friction_depth.)
 
-
-.. attribute:: friction_depth : float
-
-   Friction source terms are only applied in water shallower than this,
-   i.e. if `h < friction_depth`, 
-   since they have negligible effect in deeper water.
 
 .. _setrun_topo:
 

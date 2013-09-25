@@ -198,7 +198,15 @@ It is important to set this properly for tsunami applications, see
 <dt>
 <tt class="descname">friction_forcing : bool</tt></dt>
 <dd><p>Whether to apply friction source terms in momentum equations.
-See <a class="reference internal" href="manning.html#manning"><em>Manning friction term</em></a> for more discussion of the next four parameters.</p>
+See <a class="reference internal" href="manning.html#manning"><em>Manning friction term</em></a> for more discussion of the next three parameters.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<tt class="descname">friction_depth : float</tt></dt>
+<dd><p>Friction source terms are only applied in water shallower than this,
+i.e. if <cite>h &lt; friction_depth</cite>,
+assuming they have negligible effect in deeper water.</p>
 </dd></dl>
 
 <dl class="attribute">
@@ -213,7 +221,8 @@ regions where each is used based on values of the topography B.</p>
 <dl class="attribute">
 <dt>
 <tt class="descname">manning_break : list of floats</tt></dt>
-<dd><p>If manning_coefficient is a list of length N, then this should be a list
+<dd><p>If manning_coefficient is a list of length N, then this should be a
+monotonically increasing list
 of length N-1 giving break points in the topo B used to determine where
 each Manning coefficient is used.</p>
 <p>For example, if</p>
@@ -224,14 +233,6 @@ each Manning coefficient is used.</p>
 <p>then 0.025 will be used where B&lt;0 and 0.06 used where B&gt;0.
 (Subject still to the restriction that no friction is applied
 where h &gt;= friction_depth.)</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt>
-<tt class="descname">friction_depth : float</tt></dt>
-<dd><p>Friction source terms are only applied in water shallower than this,
-i.e. if <cite>h &lt; friction_depth</cite>,
-since they have negligible effect in deeper water.</p>
 </dd></dl>
 
 </div>
