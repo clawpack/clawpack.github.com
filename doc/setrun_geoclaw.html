@@ -30,18 +30,18 @@
     <link rel="shortcut icon" href="_static/clawicon.ico"/>
     <link rel="author" title="About these documents" href="about.html" />
     <link rel="top" title="Clawpack 5.0.0rc-alpha documentation" href="index.html" />
-    <link rel="next" title="Sample GeoClaw setrun.py module" href="setrun_geoclaw_sample.html" />
+    <link rel="next" title="Plotting routines for GeoClaw" href="plotting_geoclaw.html" />
     <link rel="prev" title="Topography data" href="topo.html" /> 
   </head>
   <body>
 <div id="main-wrapper" class="sphinx">
 <div id="header-wrapper">
   <section id="header">
-    <h1><a href="http://clawpack.org/">Clawpack</a></h1>
+    <h1><a href="http://clawpack.org/">Clawpack</a></h1> 
     <nav>
       <ul>
         <li>
-          <a href="index.html">Docs</a>
+          <a href="toc_condensed.html">Docs</a>
         </li>
         <li>
           <a href="installing.html">Install</a>
@@ -74,7 +74,7 @@
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="setrun_geoclaw_sample.html" title="Sample GeoClaw setrun.py module"
+          <a href="plotting_geoclaw.html" title="Plotting routines for GeoClaw"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="topo.html" title="Topography data"
@@ -99,13 +99,12 @@ description of <cite>setrun.py</cite> input scripts more generally.</p>
 file in any <a class="reference internal" href="geoclaw.html#geoclaw"><em>GeoClaw</em></a> application.
 See also the <a class="reference internal" href="geohints.html#geohints"><em>Cautionary Hints on using GeoClaw</em></a> for more about parameter choices.</p>
 <p>It is best to look at a specific example while reading this section, for
-example  <a class="reference internal" href="setrun_geoclaw_sample.html#setrun-geoclaw-sample"><em>Sample GeoClaw setrun.py module</em></a>.</p>
-<p>See also the sample codes in the directory <cite>$CLAW/geoclaw/examples/tsunami</cite>.</p>
+example in one of the subdirectories of <cite>$CLAW/geoclaw/examples/tsunami</cite>.</p>
 <p>The function <cite>setrun</cite> in this module is essentially the same as for AMRClaw,
 except that it expects to be called with <em>claw_pkg = &#8216;geoclaw&#8217;</em>.  This call
 should be performed properly by the Makefile if you have <em>CLAW_PKG =
 geoclaw</em> set properly there.</p>
-<p>The new section <a class="reference internal" href="setrun_geoclaw_sample.html#setrun-setgeo"><em>setgeo function</em></a>
+<p>The new section <em class="xref std std-ref">setrun_setgeo</em>
 in this module contains the new GeoClaw parameters.</p>
 <p>A brief summary of these:</p>
 <div class="section" id="additional-amr-parameters">
@@ -133,7 +132,7 @@ shallow coastal regions this may not be the case.</p>
 <dd><p>Cells are flagged for refinement if the difference between the surface
 elevation and sea level is larger than this tolerance.  Note that whether
 refinement is actually done depends also on how various AMR regions have
-been set (see Section <a class="reference internal" href="regions.html#regions"><em>Specifying AMR regions</em></a>) and also on several other
+been set (see Section <em class="xref std std-ref">regions</em>) and also on several other
 attributes described below that contain information on minimum and
 maximum refinement allowed in various regions.</p>
 </dd></dl>
@@ -157,7 +156,7 @@ be refined.</p>
 
 </div>
 <div class="section" id="general-geo-parameters">
-<h2>General geo parameters<a class="headerlink" href="#general-geo-parameters" title="Permalink to this headline">¶</a></h2>
+<span id="setrun-geo"></span><h2>General geo parameters<a class="headerlink" href="#general-geo-parameters" title="Permalink to this headline">¶</a></h2>
 <p><cite>rundata.geo_data</cite> has the following additional attributes:</p>
 <dl class="attribute">
 <dt>
@@ -268,7 +267,7 @@ covered by this grid (for times between <em>t1</em> and <em>t2</em>).</div></blo
 <blockquote>
 <div>the name of the topo file.</div></blockquote>
 </div></blockquote>
-<p>For more about controlling AMR in various regions, see <a class="reference internal" href="regions.html#regions"><em>Specifying AMR regions</em></a>.</p>
+<p>For more about controlling AMR in various regions, see <em class="xref std std-ref">regions</em>.</p>
 </div></blockquote>
 </dd></dl>
 
@@ -379,38 +378,8 @@ covered by this grid (for times between <em>t1</em> and <em>t2</em>).</div></blo
 <blockquote>
 <div>the spacial extent of this region.</div></blockquote>
 </div></blockquote>
-<p>For more about controlling AMR in various regions, see <a class="reference internal" href="regions.html#regions"><em>Specifying AMR regions</em></a>.</p>
+<p>For more about controlling AMR in various regions, see <em class="xref std std-ref">regions</em>.</p>
 </div></blockquote>
-</dd></dl>
-
-</div>
-<div class="section" id="gauge-parameters">
-<span id="setrun-guages"></span><h2>Gauge parameters<a class="headerlink" href="#gauge-parameters" title="Permalink to this headline">¶</a></h2>
-<div class="admonition warning">
-<p class="first admonition-title">Warning</p>
-<p class="last">Needs updating</p>
-</div>
-<dl class="attribute">
-<dt>
-<tt class="descname">gauges : list of lists</tt></dt>
-<dd><p><strong>Note:</strong> this should become a more general AMR parameter.</p>
-<p><em>gauges</em> should be a list of the form <em>[gauge1info, gauge2info, etc.]</em>
-where each element is itself a list of the form</p>
-<blockquote>
-<div>[gaugeno, x, y, t1, t2]</div></blockquote>
-<p>with values</p>
-<blockquote>
-<div><p><em>gaugeno</em> : integer</p>
-<blockquote>
-<div>the number of this gauge</div></blockquote>
-<p><em>x, y</em> : floats</p>
-<blockquote>
-<div>the location of this gauge</div></blockquote>
-<p><em>t1, t2</em> : floats</p>
-<blockquote>
-<div>the time interval over which gauge data should be output.</div></blockquote>
-</div></blockquote>
-<p>For more about gauges, see <a class="reference internal" href="gauges.html#gauges"><em>Gauges</em></a>.</p>
 </dd></dl>
 
 </div>
@@ -471,7 +440,6 @@ include <em>x1</em>, <em>x2</em> and <em>xpoints-2</em> points in between, for e
 <li><a class="reference internal" href="#topography-data-file-parameters">Topography data file parameters</a></li>
 <li><a class="reference internal" href="#qinit-data-file-parameters">qinit data file parameters</a></li>
 <li><a class="reference internal" href="#amr-refinement-region-parameters">AMR refinement region parameters</a></li>
-<li><a class="reference internal" href="#gauge-parameters">Gauge parameters</a></li>
 <li><a class="reference internal" href="#fixed-grid-output-parameters">Fixed grid output parameters</a></li>
 <li><a class="reference internal" href="#fixed-grid-version-2-output-parameters">Fixed grid (version 2) output parameters</a></li>
 </ul>
@@ -481,7 +449,7 @@ include <em>x1</em>, <em>x2</em> and <em>xpoints-2</em> points in between, for e
 <ul>
   <li><a href="contents.html">Documentation overview</a><ul>
       <li>Previous: <a href="topo.html" title="previous chapter">Topography data</a></li>
-      <li>Next: <a href="setrun_geoclaw_sample.html" title="next chapter">Sample GeoClaw <cite>setrun.py</cite> module</a></li>
+      <li>Next: <a href="plotting_geoclaw.html" title="next chapter">Plotting routines for GeoClaw</a></li>
   </ul></li>
 </ul>
   <h3>This Page</h3>

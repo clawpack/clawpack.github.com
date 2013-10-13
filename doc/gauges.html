@@ -30,18 +30,18 @@
     <link rel="shortcut icon" href="_static/clawicon.ico"/>
     <link rel="author" title="About these documents" href="about.html" />
     <link rel="top" title="Clawpack 5.0.0rc-alpha documentation" href="index.html" />
-    <link rel="next" title="Pyclaw Quickstart" href="pyclaw/index.html" />
-    <link rel="prev" title="Some sources of tsunami data" href="tsunamidata.html" /> 
+    <link rel="next" title="GeoClaw" href="geoclaw.html" />
+    <link rel="prev" title="AMR refinement criteria" href="refinement.html" /> 
   </head>
   <body>
 <div id="main-wrapper" class="sphinx">
 <div id="header-wrapper">
   <section id="header">
-    <h1><a href="http://clawpack.org/">Clawpack</a></h1>
+    <h1><a href="http://clawpack.org/">Clawpack</a></h1> 
     <nav>
       <ul>
         <li>
-          <a href="index.html">Docs</a>
+          <a href="toc_condensed.html">Docs</a>
         </li>
         <li>
           <a href="installing.html">Install</a>
@@ -74,10 +74,10 @@
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="pyclaw/index.html" title="Pyclaw Quickstart"
+          <a href="geoclaw.html" title="GeoClaw"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="tsunamidata.html" title="Some sources of tsunami data"
+          <a href="refinement.html" title="AMR refinement criteria"
              accesskey="P">previous</a> |</li>
         <li><a href="contents.html">Clawpack 5.0.0rc-alpha documentation</a> &raquo;</li> 
       </ul>
@@ -90,14 +90,11 @@
             
   <div class="section" id="gauges">
 <span id="id1"></span><h1>Gauges<a class="headerlink" href="#gauges" title="Permalink to this headline">¶</a></h1>
-<div class="admonition warning">
-<p class="first admonition-title">Warning</p>
-<p class="last">Needs updating</p>
-</div>
-<p>With AMRCLAW in two space dimensions
+<p>With AMRClaw in two space dimensions and GeoClaw
 it is possible to specify gauge locations as points (x,y) where the values of all
 components of q should be output every time step during the computation over some
-time range (t1,t2).  The addition of a time range is new in svn revision 328.</p>
+time range (t1,t2).</p>
+<p><strong>Still need to add to 3d AMRClaw code, and to Classic codes.</strong></p>
 <p>Gauges are useful in several ways, e.g.:</p>
 <blockquote>
 <div><ol class="arabic simple">
@@ -111,23 +108,28 @@ comparing to curves that give the solution as a function of time often reveals
 more clearly differences in accuracy or nonphysical oscillations.</li>
 </ol>
 </div></blockquote>
-<p>To use gauges, include the line:</p>
-<div class="highlight-python"><pre>call setgauges()</pre>
-</div>
-<p>in your file setprob.f.  This reads in the gauge locations from the file
-<cite>setgauges.data</cite>.  This file should have one line giving the number of gauges and
-the following lines specify information for each gauge in the format:</p>
-<div class="highlight-python"><pre>gaugeno  x  y  t1  t2</pre>
-</div>
-<p>Rather than creating this file by hand, it is easiest to do this in your
-<cite>setrun.py</cite> file by including lines of the form:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">clawdata</span><span class="o">.</span><span class="n">gauges</span> <span class="o">=</span> <span class="p">[]</span>
-<span class="n">clawdata</span><span class="o">.</span><span class="n">gauges</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">gaugeno</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">t1</span><span class="p">,</span> <span class="n">t2</span><span class="p">])</span>
+<div class="section" id="gauge-parameters-in-setrun">
+<span id="setrun-guages"></span><h2>Gauge parameters in setrun<a class="headerlink" href="#gauge-parameters-in-setrun" title="Permalink to this headline">¶</a></h2>
+<p>See also <a class="reference internal" href="setrun_amrclaw.html#setrun-amrclaw"><em>Specifying AMRClaw run-time parameters in setrun.py</em></a>.</p>
+<p>Gauges are specified in <cite>setrun</cite> by adding lists of gauge data for each
+desired gauge to the <cite>ClawRunData</cite>
+object <cite>rundata.gaugedata.gauges</cite>.  This is initialized as an empty list and
+new gauges can be specified by:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">rundata</span><span class="o">.</span><span class="n">gaugedata</span><span class="o">.</span><span class="n">gauges</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">gaugeno</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">t1</span><span class="p">,</span> <span class="n">t2</span><span class="p">])</span>
 </pre></div>
 </div>
-<p>where the second line is repeated as many times as desired with different values of
-the parameters.  From this information the <cite>setgauges.data</cite> file will be
-automatically created when you do &#8220;make .data&#8221; or &#8220;make .output&#8221;.</p>
+<p>with values</p>
+<ul>
+<li><p class="first"><em>gaugeno</em> : integer</p>
+<p>the number of this gauge</p>
+</li>
+<li><p class="first"><em>x, y</em> : floats</p>
+<p>the location of this gauge</p>
+</li>
+<li><p class="first"><em>t1, t2</em> : floats</p>
+<p>the time interval over which gauge data should be output.</p>
+</li>
+</ul>
 <p>During the computation the value of all components of q at all gauge locations will
 be output to a single file <cite>fort.gauge</cite> in the output directory.  Lines of this
 file have the form:</p>
@@ -138,6 +140,7 @@ Internally the finest level available at each gauge is used, with bilinear
 interpolation to the gauge locations from the 4 nearest cell centers.</p>
 <p>If you wish to change what is output at these points, you should copy the library
 routine <cite>dumpgauge.f</cite> to your own directory and modify it appropriately.</p>
+</div>
 <div class="section" id="plotting-tools">
 <h2>Plotting tools<a class="headerlink" href="#plotting-tools" title="Permalink to this headline">¶</a></h2>
 <p>Several Python plotting tools are available to plot the gauge data, so you do not
@@ -215,12 +218,8 @@ to your setplot.py file and modify at will.</p>
 </div>
 <div class="section" id="examples">
 <h2>Examples<a class="headerlink" href="#examples" title="Permalink to this headline">¶</a></h2>
-<p>To see an example of the use of gauges see:</p>
-<blockquote>
-<div><ul class="simple">
-<li><strong>Need pointer</strong></li>
-</ul>
-</div></blockquote>
+<p>Several of the examples found in <cite>$CLAW/amrclaw/examples/</cite>
+and <cite>$CLAW/geoclaw/examples/</cite> contain the specification of gauges.</p>
 </div>
 </div>
 
@@ -236,6 +235,7 @@ to your setplot.py file and modify at will.</p>
   <h3><a href="contents.html">Table Of Contents</a></h3>
   <ul>
 <li><a class="reference internal" href="#">Gauges</a><ul>
+<li><a class="reference internal" href="#gauge-parameters-in-setrun">Gauge parameters in setrun</a></li>
 <li><a class="reference internal" href="#plotting-tools">Plotting tools</a></li>
 <li><a class="reference internal" href="#plotting-gauge-locations">Plotting gauge locations</a></li>
 <li><a class="reference internal" href="#examples">Examples</a></li>
@@ -245,8 +245,8 @@ to your setplot.py file and modify at will.</p>
 <h3>Related Topics</h3>
 <ul>
   <li><a href="contents.html">Documentation overview</a><ul>
-      <li>Previous: <a href="tsunamidata.html" title="previous chapter">Some sources of tsunami data</a></li>
-      <li>Next: <a href="pyclaw/index.html" title="next chapter">Pyclaw Quickstart</a></li>
+      <li>Previous: <a href="refinement.html" title="previous chapter">AMR refinement criteria</a></li>
+      <li>Next: <a href="geoclaw.html" title="next chapter">GeoClaw</a></li>
   </ul></li>
 </ul>
   <h3>This Page</h3>
