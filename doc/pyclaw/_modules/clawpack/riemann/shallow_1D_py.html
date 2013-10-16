@@ -1,0 +1,274 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>clawpack.riemann.shallow_1D_py &mdash; PyClaw 1.0 documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="shortcut icon" href="../../../_static/clawicon.ico"/>
+    <link rel="author" title="About these documents" href="../../../about.html" />
+    <link rel="top" title="PyClaw 1.0 documentation" href="../../../index.html" />
+    <link rel="up" title="Module code" href="../../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+<li><a href="../../../index.html">Contents </a>|</li>
+<li><a href="../../../gallery/gallery_all.html">Gallery </a></li>
+
+          <li><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for clawpack.riemann.shallow_1D_py</h1><div class="highlight"><pre>
+<span class="c">#!/usr/bin/env python</span>
+<span class="c"># encoding: utf-8</span>
+<span class="sd">r&quot;&quot;&quot;</span>
+<span class="sd">Riemann solvers for the shallow water equations.</span>
+<span class="sd">    </span>
+<span class="sd">The available solvers are:</span>
+<span class="sd"> * Roe - Use Roe averages to caluclate the solution to the Riemann problem</span>
+<span class="sd"> * HLL - Use a HLL solver</span>
+<span class="sd"> * Exact - Use a newton iteration to calculate the exact solution to the </span>
+<span class="sd">        Riemann problem</span>
+
+<span class="sd">.. math:: </span>
+<span class="sd">    q_t + f(q)_x = 0</span>
+<span class="sd">  </span>
+<span class="sd">where </span>
+
+<span class="sd">.. math:: </span>
+<span class="sd">    q(x,t) = \left [ \begin{array}{c} h \\ h u \end{array} \right ],</span>
+<span class="sd">  </span>
+<span class="sd">the flux function is </span>
+
+<span class="sd">.. math:: </span>
+<span class="sd">    f(q) = \left [ \begin{array}{c} h u \\ hu^2 + 1/2 g h^2 \end{array}\right ].</span>
+
+<span class="sd">and :math:`h` is the water column height, :math:`u` the velocity and :math:`g`</span>
+<span class="sd">is the gravitational acceleration.</span>
+
+<span class="sd">:Authors:</span>
+<span class="sd">    Kyle T. Mandli (2009-02-05): Initial version</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="c"># ============================================================================</span>
+<span class="c">#      Copyright (C) 2009 Kyle T. Mandli &lt;mandli@amath.washington.edu&gt;</span>
+<span class="c">#</span>
+<span class="c">#  Distributed under the terms of the Berkeley Software Distribution (BSD) </span>
+<span class="c">#  license</span>
+<span class="c">#                     http://www.opensource.org/licenses/</span>
+<span class="c"># ============================================================================</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+
+<span class="n">num_eqn</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="n">num_waves</span> <span class="o">=</span> <span class="mi">2</span>
+
+<div class="viewcode-block" id="shallow_roe_1D"><a class="viewcode-back" href="../../../rp.html#clawpack.riemann.shallow_1D_py.shallow_roe_1D">[docs]</a><span class="k">def</span> <span class="nf">shallow_roe_1D</span><span class="p">(</span><span class="n">q_l</span><span class="p">,</span><span class="n">q_r</span><span class="p">,</span><span class="n">aux_l</span><span class="p">,</span><span class="n">aux_r</span><span class="p">,</span><span class="n">problem_data</span><span class="p">):</span>
+    <span class="sd">r&quot;&quot;&quot;</span>
+<span class="sd">    Roe shallow water solver in 1d::</span>
+<span class="sd">    </span>
+<span class="sd">        ubar = (sqrt(u_l) + sqrt(u_r)) / (sqrt(h_l) + sqrt(h_r))</span>
+<span class="sd">        cbar = sqrt( 0.5 * g * (h_l + h_r))</span>
+<span class="sd">         </span>
+<span class="sd">        W_1 = |      1      |  s_1 = ubar - cbar</span>
+<span class="sd">              | ubar - cbar |</span>
+<span class="sd">         </span>
+<span class="sd">        W_2 = |      1      |  s_1 = ubar + cbar</span>
+<span class="sd">              | ubar + cbar |</span>
+<span class="sd">          </span>
+<span class="sd">        a1 = 0.5 * ( - delta_hu + (ubar + cbar) * delta_h ) / cbar</span>
+<span class="sd">        a2 = 0.5 * (   delta_hu - (ubar - cbar) * delta_h ) / cbar</span>
+<span class="sd">    </span>
+<span class="sd">    *problem_data* should contain:</span>
+<span class="sd">     - *g* - (float) Gravitational constant</span>
+<span class="sd">     - *efix* - (bool) Boolean as to whether a entropy fix should be used, if </span>
+<span class="sd">       not present, false is assumed</span>
+<span class="sd">            </span>
+<span class="sd">    :Version: 1.0 (2009-02-05)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="c"># Array shapes</span>
+    <span class="n">num_rp</span> <span class="o">=</span> <span class="n">q_l</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    
+    <span class="c"># Output arrays</span>
+    <span class="n">wave</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span> <span class="p">(</span><span class="n">num_eqn</span><span class="p">,</span> <span class="n">num_waves</span><span class="p">,</span> <span class="n">num_rp</span><span class="p">)</span> <span class="p">)</span>
+    <span class="n">s</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span> <span class="p">(</span><span class="n">num_waves</span><span class="p">,</span> <span class="n">num_rp</span><span class="p">)</span> <span class="p">)</span>
+    <span class="n">amdq</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span> <span class="p">(</span><span class="n">num_eqn</span><span class="p">,</span> <span class="n">num_rp</span><span class="p">)</span> <span class="p">)</span>
+    <span class="n">apdq</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span> <span class="p">(</span><span class="n">num_eqn</span><span class="p">,</span> <span class="n">num_rp</span><span class="p">)</span> <span class="p">)</span>
+
+    <span class="c"># Compute roe-averaged quantities</span>
+    <span class="n">ubar</span> <span class="o">=</span> <span class="p">(</span> <span class="p">(</span><span class="n">q_l</span><span class="p">[</span><span class="mi">1</span><span class="p">,:]</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">q_l</span><span class="p">[</span><span class="mi">0</span><span class="p">,:])</span> <span class="o">+</span> <span class="n">q_r</span><span class="p">[</span><span class="mi">1</span><span class="p">,:]</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">q_r</span><span class="p">[</span><span class="mi">0</span><span class="p">,:]))</span> <span class="o">/</span>
+        <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">q_l</span><span class="p">[</span><span class="mi">0</span><span class="p">,:])</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">q_r</span><span class="p">[</span><span class="mi">0</span><span class="p">,:]))</span> <span class="p">)</span>
+    <span class="n">cbar</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">0.5</span> <span class="o">*</span> <span class="n">problem_data</span><span class="p">[</span><span class="s">&#39;grav&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="n">q_l</span><span class="p">[</span><span class="mi">0</span><span class="p">,:]</span> <span class="o">+</span> <span class="n">q_r</span><span class="p">[</span><span class="mi">0</span><span class="p">,:]))</span>
+        
+    <span class="c"># Compute Flux structure    </span>
+    <span class="n">delta</span> <span class="o">=</span> <span class="n">q_r</span> <span class="o">-</span> <span class="n">q_l</span>
+    <span class="n">a1</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="p">(</span><span class="o">-</span><span class="n">delta</span><span class="p">[</span><span class="mi">1</span><span class="p">,:]</span> <span class="o">+</span> <span class="p">(</span><span class="n">ubar</span> <span class="o">+</span> <span class="n">cbar</span><span class="p">)</span> <span class="o">*</span> <span class="n">delta</span><span class="p">[</span><span class="mi">0</span><span class="p">,:])</span> <span class="o">/</span> <span class="n">cbar</span>
+    <span class="n">a2</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="p">(</span> <span class="n">delta</span><span class="p">[</span><span class="mi">1</span><span class="p">,:]</span> <span class="o">-</span> <span class="p">(</span><span class="n">ubar</span> <span class="o">-</span> <span class="n">cbar</span><span class="p">)</span> <span class="o">*</span> <span class="n">delta</span><span class="p">[</span><span class="mi">0</span><span class="p">,:])</span> <span class="o">/</span> <span class="n">cbar</span>
+        
+    <span class="c"># Compute each family of waves</span>
+    <span class="n">wave</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,:]</span> <span class="o">=</span> <span class="n">a1</span>
+    <span class="n">wave</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,:]</span> <span class="o">=</span> <span class="n">a1</span> <span class="o">*</span> <span class="p">(</span><span class="n">ubar</span> <span class="o">-</span> <span class="n">cbar</span><span class="p">)</span>
+    <span class="n">s</span><span class="p">[</span><span class="mi">0</span><span class="p">,:]</span> <span class="o">=</span> <span class="n">ubar</span> <span class="o">-</span> <span class="n">cbar</span>
+    
+    <span class="n">wave</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,:]</span> <span class="o">=</span> <span class="n">a2</span>
+    <span class="n">wave</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,:]</span> <span class="o">=</span> <span class="n">a2</span> <span class="o">*</span> <span class="p">(</span><span class="n">ubar</span> <span class="o">+</span> <span class="n">cbar</span><span class="p">)</span>
+    <span class="n">s</span><span class="p">[</span><span class="mi">1</span><span class="p">,:]</span> <span class="o">=</span> <span class="n">ubar</span> <span class="o">+</span> <span class="n">cbar</span>
+        
+    <span class="k">if</span> <span class="n">problem_data</span><span class="p">[</span><span class="s">&#39;efix&#39;</span><span class="p">]:</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s">&quot;Entropy fix has not been implemented.&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">s_index</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">2</span><span class="p">,</span><span class="n">num_rp</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="n">num_eqn</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">mw</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="n">num_waves</span><span class="p">):</span>
+                <span class="n">s_index</span><span class="p">[</span><span class="mi">0</span><span class="p">,:]</span> <span class="o">=</span> <span class="n">s</span><span class="p">[</span><span class="n">mw</span><span class="p">,:]</span>
+                <span class="n">amdq</span><span class="p">[</span><span class="n">m</span><span class="p">,:]</span> <span class="o">+=</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">s_index</span><span class="p">,</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="o">*</span> <span class="n">wave</span><span class="p">[</span><span class="n">m</span><span class="p">,</span><span class="n">mw</span><span class="p">,:]</span>
+                <span class="n">apdq</span><span class="p">[</span><span class="n">m</span><span class="p">,:]</span> <span class="o">+=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">s_index</span><span class="p">,</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="o">*</span> <span class="n">wave</span><span class="p">[</span><span class="n">m</span><span class="p">,</span><span class="n">mw</span><span class="p">,:]</span>
+            
+    <span class="k">return</span> <span class="n">wave</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">amdq</span><span class="p">,</span> <span class="n">apdq</span>
+    </div>
+<div class="viewcode-block" id="shallow_hll_1D"><a class="viewcode-back" href="../../../rp.html#clawpack.riemann.shallow_1D_py.shallow_hll_1D">[docs]</a><span class="k">def</span> <span class="nf">shallow_hll_1D</span><span class="p">(</span><span class="n">q_l</span><span class="p">,</span><span class="n">q_r</span><span class="p">,</span><span class="n">aux_l</span><span class="p">,</span><span class="n">aux_r</span><span class="p">,</span><span class="n">problem_data</span><span class="p">):</span>
+    <span class="sd">r&quot;&quot;&quot;</span>
+<span class="sd">    HLL shallow water solver ::</span>
+<span class="sd">    </span>
+<span class="sd">         </span>
+<span class="sd">        W_1 = Q_hat - Q_l    s_1 = min(u_l-c_l,u_l+c_l,lambda_roe_1,lambda_roe_2)</span>
+<span class="sd">        W_2 = Q_r - Q_hat    s_2 = max(u_r-c_r,u_r+c_r,lambda_roe_1,lambda_roe_2)</span>
+<span class="sd">    </span>
+<span class="sd">        Q_hat = ( f(q_r) - f(q_l) - s_2 * q_r + s_1 * q_l ) / (s_1 - s_2)</span>
+<span class="sd">    </span>
+<span class="sd">    *problem_data* should contain:</span>
+<span class="sd">     - *g* - (float) Gravitational constant</span>
+<span class="sd">            </span>
+<span class="sd">    :Version: 1.0 (2009-02-05)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c"># Array shapes</span>
+    <span class="n">num_rp</span> <span class="o">=</span> <span class="n">q_l</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">num_eqn</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="n">num_waves</span> <span class="o">=</span> <span class="mi">2</span>
+    
+    <span class="c"># Output arrays</span>
+    <span class="n">wave</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span> <span class="p">(</span><span class="n">num_eqn</span><span class="p">,</span> <span class="n">num_waves</span><span class="p">,</span> <span class="n">num_rp</span><span class="p">)</span> <span class="p">)</span>
+    <span class="n">s</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span> <span class="p">(</span><span class="n">num_waves</span><span class="p">,</span> <span class="n">num_rp</span><span class="p">)</span> <span class="p">)</span>
+    <span class="n">amdq</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span> <span class="p">(</span><span class="n">num_eqn</span><span class="p">,</span> <span class="n">num_rp</span><span class="p">)</span> <span class="p">)</span>
+    <span class="n">apdq</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span> <span class="p">(</span><span class="n">num_eqn</span><span class="p">,</span> <span class="n">num_rp</span><span class="p">)</span> <span class="p">)</span>
+
+    <span class="c"># Compute Roe and right and left speeds</span>
+    <span class="n">ubar</span> <span class="o">=</span> <span class="p">(</span> <span class="p">(</span><span class="n">q_l</span><span class="p">[</span><span class="mi">1</span><span class="p">,:]</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">q_l</span><span class="p">[</span><span class="mi">0</span><span class="p">,:])</span> <span class="o">+</span> <span class="n">q_r</span><span class="p">[</span><span class="mi">1</span><span class="p">,:]</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">q_r</span><span class="p">[</span><span class="mi">0</span><span class="p">,:]))</span> <span class="o">/</span>
+        <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">q_l</span><span class="p">[</span><span class="mi">0</span><span class="p">,:])</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">q_r</span><span class="p">[</span><span class="mi">0</span><span class="p">,:]))</span> <span class="p">)</span>
+    <span class="n">cbar</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">0.5</span> <span class="o">*</span> <span class="n">problem_data</span><span class="p">[</span><span class="s">&#39;grav&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="n">q_l</span><span class="p">[</span><span class="mi">0</span><span class="p">,:]</span> <span class="o">+</span> <span class="n">q_r</span><span class="p">[</span><span class="mi">0</span><span class="p">,:]))</span>
+    <span class="n">u_r</span> <span class="o">=</span> <span class="n">q_r</span><span class="p">[</span><span class="mi">1</span><span class="p">,:]</span> <span class="o">/</span> <span class="n">q_r</span><span class="p">[</span><span class="mi">0</span><span class="p">,:]</span>
+    <span class="n">c_r</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">problem_data</span><span class="p">[</span><span class="s">&#39;grav&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="n">q_r</span><span class="p">[</span><span class="mi">0</span><span class="p">,:])</span>
+    <span class="n">u_l</span> <span class="o">=</span> <span class="n">q_l</span><span class="p">[</span><span class="mi">1</span><span class="p">,:]</span> <span class="o">/</span> <span class="n">q_l</span><span class="p">[</span><span class="mi">0</span><span class="p">,:]</span>
+    <span class="n">c_l</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">problem_data</span><span class="p">[</span><span class="s">&#39;grav&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="n">q_l</span><span class="p">[</span><span class="mi">0</span><span class="p">,:])</span>
+
+    <span class="c"># Compute Einfeldt speeds</span>
+    <span class="n">s_index</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="mi">4</span><span class="p">,</span><span class="n">num_rp</span><span class="p">))</span>
+    <span class="n">s_index</span><span class="p">[</span><span class="mi">0</span><span class="p">,:]</span> <span class="o">=</span> <span class="n">ubar</span><span class="o">+</span><span class="n">cbar</span>
+    <span class="n">s_index</span><span class="p">[</span><span class="mi">1</span><span class="p">,:]</span> <span class="o">=</span> <span class="n">ubar</span><span class="o">-</span><span class="n">cbar</span>
+    <span class="n">s_index</span><span class="p">[</span><span class="mi">2</span><span class="p">,:]</span> <span class="o">=</span> <span class="n">u_l</span> <span class="o">+</span> <span class="n">c_l</span>
+    <span class="n">s_index</span><span class="p">[</span><span class="mi">3</span><span class="p">,:]</span> <span class="o">=</span> <span class="n">u_l</span> <span class="o">-</span> <span class="n">c_l</span>
+    <span class="n">s</span><span class="p">[</span><span class="mi">0</span><span class="p">,:]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">s_index</span><span class="p">,</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">s_index</span><span class="p">[</span><span class="mi">2</span><span class="p">,:]</span> <span class="o">=</span> <span class="n">u_r</span> <span class="o">+</span> <span class="n">c_r</span>
+    <span class="n">s_index</span><span class="p">[</span><span class="mi">3</span><span class="p">,:]</span> <span class="o">=</span> <span class="n">u_r</span> <span class="o">-</span> <span class="n">c_r</span>
+    <span class="n">s</span><span class="p">[</span><span class="mi">1</span><span class="p">,:]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">s_index</span><span class="p">,</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+    <span class="c"># Compute middle state</span>
+    <span class="n">q_hat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="mi">2</span><span class="p">,</span><span class="n">num_rp</span><span class="p">))</span>
+    <span class="n">q_hat</span><span class="p">[</span><span class="mi">0</span><span class="p">,:]</span> <span class="o">=</span> <span class="p">((</span><span class="n">q_r</span><span class="p">[</span><span class="mi">1</span><span class="p">,:]</span> <span class="o">-</span> <span class="n">q_l</span><span class="p">[</span><span class="mi">1</span><span class="p">,:]</span> <span class="o">-</span> <span class="n">s</span><span class="p">[</span><span class="mi">1</span><span class="p">,:]</span> <span class="o">*</span> <span class="n">q_r</span><span class="p">[</span><span class="mi">0</span><span class="p">,:]</span> 
+                            <span class="o">+</span> <span class="n">s</span><span class="p">[</span><span class="mi">0</span><span class="p">,:]</span> <span class="o">*</span> <span class="n">q_l</span><span class="p">[</span><span class="mi">0</span><span class="p">,:])</span> <span class="o">/</span> <span class="p">(</span><span class="n">s</span><span class="p">[</span><span class="mi">0</span><span class="p">,:]</span> <span class="o">-</span> <span class="n">s</span><span class="p">[</span><span class="mi">1</span><span class="p">,:]))</span>
+    <span class="n">q_hat</span><span class="p">[</span><span class="mi">1</span><span class="p">,:]</span> <span class="o">=</span> <span class="p">((</span><span class="n">q_r</span><span class="p">[</span><span class="mi">1</span><span class="p">,:]</span><span class="o">**</span><span class="mi">2</span><span class="o">/</span><span class="n">q_r</span><span class="p">[</span><span class="mi">0</span><span class="p">,:]</span> <span class="o">+</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">problem_data</span><span class="p">[</span><span class="s">&#39;grav&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="n">q_r</span><span class="p">[</span><span class="mi">0</span><span class="p">,:]</span><span class="o">**</span><span class="mi">2</span>
+                <span class="o">-</span> <span class="p">(</span><span class="n">q_l</span><span class="p">[</span><span class="mi">1</span><span class="p">,:]</span><span class="o">**</span><span class="mi">2</span><span class="o">/</span><span class="n">q_l</span><span class="p">[</span><span class="mi">0</span><span class="p">,:]</span> <span class="o">+</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">problem_data</span><span class="p">[</span><span class="s">&#39;grav&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="n">q_l</span><span class="p">[</span><span class="mi">0</span><span class="p">,:]</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+                <span class="o">-</span> <span class="n">s</span><span class="p">[</span><span class="mi">1</span><span class="p">,:]</span> <span class="o">*</span> <span class="n">q_r</span><span class="p">[</span><span class="mi">1</span><span class="p">,:]</span> <span class="o">+</span> <span class="n">s</span><span class="p">[</span><span class="mi">0</span><span class="p">,:]</span> <span class="o">*</span> <span class="n">q_l</span><span class="p">[</span><span class="mi">1</span><span class="p">,:])</span> <span class="o">/</span> <span class="p">(</span><span class="n">s</span><span class="p">[</span><span class="mi">0</span><span class="p">,:]</span> <span class="o">-</span> <span class="n">s</span><span class="p">[</span><span class="mi">1</span><span class="p">,:]))</span>
+
+    <span class="c"># Compute each family of waves</span>
+    <span class="n">wave</span><span class="p">[:,</span><span class="mi">0</span><span class="p">,:]</span> <span class="o">=</span> <span class="n">q_hat</span> <span class="o">-</span> <span class="n">q_l</span>
+    <span class="n">wave</span><span class="p">[:,</span><span class="mi">1</span><span class="p">,:]</span> <span class="o">=</span> <span class="n">q_r</span> <span class="o">-</span> <span class="n">q_hat</span>
+    
+    <span class="c"># Compute variations</span>
+    <span class="n">s_index</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">2</span><span class="p">,</span><span class="n">num_rp</span><span class="p">))</span>
+    <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="n">num_eqn</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">mw</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="n">num_waves</span><span class="p">):</span>
+            <span class="n">s_index</span><span class="p">[</span><span class="mi">0</span><span class="p">,:]</span> <span class="o">=</span> <span class="n">s</span><span class="p">[</span><span class="n">mw</span><span class="p">,:]</span>
+            <span class="n">amdq</span><span class="p">[</span><span class="n">m</span><span class="p">,:]</span> <span class="o">+=</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">s_index</span><span class="p">,</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="o">*</span> <span class="n">wave</span><span class="p">[</span><span class="n">m</span><span class="p">,</span><span class="n">mw</span><span class="p">,:]</span>
+            <span class="n">apdq</span><span class="p">[</span><span class="n">m</span><span class="p">,:]</span> <span class="o">+=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">s_index</span><span class="p">,</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="o">*</span> <span class="n">wave</span><span class="p">[</span><span class="n">m</span><span class="p">,</span><span class="n">mw</span><span class="p">,:]</span>
+            
+    <span class="k">return</span> <span class="n">wave</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">amdq</span><span class="p">,</span> <span class="n">apdq</span>
+    </div>
+<div class="viewcode-block" id="shallow_exact_1D"><a class="viewcode-back" href="../../../rp.html#clawpack.riemann.shallow_1D_py.shallow_exact_1D">[docs]</a><span class="k">def</span> <span class="nf">shallow_exact_1D</span><span class="p">(</span><span class="n">q_l</span><span class="p">,</span><span class="n">q_r</span><span class="p">,</span><span class="n">aux_l</span><span class="p">,</span><span class="n">aux_r</span><span class="p">,</span><span class="n">problem_data</span><span class="p">):</span>
+    <span class="sd">r&quot;&quot;&quot;</span>
+<span class="sd">    Exact shallow water Riemann solver</span>
+<span class="sd">    </span>
+<span class="sd">    .. warning::</span>
+<span class="sd">        This solver has not been implemented.</span>
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s">&quot;The exact swe solver has not been implemented.&quot;</span><span class="p">)</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../../index.html">
+              <img class="logo" src="../../../_static/clawlogo.jpg" alt="Logo"/>
+            </a></p>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+
+    <div class="footer">
+        &copy; Copyright 2010-2011, Kyle Mandli, David I. Ketcheson, Amal Alghamdi, and Aron Ahmadia.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>

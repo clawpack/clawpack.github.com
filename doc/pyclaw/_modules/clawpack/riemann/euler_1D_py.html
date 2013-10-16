@@ -1,0 +1,209 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>clawpack.riemann.euler_1D_py &mdash; PyClaw 1.0 documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="shortcut icon" href="../../../_static/clawicon.ico"/>
+    <link rel="author" title="About these documents" href="../../../about.html" />
+    <link rel="top" title="PyClaw 1.0 documentation" href="../../../index.html" />
+    <link rel="up" title="Module code" href="../../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+<li><a href="../../../index.html">Contents </a>|</li>
+<li><a href="../../../gallery/gallery_all.html">Gallery </a></li>
+
+          <li><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for clawpack.riemann.euler_1D_py</h1><div class="highlight"><pre>
+<span class="c">#!/usr/bin/env python</span>
+<span class="c"># encoding: utf-8</span>
+<span class="sd">r&quot;&quot;&quot;</span>
+<span class="sd">Riemann solvers for the Euler equations</span>
+
+<span class="sd">This module contains Riemann solvers for the Euler equations which have the</span>
+<span class="sd">form (in 1d):</span>
+
+<span class="sd">.. math:: </span>
+<span class="sd">    q_t + f(q)_x = 0</span>
+<span class="sd">  </span>
+<span class="sd">where </span>
+
+<span class="sd">.. math:: </span>
+<span class="sd">    q(x,t) = \left [ \begin{array}{c} \rho \\ \rho u \\ E \end{array} \right ],</span>
+<span class="sd">  </span>
+<span class="sd">the flux function is </span>
+
+<span class="sd">.. math:: </span>
+<span class="sd">    f(q) = \left [ \begin{array}{c} \rho u \\ \rho u^2 + p \\ u(E+p) \end{array}\right ].</span>
+
+<span class="sd">and :math:`\rho` is the density, :math:`u` the velocity, :math:`E` is the </span>
+<span class="sd">energy and :math:`p` is the pressure.</span>
+
+<span class="sd">Unless otherwise noted, the ideal gas equation of state is used:</span>
+
+<span class="sd">.. math::</span>
+<span class="sd">    E = (\gamma - 1) \left (E - \frac{1}{2}\rho u^2 \right)</span>
+
+<span class="sd">:Authors:</span>
+<span class="sd">    Kyle T. Mandli (2009-06-26): Initial version</span>
+<span class="sd">    Kyle T. Mandli (2011-03-28): Interleaved version</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="c"># ============================================================================</span>
+<span class="c">#      Copyright (C) 2009 Kyle T. Mandli &lt;mandli@amath.washington.edu&gt;</span>
+<span class="c">#</span>
+<span class="c">#  Distributed under the terms of the Berkeley Software Distribution (BSD) </span>
+<span class="c">#  license</span>
+<span class="c">#                     http://www.opensource.org/licenses/</span>
+<span class="c"># ============================================================================</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+
+<span class="n">num_eqn</span> <span class="o">=</span> <span class="mi">3</span>
+<span class="n">num_waves</span> <span class="o">=</span> <span class="mi">3</span>
+
+<div class="viewcode-block" id="euler_roe_1D"><a class="viewcode-back" href="../../../rp.html#clawpack.riemann.euler_1D_py.euler_roe_1D">[docs]</a><span class="k">def</span> <span class="nf">euler_roe_1D</span><span class="p">(</span><span class="n">q_l</span><span class="p">,</span><span class="n">q_r</span><span class="p">,</span><span class="n">aux_l</span><span class="p">,</span><span class="n">aux_r</span><span class="p">,</span><span class="n">problem_data</span><span class="p">):</span>
+    <span class="sd">r&quot;&quot;&quot;</span>
+<span class="sd">    Roe Euler solver in 1d</span>
+<span class="sd">    </span>
+<span class="sd">    *aug_global* should contain -</span>
+<span class="sd">     - *gamma* - (float) Ratio of the heat capacities</span>
+<span class="sd">     - *gamma1* - (float) :math:`1 - \gamma`</span>
+<span class="sd">     - *efix* - (bool) Whether to use an entropy fix or not</span>
+<span class="sd">    </span>
+<span class="sd">    See :ref:`pyclaw_rp` for more details.</span>
+<span class="sd">    </span>
+<span class="sd">    :Version: 1.0 (2009-6-26)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="c"># Problem dimensions</span>
+    <span class="n">num_rp</span> <span class="o">=</span> <span class="n">q_l</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+    <span class="c"># Return values</span>
+    <span class="n">wave</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span> <span class="p">(</span><span class="n">num_eqn</span><span class="p">,</span> <span class="n">num_waves</span><span class="p">,</span> <span class="n">num_rp</span><span class="p">)</span> <span class="p">)</span>
+    <span class="n">s</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span> <span class="p">(</span><span class="n">num_waves</span><span class="p">,</span> <span class="n">num_rp</span><span class="p">)</span> <span class="p">)</span>
+    <span class="n">amdq</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span> <span class="p">(</span><span class="n">num_eqn</span><span class="p">,</span> <span class="n">num_rp</span><span class="p">)</span> <span class="p">)</span>
+    <span class="n">apdq</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span> <span class="p">(</span><span class="n">num_eqn</span><span class="p">,</span> <span class="n">num_rp</span><span class="p">)</span> <span class="p">)</span>
+    
+    <span class="c"># Solver parameters</span>
+    <span class="n">gamma</span> <span class="o">=</span> <span class="n">problem_data</span><span class="p">[</span><span class="s">&#39;gamma&#39;</span><span class="p">]</span>
+    <span class="n">gamma1</span> <span class="o">=</span> <span class="n">problem_data</span><span class="p">[</span><span class="s">&#39;gamma1&#39;</span><span class="p">]</span>
+
+    <span class="c"># Calculate Roe averages</span>
+    <span class="n">rhsqrtl</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">q_l</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="o">...</span><span class="p">])</span>
+    <span class="n">rhsqrtr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">q_r</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="o">...</span><span class="p">])</span>
+    <span class="n">pl</span> <span class="o">=</span> <span class="n">gamma1</span> <span class="o">*</span> <span class="p">(</span><span class="n">q_l</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="o">...</span><span class="p">]</span> <span class="o">-</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="p">(</span><span class="n">q_l</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="o">...</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="o">/</span> <span class="n">q_l</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="o">...</span><span class="p">])</span>
+    <span class="n">pr</span> <span class="o">=</span> <span class="n">gamma1</span> <span class="o">*</span> <span class="p">(</span><span class="n">q_r</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="o">...</span><span class="p">]</span> <span class="o">-</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="p">(</span><span class="n">q_r</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="o">...</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="o">/</span> <span class="n">q_r</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="o">...</span><span class="p">])</span>
+    <span class="n">rhsq2</span> <span class="o">=</span> <span class="n">rhsqrtl</span> <span class="o">+</span> <span class="n">rhsqrtr</span>
+    <span class="n">u</span> <span class="o">=</span> <span class="n">q_l</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="o">...</span><span class="p">]</span> <span class="o">/</span> <span class="n">rhsqrtl</span> <span class="o">+</span> <span class="n">q_r</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="o">...</span><span class="p">]</span> <span class="o">/</span> <span class="n">rhsqrtr</span>
+    <span class="n">enthalpy</span> <span class="o">=</span> <span class="p">((</span><span class="n">q_l</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="o">...</span><span class="p">]</span> <span class="o">+</span> <span class="n">pl</span><span class="p">)</span> <span class="o">/</span> <span class="n">rhsqrtl</span> <span class="o">+</span> <span class="p">(</span><span class="n">q_r</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="o">...</span><span class="p">]</span> <span class="o">+</span> <span class="n">pr</span><span class="p">)</span> <span class="o">/</span> <span class="n">rhsqrtr</span><span class="p">)</span> <span class="o">/</span> <span class="n">rhsq2</span>
+    <span class="n">a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">gamma1</span> <span class="o">*</span> <span class="p">(</span><span class="n">enthalpy</span> <span class="o">-</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">u</span><span class="o">**</span><span class="mi">2</span><span class="p">))</span>
+
+    <span class="c"># Find eigenvector coefficients</span>
+    <span class="n">delta</span> <span class="o">=</span> <span class="n">q_r</span> <span class="o">-</span> <span class="n">q_l</span>
+    <span class="n">a2</span> <span class="o">=</span> <span class="n">gamma1</span> <span class="o">/</span> <span class="n">a</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="p">((</span><span class="n">enthalpy</span> <span class="o">-</span><span class="n">u</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">*</span><span class="n">delta</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="o">...</span><span class="p">]</span> <span class="o">+</span> <span class="n">u</span><span class="o">*</span><span class="n">delta</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="o">...</span><span class="p">]</span> <span class="o">-</span> <span class="n">delta</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="o">...</span><span class="p">])</span>
+    <span class="n">a3</span> <span class="o">=</span> <span class="p">(</span><span class="n">delta</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="o">...</span><span class="p">]</span> <span class="o">+</span> <span class="p">(</span><span class="n">a</span><span class="o">-</span><span class="n">u</span><span class="p">)</span> <span class="o">*</span> <span class="n">delta</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="o">...</span><span class="p">]</span> <span class="o">-</span> <span class="n">a</span><span class="o">*</span><span class="n">a2</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mf">2.0</span><span class="o">*</span><span class="n">a</span><span class="p">)</span>
+    <span class="n">a1</span> <span class="o">=</span> <span class="n">delta</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="o">...</span><span class="p">]</span> <span class="o">-</span> <span class="n">a2</span> <span class="o">-</span> <span class="n">a3</span>
+    
+    <span class="c"># Compute the waves</span>
+    <span class="n">wave</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="n">a1</span>
+    <span class="n">wave</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="n">a1</span> <span class="o">*</span> <span class="p">(</span><span class="n">u</span><span class="o">-</span><span class="n">a</span><span class="p">)</span>
+    <span class="n">wave</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="n">a1</span> <span class="o">*</span> <span class="p">(</span><span class="n">enthalpy</span> <span class="o">-</span> <span class="n">u</span><span class="o">*</span><span class="n">a</span><span class="p">)</span>
+    <span class="n">s</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="n">u</span> <span class="o">-</span> <span class="n">a</span>
+    
+    <span class="n">wave</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="n">a2</span>
+    <span class="n">wave</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="n">a2</span> <span class="o">*</span> <span class="n">u</span>
+    <span class="n">wave</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="n">a2</span> <span class="o">*</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">u</span><span class="o">**</span><span class="mi">2</span>
+    <span class="n">s</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="n">u</span>
+    
+    <span class="n">wave</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="n">a3</span>
+    <span class="n">wave</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="n">a3</span> <span class="o">*</span> <span class="p">(</span><span class="n">u</span><span class="o">+</span><span class="n">a</span><span class="p">)</span>
+    <span class="n">wave</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="n">a3</span> <span class="o">*</span> <span class="p">(</span><span class="n">enthalpy</span> <span class="o">+</span> <span class="n">u</span><span class="o">*</span><span class="n">a</span><span class="p">)</span>
+    <span class="n">s</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="n">u</span> <span class="o">+</span> <span class="n">a</span>
+    
+    <span class="c"># Entropy fix</span>
+    <span class="k">if</span> <span class="n">problem_data</span><span class="p">[</span><span class="s">&#39;efix&#39;</span><span class="p">]:</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s">&quot;Entropy fix has not been implemented!&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c"># Godunov update</span>
+        <span class="n">s_index</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">2</span><span class="p">,</span><span class="n">num_rp</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="n">num_eqn</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">mw</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="n">num_waves</span><span class="p">):</span>
+                <span class="n">s_index</span><span class="p">[</span><span class="mi">0</span><span class="p">,:]</span> <span class="o">=</span> <span class="n">s</span><span class="p">[</span><span class="n">mw</span><span class="p">,:]</span>
+                <span class="n">amdq</span><span class="p">[</span><span class="n">m</span><span class="p">,:]</span> <span class="o">+=</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">s_index</span><span class="p">,</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="o">*</span> <span class="n">wave</span><span class="p">[</span><span class="n">m</span><span class="p">,</span><span class="n">mw</span><span class="p">,:]</span>
+                <span class="n">apdq</span><span class="p">[</span><span class="n">m</span><span class="p">,:]</span> <span class="o">+=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">s_index</span><span class="p">,</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="o">*</span> <span class="n">wave</span><span class="p">[</span><span class="n">m</span><span class="p">,</span><span class="n">mw</span><span class="p">,:]</span>
+    
+
+    <span class="k">return</span> <span class="n">wave</span><span class="p">,</span><span class="n">s</span><span class="p">,</span><span class="n">amdq</span><span class="p">,</span><span class="n">apdq</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../../index.html">
+              <img class="logo" src="../../../_static/clawlogo.jpg" alt="Logo"/>
+            </a></p>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+
+    <div class="footer">
+        &copy; Copyright 2010-2011, Kyle Mandli, David I. Ketcheson, Amal Alghamdi, and Aron Ahmadia.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>

@@ -1,0 +1,796 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>clawpack.pyclaw.classic.solver &mdash; PyClaw 1.0 documentation</title>
+    
+    <link rel="stylesheet" href="../../../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../../',
+        VERSION:     '1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="shortcut icon" href="../../../../_static/clawicon.ico"/>
+    <link rel="author" title="About these documents" href="../../../../about.html" />
+    <link rel="top" title="PyClaw 1.0 documentation" href="../../../../index.html" />
+    <link rel="up" title="Module code" href="../../../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+<li><a href="../../../../index.html">Contents </a>|</li>
+<li><a href="../../../../gallery/gallery_all.html">Gallery </a></li>
+
+          <li><a href="../../../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for clawpack.pyclaw.classic.solver</h1><div class="highlight"><pre>
+<span class="sd">r&quot;&quot;&quot;</span>
+<span class="sd">Module containing the classic Clawpack solvers.</span>
+
+<span class="sd">This module contains the pure and wrapped classic clawpack solvers.  All </span>
+<span class="sd">clawpack solvers inherit from the :class:`ClawSolver` superclass which in turn </span>
+<span class="sd">inherits from the :class:`~pyclaw.solver.Solver` superclass.  These</span>
+<span class="sd">are both pure virtual classes; the only solver classes that should be instantiated</span>
+<span class="sd">are the dimension-specific ones, :class:`ClawSolver1D` and :class:`ClawSolver2D`.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">clawpack.pyclaw.util</span> <span class="kn">import</span> <span class="n">add_parent_doc</span>
+<span class="kn">from</span> <span class="nn">clawpack.pyclaw.solver</span> <span class="kn">import</span> <span class="n">Solver</span>
+<span class="kn">from</span> <span class="nn">clawpack.pyclaw.limiters</span> <span class="kn">import</span> <span class="n">tvd</span>
+
+<span class="c"># ============================================================================</span>
+<span class="c">#  Generic Clawpack solver class</span>
+<span class="c"># ============================================================================</span>
+<div class="viewcode-block" id="ClawSolver"><a class="viewcode-back" href="../../../../solvers.html#clawpack.pyclaw.classic.solver.ClawSolver">[docs]</a><span class="k">class</span> <span class="nc">ClawSolver</span><span class="p">(</span><span class="n">Solver</span><span class="p">):</span>
+    <span class="sd">r&quot;&quot;&quot;</span>
+<span class="sd">    Generic classic Clawpack solver</span>
+<span class="sd">    </span>
+<span class="sd">    All Clawpack solvers inherit from this base class.</span>
+<span class="sd">    </span>
+<span class="sd">    .. attribute:: mthlim </span>
+<span class="sd">    </span>
+<span class="sd">        Limiter(s) to be used.  Specified either as one value or a list.</span>
+<span class="sd">        If one value, the specified limiter is used for all wave families.</span>
+<span class="sd">        If a list, the specified values indicate which limiter to apply to</span>
+<span class="sd">        each wave family.  Take a look at pyclaw.limiters.tvd for an enumeration.</span>
+<span class="sd">        ``Default = limiters.tvd.minmod``</span>
+<span class="sd">    </span>
+<span class="sd">    .. attribute:: order</span>
+<span class="sd">    </span>
+<span class="sd">        Order of the solver, either 1 for first order (i.e., Godunov&#39;s method)</span>
+<span class="sd">        or 2 for second order (Lax-Wendroff-LeVeque).</span>
+<span class="sd">        ``Default = 2``</span>
+<span class="sd">    </span>
+<span class="sd">    .. attribute:: source_split</span>
+<span class="sd">    </span>
+<span class="sd">        Which source splitting method to use: 1 for first </span>
+<span class="sd">        order Godunov splitting and 2 for second order Strang splitting.</span>
+<span class="sd">        ``Default = 1``</span>
+<span class="sd">        </span>
+<span class="sd">    .. attribute:: fwave</span>
+<span class="sd">    </span>
+<span class="sd">        Whether to split the flux jump (rather than the jump in Q) into waves; </span>
+<span class="sd">        requires that the Riemann solver performs the splitting.  </span>
+<span class="sd">        ``Default = False``</span>
+<span class="sd">        </span>
+<span class="sd">    .. attribute:: step_source</span>
+<span class="sd">    </span>
+<span class="sd">        Handle for function that evaluates the source term.  </span>
+<span class="sd">        The required signature for this function is:</span>
+
+<span class="sd">        def step_source(solver,state,dt)</span>
+<span class="sd">    </span>
+<span class="sd">    .. attribute:: before_step</span>
+<span class="sd">    </span>
+<span class="sd">        Function called before each time step is taken.</span>
+<span class="sd">        The required signature for this function is:</span>
+<span class="sd">        </span>
+<span class="sd">        def before_step(solver,solution)</span>
+
+<span class="sd">    .. attribute:: kernel_language</span>
+
+<span class="sd">        Specifies whether to use wrapped Fortran routines (&#39;Fortran&#39;)</span>
+<span class="sd">        or pure Python (&#39;Python&#39;).  ``Default = &#39;Fortran&#39;``.</span>
+<span class="sd">    </span>
+<span class="sd">    .. attribute:: verbosity</span>
+
+<span class="sd">        The level of detail of logged messages from the Fortran solver.</span>
+<span class="sd">        ``Default = 0``.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="c"># ========== Generic Init Routine ========================================</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">riemann_solver</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="n">claw_package</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">r&quot;&quot;&quot;</span>
+<span class="sd">        See :class:`ClawSolver` for full documentation.</span>
+
+<span class="sd">        Output:</span>
+<span class="sd">        - (:class:`ClawSolver`) - Initialized clawpack solver</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_ghost</span> <span class="o">=</span> <span class="mi">2</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">limiters</span> <span class="o">=</span> <span class="n">tvd</span><span class="o">.</span><span class="n">minmod</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">order</span> <span class="o">=</span> <span class="mi">2</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">source_split</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fwave</span> <span class="o">=</span> <span class="bp">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">step_source</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">before_step</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">kernel_language</span> <span class="o">=</span> <span class="s">&#39;Fortran&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">verbosity</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cfl_max</span> <span class="o">=</span> <span class="mf">1.0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cfl_desired</span> <span class="o">=</span> <span class="mf">0.9</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_mthlim</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">limiters</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_method</span> <span class="o">=</span> <span class="bp">None</span>
+
+        <span class="c"># Call general initialization function</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">ClawSolver</span><span class="p">,</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">riemann_solver</span><span class="p">,</span><span class="n">claw_package</span><span class="p">)</span>
+    
+    <span class="c"># ========== Time stepping routines ======================================</span>
+<div class="viewcode-block" id="ClawSolver.step"><a class="viewcode-back" href="../../../../solvers.html#clawpack.pyclaw.classic.solver.ClawSolver.step">[docs]</a>    <span class="k">def</span> <span class="nf">step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">solution</span><span class="p">):</span>
+        <span class="sd">r&quot;&quot;&quot;</span>
+<span class="sd">        Evolve solution one time step</span>
+
+<span class="sd">        The elements of the algorithm for taking one step are:</span>
+<span class="sd">        </span>
+<span class="sd">        1. The :meth:`before_step` function is called</span>
+<span class="sd">        </span>
+<span class="sd">        2. A half step on the source term :func:`step_source` if Strang splitting is </span>
+<span class="sd">           being used (:attr:`source_split` = 2)</span>
+<span class="sd">        </span>
+<span class="sd">        3. A step on the homogeneous problem :math:`q_t + f(q)_x = 0` is taken</span>
+<span class="sd">        </span>
+<span class="sd">        4. A second half step or a full step is taken on the source term</span>
+<span class="sd">           :func:`step_source` depending on whether Strang splitting was used </span>
+<span class="sd">           (:attr:`source_split` = 2) or Godunov splitting </span>
+<span class="sd">           (:attr:`source_split` = 1)</span>
+
+<span class="sd">        This routine is called from the method evolve_to_time defined in the</span>
+<span class="sd">        pyclaw.solver.Solver superclass.</span>
+
+<span class="sd">        :Input:</span>
+<span class="sd">         - *solution* - (:class:`~pyclaw.solution.Solution`) solution to be evolved</span>
+<span class="sd">         </span>
+<span class="sd">        :Output: </span>
+<span class="sd">         - (bool) - True if full step succeeded, False otherwise</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">before_step</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">before_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">solution</span><span class="o">.</span><span class="n">states</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">source_split</span> <span class="o">==</span> <span class="mi">2</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">step_source</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">step_source</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">solution</span><span class="o">.</span><span class="n">states</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="bp">self</span><span class="o">.</span><span class="n">dt</span><span class="o">/</span><span class="mf">2.0</span><span class="p">)</span>
+    
+        <span class="bp">self</span><span class="o">.</span><span class="n">step_hyperbolic</span><span class="p">(</span><span class="n">solution</span><span class="p">)</span>
+
+        <span class="c"># Check here if the CFL condition is satisfied. </span>
+        <span class="c"># If not, return # immediately to evolve_to_time and let it deal with</span>
+        <span class="c"># picking a new step size (dt).</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">cfl</span><span class="o">.</span><span class="n">get_cached_max</span><span class="p">()</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cfl_max</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">False</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">step_source</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="c"># Strang splitting</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">source_split</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">step_source</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">solution</span><span class="o">.</span><span class="n">states</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="bp">self</span><span class="o">.</span><span class="n">dt</span><span class="o">/</span><span class="mf">2.0</span><span class="p">)</span>
+
+            <span class="c"># Godunov Splitting</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">source_split</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">step_source</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">solution</span><span class="o">.</span><span class="n">states</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="bp">self</span><span class="o">.</span><span class="n">dt</span><span class="p">)</span>
+                
+        <span class="k">return</span> <span class="bp">True</span>
+            </div>
+    <span class="k">def</span> <span class="nf">_check_cfl_settings</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">pass</span>
+
+    <span class="k">def</span> <span class="nf">_allocate_workspace</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">solution</span><span class="p">):</span>
+        <span class="k">pass</span>
+
+<div class="viewcode-block" id="ClawSolver.step_hyperbolic"><a class="viewcode-back" href="../../../../solvers.html#clawpack.pyclaw.classic.solver.ClawSolver.step_hyperbolic">[docs]</a>    <span class="k">def</span> <span class="nf">step_hyperbolic</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">solution</span><span class="p">):</span>
+        <span class="sd">r&quot;&quot;&quot;</span>
+<span class="sd">        Take one homogeneous step on the solution.</span>
+<span class="sd">        </span>
+<span class="sd">        This is a dummy routine and must be overridden.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s">&quot;Dummy routine, please override!&quot;</span><span class="p">)</span>
+</div>
+    <span class="k">def</span> <span class="nf">_set_mthlim</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">r&quot;&quot;&quot;</span>
+<span class="sd">        Convenience routine to convert users limiter specification to </span>
+<span class="sd">        the format understood by the Fortran code (i.e., a list of length num_waves).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_mthlim</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">limiters</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">limiters</span><span class="p">,</span><span class="nb">list</span><span class="p">):</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mthlim</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_mthlim</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_mthlim</span><span class="p">)</span><span class="o">==</span><span class="mi">1</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mthlim</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mthlim</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_waves</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_mthlim</span><span class="p">)</span><span class="o">!=</span><span class="bp">self</span><span class="o">.</span><span class="n">num_waves</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s">&#39;Length of solver.limiters is not equal to 1 or to solver.num_waves&#39;</span><span class="p">)</span>
+ 
+    <span class="k">def</span> <span class="nf">_set_method</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">state</span><span class="p">):</span>
+        <span class="sd">r&quot;&quot;&quot;</span>
+<span class="sd">        Set values of the solver._method array required by the Fortran code.</span>
+<span class="sd">        These are algorithmic parameters.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+        <span class="c">#We ought to put method and many other things in a Fortran</span>
+        <span class="c">#module and set the fortran variables directly here.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_method</span> <span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="mi">7</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span><span class="n">order</span><span class="o">=</span><span class="s">&#39;F&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_method</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dt_variable</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_method</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">order</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_dim</span><span class="o">==</span><span class="mi">1</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_method</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c"># Not used in 1D</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">dimensional_split</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_method</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>  <span class="c"># First-order dimensional splitting</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_method</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">transverse_waves</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_method</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbosity</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_method</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c"># Not used for PyClaw (would be self.source_split)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_method</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">index_capa</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_method</span><span class="p">[</span><span class="mi">6</span><span class="p">]</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">num_aux</span>
+
+<div class="viewcode-block" id="ClawSolver.setup"><a class="viewcode-back" href="../../../../solvers.html#clawpack.pyclaw.classic.solver.ClawSolver.setup">[docs]</a>    <span class="k">def</span> <span class="nf">setup</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">solution</span><span class="p">):</span>
+        <span class="sd">r&quot;&quot;&quot;</span>
+<span class="sd">        Perform essential solver setup.  This routine must be called before</span>
+<span class="sd">        solver.step() may be called.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c"># This is a hack to deal with the fact that petsc4py</span>
+        <span class="c"># doesn&#39;t allow us to change the stencil_width (num_ghost)</span>
+        <span class="n">solution</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">set_num_ghost</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_ghost</span><span class="p">)</span>
+        <span class="c"># End hack</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_check_cfl_settings</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_set_mthlim</span><span class="p">()</span>
+        <span class="k">if</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kernel_language</span> <span class="o">==</span> <span class="s">&#39;Fortran&#39;</span><span class="p">):</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">fmod</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="n">so_name</span> <span class="o">=</span> <span class="s">&#39;clawpack.pyclaw.classic.classic&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_dim</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">fmod</span> <span class="o">=</span> <span class="nb">__import__</span><span class="p">(</span><span class="n">so_name</span><span class="p">,</span><span class="n">fromlist</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;clawpack.pyclaw.classic&#39;</span><span class="p">])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_set_fortran_parameters</span><span class="p">(</span><span class="n">solution</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_allocate_workspace</span><span class="p">(</span><span class="n">solution</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_dim</span><span class="o">&gt;</span><span class="mi">1</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s">&#39;Only Fortran kernels are supported in multi-D.&#39;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_allocate_bc_arrays</span><span class="p">(</span><span class="n">solution</span><span class="o">.</span><span class="n">states</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_is_set_up</span> <span class="o">=</span> <span class="bp">True</span>
+
+</div>
+    <span class="k">def</span> <span class="nf">_set_fortran_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">solution</span><span class="p">):</span>
+        <span class="sd">r&quot;&quot;&quot;</span>
+<span class="sd">        Pack parameters into format recognized by Clawpack (Fortran) code.</span>
+
+<span class="sd">        Sets the solver._method array and the cparam common block for the Riemann solver.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_set_method</span><span class="p">(</span><span class="n">solution</span><span class="o">.</span><span class="n">state</span><span class="p">)</span>
+        <span class="c"># The reload here is necessary because otherwise the common block</span>
+        <span class="c"># cparam in the Riemann solver doesn&#39;t get flushed between running</span>
+        <span class="c"># different tests in a single Python session.</span>
+        <span class="nb">reload</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fmod</span><span class="p">)</span>
+        <span class="n">solution</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">set_cparam</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fmod</span><span class="p">)</span>
+        <span class="n">solution</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">set_cparam</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rp</span><span class="p">)</span>
+
+<div class="viewcode-block" id="ClawSolver.teardown"><a class="viewcode-back" href="../../../../solvers.html#clawpack.pyclaw.classic.solver.ClawSolver.teardown">[docs]</a>    <span class="k">def</span> <span class="nf">teardown</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">r&quot;&quot;&quot;</span>
+<span class="sd">        Delete Fortran objects, which otherwise tend to persist in Python sessions.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kernel_language</span> <span class="o">==</span> <span class="s">&#39;Fortran&#39;</span><span class="p">):</span>
+            <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">fmod</span>
+
+
+
+<span class="c"># ============================================================================</span>
+<span class="c">#  ClawPack 1d Solver Class</span>
+<span class="c"># ============================================================================</span></div></div>
+<span class="k">class</span> <span class="nc">ClawSolver1D</span><span class="p">(</span><span class="n">ClawSolver</span><span class="p">):</span>
+    <span class="sd">r&quot;&quot;&quot;</span>
+<span class="sd">    Clawpack evolution routine in 1D</span>
+<span class="sd">    </span>
+<span class="sd">    This class represents the 1d clawpack solver on a single grid.  Note that </span>
+<span class="sd">    there are routines here for interfacing with the fortran time stepping </span>
+<span class="sd">    routines and the Python time stepping routines.  The ones used are </span>
+<span class="sd">    dependent on the argument given to the initialization of the solver </span>
+<span class="sd">    (defaults to python).</span>
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">__doc__</span> <span class="o">+=</span> <span class="n">add_parent_doc</span><span class="p">(</span><span class="n">ClawSolver</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">riemann_solver</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">claw_package</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">r&quot;&quot;&quot;</span>
+<span class="sd">        Create 1d Clawpack solver</span>
+
+<span class="sd">        Output:</span>
+<span class="sd">        - (:class:`ClawSolver1D`) - Initialized 1d clawpack solver</span>
+<span class="sd">        </span>
+<span class="sd">        See :class:`ClawSolver1D` for more info.</span>
+<span class="sd">        &quot;&quot;&quot;</span>   
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_dim</span> <span class="o">=</span> <span class="mi">1</span>
+
+        <span class="nb">super</span><span class="p">(</span><span class="n">ClawSolver1D</span><span class="p">,</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">riemann_solver</span><span class="p">,</span> <span class="n">claw_package</span><span class="p">)</span>
+
+
+    <span class="c"># ========== Homogeneous Step =====================================</span>
+    <span class="k">def</span> <span class="nf">step_hyperbolic</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">solution</span><span class="p">):</span>
+        <span class="sd">r&quot;&quot;&quot;</span>
+<span class="sd">        Take one time step on the homogeneous hyperbolic system.</span>
+
+<span class="sd">        :Input:</span>
+<span class="sd">         - *solution* - (:class:`~pyclaw.solution.Solution`) Solution that </span>
+<span class="sd">           will be evolved</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+
+        <span class="n">state</span> <span class="o">=</span> <span class="n">solution</span><span class="o">.</span><span class="n">states</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">grid</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">grid</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_apply_q_bcs</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">state</span><span class="o">.</span><span class="n">num_aux</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_apply_aux_bcs</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
+            
+        <span class="n">num_eqn</span><span class="p">,</span><span class="n">num_ghost</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">num_eqn</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">num_ghost</span>
+          
+        <span class="k">if</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kernel_language</span> <span class="o">==</span> <span class="s">&#39;Fortran&#39;</span><span class="p">):</span>
+            <span class="n">mx</span> <span class="o">=</span> <span class="n">grid</span><span class="o">.</span><span class="n">num_cells</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">dx</span><span class="p">,</span><span class="n">dt</span> <span class="o">=</span> <span class="n">grid</span><span class="o">.</span><span class="n">delta</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="bp">self</span><span class="o">.</span><span class="n">dt</span>
+            <span class="n">dtdx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span> <span class="p">(</span><span class="n">mx</span><span class="o">+</span><span class="mi">2</span><span class="o">*</span><span class="n">num_ghost</span><span class="p">)</span> <span class="p">)</span> <span class="o">+</span> <span class="n">dt</span><span class="o">/</span><span class="n">dx</span>
+            <span class="n">rp1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rp</span><span class="o">.</span><span class="n">rp1</span><span class="o">.</span><span class="n">_cpointer</span>
+            
+            <span class="bp">self</span><span class="o">.</span><span class="n">qbc</span><span class="p">,</span><span class="n">cfl</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fmod</span><span class="o">.</span><span class="n">step1</span><span class="p">(</span><span class="n">num_ghost</span><span class="p">,</span><span class="n">mx</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">qbc</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">auxbc</span><span class="p">,</span><span class="n">dx</span><span class="p">,</span><span class="n">dt</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">_method</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">_mthlim</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">fwave</span><span class="p">,</span><span class="n">rp1</span><span class="p">)</span>
+            
+        <span class="k">elif</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kernel_language</span> <span class="o">==</span> <span class="s">&#39;Python&#39;</span><span class="p">):</span>
+ 
+            <span class="n">q</span>   <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">qbc</span>
+            <span class="n">aux</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">auxbc</span>
+            <span class="c"># Limiter to use in the pth family</span>
+            <span class="n">limiter</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_mthlim</span><span class="p">,</span><span class="n">ndmin</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>  
+        
+            <span class="n">dtdx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span> <span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">num_ghost</span><span class="o">+</span><span class="n">grid</span><span class="o">.</span><span class="n">num_cells</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="p">)</span>
+
+            <span class="c"># Find local value for dt/dx</span>
+            <span class="k">if</span> <span class="n">state</span><span class="o">.</span><span class="n">index_capa</span><span class="o">&gt;=</span><span class="mi">0</span><span class="p">:</span>
+                <span class="n">dtdx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dt</span> <span class="o">/</span> <span class="p">(</span><span class="n">grid</span><span class="o">.</span><span class="n">delta</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">state</span><span class="o">.</span><span class="n">aux</span><span class="p">[</span><span class="n">state</span><span class="o">.</span><span class="n">index_capa</span><span class="p">,:])</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">dtdx</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dt</span><span class="o">/</span><span class="n">grid</span><span class="o">.</span><span class="n">delta</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        
+            <span class="c"># Solve Riemann problem at each interface</span>
+            <span class="n">q_l</span><span class="o">=</span><span class="n">q</span><span class="p">[:,:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">q_r</span><span class="o">=</span><span class="n">q</span><span class="p">[:,</span><span class="mi">1</span><span class="p">:]</span>
+            <span class="k">if</span> <span class="n">state</span><span class="o">.</span><span class="n">aux</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="n">aux_l</span><span class="o">=</span><span class="n">aux</span><span class="p">[:,:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+                <span class="n">aux_r</span><span class="o">=</span><span class="n">aux</span><span class="p">[:,</span><span class="mi">1</span><span class="p">:]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">aux_l</span> <span class="o">=</span> <span class="bp">None</span>
+                <span class="n">aux_r</span> <span class="o">=</span> <span class="bp">None</span>
+            <span class="n">wave</span><span class="p">,</span><span class="n">s</span><span class="p">,</span><span class="n">amdq</span><span class="p">,</span><span class="n">apdq</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rp</span><span class="p">(</span><span class="n">q_l</span><span class="p">,</span><span class="n">q_r</span><span class="p">,</span><span class="n">aux_l</span><span class="p">,</span><span class="n">aux_r</span><span class="p">,</span><span class="n">state</span><span class="o">.</span><span class="n">problem_data</span><span class="p">)</span>
+            
+            <span class="c"># Update loop limits, these are the limits for the Riemann solver</span>
+            <span class="c"># locations, which then update a grid cell value</span>
+            <span class="c"># We include the Riemann problem just outside of the grid so we can</span>
+            <span class="c"># do proper limiting at the grid edges</span>
+            <span class="c">#        LL    |                               |     UL</span>
+            <span class="c">#  |  LL |     |     |     |  ...  |     |     |  UL  |     |</span>
+            <span class="c">#              |                               |</span>
+
+            <span class="n">LL</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_ghost</span> <span class="o">-</span> <span class="mi">1</span>
+            <span class="n">UL</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_ghost</span> <span class="o">+</span> <span class="n">grid</span><span class="o">.</span><span class="n">num_cells</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span> 
+
+            <span class="c"># Update q for Godunov update</span>
+            <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="n">num_eqn</span><span class="p">):</span>
+                <span class="n">q</span><span class="p">[</span><span class="n">m</span><span class="p">,</span><span class="n">LL</span><span class="p">:</span><span class="n">UL</span><span class="p">]</span> <span class="o">-=</span> <span class="n">dtdx</span><span class="p">[</span><span class="n">LL</span><span class="p">:</span><span class="n">UL</span><span class="p">]</span><span class="o">*</span><span class="n">apdq</span><span class="p">[</span><span class="n">m</span><span class="p">,</span><span class="n">LL</span><span class="o">-</span><span class="mi">1</span><span class="p">:</span><span class="n">UL</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+                <span class="n">q</span><span class="p">[</span><span class="n">m</span><span class="p">,</span><span class="n">LL</span><span class="o">-</span><span class="mi">1</span><span class="p">:</span><span class="n">UL</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">-=</span> <span class="n">dtdx</span><span class="p">[</span><span class="n">LL</span><span class="o">-</span><span class="mi">1</span><span class="p">:</span><span class="n">UL</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="n">amdq</span><span class="p">[</span><span class="n">m</span><span class="p">,</span><span class="n">LL</span><span class="o">-</span><span class="mi">1</span><span class="p">:</span><span class="n">UL</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        
+            <span class="c"># Compute maximum wave speed</span>
+            <span class="n">cfl</span> <span class="o">=</span> <span class="mf">0.0</span>
+            <span class="k">for</span> <span class="n">mw</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="n">wave</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]):</span>
+                <span class="n">smax1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">dtdx</span><span class="p">[</span><span class="n">LL</span><span class="p">:</span><span class="n">UL</span><span class="p">]</span><span class="o">*</span><span class="n">s</span><span class="p">[</span><span class="n">mw</span><span class="p">,</span><span class="n">LL</span><span class="o">-</span><span class="mi">1</span><span class="p">:</span><span class="n">UL</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+                <span class="n">smax2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="o">-</span><span class="n">dtdx</span><span class="p">[</span><span class="n">LL</span><span class="o">-</span><span class="mi">1</span><span class="p">:</span><span class="n">UL</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="n">s</span><span class="p">[</span><span class="n">mw</span><span class="p">,</span><span class="n">LL</span><span class="o">-</span><span class="mi">1</span><span class="p">:</span><span class="n">UL</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+                <span class="n">cfl</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">cfl</span><span class="p">,</span><span class="n">smax1</span><span class="p">,</span><span class="n">smax2</span><span class="p">)</span>
+
+            <span class="c"># If we are doing slope limiting we have more work to do</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">order</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+                <span class="c"># Initialize flux corrections</span>
+                <span class="n">f</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span> <span class="p">(</span><span class="n">num_eqn</span><span class="p">,</span><span class="n">grid</span><span class="o">.</span><span class="n">num_cells</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="mi">2</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">num_ghost</span><span class="p">)</span> <span class="p">)</span>
+            
+                <span class="c"># Apply Limiters to waves</span>
+                <span class="k">if</span> <span class="p">(</span><span class="n">limiter</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
+                    <span class="n">wave</span> <span class="o">=</span> <span class="n">tvd</span><span class="o">.</span><span class="n">limit</span><span class="p">(</span><span class="n">state</span><span class="o">.</span><span class="n">num_eqn</span><span class="p">,</span><span class="n">wave</span><span class="p">,</span><span class="n">s</span><span class="p">,</span><span class="n">limiter</span><span class="p">,</span><span class="n">dtdx</span><span class="p">)</span>
+
+                <span class="c"># Compute correction fluxes for second order q_{xx} terms</span>
+                <span class="n">dtdxave</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="p">(</span><span class="n">dtdx</span><span class="p">[</span><span class="n">LL</span><span class="o">-</span><span class="mi">1</span><span class="p">:</span><span class="n">UL</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">dtdx</span><span class="p">[</span><span class="n">LL</span><span class="p">:</span><span class="n">UL</span><span class="p">])</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">fwave</span><span class="p">:</span>
+                    <span class="k">for</span> <span class="n">mw</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="n">wave</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]):</span>
+                        <span class="n">sabs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">s</span><span class="p">[</span><span class="n">mw</span><span class="p">,</span><span class="n">LL</span><span class="o">-</span><span class="mi">1</span><span class="p">:</span><span class="n">UL</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+                        <span class="n">om</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">-</span> <span class="n">sabs</span><span class="o">*</span><span class="n">dtdxave</span><span class="p">[:</span><span class="n">UL</span><span class="o">-</span><span class="n">LL</span><span class="p">]</span>
+                        <span class="n">ssign</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sign</span><span class="p">(</span><span class="n">s</span><span class="p">[</span><span class="n">mw</span><span class="p">,</span><span class="n">LL</span><span class="o">-</span><span class="mi">1</span><span class="p">:</span><span class="n">UL</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+                        <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="n">num_eqn</span><span class="p">):</span>
+                            <span class="n">f</span><span class="p">[</span><span class="n">m</span><span class="p">,</span><span class="n">LL</span><span class="p">:</span><span class="n">UL</span><span class="p">]</span> <span class="o">+=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">ssign</span> <span class="o">*</span> <span class="n">om</span> <span class="o">*</span> <span class="n">wave</span><span class="p">[</span><span class="n">m</span><span class="p">,</span><span class="n">mw</span><span class="p">,</span><span class="n">LL</span><span class="o">-</span><span class="mi">1</span><span class="p">:</span><span class="n">UL</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">for</span> <span class="n">mw</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="n">wave</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]):</span>
+                        <span class="n">sabs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">s</span><span class="p">[</span><span class="n">mw</span><span class="p">,</span><span class="n">LL</span><span class="o">-</span><span class="mi">1</span><span class="p">:</span><span class="n">UL</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+                        <span class="n">om</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">-</span> <span class="n">sabs</span><span class="o">*</span><span class="n">dtdxave</span><span class="p">[:</span><span class="n">UL</span><span class="o">-</span><span class="n">LL</span><span class="p">]</span>
+                        <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="n">num_eqn</span><span class="p">):</span>
+                            <span class="n">f</span><span class="p">[</span><span class="n">m</span><span class="p">,</span><span class="n">LL</span><span class="p">:</span><span class="n">UL</span><span class="p">]</span> <span class="o">+=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">sabs</span> <span class="o">*</span> <span class="n">om</span> <span class="o">*</span> <span class="n">wave</span><span class="p">[</span><span class="n">m</span><span class="p">,</span><span class="n">mw</span><span class="p">,</span><span class="n">LL</span><span class="o">-</span><span class="mi">1</span><span class="p">:</span><span class="n">UL</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+                <span class="c"># Update q by differencing correction fluxes</span>
+                <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="n">num_eqn</span><span class="p">):</span>
+                    <span class="n">q</span><span class="p">[</span><span class="n">m</span><span class="p">,</span><span class="n">LL</span><span class="p">:</span><span class="n">UL</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">-=</span> <span class="n">dtdx</span><span class="p">[</span><span class="n">LL</span><span class="p">:</span><span class="n">UL</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="n">m</span><span class="p">,</span><span class="n">LL</span><span class="o">+</span><span class="mi">1</span><span class="p">:</span><span class="n">UL</span><span class="p">]</span> <span class="o">-</span> <span class="n">f</span><span class="p">[</span><span class="n">m</span><span class="p">,</span><span class="n">LL</span><span class="p">:</span><span class="n">UL</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span> 
+
+        <span class="k">else</span><span class="p">:</span> <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s">&quot;Unrecognized kernel_language; choose &#39;Fortran&#39; or &#39;Python&#39;&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">cfl</span><span class="o">.</span><span class="n">update_global_max</span><span class="p">(</span><span class="n">cfl</span><span class="p">)</span>
+        <span class="n">state</span><span class="o">.</span><span class="n">set_q_from_qbc</span><span class="p">(</span><span class="n">num_ghost</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">qbc</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">state</span><span class="o">.</span><span class="n">num_aux</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">state</span><span class="o">.</span><span class="n">set_aux_from_auxbc</span><span class="p">(</span><span class="n">num_ghost</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">auxbc</span><span class="p">)</span>
+   
+
+<span class="c"># ============================================================================</span>
+<span class="c">#  ClawPack 2d Solver Class</span>
+<span class="c"># ============================================================================</span>
+<span class="k">class</span> <span class="nc">ClawSolver2D</span><span class="p">(</span><span class="n">ClawSolver</span><span class="p">):</span>
+    <span class="sd">r&quot;&quot;&quot;</span>
+<span class="sd">    2D Classic (Clawpack) solver.</span>
+
+<span class="sd">    Solve using the wave propagation algorithms of Randy LeVeque&#39;s</span>
+<span class="sd">    Clawpack code (www.clawpack.org).</span>
+
+<span class="sd">    In addition to the attributes of ClawSolver1D, ClawSolver2D</span>
+<span class="sd">    also has the following options:</span>
+<span class="sd">    </span>
+<span class="sd">    .. attribute:: dimensional_split</span>
+<span class="sd">    </span>
+<span class="sd">        If True, use dimensional splitting (Godunov splitting).</span>
+<span class="sd">        Dimensional splitting with Strang splitting is not supported</span>
+<span class="sd">        at present but could easily be enabled if necessary.</span>
+<span class="sd">        If False, use unsplit Clawpack algorithms, possibly including</span>
+<span class="sd">        transverse Riemann solves.</span>
+
+<span class="sd">    .. attribute:: transverse_waves</span>
+<span class="sd">    </span>
+<span class="sd">        If dimensional_split is True, this option has no effect.  If</span>
+<span class="sd">        dim_plit is False, then transverse_waves should be one of</span>
+<span class="sd">        the following values:</span>
+
+<span class="sd">        ClawSolver2D.no_trans: Transverse Riemann solver</span>
+<span class="sd">        not used.  The stable CFL for this algorithm is 0.5.  Not recommended.</span>
+<span class="sd">        </span>
+<span class="sd">        ClawSolver2D.trans_inc: Transverse increment waves are computed</span>
+<span class="sd">        and propagated.</span>
+
+<span class="sd">        ClawSolver2D.trans_cor: Transverse increment waves and transverse</span>
+<span class="sd">        correction waves are computed and propagated.</span>
+
+<span class="sd">    Note that only the fortran routines are supported for now in 2D.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">__doc__</span> <span class="o">+=</span> <span class="n">add_parent_doc</span><span class="p">(</span><span class="n">ClawSolver</span><span class="p">)</span>
+    
+    <span class="n">no_trans</span>  <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">trans_inc</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">trans_cor</span> <span class="o">=</span> <span class="mi">2</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">riemann_solver</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">claw_package</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">r&quot;&quot;&quot;</span>
+<span class="sd">        Create 2d Clawpack solver</span>
+<span class="sd">        </span>
+<span class="sd">        See :class:`ClawSolver2D` for more info.</span>
+<span class="sd">        &quot;&quot;&quot;</span>   
+        <span class="bp">self</span><span class="o">.</span><span class="n">dimensional_split</span> <span class="o">=</span> <span class="bp">True</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">transverse_waves</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">trans_inc</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_dim</span> <span class="o">=</span> <span class="mi">2</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">aux1</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">aux2</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">aux3</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">work</span> <span class="o">=</span> <span class="bp">None</span>
+
+        <span class="nb">super</span><span class="p">(</span><span class="n">ClawSolver2D</span><span class="p">,</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">riemann_solver</span><span class="p">,</span> <span class="n">claw_package</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_check_cfl_settings</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="p">(</span><span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">dimensional_split</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">transverse_waves</span><span class="o">==</span><span class="mi">0</span><span class="p">):</span>
+            <span class="n">cfl_recommended</span> <span class="o">=</span> <span class="mf">0.5</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">cfl_recommended</span> <span class="o">=</span> <span class="mf">1.0</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">cfl_max</span> <span class="o">&gt;</span> <span class="n">cfl_recommended</span><span class="p">:</span>
+            <span class="kn">import</span> <span class="nn">warnings</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s">&#39;cfl_max is set higher than the recommended value of </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="n">cfl_recommended</span><span class="p">)</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cfl_desired</span><span class="p">))</span>
+
+
+    <span class="k">def</span> <span class="nf">_allocate_workspace</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">solution</span><span class="p">):</span>
+        <span class="sd">r&quot;&quot;&quot;</span>
+<span class="sd">        Pack parameters into format recognized by Clawpack (Fortran) code.</span>
+
+<span class="sd">        Sets the method array and the cparam common block for the Riemann solver.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+
+        <span class="n">state</span> <span class="o">=</span> <span class="n">solution</span><span class="o">.</span><span class="n">state</span>
+
+        <span class="n">num_eqn</span><span class="p">,</span><span class="n">num_aux</span><span class="p">,</span><span class="n">num_waves</span><span class="p">,</span><span class="n">num_ghost</span><span class="p">,</span><span class="n">aux</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">num_eqn</span><span class="p">,</span><span class="n">state</span><span class="o">.</span><span class="n">num_aux</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">num_waves</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">num_ghost</span><span class="p">,</span><span class="n">state</span><span class="o">.</span><span class="n">aux</span>
+
+        <span class="c">#The following is a hack to work around an issue</span>
+        <span class="c">#with f2py.  It involves wastefully allocating three arrays.</span>
+        <span class="c">#f2py seems not able to handle multiple zero-size arrays being passed.</span>
+        <span class="c"># it appears the bug is related to f2py/src/fortranobject.c line 841.</span>
+        <span class="k">if</span><span class="p">(</span><span class="n">aux</span> <span class="o">==</span> <span class="bp">None</span><span class="p">):</span> <span class="n">num_aux</span><span class="o">=</span><span class="mi">1</span>
+
+        <span class="n">grid</span>  <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">grid</span>
+        <span class="n">maxmx</span><span class="p">,</span><span class="n">maxmy</span> <span class="o">=</span> <span class="n">grid</span><span class="o">.</span><span class="n">num_cells</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">grid</span><span class="o">.</span><span class="n">num_cells</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">maxm</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">maxmx</span><span class="p">,</span> <span class="n">maxmy</span><span class="p">)</span>
+
+        <span class="c"># These work arrays really ought to live inside a fortran module</span>
+        <span class="c"># as is done for sharpclaw</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">aux1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="n">num_aux</span><span class="p">,</span><span class="n">maxm</span><span class="o">+</span><span class="mi">2</span><span class="o">*</span><span class="n">num_ghost</span><span class="p">),</span><span class="n">order</span><span class="o">=</span><span class="s">&#39;F&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">aux2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="n">num_aux</span><span class="p">,</span><span class="n">maxm</span><span class="o">+</span><span class="mi">2</span><span class="o">*</span><span class="n">num_ghost</span><span class="p">),</span><span class="n">order</span><span class="o">=</span><span class="s">&#39;F&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">aux3</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="n">num_aux</span><span class="p">,</span><span class="n">maxm</span><span class="o">+</span><span class="mi">2</span><span class="o">*</span><span class="n">num_ghost</span><span class="p">),</span><span class="n">order</span><span class="o">=</span><span class="s">&#39;F&#39;</span><span class="p">)</span>
+        <span class="n">mwork</span> <span class="o">=</span> <span class="p">(</span><span class="n">maxm</span><span class="o">+</span><span class="mi">2</span><span class="o">*</span><span class="n">num_ghost</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="mi">5</span><span class="o">*</span><span class="n">num_eqn</span> <span class="o">+</span> <span class="n">num_waves</span> <span class="o">+</span> <span class="n">num_eqn</span><span class="o">*</span><span class="n">num_waves</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">work</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="n">mwork</span><span class="p">),</span><span class="n">order</span><span class="o">=</span><span class="s">&#39;F&#39;</span><span class="p">)</span>
+
+
+    <span class="c"># ========== Hyperbolic Step =====================================</span>
+    <span class="k">def</span> <span class="nf">step_hyperbolic</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">solution</span><span class="p">):</span>
+        <span class="sd">r&quot;&quot;&quot;</span>
+<span class="sd">        Take a step on the homogeneous hyperbolic system using the Clawpack</span>
+<span class="sd">        algorithm.</span>
+
+<span class="sd">        Clawpack is based on the Lax-Wendroff method, combined with Riemann</span>
+<span class="sd">        solvers and TVD limiters applied to waves.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kernel_language</span> <span class="o">==</span> <span class="s">&#39;Fortran&#39;</span><span class="p">):</span>
+            <span class="n">state</span> <span class="o">=</span> <span class="n">solution</span><span class="o">.</span><span class="n">states</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">grid</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">grid</span>
+            <span class="n">dx</span><span class="p">,</span><span class="n">dy</span> <span class="o">=</span> <span class="n">grid</span><span class="o">.</span><span class="n">delta</span>
+            <span class="n">mx</span><span class="p">,</span><span class="n">my</span> <span class="o">=</span> <span class="n">grid</span><span class="o">.</span><span class="n">num_cells</span>
+            <span class="n">maxm</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">mx</span><span class="p">,</span><span class="n">my</span><span class="p">)</span>
+            
+            <span class="bp">self</span><span class="o">.</span><span class="n">_apply_q_bcs</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">state</span><span class="o">.</span><span class="n">num_aux</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_apply_aux_bcs</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
+            <span class="n">qold</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">qbc</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="s">&#39;F&#39;</span><span class="p">)</span>
+            
+            <span class="n">rpn2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rp</span><span class="o">.</span><span class="n">rpn2</span><span class="o">.</span><span class="n">_cpointer</span>
+            <span class="n">rpt2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rp</span><span class="o">.</span><span class="n">rpt2</span><span class="o">.</span><span class="n">_cpointer</span>
+
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">dimensional_split</span><span class="p">:</span>
+                <span class="c">#Right now only Godunov-dimensional-splitting is implemented.</span>
+                <span class="c">#Strang-dimensional-splitting could be added following dimsp2.f in Clawpack.</span>
+
+                <span class="bp">self</span><span class="o">.</span><span class="n">qbc</span><span class="p">,</span> <span class="n">cfl_x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fmod</span><span class="o">.</span><span class="n">step2ds</span><span class="p">(</span><span class="n">maxm</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">num_ghost</span><span class="p">,</span><span class="n">mx</span><span class="p">,</span><span class="n">my</span><span class="p">,</span> \
+                      <span class="n">qold</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">qbc</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">auxbc</span><span class="p">,</span><span class="n">dx</span><span class="p">,</span><span class="n">dy</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">dt</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">_method</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">_mthlim</span><span class="p">,</span>\
+                      <span class="bp">self</span><span class="o">.</span><span class="n">aux1</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">aux2</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">aux3</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">work</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">fwave</span><span class="p">,</span><span class="n">rpn2</span><span class="p">,</span><span class="n">rpt2</span><span class="p">)</span>
+
+                <span class="bp">self</span><span class="o">.</span><span class="n">qbc</span><span class="p">,</span> <span class="n">cfl_y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fmod</span><span class="o">.</span><span class="n">step2ds</span><span class="p">(</span><span class="n">maxm</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">num_ghost</span><span class="p">,</span><span class="n">mx</span><span class="p">,</span><span class="n">my</span><span class="p">,</span> \
+                      <span class="bp">self</span><span class="o">.</span><span class="n">qbc</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">qbc</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">auxbc</span><span class="p">,</span><span class="n">dx</span><span class="p">,</span><span class="n">dy</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">dt</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">_method</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">_mthlim</span><span class="p">,</span>\
+                      <span class="bp">self</span><span class="o">.</span><span class="n">aux1</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">aux2</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">aux3</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">work</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">fwave</span><span class="p">,</span><span class="n">rpn2</span><span class="p">,</span><span class="n">rpt2</span><span class="p">)</span>
+
+                <span class="n">cfl</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">cfl_x</span><span class="p">,</span><span class="n">cfl_y</span><span class="p">)</span>
+
+            <span class="k">else</span><span class="p">:</span>
+
+                <span class="bp">self</span><span class="o">.</span><span class="n">qbc</span><span class="p">,</span> <span class="n">cfl</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fmod</span><span class="o">.</span><span class="n">step2</span><span class="p">(</span><span class="n">maxm</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">num_ghost</span><span class="p">,</span><span class="n">mx</span><span class="p">,</span><span class="n">my</span><span class="p">,</span> \
+                      <span class="n">qold</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">qbc</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">auxbc</span><span class="p">,</span><span class="n">dx</span><span class="p">,</span><span class="n">dy</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">dt</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">_method</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">_mthlim</span><span class="p">,</span>\
+                      <span class="bp">self</span><span class="o">.</span><span class="n">aux1</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">aux2</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">aux3</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">work</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">fwave</span><span class="p">,</span><span class="n">rpn2</span><span class="p">,</span><span class="n">rpt2</span><span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">cfl</span><span class="o">.</span><span class="n">update_global_max</span><span class="p">(</span><span class="n">cfl</span><span class="p">)</span>
+            <span class="n">state</span><span class="o">.</span><span class="n">set_q_from_qbc</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_ghost</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">qbc</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">state</span><span class="o">.</span><span class="n">num_aux</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">state</span><span class="o">.</span><span class="n">set_aux_from_auxbc</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_ghost</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">auxbc</span><span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s">&quot;No python implementation for step_hyperbolic in 2D.&quot;</span><span class="p">)</span>
+
+<span class="c"># ============================================================================</span>
+<span class="c">#  ClawPack 3d Solver Class</span>
+<span class="c"># ============================================================================</span>
+<span class="k">class</span> <span class="nc">ClawSolver3D</span><span class="p">(</span><span class="n">ClawSolver</span><span class="p">):</span>
+    <span class="sd">r&quot;&quot;&quot;</span>
+<span class="sd">    3D Classic (Clawpack) solver.</span>
+
+<span class="sd">    Solve using the wave propagation algorithms of Randy LeVeque&#39;s</span>
+<span class="sd">    Clawpack code (www.clawpack.org).</span>
+
+<span class="sd">    In addition to the attributes of ClawSolver, ClawSolver3D</span>
+<span class="sd">    also has the following options:</span>
+<span class="sd">    </span>
+<span class="sd">    .. attribute:: dimensional_split</span>
+<span class="sd">    </span>
+<span class="sd">        If True, use dimensional splitting (Godunov splitting).</span>
+<span class="sd">        Dimensional splitting with Strang splitting is not supported</span>
+<span class="sd">        at present but could easily be enabled if necessary.</span>
+<span class="sd">        If False, use unsplit Clawpack algorithms, possibly including</span>
+<span class="sd">        transverse Riemann solves.</span>
+
+<span class="sd">    .. attribute:: transverse_waves</span>
+<span class="sd">    </span>
+<span class="sd">        If dimensional_split is True, this option has no effect.  If</span>
+<span class="sd">        dim_plit is False, then transverse_waves should be one of</span>
+<span class="sd">        the following values:</span>
+
+<span class="sd">        ClawSolver3D.no_trans: Transverse Riemann solver</span>
+<span class="sd">        not used.  The stable CFL for this algorithm is 0.5.  Not recommended.</span>
+<span class="sd">        </span>
+<span class="sd">        ClawSolver3D.trans_inc: Transverse increment waves are computed</span>
+<span class="sd">        and propagated.</span>
+
+<span class="sd">        ClawSolver3D.trans_cor: Transverse increment waves and transverse</span>
+<span class="sd">        correction waves are computed and propagated.</span>
+
+<span class="sd">    Note that only Fortran routines are supported for now in 3D --</span>
+<span class="sd">    there is no pure-python version.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">__doc__</span> <span class="o">+=</span> <span class="n">add_parent_doc</span><span class="p">(</span><span class="n">ClawSolver</span><span class="p">)</span>
+
+    <span class="n">no_trans</span>  <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">trans_inc</span> <span class="o">=</span> <span class="mi">11</span>
+    <span class="n">trans_cor</span> <span class="o">=</span> <span class="mi">22</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">riemann_solver</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">claw_package</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">r&quot;&quot;&quot;</span>
+<span class="sd">        Create 3d Clawpack solver</span>
+<span class="sd">        </span>
+<span class="sd">        See :class:`ClawSolver3D` for more info.</span>
+<span class="sd">        &quot;&quot;&quot;</span>   
+        <span class="c"># Add the functions as required attributes</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dimensional_split</span> <span class="o">=</span> <span class="bp">True</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">transverse_waves</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">trans_cor</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_dim</span> <span class="o">=</span> <span class="mi">3</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">aux1</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">aux2</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">aux3</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">work</span> <span class="o">=</span> <span class="bp">None</span>
+
+        <span class="nb">super</span><span class="p">(</span><span class="n">ClawSolver3D</span><span class="p">,</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">riemann_solver</span><span class="p">,</span> <span class="n">claw_package</span><span class="p">)</span>
+
+    <span class="c"># ========== Setup routine =============================   </span>
+    <span class="k">def</span> <span class="nf">_allocate_workspace</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">solution</span><span class="p">):</span>
+        <span class="sd">r&quot;&quot;&quot;</span>
+<span class="sd">        Allocate auxN and work arrays for use in Fortran subroutines.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+
+        <span class="n">state</span> <span class="o">=</span> <span class="n">solution</span><span class="o">.</span><span class="n">states</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="n">num_eqn</span><span class="p">,</span><span class="n">num_aux</span><span class="p">,</span><span class="n">num_waves</span><span class="p">,</span><span class="n">num_ghost</span><span class="p">,</span><span class="n">aux</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">num_eqn</span><span class="p">,</span><span class="n">state</span><span class="o">.</span><span class="n">num_aux</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">num_waves</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">num_ghost</span><span class="p">,</span><span class="n">state</span><span class="o">.</span><span class="n">aux</span>
+
+        <span class="c">#The following is a hack to work around an issue</span>
+        <span class="c">#with f2py.  It involves wastefully allocating three arrays.</span>
+        <span class="c">#f2py seems not able to handle multiple zero-size arrays being passed.</span>
+        <span class="c"># it appears the bug is related to f2py/src/fortranobject.c line 841.</span>
+        <span class="k">if</span><span class="p">(</span><span class="n">aux</span> <span class="o">==</span> <span class="bp">None</span><span class="p">):</span> <span class="n">num_aux</span><span class="o">=</span><span class="mi">1</span>
+
+        <span class="n">grid</span>  <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">grid</span>
+        <span class="n">maxmx</span><span class="p">,</span><span class="n">maxmy</span><span class="p">,</span><span class="n">maxmz</span> <span class="o">=</span> <span class="n">grid</span><span class="o">.</span><span class="n">num_cells</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">grid</span><span class="o">.</span><span class="n">num_cells</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span><span class="n">grid</span><span class="o">.</span><span class="n">num_cells</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+        <span class="n">maxm</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">maxmx</span><span class="p">,</span> <span class="n">maxmy</span><span class="p">,</span> <span class="n">maxmz</span><span class="p">)</span>
+
+        <span class="c"># These work arrays really ought to live inside a fortran module</span>
+        <span class="c"># as is done for sharpclaw</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">aux1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="n">num_aux</span><span class="p">,</span><span class="n">maxm</span><span class="o">+</span><span class="mi">2</span><span class="o">*</span><span class="n">num_ghost</span><span class="p">,</span><span class="mi">3</span><span class="p">),</span><span class="n">order</span><span class="o">=</span><span class="s">&#39;F&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">aux2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="n">num_aux</span><span class="p">,</span><span class="n">maxm</span><span class="o">+</span><span class="mi">2</span><span class="o">*</span><span class="n">num_ghost</span><span class="p">,</span><span class="mi">3</span><span class="p">),</span><span class="n">order</span><span class="o">=</span><span class="s">&#39;F&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">aux3</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="n">num_aux</span><span class="p">,</span><span class="n">maxm</span><span class="o">+</span><span class="mi">2</span><span class="o">*</span><span class="n">num_ghost</span><span class="p">,</span><span class="mi">3</span><span class="p">),</span><span class="n">order</span><span class="o">=</span><span class="s">&#39;F&#39;</span><span class="p">)</span>
+        <span class="n">mwork</span> <span class="o">=</span> <span class="p">(</span><span class="n">maxm</span><span class="o">+</span><span class="mi">2</span><span class="o">*</span><span class="n">num_ghost</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="mi">31</span><span class="o">*</span><span class="n">num_eqn</span> <span class="o">+</span> <span class="n">num_waves</span> <span class="o">+</span> <span class="n">num_eqn</span><span class="o">*</span><span class="n">num_waves</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">work</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="n">mwork</span><span class="p">),</span><span class="n">order</span><span class="o">=</span><span class="s">&#39;F&#39;</span><span class="p">)</span>
+
+
+    <span class="c"># ========== Hyperbolic Step =====================================</span>
+    <span class="k">def</span> <span class="nf">step_hyperbolic</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">solution</span><span class="p">):</span>
+        <span class="sd">r&quot;&quot;&quot;</span>
+<span class="sd">        Take a step on the homogeneous hyperbolic system using the Clawpack</span>
+<span class="sd">        algorithm.</span>
+
+<span class="sd">        Clawpack is based on the Lax-Wendroff method, combined with Riemann</span>
+<span class="sd">        solvers and TVD limiters applied to waves.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kernel_language</span> <span class="o">==</span> <span class="s">&#39;Fortran&#39;</span><span class="p">):</span>
+            <span class="n">state</span> <span class="o">=</span> <span class="n">solution</span><span class="o">.</span><span class="n">states</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">grid</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">grid</span>
+            <span class="n">dx</span><span class="p">,</span><span class="n">dy</span><span class="p">,</span><span class="n">dz</span> <span class="o">=</span> <span class="n">grid</span><span class="o">.</span><span class="n">delta</span>
+            <span class="n">mx</span><span class="p">,</span><span class="n">my</span><span class="p">,</span><span class="n">mz</span> <span class="o">=</span> <span class="n">grid</span><span class="o">.</span><span class="n">num_cells</span>
+            <span class="n">maxm</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">mx</span><span class="p">,</span><span class="n">my</span><span class="p">,</span><span class="n">mz</span><span class="p">)</span>
+            
+            <span class="bp">self</span><span class="o">.</span><span class="n">_apply_q_bcs</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">state</span><span class="o">.</span><span class="n">num_aux</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_apply_aux_bcs</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
+            <span class="n">qnew</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">qbc</span>
+            <span class="n">qold</span> <span class="o">=</span> <span class="n">qnew</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="s">&#39;F&#39;</span><span class="p">)</span>
+            
+            <span class="n">rpn3</span>  <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rp</span><span class="o">.</span><span class="n">rpn3</span><span class="o">.</span><span class="n">_cpointer</span>
+            <span class="n">rpt3</span>  <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rp</span><span class="o">.</span><span class="n">rpt3</span><span class="o">.</span><span class="n">_cpointer</span>
+            <span class="n">rptt3</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rp</span><span class="o">.</span><span class="n">rptt3</span><span class="o">.</span><span class="n">_cpointer</span>
+
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">dimensional_split</span><span class="p">:</span>
+                <span class="c">#Right now only Godunov-dimensional-splitting is implemented.</span>
+                <span class="c">#Strang-dimensional-splitting could be added following dimsp2.f in Clawpack.</span>
+
+                <span class="n">q</span><span class="p">,</span> <span class="n">cfl_x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fmod</span><span class="o">.</span><span class="n">step3ds</span><span class="p">(</span><span class="n">maxm</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">num_ghost</span><span class="p">,</span><span class="n">mx</span><span class="p">,</span><span class="n">my</span><span class="p">,</span><span class="n">mz</span><span class="p">,</span> \
+                      <span class="n">qold</span><span class="p">,</span><span class="n">qnew</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">auxbc</span><span class="p">,</span><span class="n">dx</span><span class="p">,</span><span class="n">dy</span><span class="p">,</span><span class="n">dz</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">dt</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">_method</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">_mthlim</span><span class="p">,</span>\
+                      <span class="bp">self</span><span class="o">.</span><span class="n">aux1</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">aux2</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">aux3</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">work</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="n">rpn3</span><span class="p">,</span><span class="n">rpt3</span><span class="p">,</span><span class="n">rptt3</span><span class="p">)</span>
+
+                <span class="n">q</span><span class="p">,</span> <span class="n">cfl_y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fmod</span><span class="o">.</span><span class="n">step3ds</span><span class="p">(</span><span class="n">maxm</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">num_ghost</span><span class="p">,</span><span class="n">mx</span><span class="p">,</span><span class="n">my</span><span class="p">,</span><span class="n">mz</span><span class="p">,</span> \
+                      <span class="n">q</span><span class="p">,</span><span class="n">q</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">auxbc</span><span class="p">,</span><span class="n">dx</span><span class="p">,</span><span class="n">dy</span><span class="p">,</span><span class="n">dz</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">dt</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">_method</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">_mthlim</span><span class="p">,</span>\
+                      <span class="bp">self</span><span class="o">.</span><span class="n">aux1</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">aux2</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">aux3</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">work</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="n">rpn3</span><span class="p">,</span><span class="n">rpt3</span><span class="p">,</span><span class="n">rptt3</span><span class="p">)</span>
+
+                <span class="n">q</span><span class="p">,</span> <span class="n">cfl_z</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fmod</span><span class="o">.</span><span class="n">step3ds</span><span class="p">(</span><span class="n">maxm</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">num_ghost</span><span class="p">,</span><span class="n">mx</span><span class="p">,</span><span class="n">my</span><span class="p">,</span><span class="n">mz</span><span class="p">,</span> \
+                      <span class="n">q</span><span class="p">,</span><span class="n">q</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">auxbc</span><span class="p">,</span><span class="n">dx</span><span class="p">,</span><span class="n">dy</span><span class="p">,</span><span class="n">dz</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">dt</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">_method</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">_mthlim</span><span class="p">,</span>\
+                      <span class="bp">self</span><span class="o">.</span><span class="n">aux1</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">aux2</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">aux3</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">work</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="n">rpn3</span><span class="p">,</span><span class="n">rpt3</span><span class="p">,</span><span class="n">rptt3</span><span class="p">)</span>
+
+                <span class="n">cfl</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">cfl_x</span><span class="p">,</span><span class="n">cfl_y</span><span class="p">,</span><span class="n">cfl_z</span><span class="p">)</span>
+
+            <span class="k">else</span><span class="p">:</span>
+
+                <span class="n">q</span><span class="p">,</span> <span class="n">cfl</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fmod</span><span class="o">.</span><span class="n">step3</span><span class="p">(</span><span class="n">maxm</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">num_ghost</span><span class="p">,</span><span class="n">mx</span><span class="p">,</span><span class="n">my</span><span class="p">,</span><span class="n">mz</span><span class="p">,</span> \
+                      <span class="n">qold</span><span class="p">,</span><span class="n">qnew</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">auxbc</span><span class="p">,</span><span class="n">dx</span><span class="p">,</span><span class="n">dy</span><span class="p">,</span><span class="n">dz</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">dt</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">_method</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">_mthlim</span><span class="p">,</span>\
+                      <span class="bp">self</span><span class="o">.</span><span class="n">aux1</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">aux2</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">aux3</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">work</span><span class="p">,</span><span class="n">rpn3</span><span class="p">,</span><span class="n">rpt3</span><span class="p">,</span><span class="n">rptt3</span><span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">cfl</span><span class="o">.</span><span class="n">update_global_max</span><span class="p">(</span><span class="n">cfl</span><span class="p">)</span>
+            <span class="n">state</span><span class="o">.</span><span class="n">set_q_from_qbc</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_ghost</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">qbc</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">state</span><span class="o">.</span><span class="n">num_aux</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">state</span><span class="o">.</span><span class="n">set_aux_from_auxbc</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_ghost</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">auxbc</span><span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s">&quot;No python implementation for step_hyperbolic in 3D.&quot;</span><span class="p">)</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../../../index.html">
+              <img class="logo" src="../../../../_static/clawlogo.jpg" alt="Logo"/>
+            </a></p>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+
+    <div class="footer">
+        &copy; Copyright 2010-2011, Kyle Mandli, David I. Ketcheson, Amal Alghamdi, and Aron Ahmadia.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>
