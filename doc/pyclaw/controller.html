@@ -32,14 +32,14 @@
     <link rel="top" title="Clawpack 5.0.0rc-alpha documentation" href="../index.html" />
     <link rel="up" title="Pyclaw Quickstart" href="index.html" />
     <link rel="next" title="Using PyClaw’s solvers: Classic and SharpClaw" href="solvers.html" />
-    <link rel="prev" title="Application gallery" href="gallery/gallery_all.html" /> 
+    <link rel="prev" title="Gallery of all PyClaw applications" href="gallery/gallery_all.html" /> 
   </head>
   <body>
 <div id="main-wrapper" class="sphinx">
 <div id="header-wrapper">
   <section id="header">
     <!-- <h1><a href="http://clawpack.org/">Clawpack</a></h1> -->
-    <h1><a href="../index.html">Clawpack</a></h1> 
+    <h1><a href="../index.html">Clawpack 5</a></h1> 
     <nav>
       <ul>
         <li>
@@ -79,7 +79,7 @@
           <a href="solvers.html" title="Using PyClaw’s solvers: Classic and SharpClaw"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="gallery/gallery_all.html" title="Application gallery"
+          <a href="gallery/gallery_all.html" title="Gallery of all PyClaw applications"
              accesskey="P">previous</a> |</li>
         <li><a href="../contents.html">Clawpack 5.0.0rc-alpha documentation</a> &raquo;</li>
           <li><a href="index.html" accesskey="U">Pyclaw Quickstart</a> &raquo;</li> 
@@ -132,33 +132,53 @@ work in its entirety.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name" colspan="2">Initialization :</th></tr>
-<tr class="field-odd field"><td>&nbsp;</td><td class="field-body"><p class="first">Input: None</p>
-</td>
+<tr class="field-odd field"><td>&nbsp;</td><td class="field-body">Input: None</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Examples :</th><td class="field-body"><div class="first last highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">clawpack.pyclaw</span> <span class="kn">as</span> <span class="nn">pyclaw</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">Dimension</span><span class="p">(</span><span class="s">&#39;x&#39;</span><span class="p">,</span><span class="mf">0.</span><span class="p">,</span><span class="mf">1.</span><span class="p">,</span><span class="mi">100</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">domain</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">Domain</span><span class="p">((</span><span class="n">x</span><span class="p">))</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">state</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">State</span><span class="p">(</span><span class="n">domain</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">claw</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">Controller</span><span class="p">()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">claw</span><span class="o">.</span><span class="n">solution</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">Solution</span><span class="p">(</span><span class="n">state</span><span class="p">,</span><span class="n">domain</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">claw</span><span class="o">.</span><span class="n">solver</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">ClawSolver1D</span><span class="p">()</span>
-</pre></div>
-</div>
-</td>
+<tr class="field-even field"><th class="field-name">Version :</th><td class="field-body">1.0 (2009-06-01)</td>
 </tr>
 </tbody>
 </table>
 <dl class="method">
-<dt id="pyclaw.controller.Controller.check_validity">
-<tt class="descname">check_validity</tt><big>(</big><big>)</big><a class="headerlink" href="#pyclaw.controller.Controller.check_validity" title="Permalink to this definition">¶</a></dt>
-<dd><p>Check that the controller has been properly set up and is ready to run.</p>
-<p>Checks validity of the solver</p>
+<dt id="pyclaw.controller.Controller.get_data">
+<tt class="descname">get_data</tt><big>(</big><em>claw_path=None</em><big>)</big><a class="headerlink" href="#pyclaw.controller.Controller.get_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a data object from this controller&#8217;s solver and solutions</p>
+<p>This function will take the current solver and solutions[&#8216;n&#8217;] and
+create a data object that can be read in via classic clawpack.</p>
+<p>If claw_path is provided, then the data that should be written to the
+claw.data file will be written to that path.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Input :</th><td class="field-body"><ul class="first simple">
+<li><em>claw_path</em> - (string) Path to write data file to</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Output :</th><td class="field-body"><ul class="first last simple">
+<li>(<tt class="xref py py-class docutils literal"><span class="pre">Data</span></tt>) - Data object claw_data containing 
+the appropriate data for a claw.data file.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyclaw.controller.Controller.read_data">
+<tt class="descname">read_data</tt><big>(</big><em>path</em><big>)</big><a class="headerlink" href="#pyclaw.controller.Controller.read_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read in a claw.data file and initialize accordingly</p>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">Not implemented!</p>
+</div>
 </dd></dl>
 
 <dl class="method">
 <dt id="pyclaw.controller.Controller.run">
 <tt class="descname">run</tt><big>(</big><big>)</big><a class="headerlink" href="#pyclaw.controller.Controller.run" title="Permalink to this definition">¶</a></dt>
-<dd><p>Convenience routine that will evolve solution based on the 
+<dd><p>Convenience routine that will evolve solutions[&#8216;n&#8217;] based on the 
 traditional clawpack output and run parameters.</p>
 <p>This function uses the run parameters and solver parameters to evolve
 the solution to the end time specified in run_data, outputting at the
@@ -171,38 +191,22 @@ appropriate times.</p>
 </tr>
 <tr class="field-even field"><th class="field-name">Ouput :</th><td class="field-body">(dict) - Return a dictionary of the status of the solver.</td>
 </tr>
+<tr class="field-odd field"><th class="field-name">Version :</th><td class="field-body">1.0 (2009-05-01)</td>
+</tr>
 </tbody>
 </table>
 </dd></dl>
 
-<dl class="attribute">
-<dt id="pyclaw.controller.Controller.F_file_name">
-<tt class="descname">F_file_name</tt><em class="property"> = None</em><a class="headerlink" href="#pyclaw.controller.Controller.F_file_name" title="Permalink to this definition">¶</a></dt>
-<dd><p>(string) - Name of text file containing functionals</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="pyclaw.controller.Controller.F_path">
-<tt class="descname">F_path</tt><a class="headerlink" href="#pyclaw.controller.Controller.F_path" title="Permalink to this definition">¶</a></dt>
-<dd><p>(string) - Full path to output file for functionals</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="pyclaw.controller.Controller.compute_F">
-<tt class="descname">compute_F</tt><em class="property"> = None</em><a class="headerlink" href="#pyclaw.controller.Controller.compute_F" title="Permalink to this definition">¶</a></dt>
-<dd><p>(function) - Function that computes density of functional F</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="pyclaw.controller.Controller.compute_p">
-<tt class="descname">compute_p</tt><em class="property"> = None</em><a class="headerlink" href="#pyclaw.controller.Controller.compute_p" title="Permalink to this definition">¶</a></dt>
-<dd><p>(function) - function that computes derived quantities</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="pyclaw.controller.Controller.file_prefix_p">
-<tt class="descname">file_prefix_p</tt><em class="property"> = None</em><a class="headerlink" href="#pyclaw.controller.Controller.file_prefix_p" title="Permalink to this definition">¶</a></dt>
-<dd><p>(string) - File prefix to be prepended to derived quantity output files</p>
+<dl class="method">
+<dt id="pyclaw.controller.Controller.runxclaw">
+<tt class="descname">runxclaw</tt><big>(</big><em>verbose=True</em><big>)</big><a class="headerlink" href="#pyclaw.controller.Controller.runxclaw" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run the command xdir/xclawcmd, directing the output fort.*
+files to outdir, writing unit 6 timestepping info to file xclawout.
+Runtime error messages are written to file xclawerr.
+If xclawout(xclawerr) is None, then output to stdout(stderr).</p>
+<p>If savecode==True, archive a copy of the code into directory outdir.</p>
+<p>This function returns the returncode from the process running xclawcmd,
+which will be nonzero if a runtime error occurs.</p>
 </dd></dl>
 
 <dl class="attribute">
@@ -219,36 +223,30 @@ appropriate times.</p>
 </dd></dl>
 
 <dl class="attribute">
-<dt id="pyclaw.controller.Controller.nstepout">
-<tt class="descname">nstepout</tt><em class="property"> = None</em><a class="headerlink" href="#pyclaw.controller.Controller.nstepout" title="Permalink to this definition">¶</a></dt>
-<dd><p>(int) - Number of steps between output, only used with
-<tt class="docutils literal"><span class="pre">output_style</span> <span class="pre">=</span> <span class="pre">3</span></tt>, <tt class="docutils literal"><span class="pre">default</span> <span class="pre">=</span> <span class="pre">1</span></tt></p>
+<dt id="pyclaw.controller.Controller.nout">
+<tt class="descname">nout</tt><em class="property"> = None</em><a class="headerlink" href="#pyclaw.controller.Controller.nout" title="Permalink to this definition">¶</a></dt>
+<dd><p>(int) - Number of output times, only used with <tt class="docutils literal"><span class="pre">outstyle</span> <span class="pre">=</span> <span class="pre">1</span></tt>,
+<tt class="docutils literal"><span class="pre">default</span> <span class="pre">=</span> <span class="pre">10</span></tt></p>
 </dd></dl>
 
 <dl class="attribute">
-<dt id="pyclaw.controller.Controller.num_output_times">
-<tt class="descname">num_output_times</tt><em class="property"> = None</em><a class="headerlink" href="#pyclaw.controller.Controller.num_output_times" title="Permalink to this definition">¶</a></dt>
-<dd><p>(int) - Number of output times, only used with <tt class="docutils literal"><span class="pre">output_style</span> <span class="pre">=</span> <span class="pre">1</span></tt>,
-<tt class="docutils literal"><span class="pre">default</span> <span class="pre">=</span> <span class="pre">10</span></tt></p>
+<dt id="pyclaw.controller.Controller.nstepout">
+<tt class="descname">nstepout</tt><em class="property"> = None</em><a class="headerlink" href="#pyclaw.controller.Controller.nstepout" title="Permalink to this definition">¶</a></dt>
+<dd><p>(int) - Number of steps between output, only used with
+<tt class="docutils literal"><span class="pre">outstyle</span> <span class="pre">=</span> <span class="pre">3</span></tt>, <tt class="docutils literal"><span class="pre">default</span> <span class="pre">=</span> <span class="pre">1</span></tt></p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="pyclaw.controller.Controller.out_times">
 <tt class="descname">out_times</tt><em class="property"> = None</em><a class="headerlink" href="#pyclaw.controller.Controller.out_times" title="Permalink to this definition">¶</a></dt>
-<dd><p>(int) - Output time list, only used with <tt class="docutils literal"><span class="pre">output_style</span> <span class="pre">=</span> <span class="pre">2</span></tt>,
-<tt class="docutils literal"><span class="pre">default</span> <span class="pre">=</span> <span class="pre">numpy.linspace(0.0,tfinal,num_output_times)</span></tt></p>
+<dd><p>(int) - Output time list, only used with <tt class="docutils literal"><span class="pre">outstyle</span> <span class="pre">=</span> <span class="pre">2</span></tt>,
+<tt class="docutils literal"><span class="pre">default</span> <span class="pre">=</span> <span class="pre">numpy.linspace(0.0,tfinal,nout)</span></tt></p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="pyclaw.controller.Controller.outdir">
 <tt class="descname">outdir</tt><em class="property"> = None</em><a class="headerlink" href="#pyclaw.controller.Controller.outdir" title="Permalink to this definition">¶</a></dt>
 <dd><p>(string) - Output directory, directs output files to outdir</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="pyclaw.controller.Controller.outdir_p">
-<tt class="descname">outdir_p</tt><a class="headerlink" href="#pyclaw.controller.Controller.outdir_p" title="Permalink to this definition">¶</a></dt>
-<dd><p>(string) - Directory to use for writing derived quantity files</p>
 </dd></dl>
 
 <dl class="attribute">
@@ -274,8 +272,8 @@ data in output_format&#8217;s format.  <tt class="docutils literal"><span class=
 </dd></dl>
 
 <dl class="attribute">
-<dt id="pyclaw.controller.Controller.output_style">
-<tt class="descname">output_style</tt><em class="property"> = None</em><a class="headerlink" href="#pyclaw.controller.Controller.output_style" title="Permalink to this definition">¶</a></dt>
+<dt id="pyclaw.controller.Controller.outstyle">
+<tt class="descname">outstyle</tt><em class="property"> = None</em><a class="headerlink" href="#pyclaw.controller.Controller.outstyle" title="Permalink to this definition">¶</a></dt>
 <dd><p>(int) - Time output style, <tt class="docutils literal"><span class="pre">default</span> <span class="pre">=</span> <span class="pre">1</span></tt></p>
 </dd></dl>
 
@@ -316,6 +314,12 @@ objects plot parameters.</p>
 <dt id="pyclaw.controller.Controller.solver">
 <tt class="descname">solver</tt><em class="property"> = None</em><a class="headerlink" href="#pyclaw.controller.Controller.solver" title="Permalink to this definition">¶</a></dt>
 <dd><p>(<tt class="xref py py-class docutils literal"><span class="pre">Solver</span></tt>) - Solver object</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pyclaw.controller.Controller.t0">
+<tt class="descname">t0</tt><em class="property"> = None</em><a class="headerlink" href="#pyclaw.controller.Controller.t0" title="Permalink to this definition">¶</a></dt>
+<dd><p>(float) - Starting time, <tt class="docutils literal"><span class="pre">default</span> <span class="pre">=</span> <span class="pre">0.0</span></tt></p>
 </dd></dl>
 
 <dl class="attribute">
@@ -399,7 +403,7 @@ xclaw.exe if cygwin is being used (which it checks vis sys.platform)</p>
 <ul>
   <li><a href="../contents.html">Documentation overview</a><ul>
   <li><a href="index.html">Pyclaw Quickstart</a><ul>
-      <li>Previous: <a href="gallery/gallery_all.html" title="previous chapter">Application gallery</a></li>
+      <li>Previous: <a href="gallery/gallery_all.html" title="previous chapter">Gallery of all PyClaw applications</a></li>
       <li>Next: <a href="solvers.html" title="next chapter">Using PyClaw&#8217;s solvers: Classic and SharpClaw</a></li>
   </ul></li>
   </ul></li>
