@@ -7,7 +7,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Regression testing &mdash; Clawpack 5.0.0rc-alpha documentation</title>
+    <title>Clawpack components &mdash; Clawpack 5.0.0rc-alpha documentation</title>
     
     <link rel="stylesheet" href="_static/flasky.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -30,8 +30,8 @@
     <link rel="shortcut icon" href="_static/clawicon.ico"/>
     <link rel="author" title="About these documents" href="about.html" />
     <link rel="top" title="Clawpack 5.0.0rc-alpha documentation" href="index.html" />
-    <link rel="next" title="Keeping track of git versions" href="git_versions.html" />
-    <link rel="prev" title="Guide for updating this documentation" href="howto_doc.html" /> 
+    <link rel="next" title="Clawpack Applications repository" href="apps.html" />
+    <link rel="prev" title="Gallery of FVMHP book applications" href="gallery/gallery_fvmbook.html" /> 
   </head>
   <body>
 <div id="main-wrapper" class="sphinx">
@@ -75,10 +75,10 @@
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="git_versions.html" title="Keeping track of git versions"
+          <a href="apps.html" title="Clawpack Applications repository"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="howto_doc.html" title="Guide for updating this documentation"
+          <a href="gallery/gallery_fvmbook.html" title="Gallery of FVMHP book applications"
              accesskey="P">previous</a> |</li>
         <li><a href="contents.html">Clawpack 5.0.0rc-alpha documentation</a> &raquo;</li> 
       </ul>
@@ -89,44 +89,42 @@
         <div class="bodywrapper">
           <div class="body">
             
-  <div class="section" id="regression-testing">
-<span id="regression"></span><h1>Regression testing<a class="headerlink" href="#regression-testing" title="Permalink to this headline">¶</a></h1>
-<p>When making changes to the Clawpack code base it is a good idea to perform
-regression tests to insure that the changes have not broken anything.</p>
-<p><strong>Developing a general procedure for regression testing still needs to be done.</strong></p>
-<p><strong>Also need a database for storing &#8220;correct&#8221; results from various versions
-of the code.</strong></p>
-<div class="section" id="chardiff-tool-for-line-by-line-comparison-of-output-files">
-<h2>chardiff tool for line-by-line comparison of output files<a class="headerlink" href="#chardiff-tool-for-line-by-line-comparison-of-output-files" title="Permalink to this headline">¶</a></h2>
-<p>If <cite>_output_old</cite> and <cite>_output_new</cite> are two sets of output files from old and
-new versions of a code, then it is often useful to do a line by line
-comparison of all of the files in each directory and display any
-differences.  Standard tools such as <cite>xxdiff</cite> in linux or <cite>opendiff</cite> on a
-Mac are not very good for this since they try to match up blocks of lines to
-give the best match and may not compare the files line by line.</p>
-<p>The Python script <cite>$CLAW/clawutil/src/python/clawutil/chardiff.py</cite> can be
-used for this purpose:</p>
-<div class="highlight-python"><pre>$ python $CLAWUTIL/chardiff.py _output_old _output_new</pre>
-</div>
-<p>will create a new directory with html files showing all differences.  It can
-also be used to compare two individual files.  See the docstring for more
-details.</p>
-</div>
-<div class="section" id="imagediff-tool-for-pixel-comparison-of-plots">
-<h2>imagediff tool for pixel comparison of plots<a class="headerlink" href="#imagediff-tool-for-pixel-comparison-of-plots" title="Permalink to this headline">¶</a></h2>
-<p>If <cite>_plots_old</cite> and <cite>_plots_new</cite> contain two sets of plots that we hope are
-identical, the Python script
-<cite>$CLAW/clawutil/src/python/clawutil/imagediff.py</cite> can be used to compare
-the corresponding images in each directory and produce html files
-that show each pair of images side by side.  If the images are not
-identical it also shows an image indicating which pixels are different
-in the two:</p>
-<div class="highlight-python"><pre>$ python $CLAWUTIL/imagediff.py _plots_old _plots_new</pre>
-</div>
-<p>will create a new directory with html files showing all differences.  It can
-also be used to compare two individual files.  See the docstring for more
-details.</p>
-<p>See also: <a class="reference internal" href="git_versions.html#git-versions"><em>Keeping track of git versions</em></a>.</p>
+  <div class="section" id="clawpack-components">
+<span id="id1"></span><h1>Clawpack components<a class="headerlink" href="#clawpack-components" title="Permalink to this headline">¶</a></h1>
+<p>Clawpack is developed using the <a class="reference external" href="http://git-scm.com/">git</a> version control
+system and all the source code is openly available via the
+<a class="reference external" href="https://github.com/organizations/clawpack">Clawpack GitHub Organization</a>.</p>
+<p>The code is organized in several independent git repositories.  One of these
+is the <a class="reference external" href="https://github.com/clawpack/clawpack">clawpack/clawpack</a>
+super-repository that is used to coordinate versions between other
+repositories.  If you are interested in cloning the code directly from
+GitHub and/or helping develop Clawpack, see <a class="reference internal" href="developers.html#developers"><em>Developers&#8217; Guide</em></a>.</p>
+<p>If you download a tar file of Clawpack, as described in
+<a class="reference internal" href="installing.html#downloading"><em>Downloading Clawpack</em></a>, then you will obtain a top level directory that has the
+following subdirectories:</p>
+<ul class="simple">
+<li><cite>classic</cite>  (Classic single-grid Fortran code)</li>
+<li><cite>amrclaw</cite> (<a class="reference internal" href="amrclaw.html#amrclaw"><em>AMRClaw Software</em></a>, AMR version of Fortran code)</li>
+<li><cite>riemann</cite>  (Riemann solvers, in Fortran, also used by PyClaw)</li>
+<li><cite>geoclaw</cite>  (GeoClaw for geophysical flows)</li>
+<li><cite>clawutil</cite>  (Utility functions, Makefile.common used in multiple repositories)</li>
+<li><cite>pyclaw</cite>  (Python code, some of which is needed also for Fortran version)</li>
+<li><cite>visclaw</cite>  (Python graphics and visualization tools)</li>
+</ul>
+<p>These correspond to individual GitHub repositories.</p>
+<div class="section" id="other-repositories">
+<span id="other-repos"></span><h2>Other repositories<a class="headerlink" href="#other-repositories" title="Permalink to this headline">¶</a></h2>
+<p>Other repositories in the
+<a class="reference external" href="https://github.com/organizations/clawpack">Clawpack GitHub Organization</a>
+may be of interest to some users:</p>
+<ul class="simple">
+<li><cite>apps</cite> contains additional applications, see <a class="reference internal" href="apps.html#apps"><em>Clawpack Applications repository</em></a>.</li>
+<li><cite>doc</cite> contains <a class="reference external" href="http://sphinx.pocoo.org/">sphinx</a> input files for the
+Clawpack documentation.</li>
+<li><cite>clawpack.github.com</cite> contains the html files that appear on the web.</li>
+<li><cite>clawpack-4.x</cite> contains the latest version of Clawpack 4.x, the legacy
+code.</li>
+</ul>
 </div>
 </div>
 
@@ -141,22 +139,21 @@ details.</p>
             </a></p>
   <h3><a href="contents.html">Table Of Contents</a></h3>
   <ul>
-<li><a class="reference internal" href="#">Regression testing</a><ul>
-<li><a class="reference internal" href="#chardiff-tool-for-line-by-line-comparison-of-output-files">chardiff tool for line-by-line comparison of output files</a></li>
-<li><a class="reference internal" href="#imagediff-tool-for-pixel-comparison-of-plots">imagediff tool for pixel comparison of plots</a></li>
+<li><a class="reference internal" href="#">Clawpack components</a><ul>
+<li><a class="reference internal" href="#other-repositories">Other repositories</a></li>
 </ul>
 </li>
 </ul>
 <h3>Related Topics</h3>
 <ul>
   <li><a href="contents.html">Documentation overview</a><ul>
-      <li>Previous: <a href="howto_doc.html" title="previous chapter">Guide for updating this documentation</a></li>
-      <li>Next: <a href="git_versions.html" title="next chapter">Keeping track of git versions</a></li>
+      <li>Previous: <a href="gallery/gallery_fvmbook.html" title="previous chapter">Gallery of FVMHP book applications</a></li>
+      <li>Next: <a href="apps.html" title="next chapter">Clawpack Applications repository</a></li>
   </ul></li>
 </ul>
   <h3>This Page</h3>
   <ul class="this-page-menu">
-    <li><a href="_sources/regression.txt"
+    <li><a href="_sources/clawpack_components.txt"
            rel="nofollow">Show Source</a></li>
   </ul>
 <div id="searchbox" style="display: none">
