@@ -38,7 +38,7 @@
 <div id="header-wrapper">
   <section id="header">
     <!-- <h1><a href="http://clawpack.org/">Clawpack</a></h1> -->
-    <center><h1><a href="index.html">Clawpack 5</a></h1></center>
+    <center><h1><a href="index.html">Clawpack-5</a></h1></center>
     <nav>
       <ul>
         <li>
@@ -389,8 +389,7 @@ covered by this grid (for times between <em>t1</em> and <em>t2</em>).</div></blo
 <dl class="attribute">
 <dt>
 <tt class="descname">fixedgrids : list of lists</tt></dt>
-<dd><p><strong>Note:</strong> this might become a more general AMR parameter.</p>
-<p>This can be used to specify a set of grids where output should be
+<dd><p>This can be used to specify a set of grids where output should be
 produced at the specified resolution regardless of how the AMR grids look
 at each time.  Interpolation from the best available grid near each point
 is used.  This is useful for comparing AMR output to results obtained
@@ -411,16 +410,40 @@ where each element is itself a list of the form</p>
 <blockquote>
 <div>the number of grid points in the x and y directions (the grid will
 include <em>x1</em>, <em>x2</em> and <em>xpoints-2</em> points in between, for example).</div></blockquote>
+<p><em>ioutarrivaltimes</em> : int</p>
+<blockquote>
+<div><strong>Deprecated feature.</strong>  This should generally be set to 0.  If you want to
+keep track of arrival times, it is recommended to use the new <cite>fgmax</cite>
+parameters described below.</div></blockquote>
+<p><em>ioutsurfacemax</em> :</p>
+<blockquote>
+<div><strong>Deprecated feature.</strong>  This should generally be set to 0.  If you want to
+keep track of surface or depth maxima, it is recommended to use the new
+<cite>fgmax</cite> parameters described below.</div></blockquote>
 </div></blockquote>
 </dd></dl>
 
 </div>
-<div class="section" id="fixed-grid-version-2-output-parameters">
-<span id="setrun-fixedgrids2"></span><h2>Fixed grid (version 2) output parameters<a class="headerlink" href="#fixed-grid-version-2-output-parameters" title="Permalink to this headline">¶</a></h2>
-<div class="admonition warning">
-<p class="first admonition-title">Warning</p>
-<p class="last">Needs updating</p>
-</div>
+<div class="section" id="fixed-grid-maximum-monitoring-arrival-times">
+<span id="setrun-fgmax"></span><h2>Fixed grid maximum monitoring / arrival times<a class="headerlink" href="#fixed-grid-maximum-monitoring-arrival-times" title="Permalink to this headline">¶</a></h2>
+<dl class="attribute">
+<dt>
+<tt class="descname">fgmax_files : list of strings</tt></dt>
+<dd><p>This can be used to specify a set of grids on which to monitor the
+maximum flow depth (or other quantities) observed over the course of
+the computation, and/or the arrival time of the flow or wave.</p>
+<p>This works better than using the older <cite>fixedgrids</cite> approach since it now
+correctly interpolates when a grid point lies near the junction of two
+grid patches, which was not always handled properly before.</p>
+<p>The &#8220;grids&#8221; also do not have to be rectangular grids aligned with the
+coordinate directions, but can consist of an arbitrary list of points
+that could also be points along a one-dimensional transect or points
+following a coastline, for example.</p>
+<p><em>fgmax_files</em> should be a list of strings specifying the file names of
+files that list the points on each grid and additional information
+required for each grid, as described at <a class="reference internal" href="fgmax.html#fgmax"><em>Fixed grid monitoring</em></a>.</p>
+</dd></dl>
+
 </div>
 </div>
 
@@ -442,7 +465,7 @@ include <em>x1</em>, <em>x2</em> and <em>xpoints-2</em> points in between, for e
 <li><a class="reference internal" href="#qinit-data-file-parameters">qinit data file parameters</a></li>
 <li><a class="reference internal" href="#amr-refinement-region-parameters">AMR refinement region parameters</a></li>
 <li><a class="reference internal" href="#fixed-grid-output-parameters">Fixed grid output parameters</a></li>
-<li><a class="reference internal" href="#fixed-grid-version-2-output-parameters">Fixed grid (version 2) output parameters</a></li>
+<li><a class="reference internal" href="#fixed-grid-maximum-monitoring-arrival-times">Fixed grid maximum monitoring / arrival times</a></li>
 </ul>
 </li>
 </ul>
