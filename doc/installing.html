@@ -91,28 +91,43 @@
             
   <div class="section" id="installation-instructions">
 <span id="installing"></span><h1>Installation instructions<a class="headerlink" href="#installation-instructions" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="simple-install-install-pyclaw-and-visclaw-only">
-<span id="install-pyclaw"></span><h2>Simple install (install PyClaw and VisClaw only)<a class="headerlink" href="#simple-install-install-pyclaw-and-visclaw-only" title="Permalink to this headline">¶</a></h2>
-<p>If you will only use PyClaw, everything is handled by pip:</p>
-<div class="highlight-python"><pre>pip install clawpack</pre>
-</div>
-<p>Do not use this if you intend to run Classic, AMRClaw, or GeoClaw (see next section).</p>
-</div>
-<div class="section" id="full-install-install-all-packages">
-<span id="install-clawpack"></span><h2>Full install (install all packages)<a class="headerlink" href="#full-install-install-all-packages" title="Permalink to this headline">¶</a></h2>
+<p>See also</p>
+<ul class="simple">
+<li><a class="reference internal" href="#install-prerequisites"><em>Prerequisites</em></a> for other software you need to
+successfully use Clawpack.</li>
+<li><a class="reference internal" href="#install-alternatives"><em>Alternative ways of running Clawpack</em></a>  if you want to avoid installing
+prerequisites.</li>
+<li><a class="reference internal" href="developers.html#developers"><em>Developers&#8217; Guide</em></a> if you want to clone Clawpack from GitHub.</li>
+</ul>
+<div class="section" id="download-a-tar-file">
+<span id="install-download"></span><h2>Download a tar file<a class="headerlink" href="#download-a-tar-file" title="Permalink to this headline">¶</a></h2>
 <p>First, download a tar file of the latest release:</p>
 <ul class="simple">
 <li><a class="reference external" href="https://github.com/clawpack/clawpack/releases/download/5.0.0rc-beta/clawpack-rc-beta.tar.gz">https://github.com/clawpack/clawpack/releases/download/5.0.0rc-beta/clawpack-rc-beta.tar.gz</a></li>
 </ul>
 <p>(See <a class="reference internal" href="previous.html#previous"><em>Previous versions of Clawpack</em></a> for older versions.)</p>
 <p>Save this tar file in the directory where you want the top level of the
-clawpack tree to reside.  Then:</p>
-<div class="highlight-python"><pre>tar -xzvf clawpack-rc-beta.tar.gz
-cd clawpack-rc-beta
-python setup.py install</pre>
+clawpack tree to reside.  Then untar using the command:</p>
+<div class="highlight-python"><pre>tar -xzvf clawpack-rc-beta.tar.gz</pre>
 </div>
-<p>If you will use Classic/AMRClaw/GeoClaw, you must also <a class="reference internal" href="#setenv"><em>Set environment variables</em></a>.
-If you wish to avoid compiling the PyClaw source, see <a class="reference internal" href="#fortran-only"><em>Installing without compiling PyClaw</em></a>.</p>
+</div>
+<div class="section" id="full-install-install-all-packages">
+<span id="install-clawpack"></span><h2>Full install (install all packages)<a class="headerlink" href="#full-install-install-all-packages" title="Permalink to this headline">¶</a></h2>
+<p>Then move into the top level directory:</p>
+<div class="highlight-python"><pre>cd clawpack-rc-beta</pre>
+</div>
+<p>If you will use PyClaw (see <a class="reference internal" href="pyclaw/index.html#pyclaw"><em>Pyclaw Quickstart</em></a>) then you should do:</p>
+<div class="highlight-python"><pre>pip install -e ./</pre>
+</div>
+<p>This will compile a lot of Fortran code using <cite>f2py</cite> and will produce a lot of
+output, so you might want to redirect the output, e.g.</p>
+<div class="highlight-python"><pre>pip install -e ./ &gt; install_output.txt</pre>
+</div>
+<p>If you wish to avoid compiling the PyClaw source (if you will only use
+Fortran versions such as Classic, AMRClaw, or GeoClaw), see
+<a class="reference internal" href="#fortran-only"><em>Installing without compiling PyClaw</em></a>.</p>
+<p>Regardless of whether you have done the above <cite>pip install</cite>,
+if you will use Classic/AMRClaw/GeoClaw, you must also <a class="reference internal" href="#setenv"><em>Set environment variables</em></a>.</p>
 </div>
 <div class="section" id="running-an-example">
 <span id="first-run"></span><h2>Running an example<a class="headerlink" href="#running-an-example" title="Permalink to this headline">¶</a></h2>
@@ -199,23 +214,33 @@ or <a class="reference external" href="https://github.com/clawpack/clawpack/issu
 You can still use the Fortran codes (AMRClaw, GeoClaw, and Classic) by doing
 the following.</p>
 <p>First, download a tarfile of the latest release as described in
-<a class="reference internal" href="#install-clawpack"><em>Full install (install all packages)</em></a>.  Then:</p>
-<div class="highlight-python"><pre>tar -xzvf clawpack-rc-alpha.tar.gz
-cd clawpack
-python setup.py symlink-only</pre>
-</div>
+<a class="reference internal" href="#install-download"><em>Download a tar file</em></a>.</p>
 <p>Next <a class="reference internal" href="#setenv"><em>Set environment variables</em></a>.  You must then also set your PYTHONPATH manually:</p>
 <div class="highlight-python"><pre>export PYTHONPATH=$CLAW:$PYTHONPATH</pre>
 </div>
+<p>Then you should be able to do:</p>
+<div class="highlight-python"><pre>cd $CLAW   # assuming this enviornment variable was properly set
+python setup.py symlink-only</pre>
+</div>
+<p>This will create some symbolic links in the <cite>$CLAW/clawpack</cite>
+subdirectory of your top level Clawpack directory, but does not compile code.
+In Python you should now be able to do the following, for example:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">clawpack</span> <span class="kn">import</span> <span class="n">visclaw</span>
+</pre></div>
+</div>
+<p>If not then either your <cite>$PYTHONPATH</cite> environment variable is not set
+properly or the required symbolic links were not created.</p>
 </div>
 <div class="section" id="alternative-ways-of-running-clawpack">
-<h2>Alternative ways of running Clawpack<a class="headerlink" href="#alternative-ways-of-running-clawpack" title="Permalink to this headline">¶</a></h2>
+<span id="install-alternatives"></span><h2>Alternative ways of running Clawpack<a class="headerlink" href="#alternative-ways-of-running-clawpack" title="Permalink to this headline">¶</a></h2>
 <p><strong>Virtual Machine.</strong>
-An alternative to installing the prerequisites and Clawpack itself is to use the
-<a class="reference internal" href="vm.html#vm"><em>Clawpack Virtual Machine</em></a>.</p>
+An alternative to installing the <a class="reference internal" href="#install-prerequisites"><em>Prerequisites</em></a>
+and Clawpack itself is to use the <a class="reference internal" href="vm.html#vm"><em>Clawpack Virtual Machine</em></a>.</p>
+<p><strong>Cloud Computing.</strong>
+Another alternative is to run Clawpack on the Cloud, see <a class="reference internal" href="aws.html#aws"><em>Amazon Web Services EC2 Clawpack AMI</em></a>.</p>
 </div>
 <div class="section" id="prerequisites">
-<h2>Prerequisites<a class="headerlink" href="#prerequisites" title="Permalink to this headline">¶</a></h2>
+<span id="install-prerequisites"></span><h2>Prerequisites<a class="headerlink" href="#prerequisites" title="Permalink to this headline">¶</a></h2>
 <dl class="docutils">
 <dt><strong>Operating system:</strong></dt>
 <dd><ul class="first last simple">
@@ -317,7 +342,7 @@ archived results.  The tests should run in a few seconds.</p>
   <h3><a href="contents.html">Table Of Contents</a></h3>
   <ul>
 <li><a class="reference internal" href="#">Installation instructions</a><ul>
-<li><a class="reference internal" href="#simple-install-install-pyclaw-and-visclaw-only">Simple install (install PyClaw and VisClaw only)</a></li>
+<li><a class="reference internal" href="#download-a-tar-file">Download a tar file</a></li>
 <li><a class="reference internal" href="#full-install-install-all-packages">Full install (install all packages)</a></li>
 <li><a class="reference internal" href="#running-an-example">Running an example</a></li>
 <li><a class="reference internal" href="#installing-without-compiling-pyclaw">Installing without compiling PyClaw</a></li>

@@ -4,6 +4,11 @@
 Amazon Web Services EC2 Clawpack AMI
 ====================================
 
+.. warning::  This has not been updated for Clawpack-5 yet,
+   but it should still work if you start up an instance as described below
+   and then install Clawpack-5 by following the 
+   :ref:`installing`.
+
 To run Clawpack in the Cloud using Amazon Web Services Elastic Cloud
 Computing (EC2), first sign up for an account.  Note that 
 you can get 750 hours free micro instance usage
@@ -93,7 +98,12 @@ highlighted on the screenshot below:
 
 Go into the directory where your key pair is stored, in a file with a name
 like `rjlkey.pem` and you should be able to `ssh` into your instance using
-the name of the public DNS, e.g. for the above example::
+the name of the public DNS, with format like::
+
+    $ ssh -i KEYPAIR-FILE  ubuntu@DNS
+
+where KEYPAIR-FILE and DNS must be replaced by the appropriate
+things, e.g. for the above example::
 
     $ ssh -i rjlkey.pem ubuntu@ec2-50-19-75-229.compute-1.amazonaws.com
 
@@ -132,6 +142,9 @@ The `$CLAW` variable is set to point to this version of Clawpack (in the
 Of course you could instead download a tar file of Clawpack and install
 following the instructions at :ref:`installing`.  At any rate, see that
 section for instructions on what to do next if you are new to Clawpack.
+
+.. warning::  If you want to use Clawpack-5, instead follow the
+   :ref:`installing`.
 
 Viewing plots of results
 ------------------------
@@ -203,15 +216,43 @@ they are located (created with the `ln -s` command in linux).
 So, for example, if you do the following::
 
     $ cd /var/www
-    $ ln -s /claw/clawpack-4.x/apps .
+    $ ln -s /claw/clawpack-4.x/apps ./apps
 
 Then you should be able to see the `apps` directory in your web browser,
 which would be at ::
 
-    `http://ec2-50-19-75-229.compute-1.amazonaws.com/apps/`
+    http://ec2-50-19-75-229.compute-1.amazonaws.com/apps/
 
 for the above example.  You will have to replace the DNS with that of your
-instance.
+instance.   
+
+If you want to expose all of your home directory to the web::
+
+    $ cd /var/www
+    $ ln -s /home/ubuntu ./home
+
+Transferring files to/from your instance
+----------------------------------------
+
+You can use `scp` to transfer files between a running instance and
+the computer on which the ssh key is stored.
+
+From your computer (not from the instance)::
+
+    $ scp -i KEYPAIR-FILE FILE-TO-SEND ubuntu@DNS:REMOTE-DIRECTORY
+
+where DNS is the public DNS of the instance and `REMOTE-DIRECTORY` is
+the path (relative to home directory) 
+where you want the file to end up.  You can leave off
+`:REMOTE-DIRECTORY` if you want it to end up in your home directory.
+
+Going the other way, you can download a file from your instance to
+your own computer via::
+
+    $ scp -i KEYPAIR-FILE ubuntu@DNS:FILE-TO-GET .
+
+to retrieve the file named `FILE-TO-GET` (which might include a path
+relative to the home directory) into the current directory.
 
 Stopping your instance
 ----------------------
@@ -222,6 +263,7 @@ by selecting the instance from the Management Console / Instances, and then
 select `Stop` from the `Instance Actions` menu.
 
 You can restart it later and it will be in the same state you left it in.
+But note that it will probably have a new Public DNS!
 
 Creating your own AMI
 ---------------------
