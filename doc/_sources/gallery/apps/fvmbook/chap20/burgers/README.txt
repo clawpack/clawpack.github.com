@@ -4,7 +4,7 @@
 2D Burgers' equation at angle theta to the x-axis
 -------------------------------------------------
 
-The value of theta is set in setprob.data
+The value of theta is set in `setrun.py`.
 
     
 Example [book/chap20/burgers] to accompany the book 
