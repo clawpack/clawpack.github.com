@@ -1,0 +1,231 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Two-dimensional advection &mdash; Clawpack 5.0.0rc-alpha documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/flasky.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/base.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/layout.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '5.0.0rc-alpha',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="shortcut icon" href="../../_static/clawicon.ico"/>
+    <link rel="author" title="About these documents" href="../../about.html" />
+    <link rel="top" title="Clawpack 5.0.0rc-alpha documentation" href="../../index.html" /> 
+  </head>
+  <body>
+<div id="main-wrapper" class="sphinx">
+<div id="header-wrapper">
+  <section id="header">
+    <!-- <h1><a href="http://clawpack.org/">Clawpack</a></h1> -->
+    <h1><a href="../../index.html">Clawpack-5</a></h1> 
+    <nav>
+      <ul>
+        <li>
+          <a href="../../toc_condensed.html">Docs</a>
+        </li>
+        <li>
+          <a href="../../installing.html">Install</a>
+        </li>
+        <li>
+          <a class="" href="../../galleries.html">Gallery</a>
+        </li>
+        <li>
+          <a class="active" href="https://groups.google.com/forum/#!forum/claw-users">Support</a>
+        </li>
+        <li>
+          <a class="active" href="http://github.com/organizations/clawpack">Source</a>
+        </li>
+        <li>
+          <a class="" href="../../developers.html">Develop</a>
+        </li>
+      </ul>
+    </nav>
+  </section>
+<div class="decoration"></div>
+</div>
+
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../contents.html">Clawpack 5.0.0rc-alpha documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <span class="target" id="module-pyclaw.examples.advection_2d.advection_2d"><span id="advection-2d"></span></span><div class="section" id="two-dimensional-advection">
+<h1>Two-dimensional advection<a class="headerlink" href="#two-dimensional-advection" title="Permalink to this headline">¶</a></h1>
+<p>Solve the two-dimensional linear advection equation</p>
+<div class="math">
+\[\begin{split}q_t + (uq)_x + (vq)_y &amp; = 0\end{split}\]</div>
+<p>Here q is a conserved quantity, and (u,v) is the velocity vector.</p>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span class="c">#!/usr/bin/env python</span>
+<span class="c"># encoding: utf-8</span>
+<span class="sd">r&quot;&quot;&quot;</span>
+<span class="sd">Two-dimensional advection</span>
+<span class="sd">=========================</span>
+
+<span class="sd">Solve the two-dimensional linear advection equation</span>
+
+<span class="sd">.. math:: </span>
+<span class="sd">    q_t + (uq)_x + (vq)_y &amp; = 0</span>
+
+<span class="sd">Here q is a conserved quantity, and (u,v) is the velocity vector.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+
+<span class="k">def</span> <span class="nf">qinit</span><span class="p">(</span><span class="n">state</span><span class="p">):</span>
+
+    <span class="c"># Set initial conditions for q.</span>
+    <span class="c"># Sample scalar equation with data that is piecewise constant with</span>
+    <span class="c"># q = 1.0  if  0.1 &lt; x &lt; 0.6   and   0.1 &lt; y &lt; 0.6</span>
+    <span class="c">#     0.1  otherwise</span>
+    
+    <span class="n">x</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">centers</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">y</span><span class="o">.</span><span class="n">centers</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)):</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">y</span><span class="p">)):</span>
+            <span class="k">if</span> <span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mf">0.0</span> <span class="ow">and</span> <span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mf">0.5</span> <span class="ow">and</span> <span class="n">y</span><span class="p">[</span><span class="n">j</span><span class="p">]</span><span class="o">&gt;</span><span class="mf">0.0</span> <span class="ow">and</span> <span class="n">y</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mf">0.5</span><span class="p">:</span>
+                <span class="n">state</span><span class="o">.</span><span class="n">q</span><span class="p">[:,</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.0</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">state</span><span class="o">.</span><span class="n">q</span><span class="p">[:,</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.1</span>
+                
+<span class="k">def</span> <span class="nf">setup</span><span class="p">(</span><span class="n">use_petsc</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span><span class="n">outdir</span><span class="o">=</span><span class="s">&#39;./_output&#39;</span><span class="p">,</span><span class="n">solver_type</span><span class="o">=</span><span class="s">&#39;classic&#39;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Example python script for solving the 2d advection equation.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">from</span> <span class="nn">clawpack</span> <span class="kn">import</span> <span class="n">riemann</span>
+
+    <span class="k">if</span> <span class="n">use_petsc</span><span class="p">:</span>
+        <span class="kn">import</span> <span class="nn">clawpack.petclaw</span> <span class="kn">as</span> <span class="nn">pyclaw</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="kn">from</span> <span class="nn">clawpack</span> <span class="kn">import</span> <span class="n">pyclaw</span>
+
+    <span class="k">if</span> <span class="n">solver_type</span><span class="o">==</span><span class="s">&#39;classic&#39;</span><span class="p">:</span>
+        <span class="n">solver</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">ClawSolver2D</span><span class="p">(</span><span class="n">riemann</span><span class="o">.</span><span class="n">advection_2D</span><span class="p">)</span>
+        <span class="n">solver</span><span class="o">.</span><span class="n">dimensional_split</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="n">solver</span><span class="o">.</span><span class="n">limiters</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">limiters</span><span class="o">.</span><span class="n">tvd</span><span class="o">.</span><span class="n">vanleer</span>
+    <span class="k">elif</span> <span class="n">solver_type</span><span class="o">==</span><span class="s">&#39;sharpclaw&#39;</span><span class="p">:</span>
+        <span class="n">solver</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">SharpClawSolver2D</span><span class="p">(</span><span class="n">riemann</span><span class="o">.</span><span class="n">advection_2D</span><span class="p">)</span>
+
+    <span class="n">solver</span><span class="o">.</span><span class="n">bc_lower</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">BC</span><span class="o">.</span><span class="n">periodic</span>
+    <span class="n">solver</span><span class="o">.</span><span class="n">bc_upper</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">BC</span><span class="o">.</span><span class="n">periodic</span>
+    <span class="n">solver</span><span class="o">.</span><span class="n">bc_lower</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">BC</span><span class="o">.</span><span class="n">periodic</span>
+    <span class="n">solver</span><span class="o">.</span><span class="n">bc_upper</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">BC</span><span class="o">.</span><span class="n">periodic</span>
+
+    <span class="n">solver</span><span class="o">.</span><span class="n">cfl_max</span><span class="o">=</span><span class="mf">1.0</span>
+    <span class="n">solver</span><span class="o">.</span><span class="n">cfl_desired</span> <span class="o">=</span> <span class="mf">0.9</span>
+
+    <span class="c">#===========================================================================</span>
+    <span class="c"># Initialize domain, then initialize the solution associated to the domain and</span>
+    <span class="c"># finally initialize aux array</span>
+    <span class="c">#===========================================================================</span>
+
+    <span class="c"># Domain:</span>
+    <span class="n">mx</span><span class="o">=</span><span class="mi">50</span><span class="p">;</span> <span class="n">my</span><span class="o">=</span><span class="mi">50</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">Dimension</span><span class="p">(</span><span class="s">&#39;x&#39;</span><span class="p">,</span><span class="mf">0.0</span><span class="p">,</span><span class="mf">1.0</span><span class="p">,</span><span class="n">mx</span><span class="p">)</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">Dimension</span><span class="p">(</span><span class="s">&#39;y&#39;</span><span class="p">,</span><span class="mf">0.0</span><span class="p">,</span><span class="mf">1.0</span><span class="p">,</span><span class="n">my</span><span class="p">)</span>
+    <span class="n">domain</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">Domain</span><span class="p">([</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">])</span>
+
+    <span class="n">num_eqn</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">state</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">State</span><span class="p">(</span><span class="n">domain</span><span class="p">,</span><span class="n">num_eqn</span><span class="p">)</span>
+
+    <span class="n">state</span><span class="o">.</span><span class="n">problem_data</span><span class="p">[</span><span class="s">&#39;u&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="c"># Parameters (global auxiliary variables)</span>
+    <span class="n">state</span><span class="o">.</span><span class="n">problem_data</span><span class="p">[</span><span class="s">&#39;v&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.0</span>
+
+    <span class="c"># Initial solution</span>
+    <span class="c"># ================</span>
+    <span class="n">qinit</span><span class="p">(</span><span class="n">state</span><span class="p">)</span> <span class="c"># This function is defined above</span>
+
+
+    <span class="c">#===========================================================================</span>
+    <span class="c"># Set up controller and controller parameters</span>
+    <span class="c">#===========================================================================</span>
+    <span class="n">claw</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">Controller</span><span class="p">()</span>
+    <span class="n">claw</span><span class="o">.</span><span class="n">tfinal</span> <span class="o">=</span> <span class="mf">2.0</span>
+    <span class="n">claw</span><span class="o">.</span><span class="n">solution</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">Solution</span><span class="p">(</span><span class="n">state</span><span class="p">,</span><span class="n">domain</span><span class="p">)</span>
+    <span class="n">claw</span><span class="o">.</span><span class="n">solver</span> <span class="o">=</span> <span class="n">solver</span>
+    <span class="n">claw</span><span class="o">.</span><span class="n">outdir</span> <span class="o">=</span> <span class="n">outdir</span>
+
+    <span class="k">return</span> <span class="n">claw</span>
+
+
+<span class="k">if</span> <span class="n">__name__</span><span class="o">==</span><span class="s">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">clawpack.pyclaw.util</span> <span class="kn">import</span> <span class="n">run_app_from_main</span>
+    <span class="n">output</span> <span class="o">=</span> <span class="n">run_app_from_main</span><span class="p">(</span><span class="n">setup</span><span class="p">)</span>
+</pre></div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper"><p><a href="index.html">
+  <img class="logo" src= "/_static/clawlogo.jpg" alt="Logo"/>
+</a>
+<h2>Version 5.0.0rc-alpha</h2>
+</p><h3>Related Topics</h3>
+<ul>
+  <li><a href="../../contents.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../../_sources/pyclaw/gallery/advection_2d.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+  <div class="footer">
+    &copy; Copyright 2013, The Clawpack Development Team.
+    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
+  </div>
+  
+  </body>
+</html>
