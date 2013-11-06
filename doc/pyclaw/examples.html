@@ -7,7 +7,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Solving other hyperbolic PDEs &mdash; Clawpack 5.0.0rc-alpha documentation</title>
+    <title>Working with PyClaw’s built-in examples &mdash; Clawpack 5.0.0rc-alpha documentation</title>
     
     <link rel="stylesheet" href="../_static/flasky.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -31,7 +31,7 @@
     <link rel="author" title="About these documents" href="../about.html" />
     <link rel="top" title="Clawpack 5.0.0rc-alpha documentation" href="../index.html" />
     <link rel="up" title="PyClaw Basics" href="basics.html" />
-    <link rel="next" title="Plotting PyClaw results" href="plotting.html" />
+    <link rel="next" title="One-dimensional advection" href="gallery/advection_1d.html" />
     <link rel="prev" title="PyClaw tutorial: Solve the acoustics equations" href="tutorial.html" /> 
   </head>
   <body>
@@ -76,13 +76,13 @@
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="plotting.html" title="Plotting PyClaw results"
+          <a href="gallery/advection_1d.html" title="One-dimensional advection"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="tutorial.html" title="PyClaw tutorial: Solve the acoustics equations"
              accesskey="P">previous</a> |</li>
         <li><a href="../contents.html">Clawpack 5.0.0rc-alpha documentation</a> &raquo;</li>
-          <li><a href="index.html" >Pyclaw Quickstart</a> &raquo;</li>
+          <li><a href="index.html" >Pyclaw</a> &raquo;</li>
           <li><a href="basics.html" accesskey="U">PyClaw Basics</a> &raquo;</li> 
       </ul>
     </div>  
@@ -92,25 +92,28 @@
         <div class="bodywrapper">
           <div class="body">
             
-  <div class="section" id="solving-other-hyperbolic-pdes">
-<span id="examples"></span><h1>Solving other hyperbolic PDEs<a class="headerlink" href="#solving-other-hyperbolic-pdes" title="Permalink to this headline">¶</a></h1>
-<p>Moving on from the acoustics tutorial, this section explains how to begin
-solving other systems of hyperbolic equations with PyClaw.</p>
-<div class="section" id="the-built-in-pyclaw-examples">
-<h2>The built-in PyClaw examples<a class="headerlink" href="#the-built-in-pyclaw-examples" title="Permalink to this headline">¶</a></h2>
-<p>PyClaw comes with many example application scripts in the directory <cite>pyclaw/examples/</cite>.
+  <div class="section" id="working-with-pyclaw-s-built-in-examples">
+<span id="examples"></span><h1>Working with PyClaw&#8217;s built-in examples<a class="headerlink" href="#working-with-pyclaw-s-built-in-examples" title="Permalink to this headline">¶</a></h1>
+<p>PyClaw comes with many example problem scripts that can be
+accessed from the module <cite>clawpack.pyclaw.examples</cite>.
+If you have downloaded the PyClaw source, you can find them
+in the directory <cite>clawpack/pyclaw/examples/</cite>.
 These examples demonstrate the kinds of things that can be done
-with PyClaw and are a great way to learn how to use PyClaw.  To run one of them
-simply do the following at the command prompt:</p>
-<div class="highlight-python"><pre>$ cd $PYCLAW/examples/acoustics_1d_homogeneous
-$ python acoustics.py iplot=1</pre>
-</div>
-<p>You can run any of the examples similarly by going to the appropriate directory and
-executing the Python script.</p>
-</div>
-<div class="section" id="command-line-options">
-<h2>Command-line options<a class="headerlink" href="#command-line-options" title="Permalink to this headline">¶</a></h2>
-<p>For convenience, the scripts are set up to accept certain command-line options.
+with PyClaw and are a great way to learn how to use PyClaw.</p>
+<div class="section" id="running-and-plotting-examples">
+<h2>Running and plotting examples<a class="headerlink" href="#running-and-plotting-examples" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="interactively-in-ipython">
+<h3>Interactively in IPython<a class="headerlink" href="#interactively-in-ipython" title="Permalink to this headline">¶</a></h3>
+<dl class="docutils">
+<dt>::</dt>
+<dd>from clawpack.pyclaw import examples
+claw = examples.shock_bubble_interaction.setup()
+claw.run()
+claw.plot()</dd>
+</dl>
+<p>To run and plot a different example, simply replace <cite>shock_bubble_interaction</cite>
+with another example name.  A number of keyword arguments may be passed to
+the setup function; see its docstring for details.
 These usually include the following:</p>
 <blockquote>
 <div><ul class="simple">
@@ -123,10 +126,43 @@ Note that this shouldn&#8217;t be used in parallel, as every process will try to
 &#8216;./_output&#8217;.</li>
 </ul>
 </div></blockquote>
-<p>This list of options can easily be extended by modifying the appropriate script.</p>
 </div>
-<div class="section" id="adding-new-applications">
-<h2>Adding new applications<a class="headerlink" href="#adding-new-applications" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="from-the-command-line">
+<h3>From the command line<a class="headerlink" href="#from-the-command-line" title="Permalink to this headline">¶</a></h3>
+<p>If you have downloaded the Clawpack source, you can run
+the examples from the command line.
+Simply do the following at the command prompt:</p>
+<div class="highlight-python"><pre>$ cd clawpack/pyclaw/examples/acoustics_1d_homogeneous
+$ python acoustics.py iplot=1</pre>
+</div>
+<p>You can run any of the examples similarly by going to the appropriate directory and
+executing the Python script.  For convenience, the scripts are set up to pass any
+command-line options as arguments to the setup function.</p>
+</div>
+</div>
+<div class="section" id="list-of-built-in-examples">
+<h2>List of built-in examples<a class="headerlink" href="#list-of-built-in-examples" title="Permalink to this headline">¶</a></h2>
+<p>You can see results from many of the examples in the <a class="reference internal" href="../galleries.html#galleries"><em>Galleries of all Clawpack applications</em></a>.</p>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="gallery/advection_1d.html">One-dimensional advection</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gallery/advection_2d.html">Two-dimensional advection</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gallery/advection_annulus.html">Advection in an annular domain</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gallery/variable_coefficient_advection.html">One-dimensional advection with variable velocity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gallery/acoustics_1d.html">One-dimensional acoustics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gallery/acoustics_2d.html">Two-dimensional acoustics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gallery/acoustics_2d_interface.html">Two-dimensional variable-coefficient acoustics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gallery/burgers_1d.html">Burgers&#8217; equation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gallery/shallow_water_shocktube.html">Shallow water flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gallery/woodward_colella_blast.html">Woodward-Colella blast wave problem</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gallery/psystem_2d.html">Two-dimensional p-system</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gallery/kpp.html">A non-convex flux scalar model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gallery/stegoton.html">Solitary wave formation in periodic nonlinear elastic media</a></li>
+</ul>
+</div>
+</div>
+<div class="section" id="adding-new-examples">
+<h2>Adding new examples<a class="headerlink" href="#adding-new-examples" title="Permalink to this headline">¶</a></h2>
 <p>If you have used PyClaw, we&#8217;d love to add your application to the built-in scripts.
 Please contact us on the <a class="reference external" href="http://http://groups.google.com/group/claw-users">claw-users Google group</a>.</p>
 </div>
@@ -137,27 +173,34 @@ Please contact us on the <a class="reference external" href="http://http://group
         </div>
       </div>
       <div class="sphinxsidebar">
-        <div class="sphinxsidebarwrapper"><p><a href="index.html">
-  <img class="logo" src= "/doc/_static/clawlogo.jpg" alt="Logo"/>
+        <div class="sphinxsidebarwrapper">
+<p><a href="index.html">
+    <img class="logo" src= "_static/clawlogo.jpg" alt="Logo"/>
 </a>
 <h2>Version 5.0.0rc-alpha</h2>
 </p>
   <h3><a href="../contents.html">Table Of Contents</a></h3>
   <ul>
-<li><a class="reference internal" href="#">Solving other hyperbolic PDEs</a><ul>
-<li><a class="reference internal" href="#the-built-in-pyclaw-examples">The built-in PyClaw examples</a></li>
-<li><a class="reference internal" href="#command-line-options">Command-line options</a></li>
-<li><a class="reference internal" href="#adding-new-applications">Adding new applications</a></li>
+<li><a class="reference internal" href="#">Working with PyClaw&#8217;s built-in examples</a><ul>
+<li><a class="reference internal" href="#running-and-plotting-examples">Running and plotting examples</a><ul>
+<li><a class="reference internal" href="#interactively-in-ipython">Interactively in IPython</a></li>
+<li><a class="reference internal" href="#from-the-command-line">From the command line</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#list-of-built-in-examples">List of built-in examples</a><ul>
+</ul>
+</li>
+<li><a class="reference internal" href="#adding-new-examples">Adding new examples</a></li>
 </ul>
 </li>
 </ul>
 <h3>Related Topics</h3>
 <ul>
   <li><a href="../contents.html">Documentation overview</a><ul>
-  <li><a href="index.html">Pyclaw Quickstart</a><ul>
+  <li><a href="index.html">Pyclaw</a><ul>
   <li><a href="basics.html">PyClaw Basics</a><ul>
       <li>Previous: <a href="tutorial.html" title="previous chapter">PyClaw tutorial: Solve the acoustics equations</a></li>
-      <li>Next: <a href="plotting.html" title="next chapter">Plotting PyClaw results</a></li>
+      <li>Next: <a href="gallery/advection_1d.html" title="next chapter">One-dimensional advection</a></li>
   </ul></li>
   </ul></li>
   </ul></li>
