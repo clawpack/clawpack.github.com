@@ -107,7 +107,7 @@ generally have to be reduced by a factor <em>R</em> as well.</p>
 <blockquote>
 <div><ul>
 <li><p class="first">In each time step on the Level 1 grid(s), the values in all grid cells
-(including those covered by finer grids) is advanced one time step.
+(including those covered by finer grids) are advanced one time step.
 Before this time step is taken, ghost cells around the boundary of the
 full computational domain are filled based on the boundary conditions
 specified in the library routine <em>bcNamr.f</em> (where <em>N</em> is the number of
@@ -129,12 +129,12 @@ a cell average that should be a better approximation to the true cell
 average than the original value.</p>
 </li>
 <li><p class="first">The updating just described can lead to a change in the total mass
-calculated on the Level 1 grid.  In order to restore global conseravtion,
+calculated on the Level 1 grid.  In order to restore global conservation,
 it is necessary to do a conservation fix up.  (To be described...)</p>
 </li>
 </ul>
 </div></blockquote>
-<p>This style of AMR is often called <em>Berger-Colella-Oliger</em> adaptive
+<p>This style of AMR is often called <em>Berger-Oliger-Colella</em> adaptive
 refinement, after the papers of Berger and Oliger <a class="reference internal" href="biblio.html#bergeroliger84">[BergerOliger84]</a> and
 <a class="reference internal" href="biblio.html#bergercolella89">[BergerColella89]</a>.</p>
 <p>The Fortran code in <a class="reference external" href="claw/amrclaw">$CLAW/amrclaw</a> is based on code
@@ -160,13 +160,14 @@ k-1 grid.</li>
 the boundary of the Level k grid lies along the boundary of the full
 domain.  For these cells the subroutine <em>bcNamr</em>
 (where <em>N</em> is the number of space dimensions) is used to fill ghost cell
-values with the proper user-specified boundary conditions.</li>
+values with the proper user-specified boundary conditions, unless
+periodic boundary conditions are specified (see below).</li>
 </ul>
 </div></blockquote>
 <p>For many standard boundary conditions it is not necessary for the user to do
-anything beyond setting the <em>mthbc</em> parameters in <em>setrun.py</em> (see
-<a class="reference internal" href="setrun.html#setrun"><em>Specifying classic run-time parameters in setrun.py</em></a>).  Only if some element of <em>mthbc</em> is 0 (indicating
-user-specified boundary conditions) is it necessary to modify the library
+anything beyond setting appropriate parameters in <em>setrun.py</em> (see
+<a class="reference internal" href="setrun.html#setrun"><em>Specifying classic run-time parameters in setrun.py</em></a>).  Only if user-specified boundary conditions are
+specified is it necessary to modify the library
 routine <em>bcNamr.f</em> (after copying to your application directory so as not to
 damage the library version, and modifying the <em>Makefile</em> to point to the new
 version).</p>

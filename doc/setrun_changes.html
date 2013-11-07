@@ -31,7 +31,7 @@
     <link rel="author" title="About these documents" href="about.html" />
     <link rel="top" title="Clawpack 5.0.0rc-alpha documentation" href="index.html" />
     <link rel="next" title="Galleries of all Clawpack applications" href="galleries.html" />
-    <link rel="prev" title="Converting from Clawpack 4.3 to 4.4 or 4.5" href="claw43to44.html" /> 
+    <link rel="prev" title="Converting from Clawpack 4.3 to 4.6" href="claw43to46.html" /> 
   </head>
   <body>
 <div id="main-wrapper" class="sphinx">
@@ -78,7 +78,7 @@
           <a href="galleries.html" title="Galleries of all Clawpack applications"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="claw43to44.html" title="Converting from Clawpack 4.3 to 4.4 or 4.5"
+          <a href="claw43to46.html" title="Converting from Clawpack 4.3 to 4.6"
              accesskey="P">previous</a> |</li>
         <li><a href="contents.html">Clawpack 5.0.0rc-alpha documentation</a> &raquo;</li> 
       </ul>
@@ -93,29 +93,62 @@
 <span id="setrun-changes"></span><h1>Changes to input parameters in setrun.py from 4.x to 5.0<a class="headerlink" href="#changes-to-input-parameters-in-setrun-py-from-4-x-to-5-0" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="changes-to-general-parameters">
 <h2>Changes to general parameters<a class="headerlink" href="#changes-to-general-parameters" title="Permalink to this headline">¶</a></h2>
+<ul>
+<li><p class="first">Many names have been changed, e.g.</p>
 <ul class="simple">
-<li>Many names have been changed, e.g.<ul>
 <li><cite>ndim</cite> to <cite>num_dim</cite></li>
 <li><cite>xlower</cite>, <cite>ylower</cite>, <cite>zlower</cite> are now <cite>lower[0], lower[1], lower[2]</cite>.</li>
 <li><cite>xupper</cite>, <cite>yupper</cite>, <cite>zupper</cite> are now <cite>upper[0], upper[1], upper[2]</cite>.</li>
 <li><cite>mx, my, mz</cite> are now <cite>num_cells[0:3]</cite>.</li>
 </ul>
+<p>There are many other such changes.  It is best to take a look at the
+<cite>setrun.py</cite> for an example in <cite>$CLAW/classic/examples</cite>.</p>
 </li>
 </ul>
-<p><strong>Add more</strong></p>
+<p>See also:</p>
+<blockquote>
+<div><ul class="simple">
+<li><a class="reference internal" href="setrun.html#setrun"><em>Specifying classic run-time parameters in setrun.py</em></a></li>
+<li><a class="reference internal" href="claw46to50.html#claw46to50"><em>Converting from Clawpack 4.6 to 5.0</em></a></li>
+</ul>
+</div></blockquote>
 </div>
 <div class="section" id="changes-to-amr-parameters">
 <h2>Changes to AMR parameters<a class="headerlink" href="#changes-to-amr-parameters" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
 <li>The <cite>rundata</cite> object generally defined in <cite>setrun.py</cite> now has an
 attribute <cite>rundata.amrdata</cite> and AMR parameters are attributes of this
-object.</li>
+object.   Most names of attributes have changed from those used in 4.x.</li>
 <li>Setting <cite>mxnest</cite> negative to indicate that anisotropic refinement
 in different directions might be used has been eliminated.
 Now this is always assumed and one must always specify
 refinement ratios in each direction and in time.</li>
+<li>New attributes have been added to indicate whether Richardson
+extrapolation and/or the routine ins <cite>flag2refine</cite> should be used
+to flag cells for refinement.  See <a class="reference internal" href="refinement.html#refinement"><em>AMR refinement criteria</em></a>.</li>
+<li>The capability of using &#8220;regions&#8221; to specify areas where refinement is
+forced or prohibited has been extended from GeoClaw to AMRClaw.
+See <a class="reference internal" href="refinement.html#refinement-regions"><em>Specifying AMR regions</em></a>.</li>
 </ul>
-<p><strong>Add more</strong></p>
+<p>See also:</p>
+<blockquote>
+<div><ul class="simple">
+<li><a class="reference internal" href="setrun_amrclaw.html#setrun-amrclaw"><em>Specifying AMRClaw run-time parameters in setrun.py</em></a></li>
+<li><a class="reference internal" href="claw46to50.html#claw46to50"><em>Converting from Clawpack 4.6 to 5.0</em></a></li>
+</ul>
+</div></blockquote>
+</div>
+<div class="section" id="changes-to-geoclaw-parameters">
+<h2>Changes to GeoClaw parameters<a class="headerlink" href="#changes-to-geoclaw-parameters" title="Permalink to this headline">¶</a></h2>
+<p>A number of changes have been made to parameter names and also functionality
+in some cases.</p>
+<p>See also:</p>
+<blockquote>
+<div><ul class="simple">
+<li><a class="reference internal" href="setrun_geoclaw.html#setrun-geoclaw"><em>Specifying GeoClaw parameters in setrun.py</em></a></li>
+<li><a class="reference internal" href="claw46to50.html#claw46to50"><em>Converting from Clawpack 4.6 to 5.0</em></a></li>
+</ul>
+</div></blockquote>
 </div>
 </div>
 
@@ -135,13 +168,14 @@ refinement ratios in each direction and in time.</li>
 <li><a class="reference internal" href="#">Changes to input parameters in setrun.py from 4.x to 5.0</a><ul>
 <li><a class="reference internal" href="#changes-to-general-parameters">Changes to general parameters</a></li>
 <li><a class="reference internal" href="#changes-to-amr-parameters">Changes to AMR parameters</a></li>
+<li><a class="reference internal" href="#changes-to-geoclaw-parameters">Changes to GeoClaw parameters</a></li>
 </ul>
 </li>
 </ul>
 <h3>Related Topics</h3>
 <ul>
   <li><a href="contents.html">Documentation overview</a><ul>
-      <li>Previous: <a href="claw43to44.html" title="previous chapter">Converting from Clawpack 4.3 to 4.4 or 4.5</a></li>
+      <li>Previous: <a href="claw43to46.html" title="previous chapter">Converting from Clawpack 4.3 to 4.6</a></li>
       <li>Next: <a href="galleries.html" title="next chapter">Galleries of all Clawpack applications</a></li>
   </ul></li>
 </ul>
