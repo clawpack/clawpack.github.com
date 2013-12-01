@@ -1,0 +1,298 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>User files required for the Fortran code &mdash; Clawpack 5.0.0rc-alpha documentation</title>
+    
+    <link rel="stylesheet" href="_static/flasky.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/base.css" type="text/css" />
+    <link rel="stylesheet" href="_static/layout.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '5.0.0rc-alpha',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="shortcut icon" href="_static/clawicon.ico"/>
+    <link rel="author" title="About these documents" href="about.html" />
+    <link rel="top" title="Clawpack 5.0.0rc-alpha documentation" href="index.html" />
+    <link rel="next" title="Using OpenMP" href="openmp.html" />
+    <link rel="prev" title="Fortran Compilers" href="fortran_compilers.html" /> 
+  </head>
+  <body>
+<div id="main-wrapper" class="sphinx">
+<div id="header-wrapper">
+  <section id="header">
+    <!-- <h1><a href="http://clawpack.org/">Clawpack</a></h1> -->
+    <h1><a href="index.html">Clawpack-5</a></h1> 
+    <nav>
+      <ul>
+        <li>
+          <a href="toc_condensed.html">Docs</a>
+        </li>
+        <li>
+          <a href="installing.html">Install</a>
+        </li>
+        <li>
+          <a class="" href="galleries.html">Gallery</a>
+        </li>
+        <li>
+          <a class="active" href="https://groups.google.com/forum/#!forum/claw-users">Support</a>
+        </li>
+        <li>
+          <a class="active" href="http://github.com/organizations/clawpack">Source</a>
+        </li>
+        <li>
+          <a class="" href="developers.html">Develop</a>
+        </li>
+      </ul>
+    </nav>
+  </section>
+<div class="decoration"></div>
+</div>
+
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="openmp.html" title="Using OpenMP"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="fortran_compilers.html" title="Fortran Compilers"
+             accesskey="P">previous</a> |</li>
+        <li><a href="contents.html">Clawpack 5.0.0rc-alpha documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="user-files-required-for-the-fortran-code">
+<span id="user-routines"></span><h1>User files required for the Fortran code<a class="headerlink" href="#user-files-required-for-the-fortran-code" title="Permalink to this headline">¶</a></h1>
+<p>The <cite>Makefile</cite> in an application directory shows the set of Fortran source
+code files that are being used.  Most of these files are typically in one of
+the libraries, but a few subroutines must be provided by the user in order to
+specify the hyperbolic problem to be solved and the initial conditions.
+Other subroutines may also be provided that are application-specific.
+This page summarizes some of the most common user-modified routines.</p>
+<p>The calling sequence for each subroutine differs with the number of space
+dimensions.  The sample calling sequences shown below are for one space
+dimension.</p>
+<p>See the examples in the following directories for additional samples:</p>
+<ul class="simple">
+<li><cite>$CLAW/classic/examples</cite></li>
+<li><cite>$CLAW/amrclaw/examples</cite></li>
+<li><cite>$CLAW/geoclaw/examples</cite></li>
+</ul>
+<div class="section" id="specifying-the-initial-conditions">
+<span id="user-qinit"></span><h2>Specifying the initial conditions<a class="headerlink" href="#specifying-the-initial-conditions" title="Permalink to this headline">¶</a></h2>
+<p>Calling sequence in 1d:</p>
+<div class="highlight-python"><pre>subroutine qinit(meqn,mbc,mx,xlower,dx,q,maux,aux)</pre>
+</div>
+<p>Typically every application directory contains a file <cite>qinit.f</cite> or
+<cite>qinit.f90</cite> that sets the initial conditions, typically in a loop such as:</p>
+<div class="highlight-python"><pre>do i=1,mx
+    xi = xlower + (i-0.5d0)*dx
+    q(1,i) = xi**2
+    enddo</pre>
+</div>
+<p>This loop would set the value of <span class="math">\(q^1\)</span> in the i&#8217;th cell to
+<span class="math">\(x_i^2\)</span> where <span class="math">\(x_i\)</span> is the cell center.
+For the finite volume methods used in Clawpack, the initial data should
+really be set to be the cell average of the data over each grid cell,
+determined by integrating the data for the PDE.
+If the initial data is given by a smooth function, then evaluating the
+function at the center of the grid cell generally agrees with the cell
+average to <span class="math">\({\cal O}(\Delta x^2)\)</span> and is consistent with the
+second-order accurate high-resolution methods being used in Clawpack.</p>
+<p>For a system of more than 1 equation, you must set <cite>q(m,i)</cite> for <cite>m =
+1, 2, ..., num_eqn</cite>.</p>
+<p>For adaptive mesh refinement codes, the <cite>qinit</cite> subroutine will be called
+for each grid patch at the initial time, so it is always necessary to
+compute the cell centers based on the information passed in.</p>
+</div>
+<div class="section" id="specifying-the-riemann-solver">
+<span id="user-riemann"></span><h2>Specifying the Riemann solver<a class="headerlink" href="#specifying-the-riemann-solver" title="Permalink to this headline">¶</a></h2>
+<p>The Riemann solver defines the hyperbolic equation that is being solved and
+does the bulk of the computational work &#8211; it is called at every cell
+interface every time step and returns the information about waves and speeds
+that is needed to update the solution.</p>
+<p>See <a class="reference internal" href="riemann.html#riemann"><em>Riemann solvers</em></a> for more details about the Riemann solvers.</p>
+<p>All of the examples that come with Clawpack use Riemann solvers that are
+provided in the directory <cite>$CLAW/riemann/src</cite>, see the <cite>Makefile</cite> in one of
+the examples to determine what Riemann solver file(s) are being used (in two
+and three space dimensions, transverse Riemann solvers are also required).</p>
+<p>The directory <cite>$CLAW/riemann/src</cite> contains Riemann solvers for many
+applications, including advection, acoustics, shallow water equations, Euler
+equations, traffic flow, Burgers&#8217; equation, etc.</p>
+</div>
+<div class="section" id="specifying-boundary-conditions">
+<span id="user-bc"></span><h2>Specifying boundary conditions<a class="headerlink" href="#specifying-boundary-conditions" title="Permalink to this headline">¶</a></h2>
+<p>Boundary conditions are set by the library routines:</p>
+<ul class="simple">
+<li><cite>$CLAW/classic/src/Nd/bcN.f</cite> for the classic code (N = 1, 2, 3).</li>
+<li><cite>$CLAW/amrclaw/src/Nd/bcNamr.f</cite> for the amrclaw code (N = 2, 3).</li>
+</ul>
+<p>Several standard choices of boundary condition procedures are provided in
+these routines &#8211; see <a class="reference internal" href="bc.html#bc"><em>Boundary conditions</em></a> for details.</p>
+<p>For user-supplied boundary conditions that are not implemented in the
+library routines, the library routine can be copied to the application
+directory and changes made as described at <a class="reference internal" href="bc.html#bc-user"><em>User-defined boundary conditions</em></a>.
+The <cite>Makefile</cite> should then be modified to point to the local version.</p>
+</div>
+<div class="section" id="specifying-problem-specific-data">
+<span id="user-setprob"></span><h2>Specifying problem-specific data<a class="headerlink" href="#specifying-problem-specific-data" title="Permalink to this headline">¶</a></h2>
+<p>Often an application problem has data or parameters that is most
+conveniently specified in a user-supplied routine named <cite>setprob</cite>.  There is
+a library version that does nothing in case one is not specified in the
+application directory.  As usual, the <cite>Makefile</cite> indicates what file is
+used.</p>
+<p>The <cite>setprob</cite> subroutine takes no arguments.  Data set in <cite>setprob</cite> is often
+passed in common blocks to other routines, such as <cite>qinit</cite> or the Riemann
+solver.  This is appropriate only for data that does not change with time
+and does not vary in space (e.g. the gravitational constant <cite>g</cite> in the
+shallow water equations, or the density and bulk modulus for acoustics in
+a homogenous medium).</p>
+<p>Note that named common blocks must have the same name in each routine where
+they are used.  Check any Riemann solvers you use (including those from
+<cite>$CLAW/riemann/src</cite>) to see if they require some parameters to be passed in
+via a common block.  If so, <cite>setprob</cite> is the place to set them.</p>
+<p>For spatially-varying data, see <a class="reference internal" href="#user-setaux"><em>Specifying spatially-varying data using setaux</em></a> below.</p>
+<p>Often <cite>setprob</cite> is written so that it reads in data values from a file,
+often called <cite>setprob.data</cite>.  This makes it easier to modify parameter
+values without recompiling the code.  It is also possible to set these
+values in <cite>setrun.py</cite> so that this input data is specified in the same file
+as other input parameters.  For a sample, see
+<cite>$CLAW/classic/examples/acoustics_1d_heterogeneous</cite>, for example.</p>
+</div>
+<div class="section" id="specifying-spatially-varying-data-using-setaux">
+<span id="user-setaux"></span><h2>Specifying spatially-varying data using <cite>setaux</cite><a class="headerlink" href="#specifying-spatially-varying-data-using-setaux" title="Permalink to this headline">¶</a></h2>
+<p>Some problems require specifying spatially varying data, for example the
+density and bulk modulus for acoustics in a heterogenous medium might vary
+in space and in principle could be different in each grid cell.  The best
+way to specify such data is by use of <em>auxiliary arrays</em> that are created
+whenever a grid patch for the solution is created and have the same number
+of cells with <cite>num_aux</cite> components in each cell.  The value <cite>num_aux</cite> is
+specified in <cite>setrun.py</cite>, and the contents of the <cite>aux</cite> arrays are filled by
+a subroutine named <cite>setaux</cite>, which in one dimension has the calling
+sequence:</p>
+<div class="highlight-python"><pre>subroutine setaux(mbc,mx,xlower,dx,maux,aux)</pre>
+</div>
+<p>If adaptive refinement is being used, then every time a new grid patch is
+created at any refinement level this subroutine will be called to fill in
+the corresponding <cite>aux</cite> arrays.  For a sample, see
+<cite>$CLAW/classic/examples/acoustics_1d_heterogeneous</cite>, for example.</p>
+<p>If the <cite>aux</cite> arrays need to be time-dependent, the easiest way to adjust
+them each time step is in the routine <cite>b4step</cite> described below.</p>
+</div>
+<div class="section" id="using-b4step-for-work-to-be-done-before-each-time-step">
+<span id="user-b4step"></span><h2>Using <cite>b4step</cite> for work to be done before each time step<a class="headerlink" href="#using-b4step-for-work-to-be-done-before-each-time-step" title="Permalink to this headline">¶</a></h2>
+<p>Describe.</p>
+</div>
+<div class="section" id="using-src-for-source-terms">
+<span id="user-src"></span><h2>Using <cite>src</cite> for source terms<a class="headerlink" href="#using-src-for-source-terms" title="Permalink to this headline">¶</a></h2>
+<p>Problems of the form
+<span class="math">\(q_t(x,t) + f(q(x,t))_x = \psi(q,x,t)\)</span>
+can be solved using a fractional step approach, as described in Chapter 17
+of <a class="reference internal" href="biblio.html#leveque-fvmhp">[LeVeque-FVMHP]</a>.  The user can provide a subroutine named <cite>srcN</cite> in <cite>N</cite>
+space dimensions that takes a single time step on the equation
+<span class="math">\(q_t = \psi\)</span>.  In one dimension the calling sequence is:</p>
+<div class="highlight-python"><pre>subroutine src1(meqn,mbc,mx,xlower,dx,q,maux,aux,t,dt)</pre>
+</div>
+<p>On output the <cite>q</cite> array should have been updated by using the input values
+as initial data for a single step of length <cite>dt</cite> starting at time <cite>t</cite>.</p>
+<p>The library version of <cite>srcN</cite> does nothing.  If you copy this to an
+application directory and modify for your equation, you must modify the
+<cite>Makefile</cite> to point to the local version.  You must also set the
+<cite>source_split</cite> parameter in <cite>setrun.py</cite> (see <a class="reference internal" href="setrun.html#setrun"><em>Specifying classic run-time parameters in setrun.py</em></a>) to either
+<cite>godunov</cite> or <cite>&#8220;strang&#8221;</cite>.  In the former case, the 1st order Godunov
+splitting is used (after each time step on the homogenous
+hyperbolic equation, a time step of the same length is taken on the source
+terms).  In the latter case the 2nd order Strang splitting is used: the time
+step on the hyperbolic part is both preceeded and followed by
+a time step of half the length on the source terms.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<p><a href="index.html">
+    <img class="logo" src= "_static/clawlogo.jpg" alt="Logo"/>
+</a>
+<h2>Version 5.0.0rc-alpha</h2>
+</p>
+  <h3><a href="contents.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">User files required for the Fortran code</a><ul>
+<li><a class="reference internal" href="#specifying-the-initial-conditions">Specifying the initial conditions</a></li>
+<li><a class="reference internal" href="#specifying-the-riemann-solver">Specifying the Riemann solver</a></li>
+<li><a class="reference internal" href="#specifying-boundary-conditions">Specifying boundary conditions</a></li>
+<li><a class="reference internal" href="#specifying-problem-specific-data">Specifying problem-specific data</a></li>
+<li><a class="reference internal" href="#specifying-spatially-varying-data-using-setaux">Specifying spatially-varying data using <cite>setaux</cite></a></li>
+<li><a class="reference internal" href="#using-b4step-for-work-to-be-done-before-each-time-step">Using <cite>b4step</cite> for work to be done before each time step</a></li>
+<li><a class="reference internal" href="#using-src-for-source-terms">Using <cite>src</cite> for source terms</a></li>
+</ul>
+</li>
+</ul>
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="contents.html">Documentation overview</a><ul>
+      <li>Previous: <a href="fortran_compilers.html" title="previous chapter">Fortran Compilers</a></li>
+      <li>Next: <a href="openmp.html" title="next chapter">Using OpenMP</a></li>
+  </ul></li>
+</ul>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/user_routines.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+  <div class="footer">
+    &copy; Copyright 2013, The Clawpack Development Team.
+    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
+  </div>
+  
+  </body>
+</html>

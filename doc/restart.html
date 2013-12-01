@@ -30,7 +30,7 @@
     <link rel="shortcut icon" href="_static/clawicon.ico"/>
     <link rel="author" title="About these documents" href="about.html" />
     <link rel="top" title="Clawpack 5.0.0rc-alpha documentation" href="index.html" />
-    <link rel="next" title="Plotting options" href="plotting.html" />
+    <link rel="next" title="Visclaw Plotting options" href="plotting.html" />
     <link rel="prev" title="The mapc2p function" href="mapc2p.html" /> 
   </head>
   <body>
@@ -75,7 +75,7 @@
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="plotting.html" title="Plotting options"
+          <a href="plotting.html" title="Visclaw Plotting options"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="mapc2p.html" title="The mapc2p function"
@@ -155,6 +155,24 @@ restart time) and the checkpoint
 file will not be deleted.  They will still be available in the output directory
 along with the newly created output files.</p>
 </div>
+<div class="section" id="output-files-after-a-restart">
+<span id="restart-output"></span><h2>Output files after a restart<a class="headerlink" href="#output-files-after-a-restart" title="Permalink to this headline">¶</a></h2>
+<p>After running the restarted computation,
+the original set of output files should still be in the output directory
+along with a new set from the second run.  Note that one output time may
+be repeated in two frames if <cite>clawdata.output_t0 == True</cite> in the restarted run.</p>
+<p>Note that any gauge output from the first run will be overwritten by the
+second run.  If you wish to preserve the gauge output from the first run,
+currently you must copy the output file <cite>fort.gauge</cite> to another location,
+say <cite>fort.gauge1</cite>, before doing the restart run.  Then you could catenate the
+two to get gauge output for the entire run, e.g.:</p>
+<div class="highlight-python"><pre>cd _output
+mv fort.gauge fort.gauge2
+cat fort.gauge1 fort.gauge2 &gt; fort.gauge</pre>
+</div>
+<p>This creates a file <cite>fort.gauge</cite> that contains the entire gauge history.</p>
+<p>TODO: This should be simplified.</p>
+</div>
 </div>
 
 
@@ -174,6 +192,7 @@ along with the newly created output files.</p>
 <li><a class="reference internal" href="#checkpointing-a-computation">Checkpointing a computation</a></li>
 <li><a class="reference internal" href="#restarting-a-computation">Restarting a computation</a></li>
 <li><a class="reference internal" href="#modifying-the-makefile-for-a-restart">Modifying the Makefile for a restart</a></li>
+<li><a class="reference internal" href="#output-files-after-a-restart">Output files after a restart</a></li>
 </ul>
 </li>
 </ul>
@@ -181,7 +200,7 @@ along with the newly created output files.</p>
 <ul>
   <li><a href="contents.html">Documentation overview</a><ul>
       <li>Previous: <a href="mapc2p.html" title="previous chapter">The mapc2p function</a></li>
-      <li>Next: <a href="plotting.html" title="next chapter">Plotting options</a></li>
+      <li>Next: <a href="plotting.html" title="next chapter">Visclaw Plotting options</a></li>
   </ul></li>
 </ul>
   <h3>This Page</h3>
