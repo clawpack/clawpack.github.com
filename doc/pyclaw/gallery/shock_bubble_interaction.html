@@ -103,6 +103,7 @@
 <span class="n">x0</span><span class="o">=</span><span class="mf">0.5</span><span class="p">;</span> <span class="n">y0</span><span class="o">=</span><span class="mf">0.</span><span class="p">;</span> <span class="n">r0</span><span class="o">=</span><span class="mf">0.2</span>
 <span class="n">xshock</span> <span class="o">=</span> <span class="mf">0.2</span>
 
+
 <span class="k">def</span> <span class="nf">ycirc</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">ymin</span><span class="p">,</span><span class="n">ymax</span><span class="p">):</span>
     <span class="k">if</span> <span class="p">((</span><span class="n">x</span><span class="o">-</span><span class="n">x0</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">&lt;</span><span class="p">(</span><span class="n">r0</span><span class="o">**</span><span class="mi">2</span><span class="p">):</span>
         <span class="k">return</span> <span class="nb">max</span><span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="n">y0</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">r0</span><span class="o">**</span><span class="mi">2</span><span class="o">-</span><span class="p">(</span><span class="n">x</span><span class="o">-</span><span class="n">x0</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">),</span><span class="n">ymax</span><span class="p">)</span> <span class="o">-</span> <span class="n">ymin</span><span class="p">,</span><span class="mf">0.</span><span class="p">)</span>
@@ -220,7 +221,6 @@
 
 
 <span class="k">def</span> <span class="nf">dq_Euler_radial</span><span class="p">(</span><span class="n">solver</span><span class="p">,</span><span class="n">state</span><span class="p">,</span><span class="n">dt</span><span class="p">):</span>
-    
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Geometric source terms for Euler equations with radial symmetry.</span>
 <span class="sd">    Integrated using a 2-stage, 2nd-order Runge-Kutta method.</span>
@@ -249,7 +249,9 @@
 
     <span class="k">return</span> <span class="n">dq</span>
 
-<span class="k">def</span> <span class="nf">setup</span><span class="p">(</span><span class="n">use_petsc</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span><span class="n">kernel_language</span><span class="o">=</span><span class="s">&#39;Fortran&#39;</span><span class="p">,</span><span class="n">solver_type</span><span class="o">=</span><span class="s">&#39;classic&#39;</span><span class="p">,</span> <span class="n">outdir</span><span class="o">=</span><span class="s">&#39;_output&#39;</span><span class="p">,</span> <span class="n">disable_output</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">setup</span><span class="p">(</span><span class="n">use_petsc</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span><span class="n">kernel_language</span><span class="o">=</span><span class="s">&#39;Fortran&#39;</span><span class="p">,</span><span class="n">solver_type</span><span class="o">=</span><span class="s">&#39;classic&#39;</span><span class="p">,</span>
+          <span class="n">outdir</span><span class="o">=</span><span class="s">&#39;_output&#39;</span><span class="p">,</span> <span class="n">disable_output</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">mx</span><span class="o">=</span><span class="mi">320</span><span class="p">,</span> <span class="n">my</span><span class="o">=</span><span class="mi">80</span><span class="p">,</span> <span class="n">tfinal</span><span class="o">=</span><span class="mf">0.6</span><span class="p">,</span>
+          <span class="n">num_output_times</span> <span class="o">=</span> <span class="mi">10</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Solve the Euler equations of compressible fluid dynamics.</span>
 <span class="sd">    This example involves a bubble of dense gas that is impacted by a shock.</span>
@@ -276,21 +278,17 @@
         <span class="n">solver</span><span class="o">.</span><span class="n">step_source</span><span class="o">=</span><span class="n">step_Euler_radial</span>
 
     <span class="c"># Initialize domain</span>
-    <span class="n">mx</span><span class="o">=</span><span class="mi">160</span><span class="p">;</span> <span class="n">my</span><span class="o">=</span><span class="mi">40</span>
     <span class="n">x</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">Dimension</span><span class="p">(</span><span class="s">&#39;x&#39;</span><span class="p">,</span><span class="mf">0.0</span><span class="p">,</span><span class="mf">2.0</span><span class="p">,</span><span class="n">mx</span><span class="p">)</span>
     <span class="n">y</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">Dimension</span><span class="p">(</span><span class="s">&#39;y&#39;</span><span class="p">,</span><span class="mf">0.0</span><span class="p">,</span><span class="mf">0.5</span><span class="p">,</span><span class="n">my</span><span class="p">)</span>
     <span class="n">domain</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">Domain</span><span class="p">([</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">])</span>
+
     <span class="n">num_aux</span><span class="o">=</span><span class="mi">1</span>
     <span class="n">state</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">State</span><span class="p">(</span><span class="n">domain</span><span class="p">,</span><span class="n">solver</span><span class="o">.</span><span class="n">num_eqn</span><span class="p">,</span><span class="n">num_aux</span><span class="p">)</span>
-
     <span class="n">state</span><span class="o">.</span><span class="n">problem_data</span><span class="p">[</span><span class="s">&#39;gamma&#39;</span><span class="p">]</span><span class="o">=</span> <span class="n">gamma</span>
     <span class="n">state</span><span class="o">.</span><span class="n">problem_data</span><span class="p">[</span><span class="s">&#39;gamma1&#39;</span><span class="p">]</span><span class="o">=</span> <span class="n">gamma1</span>
 
-    <span class="n">tfinal</span> <span class="o">=</span> <span class="mf">0.2</span>
-
     <span class="n">qinit</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
     <span class="n">auxinit</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
-    <span class="n">initial_solution</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">Solution</span><span class="p">(</span><span class="n">state</span><span class="p">,</span><span class="n">domain</span><span class="p">)</span>
 
     <span class="n">solver</span><span class="o">.</span><span class="n">cfl_max</span> <span class="o">=</span> <span class="mf">0.5</span>
     <span class="n">solver</span><span class="o">.</span><span class="n">cfl_desired</span> <span class="o">=</span> <span class="mf">0.45</span>
@@ -308,22 +306,87 @@
     <span class="n">solver</span><span class="o">.</span><span class="n">aux_bc_upper</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">=</span><span class="n">pyclaw</span><span class="o">.</span><span class="n">BC</span><span class="o">.</span><span class="n">extrap</span>
 
     <span class="n">claw</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">Controller</span><span class="p">()</span>
+    <span class="n">claw</span><span class="o">.</span><span class="n">solution</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">Solution</span><span class="p">(</span><span class="n">state</span><span class="p">,</span><span class="n">domain</span><span class="p">)</span>
+    <span class="n">claw</span><span class="o">.</span><span class="n">solver</span> <span class="o">=</span> <span class="n">solver</span>
+
     <span class="n">claw</span><span class="o">.</span><span class="n">keep_copy</span> <span class="o">=</span> <span class="bp">True</span>
     <span class="k">if</span> <span class="n">disable_output</span><span class="p">:</span>
         <span class="n">claw</span><span class="o">.</span><span class="n">output_format</span> <span class="o">=</span> <span class="bp">None</span>
-    <span class="c"># The output format MUST be set to petsc!</span>
     <span class="n">claw</span><span class="o">.</span><span class="n">tfinal</span> <span class="o">=</span> <span class="n">tfinal</span>
-    <span class="n">claw</span><span class="o">.</span><span class="n">solution</span> <span class="o">=</span> <span class="n">initial_solution</span>
-    <span class="n">claw</span><span class="o">.</span><span class="n">solver</span> <span class="o">=</span> <span class="n">solver</span>
-    <span class="n">claw</span><span class="o">.</span><span class="n">num_output_times</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">claw</span><span class="o">.</span><span class="n">num_output_times</span> <span class="o">=</span> <span class="n">num_output_times</span>
     <span class="n">claw</span><span class="o">.</span><span class="n">outdir</span> <span class="o">=</span> <span class="n">outdir</span>
+    <span class="n">claw</span><span class="o">.</span><span class="n">setplot</span> <span class="o">=</span> <span class="n">setplot</span>
 
-    <span class="c">#return claw.frames[claw.num_output_times].state</span>
     <span class="k">return</span> <span class="n">claw</span>
+
+    
+<span class="c">#--------------------------</span>
+<span class="k">def</span> <span class="nf">setplot</span><span class="p">(</span><span class="n">plotdata</span><span class="p">):</span>
+<span class="c">#--------------------------</span>
+    <span class="sd">&quot;&quot;&quot; </span>
+<span class="sd">    Specify what is to be plotted at each frame.</span>
+<span class="sd">    Input:  plotdata, an instance of visclaw.data.ClawPlotData.</span>
+<span class="sd">    Output: a modified version of plotdata.</span>
+<span class="sd">    &quot;&quot;&quot;</span> 
+    <span class="kn">from</span> <span class="nn">clawpack.visclaw</span> <span class="kn">import</span> <span class="n">colormaps</span>
+
+    <span class="n">plotdata</span><span class="o">.</span><span class="n">clearfigures</span><span class="p">()</span>  <span class="c"># clear any old figures,axes,items data</span>
+    
+    <span class="c"># Pressure plot</span>
+    <span class="n">plotfigure</span> <span class="o">=</span> <span class="n">plotdata</span><span class="o">.</span><span class="n">new_plotfigure</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">&#39;Density&#39;</span><span class="p">,</span> <span class="n">figno</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+    <span class="n">plotaxes</span> <span class="o">=</span> <span class="n">plotfigure</span><span class="o">.</span><span class="n">new_plotaxes</span><span class="p">()</span>
+    <span class="n">plotaxes</span><span class="o">.</span><span class="n">title</span> <span class="o">=</span> <span class="s">&#39;Density&#39;</span>
+    <span class="n">plotaxes</span><span class="o">.</span><span class="n">scaled</span> <span class="o">=</span> <span class="bp">True</span>      <span class="c"># so aspect ratio is 1</span>
+    <span class="n">plotaxes</span><span class="o">.</span><span class="n">afteraxes</span> <span class="o">=</span> <span class="n">label_axes</span>
+
+    <span class="n">plotitem</span> <span class="o">=</span> <span class="n">plotaxes</span><span class="o">.</span><span class="n">new_plotitem</span><span class="p">(</span><span class="n">plot_type</span><span class="o">=</span><span class="s">&#39;2d_schlieren&#39;</span><span class="p">)</span>
+    <span class="n">plotitem</span><span class="o">.</span><span class="n">plot_var</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">plotitem</span><span class="o">.</span><span class="n">add_colorbar</span> <span class="o">=</span> <span class="bp">False</span>
+    
+
+    <span class="c"># Tracer plot</span>
+    <span class="n">plotfigure</span> <span class="o">=</span> <span class="n">plotdata</span><span class="o">.</span><span class="n">new_plotfigure</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">&#39;Tracer&#39;</span><span class="p">,</span> <span class="n">figno</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="n">plotaxes</span> <span class="o">=</span> <span class="n">plotfigure</span><span class="o">.</span><span class="n">new_plotaxes</span><span class="p">()</span>
+    <span class="n">plotaxes</span><span class="o">.</span><span class="n">title</span> <span class="o">=</span> <span class="s">&#39;Tracer&#39;</span>
+    <span class="n">plotaxes</span><span class="o">.</span><span class="n">scaled</span> <span class="o">=</span> <span class="bp">True</span>      <span class="c"># so aspect ratio is 1</span>
+    <span class="n">plotaxes</span><span class="o">.</span><span class="n">afteraxes</span> <span class="o">=</span> <span class="n">label_axes</span>
+
+    <span class="n">plotitem</span> <span class="o">=</span> <span class="n">plotaxes</span><span class="o">.</span><span class="n">new_plotitem</span><span class="p">(</span><span class="n">plot_type</span><span class="o">=</span><span class="s">&#39;2d_pcolor&#39;</span><span class="p">)</span>
+    <span class="n">plotitem</span><span class="o">.</span><span class="n">pcolor_cmin</span> <span class="o">=</span> <span class="mf">0.</span>
+    <span class="n">plotitem</span><span class="o">.</span><span class="n">pcolor_cmax</span><span class="o">=</span><span class="mf">1.0</span>
+    <span class="n">plotitem</span><span class="o">.</span><span class="n">plot_var</span> <span class="o">=</span> <span class="mi">4</span>
+    <span class="n">plotitem</span><span class="o">.</span><span class="n">pcolor_cmap</span> <span class="o">=</span> <span class="n">colormaps</span><span class="o">.</span><span class="n">yellow_red_blue</span>
+    <span class="n">plotitem</span><span class="o">.</span><span class="n">add_colorbar</span> <span class="o">=</span> <span class="bp">False</span>
+    
+
+    <span class="c"># Energy plot</span>
+    <span class="n">plotfigure</span> <span class="o">=</span> <span class="n">plotdata</span><span class="o">.</span><span class="n">new_plotfigure</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">&#39;Energy&#39;</span><span class="p">,</span> <span class="n">figno</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+
+    <span class="n">plotaxes</span> <span class="o">=</span> <span class="n">plotfigure</span><span class="o">.</span><span class="n">new_plotaxes</span><span class="p">()</span>
+    <span class="n">plotaxes</span><span class="o">.</span><span class="n">title</span> <span class="o">=</span> <span class="s">&#39;Energy&#39;</span>
+    <span class="n">plotaxes</span><span class="o">.</span><span class="n">scaled</span> <span class="o">=</span> <span class="bp">True</span>      <span class="c"># so aspect ratio is 1</span>
+    <span class="n">plotaxes</span><span class="o">.</span><span class="n">afteraxes</span> <span class="o">=</span> <span class="n">label_axes</span>
+
+    <span class="n">plotitem</span> <span class="o">=</span> <span class="n">plotaxes</span><span class="o">.</span><span class="n">new_plotitem</span><span class="p">(</span><span class="n">plot_type</span><span class="o">=</span><span class="s">&#39;2d_pcolor&#39;</span><span class="p">)</span>
+    <span class="n">plotitem</span><span class="o">.</span><span class="n">pcolor_cmin</span> <span class="o">=</span> <span class="mf">2.</span>
+    <span class="n">plotitem</span><span class="o">.</span><span class="n">pcolor_cmax</span><span class="o">=</span><span class="mf">18.0</span>
+    <span class="n">plotitem</span><span class="o">.</span><span class="n">plot_var</span> <span class="o">=</span> <span class="mi">3</span>
+    <span class="n">plotitem</span><span class="o">.</span><span class="n">pcolor_cmap</span> <span class="o">=</span> <span class="n">colormaps</span><span class="o">.</span><span class="n">yellow_red_blue</span>
+    <span class="n">plotitem</span><span class="o">.</span><span class="n">add_colorbar</span> <span class="o">=</span> <span class="bp">False</span>
+    
+    <span class="k">return</span> <span class="n">plotdata</span>
+
+<span class="k">def</span> <span class="nf">label_axes</span><span class="p">(</span><span class="n">current_data</span><span class="p">):</span>
+    <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">as</span> <span class="nn">plt</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s">&#39;z&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s">&#39;r&#39;</span><span class="p">)</span>
+    
 
 <span class="k">if</span> <span class="n">__name__</span><span class="o">==</span><span class="s">&quot;__main__&quot;</span><span class="p">:</span>
     <span class="kn">from</span> <span class="nn">clawpack.pyclaw.util</span> <span class="kn">import</span> <span class="n">run_app_from_main</span>
-    <span class="n">output</span> <span class="o">=</span> <span class="n">run_app_from_main</span><span class="p">(</span><span class="n">setup</span><span class="p">)</span>
+    <span class="n">output</span> <span class="o">=</span> <span class="n">run_app_from_main</span><span class="p">(</span><span class="n">setup</span><span class="p">,</span><span class="n">setplot</span><span class="p">)</span>
 </pre></div>
 </div>
 

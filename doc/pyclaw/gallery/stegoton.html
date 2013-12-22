@@ -170,6 +170,8 @@ evolves into two trains of solitary waves.</p>
     <span class="k">if</span> <span class="n">state</span><span class="o">.</span><span class="n">t</span><span class="o">&gt;</span><span class="mi">5</span><span class="o">*</span><span class="n">state</span><span class="o">.</span><span class="n">problem_data</span><span class="p">[</span><span class="s">&#39;tw1&#39;</span><span class="p">]</span> <span class="ow">and</span> <span class="n">solver</span><span class="o">.</span><span class="n">bc_lower</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">==</span><span class="mi">0</span><span class="p">:</span>
         <span class="n">solver</span><span class="o">.</span><span class="n">bc_lower</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">=</span><span class="mi">2</span>
         <span class="n">solver</span><span class="o">.</span><span class="n">bc_upper</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">=</span><span class="mi">2</span>
+        <span class="n">solver</span><span class="o">.</span><span class="n">aux_bc_lower</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">=</span><span class="mi">2</span>
+        <span class="n">solver</span><span class="o">.</span><span class="n">aux_bc_upper</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">=</span><span class="mi">2</span>
 
 
 <span class="k">def</span> <span class="nf">zero_bc</span><span class="p">(</span><span class="n">state</span><span class="p">,</span><span class="n">dim</span><span class="p">,</span><span class="n">t</span><span class="p">,</span><span class="n">qbc</span><span class="p">,</span><span class="n">num_ghost</span><span class="p">):</span>
@@ -192,14 +194,6 @@ evolves into two trains of solitary waves.</p>
 
 
 <span class="k">def</span> <span class="nf">setup</span><span class="p">(</span><span class="n">use_petsc</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span><span class="n">kernel_language</span><span class="o">=</span><span class="s">&#39;Fortran&#39;</span><span class="p">,</span><span class="n">solver_type</span><span class="o">=</span><span class="s">&#39;classic&#39;</span><span class="p">,</span><span class="n">outdir</span><span class="o">=</span><span class="s">&#39;./_output&#39;</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Stegoton problem.</span>
-<span class="sd">    Nonlinear elasticity in periodic medium.</span>
-<span class="sd">    See LeVeque &amp; Yong (2003).</span>
-
-<span class="sd">    $$\\epsilon_t - u_x = 0$$</span>
-<span class="sd">    $$\\rho(x) u_t - \\sigma(\\epsilon,x)_x = 0$$</span>
-<span class="sd">    &quot;&quot;&quot;</span>
     <span class="kn">from</span> <span class="nn">clawpack</span> <span class="kn">import</span> <span class="n">riemann</span>
 
     <span class="k">if</span> <span class="n">use_petsc</span><span class="p">:</span>
@@ -220,15 +214,15 @@ evolves into two trains of solitary waves.</p>
 
     <span class="n">solver</span><span class="o">.</span><span class="n">kernel_language</span> <span class="o">=</span> <span class="n">kernel_language</span>
 
-    <span class="n">solver</span><span class="o">.</span><span class="n">bc_lower</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">BC</span><span class="o">.</span><span class="n">periodic</span>
-    <span class="n">solver</span><span class="o">.</span><span class="n">bc_upper</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">BC</span><span class="o">.</span><span class="n">periodic</span>
+    <span class="n">solver</span><span class="o">.</span><span class="n">bc_lower</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">BC</span><span class="o">.</span><span class="n">custom</span>
+    <span class="n">solver</span><span class="o">.</span><span class="n">bc_upper</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">BC</span><span class="o">.</span><span class="n">extrap</span>
 
     <span class="c">#Use the same BCs for the aux array</span>
-    <span class="n">solver</span><span class="o">.</span><span class="n">aux_bc_lower</span> <span class="o">=</span> <span class="n">solver</span><span class="o">.</span><span class="n">bc_lower</span>
-    <span class="n">solver</span><span class="o">.</span><span class="n">aux_bc_upper</span> <span class="o">=</span> <span class="n">solver</span><span class="o">.</span><span class="n">bc_upper</span>
+    <span class="n">solver</span><span class="o">.</span><span class="n">aux_bc_lower</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">BC</span><span class="o">.</span><span class="n">extrap</span>
+    <span class="n">solver</span><span class="o">.</span><span class="n">aux_bc_upper</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">BC</span><span class="o">.</span><span class="n">extrap</span>
 
-    <span class="n">xlower</span><span class="o">=</span><span class="mf">0.0</span><span class="p">;</span> <span class="n">xupper</span><span class="o">=</span><span class="mf">600.0</span>
-    <span class="n">cellsperlayer</span><span class="o">=</span><span class="mi">6</span><span class="p">;</span> <span class="n">mx</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">xupper</span><span class="o">-</span><span class="n">xlower</span><span class="p">))</span><span class="o">*</span><span class="n">cellsperlayer</span>
+    <span class="n">xlower</span><span class="o">=</span><span class="mf">0.0</span><span class="p">;</span> <span class="n">xupper</span><span class="o">=</span><span class="mf">300.0</span>
+    <span class="n">cells_per_layer</span><span class="o">=</span><span class="mi">12</span><span class="p">;</span> <span class="n">mx</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">xupper</span><span class="o">-</span><span class="n">xlower</span><span class="p">))</span><span class="o">*</span><span class="n">cells_per_layer</span>
     <span class="n">x</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">Dimension</span><span class="p">(</span><span class="s">&#39;x&#39;</span><span class="p">,</span><span class="n">xlower</span><span class="p">,</span><span class="n">xupper</span><span class="p">,</span><span class="n">mx</span><span class="p">)</span>
     <span class="n">domain</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">Domain</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
     <span class="n">state</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">State</span><span class="p">(</span><span class="n">domain</span><span class="p">,</span><span class="n">solver</span><span class="o">.</span><span class="n">num_eqn</span><span class="p">)</span>
@@ -242,21 +236,21 @@ evolves into two trains of solitary waves.</p>
     <span class="n">state</span><span class="o">.</span><span class="n">problem_data</span> <span class="o">=</span> <span class="p">{}</span>
     <span class="n">state</span><span class="o">.</span><span class="n">problem_data</span><span class="p">[</span><span class="s">&#39;t1&#39;</span><span class="p">]</span>    <span class="o">=</span> <span class="mf">10.0</span>
     <span class="n">state</span><span class="o">.</span><span class="n">problem_data</span><span class="p">[</span><span class="s">&#39;tw1&#39;</span><span class="p">]</span>   <span class="o">=</span> <span class="mf">10.0</span>
-    <span class="n">state</span><span class="o">.</span><span class="n">problem_data</span><span class="p">[</span><span class="s">&#39;a1&#39;</span><span class="p">]</span>    <span class="o">=</span> <span class="mf">0.0</span>
+    <span class="n">state</span><span class="o">.</span><span class="n">problem_data</span><span class="p">[</span><span class="s">&#39;a1&#39;</span><span class="p">]</span>    <span class="o">=</span> <span class="mf">0.4</span>
     <span class="n">state</span><span class="o">.</span><span class="n">problem_data</span><span class="p">[</span><span class="s">&#39;alpha&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">alpha</span>
     <span class="n">state</span><span class="o">.</span><span class="n">problem_data</span><span class="p">[</span><span class="s">&#39;KA&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">KA</span>
     <span class="n">state</span><span class="o">.</span><span class="n">problem_data</span><span class="p">[</span><span class="s">&#39;KB&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">KB</span>
     <span class="n">state</span><span class="o">.</span><span class="n">problem_data</span><span class="p">[</span><span class="s">&#39;rhoA&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">rhoA</span>
     <span class="n">state</span><span class="o">.</span><span class="n">problem_data</span><span class="p">[</span><span class="s">&#39;rhoB&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">rhoB</span>
-    <span class="n">state</span><span class="o">.</span><span class="n">problem_data</span><span class="p">[</span><span class="s">&#39;trtime&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">250.0</span>
+    <span class="n">state</span><span class="o">.</span><span class="n">problem_data</span><span class="p">[</span><span class="s">&#39;trtime&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">999999999.0</span>
     <span class="n">state</span><span class="o">.</span><span class="n">problem_data</span><span class="p">[</span><span class="s">&#39;trdone&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">False</span>
 
     <span class="c">#Initialize q and aux</span>
     <span class="n">xc</span><span class="o">=</span><span class="n">state</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">centers</span>
     <span class="n">state</span><span class="o">.</span><span class="n">aux</span><span class="o">=</span><span class="n">setaux</span><span class="p">(</span><span class="n">xc</span><span class="p">,</span><span class="n">rhoB</span><span class="p">,</span><span class="n">KB</span><span class="p">,</span><span class="n">rhoA</span><span class="p">,</span><span class="n">KA</span><span class="p">,</span><span class="n">alpha</span><span class="p">,</span><span class="n">xlower</span><span class="o">=</span><span class="n">xlower</span><span class="p">,</span><span class="n">xupper</span><span class="o">=</span><span class="n">xupper</span><span class="p">)</span>
-    <span class="n">qinit</span><span class="p">(</span><span class="n">state</span><span class="p">,</span><span class="n">ic</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span><span class="n">a2</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span><span class="n">xupper</span><span class="o">=</span><span class="n">xupper</span><span class="p">)</span>
+    <span class="n">qinit</span><span class="p">(</span><span class="n">state</span><span class="p">,</span><span class="n">ic</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">a2</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span><span class="n">xupper</span><span class="o">=</span><span class="n">xupper</span><span class="p">)</span>
 
-    <span class="n">tfinal</span><span class="o">=</span><span class="mf">500.</span><span class="p">;</span> <span class="n">num_output_times</span> <span class="o">=</span> <span class="mi">10</span><span class="p">;</span>
+    <span class="n">tfinal</span><span class="o">=</span><span class="mf">500.</span><span class="p">;</span> <span class="n">num_output_times</span> <span class="o">=</span> <span class="mi">20</span><span class="p">;</span>
 
     <span class="n">solver</span><span class="o">.</span><span class="n">max_steps</span> <span class="o">=</span> <span class="mi">5000000</span>
     <span class="n">solver</span><span class="o">.</span><span class="n">fwave</span> <span class="o">=</span> <span class="bp">True</span> 
@@ -265,19 +259,76 @@ evolves into two trains of solitary waves.</p>
     <span class="n">solver</span><span class="o">.</span><span class="n">user_bc_upper</span><span class="o">=</span><span class="n">zero_bc</span>
 
     <span class="n">claw</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">Controller</span><span class="p">()</span>
-    <span class="n">claw</span><span class="o">.</span><span class="n">keep_copy</span> <span class="o">=</span> <span class="bp">False</span>
     <span class="n">claw</span><span class="o">.</span><span class="n">output_style</span> <span class="o">=</span> <span class="mi">1</span>
     <span class="n">claw</span><span class="o">.</span><span class="n">num_output_times</span> <span class="o">=</span> <span class="n">num_output_times</span>
     <span class="n">claw</span><span class="o">.</span><span class="n">tfinal</span> <span class="o">=</span> <span class="n">tfinal</span>
     <span class="n">claw</span><span class="o">.</span><span class="n">solution</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">Solution</span><span class="p">(</span><span class="n">state</span><span class="p">,</span><span class="n">domain</span><span class="p">)</span>
     <span class="n">claw</span><span class="o">.</span><span class="n">solver</span> <span class="o">=</span> <span class="n">solver</span>
+    <span class="n">claw</span><span class="o">.</span><span class="n">setplot</span> <span class="o">=</span> <span class="n">setplot</span>
+    <span class="n">claw</span><span class="o">.</span><span class="n">keep_copy</span> <span class="o">=</span> <span class="bp">True</span>
 
     <span class="k">return</span> <span class="n">claw</span>
 
 
+<span class="c">#--------------------------</span>
+<span class="k">def</span> <span class="nf">setplot</span><span class="p">(</span><span class="n">plotdata</span><span class="p">):</span>
+<span class="c">#--------------------------</span>
+    <span class="sd">&quot;&quot;&quot; </span>
+<span class="sd">    Specify what is to be plotted at each frame.</span>
+<span class="sd">    Input:  plotdata, an instance of visclaw.data.ClawPlotData.</span>
+<span class="sd">    Output: a modified version of plotdata.</span>
+<span class="sd">    &quot;&quot;&quot;</span> 
+    <span class="n">plotdata</span><span class="o">.</span><span class="n">clearfigures</span><span class="p">()</span>  <span class="c"># clear any old figures,axes,items data</span>
+
+    <span class="c"># Figure for q[0]</span>
+    <span class="n">plotfigure</span> <span class="o">=</span> <span class="n">plotdata</span><span class="o">.</span><span class="n">new_plotfigure</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">&#39;Stress&#39;</span><span class="p">,</span> <span class="n">figno</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="c"># Set up for axes in this figure:</span>
+    <span class="n">plotaxes</span> <span class="o">=</span> <span class="n">plotfigure</span><span class="o">.</span><span class="n">new_plotaxes</span><span class="p">()</span>
+    <span class="n">plotaxes</span><span class="o">.</span><span class="n">title</span> <span class="o">=</span> <span class="s">&#39;Stress&#39;</span>
+    <span class="n">plotaxes</span><span class="o">.</span><span class="n">ylimits</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mf">0.1</span><span class="p">,</span><span class="mf">1.0</span><span class="p">]</span>
+
+    <span class="c"># Set up for item on these axes:</span>
+    <span class="n">plotitem</span> <span class="o">=</span> <span class="n">plotaxes</span><span class="o">.</span><span class="n">new_plotitem</span><span class="p">(</span><span class="n">plot_type</span><span class="o">=</span><span class="s">&#39;1d_plot&#39;</span><span class="p">)</span>
+    <span class="n">plotitem</span><span class="o">.</span><span class="n">plot_var</span> <span class="o">=</span> <span class="n">stress</span>
+    <span class="n">plotitem</span><span class="o">.</span><span class="n">kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;linewidth&#39;</span><span class="p">:</span><span class="mi">2</span><span class="p">}</span>
+    
+    <span class="c"># Figure for q[1]</span>
+    <span class="n">plotfigure</span> <span class="o">=</span> <span class="n">plotdata</span><span class="o">.</span><span class="n">new_plotfigure</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">&#39;Velocity&#39;</span><span class="p">,</span> <span class="n">figno</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+
+    <span class="c"># Set up for axes in this figure:</span>
+    <span class="n">plotaxes</span> <span class="o">=</span> <span class="n">plotfigure</span><span class="o">.</span><span class="n">new_plotaxes</span><span class="p">()</span>
+    <span class="n">plotaxes</span><span class="o">.</span><span class="n">xlimits</span> <span class="o">=</span> <span class="s">&#39;auto&#39;</span>
+    <span class="n">plotaxes</span><span class="o">.</span><span class="n">ylimits</span> <span class="o">=</span> <span class="p">[</span><span class="o">-.</span><span class="mi">5</span><span class="p">,</span><span class="mf">0.1</span><span class="p">]</span>
+    <span class="n">plotaxes</span><span class="o">.</span><span class="n">title</span> <span class="o">=</span> <span class="s">&#39;Velocity&#39;</span>
+
+    <span class="c"># Set up for item on these axes:</span>
+    <span class="n">plotitem</span> <span class="o">=</span> <span class="n">plotaxes</span><span class="o">.</span><span class="n">new_plotitem</span><span class="p">(</span><span class="n">plot_type</span><span class="o">=</span><span class="s">&#39;1d_plot&#39;</span><span class="p">)</span>
+    <span class="n">plotitem</span><span class="o">.</span><span class="n">plot_var</span> <span class="o">=</span> <span class="n">velocity</span>
+    <span class="n">plotitem</span><span class="o">.</span><span class="n">kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;linewidth&#39;</span><span class="p">:</span><span class="mi">2</span><span class="p">}</span>
+    
+    <span class="k">return</span> <span class="n">plotdata</span>
+
+ 
+<span class="k">def</span> <span class="nf">velocity</span><span class="p">(</span><span class="n">current_data</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Compute velocity from strain and momentum&quot;&quot;&quot;</span>
+    <span class="kn">from</span> <span class="nn">stegoton</span> <span class="kn">import</span> <span class="n">setaux</span>
+    <span class="n">aux</span><span class="o">=</span><span class="n">setaux</span><span class="p">(</span><span class="n">current_data</span><span class="o">.</span><span class="n">x</span><span class="p">,</span><span class="n">rhoB</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span><span class="n">KB</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+    <span class="n">velocity</span> <span class="o">=</span> <span class="n">current_data</span><span class="o">.</span><span class="n">q</span><span class="p">[</span><span class="mi">1</span><span class="p">,:]</span><span class="o">/</span><span class="n">aux</span><span class="p">[</span><span class="mi">0</span><span class="p">,:]</span>
+    <span class="k">return</span> <span class="n">velocity</span>
+
+<span class="k">def</span> <span class="nf">stress</span><span class="p">(</span><span class="n">current_data</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Compute stress from strain and momentum&quot;&quot;&quot;</span>
+    <span class="kn">from</span> <span class="nn">stegoton</span> <span class="kn">import</span> <span class="n">setaux</span>
+    <span class="kn">from</span> <span class="nn">clawpack.riemann.nonlinear_elasticity_1D_py</span> <span class="kn">import</span> <span class="n">sigma</span> 
+    <span class="n">aux</span><span class="o">=</span><span class="n">setaux</span><span class="p">(</span><span class="n">current_data</span><span class="o">.</span><span class="n">x</span><span class="p">)</span>
+    <span class="n">epsilon</span> <span class="o">=</span> <span class="n">current_data</span><span class="o">.</span><span class="n">q</span><span class="p">[</span><span class="mi">0</span><span class="p">,:]</span>
+    <span class="n">stress</span> <span class="o">=</span> <span class="n">sigma</span><span class="p">(</span><span class="n">epsilon</span><span class="p">,</span><span class="n">aux</span><span class="p">[</span><span class="mi">1</span><span class="p">,:])</span>
+    <span class="k">return</span> <span class="n">stress</span>
+
 <span class="k">if</span> <span class="n">__name__</span><span class="o">==</span><span class="s">&quot;__main__&quot;</span><span class="p">:</span>
     <span class="kn">from</span> <span class="nn">clawpack.pyclaw.util</span> <span class="kn">import</span> <span class="n">run_app_from_main</span>
-    <span class="n">output</span> <span class="o">=</span> <span class="n">run_app_from_main</span><span class="p">(</span><span class="n">setup</span><span class="p">)</span>
+    <span class="n">output</span> <span class="o">=</span> <span class="n">run_app_from_main</span><span class="p">(</span><span class="n">setup</span><span class="p">,</span><span class="n">setplot</span><span class="p">)</span>
 </pre></div>
 </div>
 

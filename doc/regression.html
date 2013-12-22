@@ -93,9 +93,33 @@
 <span id="regression"></span><h1>Regression testing<a class="headerlink" href="#regression-testing" title="Permalink to this headline">¶</a></h1>
 <p>When making changes to the Clawpack code base it is a good idea to perform
 regression tests to insure that the changes have not broken anything.</p>
-<p><strong>Developing a general procedure for regression testing still needs to be done.</strong></p>
-<p><strong>Also need a database for storing &#8220;correct&#8221; results from various versions
-of the code.</strong></p>
+<p>See also: <a class="reference internal" href="git_versions.html#git-versions"><em>Keeping track of git versions</em></a>.</p>
+<div class="section" id="pyclaw">
+<h2>PyClaw<a class="headerlink" href="#pyclaw" title="Permalink to this headline">¶</a></h2>
+<p>Regression tests can be performed via:</p>
+<div class="highlight-python"><pre>cd $CLAW/pyclaw
+nosetests</pre>
+</div>
+</div>
+<div class="section" id="fortran-codes">
+<h2>Fortran codes<a class="headerlink" href="#fortran-codes" title="Permalink to this headline">¶</a></h2>
+<p>A few quick tests can be perfomed of the <cite>classic</cite>, <cite>amrclaw</cite>, or <cite>geoclaw</cite>
+codes by running <cite>make tests</cite> in the corresponding <cite>tests</cite> subdirectory, e.g.:</p>
+<div class="highlight-python"><pre>cd $CLAW/classic/tests
+make tests</pre>
+</div>
+<p>This uses <cite>nosetests</cite> to run a few Python scripts that in turn run the
+Fortran codes and then compare a small set of values derived from the output
+of the run with values that are stored in these directories.
+If one of these tests fails then there is a problem to be investigated, but
+these tests do not provide good coverage of the code or check that
+everything is working properly.</p>
+<p>A somewhat more complete set of tests can be run by executing all of the
+codes in the <cite>examples</cite> subdirectories and comparing the resulting plots
+with those archived in the <a class="reference internal" href="galleries.html#galleries"><em>Galleries of all Clawpack applications</em></a>.  An attempt at automating this
+can be found in the <cite>$CLAW/amrclaw/examples</cite> directory, which uses the
+<cite>imagediff</cite> tool described below.  This is still under development.</p>
+</div>
 <div class="section" id="chardiff-tool-for-line-by-line-comparison-of-output-files">
 <h2>chardiff tool for line-by-line comparison of output files<a class="headerlink" href="#chardiff-tool-for-line-by-line-comparison-of-output-files" title="Permalink to this headline">¶</a></h2>
 <p>If <cite>_output_old</cite> and <cite>_output_new</cite> are two sets of output files from old and
@@ -106,7 +130,7 @@ Mac are not very good for this since they try to match up blocks of lines to
 give the best match and may not compare the files line by line.</p>
 <p>The Python script <cite>$CLAW/clawutil/src/python/clawutil/chardiff.py</cite> can be
 used for this purpose:</p>
-<div class="highlight-python"><pre>$ python $CLAWUTIL/chardiff.py _output_old _output_new</pre>
+<div class="highlight-python"><pre>$ python $CLAW/clawutil/src/python/clawutil/chardiff.py _output_old _output_new</pre>
 </div>
 <p>will create a new directory with html files showing all differences.  It can
 also be used to compare two individual files.  See the docstring for more
@@ -121,12 +145,21 @@ the corresponding images in each directory and produce html files
 that show each pair of images side by side.  If the images are not
 identical it also shows an image indicating which pixels are different
 in the two:</p>
-<div class="highlight-python"><pre>$ python $CLAWUTIL/imagediff.py _plots_old _plots_new</pre>
+<div class="highlight-python"><pre>$ python $CLAW/clawutil/src/python/clawutil/imagediff.py _plots_old _plots_new</pre>
 </div>
 <p>will create a new directory with html files showing all differences.  It can
 also be used to compare two individual files.  See the docstring for more
 details.</p>
-<p>See also: <a class="reference internal" href="git_versions.html#git-versions"><em>Keeping track of git versions</em></a>.</p>
+</div>
+<div class="section" id="travis-continuous-integration">
+<h2>Travis continuous integration<a class="headerlink" href="#travis-continuous-integration" title="Permalink to this headline">¶</a></h2>
+<p>Most Clawpack git repositories now contain a file <cite>.travis.yml</cite> at the top
+level so that every time a pull request is issued on Github, a basic set of
+tests is run.  This uses the <a class="reference external" href="https://travis-ci.org/">Travis continuous integration</a> platform.  Shortly after a PR is issued, Travis
+will run the commands in the <cite>.travis.yml</cite> and report the results on the
+PR page.  Look for a green check mark (good) or a red X (bad) next to a commit
+hash and click on it to see the Travis output.
+<a class="reference external" href="https://travis-ci.org/clawpack/clawpack/builds/15269312">[Sample output]</a></p>
 </div>
 </div>
 
@@ -144,8 +177,11 @@ details.</p>
   <h3><a href="contents.html">Table Of Contents</a></h3>
   <ul>
 <li><a class="reference internal" href="#">Regression testing</a><ul>
+<li><a class="reference internal" href="#pyclaw">PyClaw</a></li>
+<li><a class="reference internal" href="#fortran-codes">Fortran codes</a></li>
 <li><a class="reference internal" href="#chardiff-tool-for-line-by-line-comparison-of-output-files">chardiff tool for line-by-line comparison of output files</a></li>
 <li><a class="reference internal" href="#imagediff-tool-for-pixel-comparison-of-plots">imagediff tool for pixel comparison of plots</a></li>
+<li><a class="reference internal" href="#travis-continuous-integration">Travis continuous integration</a></li>
 </ul>
 </li>
 </ul>
