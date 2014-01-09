@@ -7,7 +7,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>User files required for the Fortran code &mdash; Clawpack 5.0.0rc-alpha documentation</title>
+    <title>User files required for the Fortran code &mdash; Clawpack 5.0.0 documentation</title>
     
     <link rel="stylesheet" href="_static/flasky.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '5.0.0rc-alpha',
+        VERSION:     '5.0.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -29,7 +29,7 @@
     <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="shortcut icon" href="_static/clawicon.ico"/>
     <link rel="author" title="About these documents" href="about.html" />
-    <link rel="top" title="Clawpack 5.0.0rc-alpha documentation" href="index.html" />
+    <link rel="top" title="Clawpack 5.0.0 documentation" href="index.html" />
     <link rel="next" title="Using OpenMP" href="openmp.html" />
     <link rel="prev" title="Fortran Compilers" href="fortran_compilers.html" /> 
   </head>
@@ -38,7 +38,7 @@
 <div id="header-wrapper">
   <section id="header">
     <!-- <h1><a href="http://clawpack.org/">Clawpack</a></h1> -->
-    <h1><a href="index.html">Clawpack-5</a></h1> 
+    <h1><a href="http://clawpack.org/">Clawpack-5</a></h1> 
     <nav>
       <ul>
         <li>
@@ -80,7 +80,7 @@
         <li class="right" >
           <a href="fortran_compilers.html" title="Fortran Compilers"
              accesskey="P">previous</a> |</li>
-        <li><a href="contents.html">Clawpack 5.0.0rc-alpha documentation</a> &raquo;</li> 
+        <li><a href="contents.html">Clawpack 5.0.0 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -100,17 +100,24 @@ This page summarizes some of the most common user-modified routines.</p>
 <p>The calling sequence for each subroutine differs with the number of space
 dimensions.  The sample calling sequences shown below are for one space
 dimension.</p>
+<p>The subroutines described below have default versions in the
+corresponding library and the <cite>Makefile</cite> can point to these if
+application-specific versions are not needed.</p>
 <p>See the examples in the following directories for additional samples:</p>
 <ul class="simple">
 <li><cite>$CLAW/classic/examples</cite></li>
 <li><cite>$CLAW/amrclaw/examples</cite></li>
 <li><cite>$CLAW/geoclaw/examples</cite></li>
 </ul>
+<p>You can also browse from the <a class="reference internal" href="galleries.html#galleries"><em>Galleries of all Clawpack applications</em></a> to the <cite>README</cite> file for an
+example and then to the source code for the application-specific codes.</p>
 <div class="section" id="specifying-the-initial-conditions">
 <span id="user-qinit"></span><h2>Specifying the initial conditions<a class="headerlink" href="#specifying-the-initial-conditions" title="Permalink to this headline">¶</a></h2>
 <p>Calling sequence in 1d:</p>
 <div class="highlight-python"><pre>subroutine qinit(meqn,mbc,mx,xlower,dx,q,maux,aux)</pre>
 </div>
+<p>See the <a class="reference internal" href="qinit_defaults.html#qinit-defaults"><em>qinit default routines</em></a> for other calling sequences and the proper
+declaration of input/output parameters.</p>
 <p>Typically every application directory contains a file <cite>qinit.f</cite> or
 <cite>qinit.f90</cite> that sets the initial conditions, typically in a loop such as:</p>
 <div class="highlight-python"><pre>do i=1,mx
@@ -200,6 +207,8 @@ a subroutine named <cite>setaux</cite>, which in one dimension has the calling
 sequence:</p>
 <div class="highlight-python"><pre>subroutine setaux(mbc,mx,xlower,dx,maux,aux)</pre>
 </div>
+<p>See the <a class="reference internal" href="setaux_defaults.html#setaux-defaults"><em>setaux default routines</em></a> for other calling sequences and the proper
+declaration of input/output parameters.</p>
 <p>If adaptive refinement is being used, then every time a new grid patch is
 created at any refinement level this subroutine will be called to fill in
 the corresponding <cite>aux</cite> arrays.  For a sample, see
@@ -209,7 +218,19 @@ them each time step is in the routine <cite>b4step</cite> described below.</p>
 </div>
 <div class="section" id="using-b4step-for-work-to-be-done-before-each-time-step">
 <span id="user-b4step"></span><h2>Using <cite>b4step</cite> for work to be done before each time step<a class="headerlink" href="#using-b4step-for-work-to-be-done-before-each-time-step" title="Permalink to this headline">¶</a></h2>
-<p>Describe.</p>
+<p>The routine <cite>b4stepN</cite> is called in <cite>N</cite> space dimensions (<cite>N=1,2,3</cite>) just
+before a time step is taken (and after ghost cells have been filled by the
+boundary conditions).  The library version of this routine does
+nothing, but this can be modified to do something prior to every time step.</p>
+<p>In one dimension the calling sequence is:</p>
+<div class="highlight-python"><pre>subroutine b4step1(mbc,mx,meqn,q,xlower,dx,t,dt,maux,aux)</pre>
+</div>
+<p>See the <a class="reference internal" href="b4step_defaults.html#b4step-defaults"><em>b4step default routines</em></a> for other calling sequences and the proper
+declaration of input/output parameters.</p>
+<p>For example, in <cite>$CLAW/amrclaw/examples/advection_2d_swirl</cite> the advection
+equation is solved with an advection velocity that varies in time as well as
+space.  This is initialized for each grid patch in <cite>setaux</cite>, but is adjusted
+each time step in <cite>b4step2</cite>.</p>
 </div>
 <div class="section" id="using-src-for-source-terms">
 <span id="user-src"></span><h2>Using <cite>src</cite> for source terms<a class="headerlink" href="#using-src-for-source-terms" title="Permalink to this headline">¶</a></h2>
@@ -223,16 +244,53 @@ space dimensions that takes a single time step on the equation
 </div>
 <p>On output the <cite>q</cite> array should have been updated by using the input values
 as initial data for a single step of length <cite>dt</cite> starting at time <cite>t</cite>.</p>
+<p>See the <a class="reference internal" href="src_defaults.html#src-defaults"><em>src default routines</em></a> for other calling sequences and the proper
+declaration of input/output parameters.</p>
 <p>The library version of <cite>srcN</cite> does nothing.  If you copy this to an
 application directory and modify for your equation, you must modify the
 <cite>Makefile</cite> to point to the local version.  You must also set the
 <cite>source_split</cite> parameter in <cite>setrun.py</cite> (see <a class="reference internal" href="setrun.html#setrun"><em>Specifying classic run-time parameters in setrun.py</em></a>) to either
-<cite>godunov</cite> or <cite>&#8220;strang&#8221;</cite>.  In the former case, the 1st order Godunov
+<cite>&#8220;godunov&#8221;</cite> or <cite>&#8220;strang&#8221;</cite>.  In the former case, the 1st order Godunov
 splitting is used (after each time step on the homogenous
 hyperbolic equation, a time step of the same length is taken on the source
 terms).  In the latter case the 2nd order Strang splitting is used: the time
 step on the hyperbolic part is both preceeded and followed by
 a time step of half the length on the source terms.</p>
+<p>For an example where source terms are used, see
+<cite>$CLAW/classic/examples/acoustics_2d_radial/1drad</cite> where a one-dimensional
+acoustic equation with a geometric source term is solved in order to provide
+a reference solution for the two-dimensional radially symmetric problem
+solved in <cite>$CLAW/classic/examples/acoustics_2d_radial</cite>.</p>
+</div>
+<div class="section" id="using-src1d-for-source-terms-with-amrclaw">
+<span id="user-src1d"></span><h2>Using <cite>src1d</cite> for source terms with AMRClaw<a class="headerlink" href="#using-src1d-for-source-terms-with-amrclaw" title="Permalink to this headline">¶</a></h2>
+<p>When the AMRClaw code is used for a problem in 2 or 3 dimensions with source
+terms, then a subroutine <cite>srcN</cite> must be provided as described above.  In
+addition, for the AMR procedure to work properly it is also necessary to
+provide another subroutine <cite>src1d</cite> with calling sequence:</p>
+<div class="highlight-python"><pre>subroutine src1d(meqn,mbc,mx1d,q1d,maux,aux1d,t,dt)</pre>
+</div>
+<p>See the <a class="reference internal" href="src1d_defaults.html#src1d-defaults"><em>src1d default routines</em></a> for other calling sequences and the proper
+declaration of input/output parameters.</p>
+<p>This routine should be a simplified version of <cite>src2</cite> or <cite>src3</cite> that takes a
+one-dimensional set of data in <cite>q1d</cite> rather than a full 2- or 3-dimensional
+array of data.  The input array <cite>aux1d</cite> has the corresponding set of
+auxiliary variables in case these are needed in stepping forward with the
+source terms.</p>
+<p>If the source terms depend only on <cite>q</cite>, it should be easy to
+adapt src2 to create this routine, simply by looping over <cite>i=1:mx1d</cite> rather
+than over a multi-dimensional array.</p>
+<p>This routine is used in computing adjustments around a fine grid patch that
+are needed in order to maintain global conservation after values in a
+coarser grid cell have been overwritten with the average of the more
+accurate fine grid values.  Adjustment of the coarse grid values in the
+cells bordering this patch is then required to maintain conservation.
+This requires solving a set of Riemann problems between fine-grid and
+coarse-grid values around the edge of the patch and <cite>src1d</cite> is used in
+advancing coarse grid values to intermediate time steps.</p>
+<p>The code may work fine without applying source terms in this
+context, so using the dummy library routine <cite>src1d</cite> might be
+successful even when source terms are present.</p>
 </div>
 </div>
 
@@ -242,10 +300,10 @@ a time step of half the length on the source terms.</p>
       </div>
       <div class="sphinxsidebar">
         <div class="sphinxsidebarwrapper">
-<p><a href="index.html">
+<p><a href="http://clawpack.org/">
     <img class="logo" src= "_static/clawlogo.jpg" alt="Logo"/>
 </a>
-<h2>Version 5.0.0rc-alpha</h2>
+<h2>Version 5.0.0</h2>
 </p>
   <h3><a href="contents.html">Table Of Contents</a></h3>
   <ul>
@@ -257,6 +315,7 @@ a time step of half the length on the source terms.</p>
 <li><a class="reference internal" href="#specifying-spatially-varying-data-using-setaux">Specifying spatially-varying data using <cite>setaux</cite></a></li>
 <li><a class="reference internal" href="#using-b4step-for-work-to-be-done-before-each-time-step">Using <cite>b4step</cite> for work to be done before each time step</a></li>
 <li><a class="reference internal" href="#using-src-for-source-terms">Using <cite>src</cite> for source terms</a></li>
+<li><a class="reference internal" href="#using-src1d-for-source-terms-with-amrclaw">Using <cite>src1d</cite> for source terms with AMRClaw</a></li>
 </ul>
 </li>
 </ul>

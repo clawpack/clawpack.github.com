@@ -7,7 +7,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Converting from Clawpack 4.6 to 5.0 &mdash; Clawpack 5.0.0rc-alpha documentation</title>
+    <title>Converting from Clawpack 4.6 to 5.0 &mdash; Clawpack 5.0.0 documentation</title>
     
     <link rel="stylesheet" href="_static/flasky.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '5.0.0rc-alpha',
+        VERSION:     '5.0.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -29,16 +29,16 @@
     <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="shortcut icon" href="_static/clawicon.ico"/>
     <link rel="author" title="About these documents" href="about.html" />
-    <link rel="top" title="Clawpack 5.0.0rc-alpha documentation" href="index.html" />
+    <link rel="top" title="Clawpack 5.0.0 documentation" href="index.html" />
     <link rel="next" title="Converting from Clawpack 4.3 to 4.6" href="claw43to46.html" />
-    <link rel="prev" title="Clawpack 4.x documentation" href="claw4x.html" /> 
+    <link rel="prev" title="Clawpack 4.x links" href="claw4x.html" /> 
   </head>
   <body>
 <div id="main-wrapper" class="sphinx">
 <div id="header-wrapper">
   <section id="header">
     <!-- <h1><a href="http://clawpack.org/">Clawpack</a></h1> -->
-    <h1><a href="index.html">Clawpack-5</a></h1> 
+    <h1><a href="http://clawpack.org/">Clawpack-5</a></h1> 
     <nav>
       <ul>
         <li>
@@ -78,9 +78,9 @@
           <a href="claw43to46.html" title="Converting from Clawpack 4.3 to 4.6"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="claw4x.html" title="Clawpack 4.x documentation"
+          <a href="claw4x.html" title="Clawpack 4.x links"
              accesskey="P">previous</a> |</li>
-        <li><a href="contents.html">Clawpack 5.0.0rc-alpha documentation</a> &raquo;</li> 
+        <li><a href="contents.html">Clawpack 5.0.0 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -91,17 +91,21 @@
             
   <div class="section" id="converting-from-clawpack-4-6-to-5-0">
 <span id="claw46to50"></span><h1>Converting from Clawpack 4.6 to 5.0<a class="headerlink" href="#converting-from-clawpack-4-6-to-5-0" title="Permalink to this headline">¶</a></h1>
+<p>(If you are converting code from Clawpack 4.3, see <a class="reference internal" href="claw43to46.html#claw43to46"><em>Converting from Clawpack 4.3 to 4.6</em></a>.)</p>
 <p>Many input parameters have been renamed and some new options have been
-added.  See <a class="reference internal" href="clawpack5.html#setrun-changes"><em>Changes to input parameters in setrun.py from 4.x to 5.0</em></a>.</p>
+added in Clawpack 5.0.  See <a class="reference internal" href="clawpack5.html#setrun-changes"><em>Changes to input parameters in setrun.py from 4.x to 5.0</em></a>.</p>
 <div class="section" id="python-conversion-tool">
 <h2>Python conversion tool<a class="headerlink" href="#python-conversion-tool" title="Permalink to this headline">¶</a></h2>
 <p>A first pass at the conversion of <em>setrun.py</em>, <em>setplot.py</em> and the
 <em>Makefile</em> can often be achieved by typing:</p>
-<div class="highlight-python"><pre>$ python $CLAW/clawutil/src/python/clawutil/conversion/convert.py</pre>
+<div class="highlight-python"><pre>$ python $CLAW/clawutil/src/python/clawutil/conversion/convert46to50.py</pre>
 </div>
 <p>in your application directory.  You should then inspect the files generated
 and fix any broken links, etc.</p>
-<p><strong>Note:</strong></p>
+<p>The original versions of various files will have <cite>_4.x</cite> appended to the file
+name for reference.  When conversion is complete, these files can be
+deleted.</p>
+<p><strong>Notes:</strong></p>
 <p>This does not yet work for all variants of the code.</p>
 <p>Old AMRClaw codes are often in a subdirectory <em>amr</em> of an application
 directory, and the directory above may contain Fortran files or other files
@@ -109,15 +113,35 @@ used by the AMR code.  Typically you will want to combine these in one
 directory.</p>
 <p>The <cite>Makefile</cite> is currently not converted properly &#8211; a generic <cite>Makefile</cite>
 is added to the directory but must be customized to point to any local
-Fortran codes, for example.</p>
-<div class="admonition warning">
-<p class="first admonition-title">Warning</p>
-<p class="last">A number of other changes have been made such as reordering
-indices in <cite>q</cite> and <cite>aux</cite> array and changes to calling sequences of
-several subroutines including <cite>qinit</cite>, <cite>setaux</cite>, and the Riemann solvers.
-These changes are not handeld by this script.
-See <a class="reference internal" href="clawpack5.html#clawpack5"><em>Changes in Clawpack 5.0</em></a>.</p>
-</div>
+Fortran codes, for example.  In particular, make sure the Makefile points to
+the correct Riemann solver(s), either a local file or a library routine from
+the <cite>$CLAW/riemann/src</cite> directory.</p>
+<p>The indices in <cite>q</cite> and <cite>aux</cite> arrays were permuted in Clawpack 5.0 relative
+to early versions, e.g. the <cite>m`th component of `q</cite> in grid cell <cite>(i,j)</cite> is
+now <cite>q(m,i,j)</cite> rather than <cite>q(i,j,m)</cite>.  The conversion script attempts to do
+this reordering if it sees a pattern of a suitable form, but you should
+carefully check your own local routines such as <cite>qinit</cite> or <cite>setaux</cite> to make
+sure this has been done properly.</p>
+<p>Calling sequences of several routines have also been changed and will need
+to be adjusted by hand for any Fortran routines in your application directory.
+See <a class="reference internal" href="user_routines.html#user-routines"><em>User files required for the Fortran code</em></a> for calling sequences of the routines that
+most frequently are provided by users.  If you specify your own
+Riemann solver, see also <a class="reference internal" href="riemann.html#riemann"><em>Riemann solvers</em></a>, and if you have custom
+boundary conditions, see <a class="reference internal" href="bc.html#bc"><em>Boundary conditions</em></a>.</p>
+<p>Note in particular that parameter <cite>maxmx</cite> (and <cite>maxmy</cite>, <cite>maxmz</cite> in more
+dimensions) is no longer in the calling sequence.  In earlier versions of
+Clawpack this indicated the declared dimension of the <cite>q</cite> and <cite>aux</cite> arrays.
+It is now assumed the arrays are dimensioned properly since dynamic memory
+allocation is generally used at run time based on <cite>mx</cite> (resp. <cite>my</cite>, <cite>mz</cite>).
+You should remove these from the calling sequence and also modify the
+declaration of input parameters to use <cite>mx</cite> in place of <cite>maxmx</cite>, etc.</p>
+<p>The classic code no longer requires a driver routine <cite>driver.f</cite>.  In earlier
+versions of Clawpack this was used to declare the <cite>q</cite> and <cite>aux</cite> arrays to be
+sufficiently large for the size of the problem to be solved.  (And
+specifying a larger value for <cite>mx</cite> led to a run-time error.)  In Clawpack-5,
+a library routine <cite>driver.f90</cite> is provided that calls the Clawpack routines,
+which now use dynamic memory allocation to allocate the required arrays at
+run time.</p>
 </div>
 </div>
 
@@ -127,10 +151,10 @@ See <a class="reference internal" href="clawpack5.html#clawpack5"><em>Changes in
       </div>
       <div class="sphinxsidebar">
         <div class="sphinxsidebarwrapper">
-<p><a href="index.html">
+<p><a href="http://clawpack.org/">
     <img class="logo" src= "_static/clawlogo.jpg" alt="Logo"/>
 </a>
-<h2>Version 5.0.0rc-alpha</h2>
+<h2>Version 5.0.0</h2>
 </p>
   <h3><a href="contents.html">Table Of Contents</a></h3>
   <ul>
@@ -142,7 +166,7 @@ See <a class="reference internal" href="clawpack5.html#clawpack5"><em>Changes in
 <h3>Related Topics</h3>
 <ul>
   <li><a href="contents.html">Documentation overview</a><ul>
-      <li>Previous: <a href="claw4x.html" title="previous chapter">Clawpack 4.x documentation</a></li>
+      <li>Previous: <a href="claw4x.html" title="previous chapter">Clawpack 4.x links</a></li>
       <li>Next: <a href="claw43to46.html" title="next chapter">Converting from Clawpack 4.3 to 4.6</a></li>
   </ul></li>
 </ul>

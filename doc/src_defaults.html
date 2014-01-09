@@ -1,0 +1,400 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>src default routines &mdash; Clawpack 5.0.0 documentation</title>
+    
+    <link rel="stylesheet" href="_static/flasky.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/base.css" type="text/css" />
+    <link rel="stylesheet" href="_static/layout.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '5.0.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="shortcut icon" href="_static/clawicon.ico"/>
+    <link rel="author" title="About these documents" href="about.html" />
+    <link rel="top" title="Clawpack 5.0.0 documentation" href="index.html" /> 
+  </head>
+  <body>
+<div id="main-wrapper" class="sphinx">
+<div id="header-wrapper">
+  <section id="header">
+    <!-- <h1><a href="http://clawpack.org/">Clawpack</a></h1> -->
+    <h1><a href="http://clawpack.org/">Clawpack-5</a></h1> 
+    <nav>
+      <ul>
+        <li>
+          <a href="toc_condensed.html">Docs</a>
+        </li>
+        <li>
+          <a href="installing.html">Install</a>
+        </li>
+        <li>
+          <a class="" href="galleries.html">Gallery</a>
+        </li>
+        <li>
+          <a class="active" href="https://groups.google.com/forum/#!forum/claw-users">Support</a>
+        </li>
+        <li>
+          <a class="active" href="http://github.com/organizations/clawpack">Source</a>
+        </li>
+        <li>
+          <a class="" href="developers.html">Develop</a>
+        </li>
+      </ul>
+    </nav>
+  </section>
+<div class="decoration"></div>
+</div>
+
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="contents.html">Clawpack 5.0.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="src-default-routines">
+<span id="src-defaults"></span><h1>src default routines<a class="headerlink" href="#src-default-routines" title="Permalink to this headline">¶</a></h1>
+<p>See also <a class="reference internal" href="user_routines.html#user-src"><em>Using src for source terms</em></a>.</p>
+<p>For GeoClaw, see <a class="reference internal" href="#src-geoclaw"><em>src routine in GeoClaw</em></a>.</p>
+<p>Below are the default <cite>src</cite> library routines for Classic and AMRClaw.
+By default these do nothing.  If you wish to specify source terms, you
+need to copy one of these files to your application directory and modify it
+as needed.  Remember to change to <cite>Makefile</cite> to point to the proper version.</p>
+<p>If you are using AMRClaw, you will also need to provide a routine <cite>src1d</cite>,
+see <a class="reference internal" href="user_routines.html#user-src1d"><em>Using src1d for source terms with AMRClaw</em></a>.</p>
+<p><cite>$CLAW/classic/src/1d/src1.f90</cite>:</p>
+<div class="highlight-fortran"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14</pre></div></td><td class="code"><div class="highlight"><pre><span class="k">subroutine </span><span class="nv">src1</span><span class="p">(</span><span class="nv">meqn</span><span class="p">,</span><span class="nv">mbc</span><span class="p">,</span><span class="nv">mx</span><span class="p">,</span><span class="nv">xlower</span><span class="p">,</span><span class="nv">dx</span><span class="p">,</span><span class="nv">q</span><span class="p">,</span><span class="nv">maux</span><span class="p">,</span><span class="nv">aux</span><span class="p">,</span><span class="nv">t</span><span class="p">,</span><span class="nv">dt</span><span class="p">)</span>
+
+    <span class="c">! Called to update q by solving source term equation </span>
+    <span class="c">! $q_t = \psi(q)$ over time dt starting at time t.</span>
+    <span class="c">!</span>
+    <span class="c">! This default version does nothing. </span>
+ 
+    <span class="k">implicit none</span>
+<span class="k">    </span><span class="kt">integer</span><span class="p">,</span> <span class="k">intent</span><span class="p">(</span><span class="nv">in</span><span class="p">)</span> <span class="kd">::</span> <span class="nv">mbc</span><span class="p">,</span><span class="nv">mx</span><span class="p">,</span><span class="nv">meqn</span><span class="p">,</span><span class="nv">maux</span>
+    <span class="kt">real</span><span class="p">(</span><span class="nb">kind</span><span class="o">=</span><span class="mi">8</span><span class="p">),</span> <span class="k">intent</span><span class="p">(</span><span class="nv">in</span><span class="p">)</span> <span class="kd">::</span> <span class="nv">xlower</span><span class="p">,</span><span class="nv">dx</span><span class="p">,</span><span class="nv">t</span><span class="p">,</span><span class="nv">dt</span>
+    <span class="kt">real</span><span class="p">(</span><span class="nb">kind</span><span class="o">=</span><span class="mi">8</span><span class="p">),</span> <span class="k">intent</span><span class="p">(</span><span class="nv">in</span><span class="p">)</span> <span class="kd">::</span>  <span class="nv">aux</span><span class="p">(</span><span class="nv">maux</span><span class="p">,</span><span class="mi">1</span><span class="o">-</span><span class="nv">mbc</span><span class="p">:</span><span class="nv">mx</span><span class="o">+</span><span class="nv">mbc</span><span class="p">)</span>
+    <span class="kt">real</span><span class="p">(</span><span class="nb">kind</span><span class="o">=</span><span class="mi">8</span><span class="p">),</span> <span class="k">intent</span><span class="p">(</span><span class="nv">inout</span><span class="p">)</span> <span class="kd">::</span>  <span class="nv">q</span><span class="p">(</span><span class="nv">meqn</span><span class="p">,</span><span class="mi">1</span><span class="o">-</span><span class="nv">mbc</span><span class="p">:</span><span class="nv">mx</span><span class="o">+</span><span class="nv">mbc</span><span class="p">)</span>
+
+<span class="k">end subroutine </span><span class="nv">src1</span>
+</pre></div>
+</td></tr></table></div>
+<p><cite>$CLAW/classic/src/2d/src2.f90</cite>:</p>
+<div class="highlight-fortran"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14</pre></div></td><td class="code"><div class="highlight"><pre><span class="k">subroutine </span><span class="nv">src2</span><span class="p">(</span><span class="nv">meqn</span><span class="p">,</span><span class="nv">mbc</span><span class="p">,</span><span class="nv">mx</span><span class="p">,</span><span class="nv">my</span><span class="p">,</span><span class="nv">xlower</span><span class="p">,</span><span class="nv">ylower</span><span class="p">,</span><span class="nv">dx</span><span class="p">,</span><span class="nv">dy</span><span class="p">,</span><span class="nv">q</span><span class="p">,</span><span class="nv">maux</span><span class="p">,</span><span class="nv">aux</span><span class="p">,</span><span class="nv">t</span><span class="p">,</span><span class="nv">dt</span><span class="p">)</span>
+
+    <span class="c">! Called to update q by solving source term equation </span>
+    <span class="c">! $q_t = \psi(q)$ over time dt starting at time t.</span>
+    <span class="c">!</span>
+    <span class="c">! This default version does nothing. </span>
+ 
+    <span class="k">implicit none</span>
+<span class="k">    </span><span class="kt">integer</span><span class="p">,</span> <span class="k">intent</span><span class="p">(</span><span class="nv">in</span><span class="p">)</span> <span class="kd">::</span> <span class="nv">mbc</span><span class="p">,</span><span class="nv">mx</span><span class="p">,</span><span class="nv">my</span><span class="p">,</span><span class="nv">meqn</span><span class="p">,</span><span class="nv">maux</span>
+    <span class="kt">real</span><span class="p">(</span><span class="nb">kind</span><span class="o">=</span><span class="mi">8</span><span class="p">),</span> <span class="k">intent</span><span class="p">(</span><span class="nv">in</span><span class="p">)</span> <span class="kd">::</span> <span class="nv">xlower</span><span class="p">,</span><span class="nv">ylower</span><span class="p">,</span><span class="nv">dx</span><span class="p">,</span><span class="nv">dy</span><span class="p">,</span><span class="nv">t</span><span class="p">,</span><span class="nv">dt</span>
+    <span class="kt">real</span><span class="p">(</span><span class="nb">kind</span><span class="o">=</span><span class="mi">8</span><span class="p">),</span> <span class="k">intent</span><span class="p">(</span><span class="nv">in</span><span class="p">)</span> <span class="kd">::</span>  <span class="nv">aux</span><span class="p">(</span><span class="nv">maux</span><span class="p">,</span><span class="mi">1</span><span class="o">-</span><span class="nv">mbc</span><span class="p">:</span><span class="nv">mx</span><span class="o">+</span><span class="nv">mbc</span><span class="p">,</span><span class="mi">1</span><span class="o">-</span><span class="nv">mbc</span><span class="p">:</span><span class="nv">my</span><span class="o">+</span><span class="nv">mbc</span><span class="p">)</span>
+    <span class="kt">real</span><span class="p">(</span><span class="nb">kind</span><span class="o">=</span><span class="mi">8</span><span class="p">),</span> <span class="k">intent</span><span class="p">(</span><span class="nv">inout</span><span class="p">)</span> <span class="kd">::</span>  <span class="nv">q</span><span class="p">(</span><span class="nv">meqn</span><span class="p">,</span><span class="mi">1</span><span class="o">-</span><span class="nv">mbc</span><span class="p">:</span><span class="nv">mx</span><span class="o">+</span><span class="nv">mbc</span><span class="p">,</span><span class="mi">1</span><span class="o">-</span><span class="nv">mbc</span><span class="p">:</span><span class="nv">my</span><span class="o">+</span><span class="nv">mbc</span><span class="p">)</span>
+
+<span class="k">end subroutine </span><span class="nv">src2</span>
+</pre></div>
+</td></tr></table></div>
+<p><cite>$CLAW/classic/src/3d/src3.f90</cite>:</p>
+<div class="highlight-fortran"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14</pre></div></td><td class="code"><div class="highlight"><pre><span class="k">subroutine </span><span class="nv">src3</span><span class="p">(</span><span class="nv">meqn</span><span class="p">,</span><span class="nv">mbc</span><span class="p">,</span><span class="nv">mx</span><span class="p">,</span><span class="nv">my</span><span class="p">,</span><span class="nv">mz</span><span class="p">,</span><span class="nv">xlower</span><span class="p">,</span><span class="nv">ylower</span><span class="p">,</span><span class="nv">zlower</span><span class="p">,</span><span class="nv">dx</span><span class="p">,</span><span class="nv">dy</span><span class="p">,</span><span class="nv">dz</span><span class="p">,</span><span class="nv">q</span><span class="p">,</span><span class="nv">maux</span><span class="p">,</span><span class="nv">aux</span><span class="p">,</span><span class="nv">t</span><span class="p">,</span><span class="nv">dt</span><span class="p">)</span>
+
+    <span class="c">! Called to update q by solving source term equation </span>
+    <span class="c">! $q_t = \psi(q)$ over time dt starting at time t.</span>
+    <span class="c">!</span>
+    <span class="c">! This default version does nothing. </span>
+ 
+    <span class="k">implicit none</span>
+<span class="k">    </span><span class="kt">integer</span><span class="p">,</span> <span class="k">intent</span><span class="p">(</span><span class="nv">in</span><span class="p">)</span> <span class="kd">::</span> <span class="nv">meqn</span><span class="p">,</span><span class="nv">mbc</span><span class="p">,</span><span class="nv">mx</span><span class="p">,</span><span class="nv">my</span><span class="p">,</span><span class="nv">mz</span><span class="p">,</span><span class="nv">maux</span>
+    <span class="kt">real</span><span class="p">(</span><span class="nb">kind</span><span class="o">=</span><span class="mi">8</span><span class="p">),</span> <span class="k">intent</span><span class="p">(</span><span class="nv">in</span><span class="p">)</span> <span class="kd">::</span> <span class="nv">xlower</span><span class="p">,</span><span class="nv">ylower</span><span class="p">,</span><span class="nv">zlower</span><span class="p">,</span><span class="nv">dx</span><span class="p">,</span><span class="nv">dy</span><span class="p">,</span><span class="nv">dz</span><span class="p">,</span><span class="nv">t</span><span class="p">,</span><span class="nv">dt</span>
+    <span class="kt">double precision</span><span class="p">,</span> <span class="k">intent</span><span class="p">(</span><span class="nv">in</span><span class="p">)</span> <span class="kd">::</span> <span class="nv">aux</span><span class="p">(</span><span class="nv">maux</span><span class="p">,</span><span class="mi">1</span><span class="o">-</span><span class="nv">mbc</span><span class="p">:</span><span class="nv">mx</span><span class="o">+</span><span class="nv">mbc</span><span class="p">,</span><span class="mi">1</span><span class="o">-</span><span class="nv">mbc</span><span class="p">:</span><span class="nv">my</span><span class="o">+</span><span class="nv">mbc</span><span class="p">)</span>
+    <span class="kt">double precision</span><span class="p">,</span> <span class="k">intent</span><span class="p">(</span><span class="nv">inout</span><span class="p">)</span> <span class="kd">::</span> <span class="nv">q</span><span class="p">(</span><span class="nv">meqn</span><span class="p">,</span><span class="mi">1</span><span class="o">-</span><span class="nv">mbc</span><span class="p">:</span><span class="nv">mx</span><span class="o">+</span><span class="nv">mbc</span><span class="p">,</span><span class="mi">1</span><span class="o">-</span><span class="nv">mbc</span><span class="p">:</span><span class="nv">my</span><span class="o">+</span><span class="nv">mbc</span><span class="p">)</span>
+
+<span class="k">end subroutine </span><span class="nv">src3</span>
+</pre></div>
+</td></tr></table></div>
+<div class="section" id="src-routine-in-geoclaw">
+<span id="src-geoclaw"></span><h2>src routine in GeoClaw<a class="headerlink" href="#src-routine-in-geoclaw" title="Permalink to this headline">¶</a></h2>
+<p>In GeoClaw, there is a library routine to impose source terms for bottom
+friction (via a Manning term) and Coriolis terms.  The topography source term
+is built into the Riemann solver in a manner that achieves well balancing
+(an ocean at rest remains at rest).</p>
+<p><cite>$CLAW/geoclaw/src/2d/shallow/src2.f90</cite>:</p>
+<div class="highlight-fortran"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77</pre></div></td><td class="code"><div class="highlight"><pre><span class="k">subroutine </span><span class="nv">src2</span><span class="p">(</span><span class="nv">meqn</span><span class="p">,</span><span class="nv">mbc</span><span class="p">,</span><span class="nv">mx</span><span class="p">,</span><span class="nv">my</span><span class="p">,</span><span class="nv">xlower</span><span class="p">,</span><span class="nv">ylower</span><span class="p">,</span><span class="nv">dx</span><span class="p">,</span><span class="nv">dy</span><span class="p">,</span><span class="nv">q</span><span class="p">,</span><span class="nv">maux</span><span class="p">,</span><span class="nv">aux</span><span class="p">,</span><span class="nv">t</span><span class="p">,</span><span class="nv">dt</span><span class="p">)</span>
+      
+    <span class="k">use </span><span class="nv">geoclaw_module</span><span class="p">,</span> <span class="nv">only</span><span class="p">:</span> <span class="nv">g</span> <span class="o">=&gt;</span> <span class="nv">grav</span><span class="p">,</span> <span class="nv">coriolis_forcing</span><span class="p">,</span> <span class="nv">coriolis</span>
+    <span class="k">use </span><span class="nv">geoclaw_module</span><span class="p">,</span> <span class="nv">only</span><span class="p">:</span> <span class="nv">friction_forcing</span><span class="p">,</span> <span class="nv">friction_depth</span>
+    <span class="k">use </span><span class="nv">geoclaw_module</span><span class="p">,</span> <span class="nv">only</span><span class="p">:</span> <span class="nv">manning_coefficient</span>
+    <span class="k">use </span><span class="nv">geoclaw_module</span><span class="p">,</span> <span class="nv">only</span><span class="p">:</span> <span class="nv">manning_break</span><span class="p">,</span> <span class="nv">num_manning</span>
+
+    <span class="k">implicit none</span>
+    
+    <span class="c">! Input parameters</span>
+    <span class="kt">integer</span><span class="p">,</span> <span class="k">intent</span><span class="p">(</span><span class="nv">in</span><span class="p">)</span> <span class="kd">::</span> <span class="nv">meqn</span><span class="p">,</span><span class="nv">mbc</span><span class="p">,</span><span class="nv">mx</span><span class="p">,</span><span class="nv">my</span><span class="p">,</span><span class="nv">maux</span>
+    <span class="kt">double precision</span><span class="p">,</span> <span class="k">intent</span><span class="p">(</span><span class="nv">in</span><span class="p">)</span> <span class="kd">::</span> <span class="nv">xlower</span><span class="p">,</span><span class="nv">ylower</span><span class="p">,</span><span class="nv">dx</span><span class="p">,</span><span class="nv">dy</span><span class="p">,</span><span class="nv">t</span><span class="p">,</span><span class="nv">dt</span>
+    
+    <span class="c">! Output</span>
+    <span class="kt">double precision</span><span class="p">,</span> <span class="k">intent</span><span class="p">(</span><span class="nv">inout</span><span class="p">)</span> <span class="kd">::</span> <span class="nv">q</span><span class="p">(</span><span class="nv">meqn</span><span class="p">,</span><span class="mi">1</span><span class="o">-</span><span class="nv">mbc</span><span class="p">:</span><span class="nv">mx</span><span class="o">+</span><span class="nv">mbc</span><span class="p">,</span><span class="mi">1</span><span class="o">-</span><span class="nv">mbc</span><span class="p">:</span><span class="nv">my</span><span class="o">+</span><span class="nv">mbc</span><span class="p">)</span>
+    <span class="kt">double precision</span><span class="p">,</span> <span class="k">intent</span><span class="p">(</span><span class="nv">inout</span><span class="p">)</span> <span class="kd">::</span> <span class="nv">aux</span><span class="p">(</span><span class="nv">maux</span><span class="p">,</span><span class="mi">1</span><span class="o">-</span><span class="nv">mbc</span><span class="p">:</span><span class="nv">mx</span><span class="o">+</span><span class="nv">mbc</span><span class="p">,</span><span class="mi">1</span><span class="o">-</span><span class="nv">mbc</span><span class="p">:</span><span class="nv">my</span><span class="o">+</span><span class="nv">mbc</span><span class="p">)</span>
+
+    <span class="c">! Locals</span>
+    <span class="kt">integer</span> <span class="kd">::</span> <span class="nv">i</span><span class="p">,</span> <span class="nv">j</span><span class="p">,</span> <span class="nv">nman</span>
+    <span class="kt">real</span><span class="p">(</span><span class="nb">kind</span><span class="o">=</span><span class="mi">8</span><span class="p">)</span> <span class="kd">::</span> <span class="nv">h</span><span class="p">,</span> <span class="nv">hu</span><span class="p">,</span> <span class="nv">hv</span><span class="p">,</span> <span class="nv">gamma</span><span class="p">,</span> <span class="nv">dgamma</span><span class="p">,</span> <span class="nv">y</span><span class="p">,</span> <span class="nv">fdt</span><span class="p">,</span> <span class="nv">a</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">),</span> <span class="nv">coeff</span>
+
+    <span class="c">! Algorithm parameters</span>
+    <span class="c">! Parameter controls when to zero out the momentum at a depth in the</span>
+    <span class="c">! friction source term</span>
+    <span class="kt">real</span><span class="p">(</span><span class="nb">kind</span><span class="o">=</span><span class="mi">8</span><span class="p">),</span> <span class="k">parameter</span> <span class="kd">::</span> <span class="nv">depth_tolerance</span> <span class="o">=</span> <span class="mf">1.0</span><span class="nv">d</span><span class="o">-</span><span class="mi">30</span>
+
+    <span class="c">! Friction source term</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nv">friction_forcing</span><span class="p">)</span> <span class="k">then</span>
+<span class="k">        do </span><span class="nv">j</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="nv">my</span>
+            <span class="k">do </span><span class="nv">i</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="nv">mx</span>
+                <span class="c">! Extract appropriate momentum</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nv">q</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="nv">i</span><span class="p">,</span><span class="nv">j</span><span class="p">)</span> <span class="o">&lt;</span> <span class="nv">depth_tolerance</span><span class="p">)</span> <span class="k">then</span>
+<span class="k">                    </span><span class="nv">q</span><span class="p">(</span><span class="mi">2</span><span class="p">:</span><span class="mi">3</span><span class="p">,</span><span class="nv">i</span><span class="p">,</span><span class="nv">j</span><span class="p">)</span> <span class="o">=</span> <span class="mf">0.</span><span class="nv">d0</span>
+                <span class="k">else</span>
+                    <span class="c">! Apply friction source term only if in shallower water</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="nv">q</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="nv">i</span><span class="p">,</span><span class="nv">j</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="nv">friction_depth</span><span class="p">)</span> <span class="k">then</span>
+<span class="k">                        do </span><span class="nv">nman</span> <span class="o">=</span> <span class="nv">num_manning</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span>
+                            <span class="k">if</span> <span class="p">(</span><span class="nv">aux</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="nv">i</span><span class="p">,</span><span class="nv">j</span><span class="p">)</span> <span class="ow">.lt.</span> <span class="nv">manning_break</span><span class="p">(</span><span class="nv">nman</span><span class="p">))</span> <span class="k">then</span>
+<span class="k">                                </span><span class="nv">coeff</span> <span class="o">=</span> <span class="nv">manning_coefficient</span><span class="p">(</span><span class="nv">nman</span><span class="p">)</span>
+                            <span class="k">endif</span>
+<span class="k">                        </span><span class="nv">enddo</span>
+                        <span class="c">! Calculate source term</span>
+                        <span class="nv">gamma</span> <span class="o">=</span> <span class="nb">sqrt</span><span class="p">(</span><span class="nv">q</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="nv">i</span><span class="p">,</span><span class="nv">j</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="nv">q</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="nv">i</span><span class="p">,</span><span class="nv">j</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="nv">g</span>     <span class="p">&amp;</span>   
+                              <span class="o">*</span> <span class="nv">coeff</span><span class="o">**</span><span class="mi">2</span> <span class="o">/</span> <span class="p">(</span><span class="nv">q</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="nv">i</span><span class="p">,</span><span class="nv">j</span><span class="p">)</span><span class="o">**</span><span class="p">(</span><span class="mf">7.</span><span class="nv">d0</span><span class="o">/</span><span class="mf">3.</span><span class="nv">d0</span><span class="p">))</span>
+                        <span class="nv">dgamma</span> <span class="o">=</span> <span class="mf">1.</span><span class="nv">d0</span> <span class="o">+</span> <span class="nv">dt</span> <span class="o">*</span> <span class="nv">gamma</span>
+                        <span class="nv">q</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="nv">i</span><span class="p">,</span> <span class="nv">j</span><span class="p">)</span> <span class="o">=</span> <span class="nv">q</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="nv">i</span><span class="p">,</span> <span class="nv">j</span><span class="p">)</span> <span class="o">/</span> <span class="nv">dgamma</span>
+                        <span class="nv">q</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="nv">i</span><span class="p">,</span> <span class="nv">j</span><span class="p">)</span> <span class="o">=</span> <span class="nv">q</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="nv">i</span><span class="p">,</span> <span class="nv">j</span><span class="p">)</span> <span class="o">/</span> <span class="nv">dgamma</span>
+                    <span class="k">endif</span>
+<span class="k">                endif</span>
+<span class="k">            </span><span class="nv">enddo</span>
+        <span class="nv">enddo</span>
+    <span class="k">endif</span>
+    <span class="c">! End of friction source term</span>
+
+    <span class="c">! Coriolis source term</span>
+    <span class="c">! TODO: May want to remove the internal calls to coriolis as this could </span>
+    <span class="c">!       lead to slow downs.</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nv">coriolis_forcing</span><span class="p">)</span> <span class="k">then</span>
+<span class="k">        do </span><span class="nv">j</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="nv">my</span>
+            <span class="nv">y</span> <span class="o">=</span> <span class="nv">ylower</span> <span class="o">+</span> <span class="p">(</span><span class="nv">j</span> <span class="o">-</span> <span class="mf">0.5</span><span class="nv">d0</span><span class="p">)</span> <span class="o">*</span> <span class="nv">dy</span>
+            <span class="nv">fdt</span> <span class="o">=</span> <span class="nv">coriolis</span><span class="p">(</span><span class="nv">y</span><span class="p">)</span> <span class="o">*</span> <span class="nv">dt</span> <span class="c">! Calculate f dependent on coordinate system</span>
+
+            <span class="c">! Calculate matrix components</span>
+            <span class="nv">a</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span> <span class="o">=</span> <span class="mf">1.</span><span class="nv">d0</span> <span class="o">-</span> <span class="mf">0.5</span><span class="nv">d0</span> <span class="o">*</span> <span class="nv">fdt</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="nv">fdt</span><span class="o">**</span><span class="mi">4</span> <span class="o">/</span> <span class="mi">2</span><span class="mf">4.</span><span class="nv">d0</span>
+            <span class="nv">a</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span> <span class="o">=</span>  <span class="nv">fdt</span> <span class="o">-</span> <span class="nv">fdt</span><span class="o">**</span><span class="mi">3</span> <span class="o">/</span> <span class="mf">6.</span><span class="nv">d0</span>
+            <span class="nv">a</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span> <span class="o">=</span> <span class="o">-</span><span class="nv">fdt</span> <span class="o">+</span> <span class="nv">fdt</span><span class="o">**</span><span class="mi">3</span> <span class="o">/</span> <span class="mf">6.</span><span class="nv">d0</span>
+            <span class="nv">a</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span> <span class="o">=</span> <span class="nv">a</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+
+            <span class="k">do </span><span class="nv">i</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="nv">mx</span>
+                <span class="nv">q</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="nv">i</span><span class="p">,</span><span class="nv">j</span><span class="p">)</span> <span class="o">=</span> <span class="nv">q</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="nv">i</span><span class="p">,</span> <span class="nv">j</span><span class="p">)</span> <span class="o">*</span> <span class="nv">a</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="nv">q</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="nv">i</span><span class="p">,</span> <span class="nv">j</span><span class="p">)</span> <span class="o">*</span> <span class="nv">a</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
+                <span class="nv">q</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="nv">i</span><span class="p">,</span><span class="nv">j</span><span class="p">)</span> <span class="o">=</span> <span class="nv">q</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="nv">i</span><span class="p">,</span> <span class="nv">j</span><span class="p">)</span> <span class="o">*</span> <span class="nv">a</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="nv">q</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="nv">i</span><span class="p">,</span> <span class="nv">j</span><span class="p">)</span> <span class="o">*</span> <span class="nv">a</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
+            <span class="nv">enddo</span>
+        <span class="nv">enddo</span>
+    <span class="k">endif</span>
+    <span class="c">! End of coriolis source term</span>
+
+<span class="k">end subroutine </span><span class="nv">src2</span>
+</pre></div>
+</td></tr></table></div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<p><a href="http://clawpack.org/">
+    <img class="logo" src= "_static/clawlogo.jpg" alt="Logo"/>
+</a>
+<h2>Version 5.0.0</h2>
+</p>
+  <h3><a href="contents.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">src default routines</a><ul>
+<li><a class="reference internal" href="#src-routine-in-geoclaw">src routine in GeoClaw</a></li>
+</ul>
+</li>
+</ul>
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="contents.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/src_defaults.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+  <div class="footer">
+    &copy; Copyright 2013, The Clawpack Development Team.
+    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
+  </div>
+  
+  </body>
+</html>
