@@ -243,35 +243,46 @@ with latitude when <cite>coordinate_system == 2</cite>).</p>
 53
 54
 55
-56</pre></div></td><td class="code"><div class="highlight"><pre><span class="c">! ============================================</span>
+56
+57
+58
+59</pre></div></td><td class="code"><div class="highlight"><pre><span class="c">! ============================================</span>
 <span class="k">subroutine </span><span class="nv">b4step2</span><span class="p">(</span><span class="nv">mbc</span><span class="p">,</span><span class="nv">mx</span><span class="p">,</span><span class="nv">my</span><span class="p">,</span><span class="nv">meqn</span><span class="p">,</span><span class="nv">q</span><span class="p">,</span><span class="nv">xlower</span><span class="p">,</span><span class="nv">ylower</span><span class="p">,</span><span class="nv">dx</span><span class="p">,</span><span class="nv">dy</span><span class="p">,</span><span class="nv">t</span><span class="p">,</span><span class="nv">dt</span><span class="p">,</span><span class="nv">maux</span><span class="p">,</span><span class="nv">aux</span><span class="p">)</span>
 <span class="c">! ============================================</span>
-<span class="c">! </span>
+<span class="c">!</span>
 <span class="c">! # called before each call to step</span>
 <span class="c">! # use to set time-dependent aux arrays or perform other tasks.</span>
-<span class="c">! </span>
+<span class="c">!</span>
 <span class="c">! This particular routine sets negative values of q(1,i,j) to zero,</span>
 <span class="c">! as well as the corresponding q(m,i,j) for m=1,meqn.</span>
 <span class="c">! This is for problems where q(1,i,j) is a depth.</span>
 <span class="c">! This should occur only because of rounding error.</span>
-<span class="c">! </span>
+<span class="c">!</span>
 <span class="c">! Also calls movetopo if topography might be moving.</span>
 
     <span class="k">use </span><span class="nv">geoclaw_module</span><span class="p">,</span> <span class="nv">only</span><span class="p">:</span> <span class="nv">dry_tolerance</span>
     <span class="k">use </span><span class="nv">geoclaw_module</span><span class="p">,</span> <span class="nv">only</span><span class="p">:</span> <span class="nv">g</span> <span class="o">=&gt;</span> <span class="nv">grav</span>
-    <span class="k">use </span><span class="nv">topo_module</span>
-    <span class="k">use </span><span class="nv">dtopo_module</span>
-    
+    <span class="k">use </span><span class="nv">topo_module</span><span class="p">,</span> <span class="nv">only</span><span class="p">:</span> <span class="nv">num_dtopo</span><span class="p">,</span><span class="nv">topotime</span>
+    <span class="k">use </span><span class="nv">topo_module</span><span class="p">,</span> <span class="nv">only</span><span class="p">:</span> <span class="nv">aux_finalized</span>
+    <span class="k">use </span><span class="nv">topo_module</span><span class="p">,</span> <span class="nv">only</span><span class="p">:</span> <span class="nv">xlowdtopo</span><span class="p">,</span><span class="nv">xhidtopo</span><span class="p">,</span><span class="nv">ylowdtopo</span><span class="p">,</span><span class="nv">yhidtopo</span>
+
+    <span class="k">use </span><span class="nv">amr_module</span><span class="p">,</span> <span class="nv">only</span><span class="p">:</span> <span class="nv">xlowdomain</span> <span class="o">=&gt;</span> <span class="nv">xlower</span>
+    <span class="k">use </span><span class="nv">amr_module</span><span class="p">,</span> <span class="nv">only</span><span class="p">:</span> <span class="nv">ylowdomain</span> <span class="o">=&gt;</span> <span class="nv">ylower</span>
+    <span class="k">use </span><span class="nv">amr_module</span><span class="p">,</span> <span class="nv">only</span><span class="p">:</span> <span class="nv">xhidomain</span> <span class="o">=&gt;</span> <span class="nv">xupper</span>
+    <span class="k">use </span><span class="nv">amr_module</span><span class="p">,</span> <span class="nv">only</span><span class="p">:</span> <span class="nv">yhidomain</span> <span class="o">=&gt;</span> <span class="nv">yupper</span>
+    <span class="k">use </span><span class="nv">amr_module</span><span class="p">,</span> <span class="nv">only</span><span class="p">:</span> <span class="nv">xperdom</span><span class="p">,</span><span class="nv">yperdom</span><span class="p">,</span><span class="nv">spheredom</span>
+
     <span class="k">implicit none</span>
-    
+
     <span class="c">! Subroutine arguments</span>
-    <span class="kt">integer</span><span class="p">,</span> <span class="k">intent</span><span class="p">(</span><span class="nv">in</span><span class="p">)</span> <span class="kd">::</span> <span class="nv">mbc</span><span class="p">,</span><span class="nv">mx</span><span class="p">,</span><span class="nv">my</span><span class="p">,</span><span class="nv">meqn</span><span class="p">,</span><span class="nv">maux</span>
-    <span class="kt">real</span><span class="p">(</span><span class="nb">kind</span><span class="o">=</span><span class="mi">8</span><span class="p">),</span> <span class="k">intent</span><span class="p">(</span><span class="nv">in</span><span class="p">)</span> <span class="kd">::</span> <span class="nv">xlower</span><span class="p">,</span> <span class="nv">ylower</span><span class="p">,</span> <span class="nv">dx</span><span class="p">,</span> <span class="nv">dy</span><span class="p">,</span> <span class="nv">t</span><span class="p">,</span> <span class="nv">dt</span>
+    <span class="kt">integer</span><span class="p">,</span> <span class="k">intent</span><span class="p">(</span><span class="nv">in</span><span class="p">)</span> <span class="kd">::</span> <span class="nv">meqn</span>
+    <span class="kt">integer</span><span class="p">,</span> <span class="k">intent</span><span class="p">(</span><span class="nv">inout</span><span class="p">)</span> <span class="kd">::</span> <span class="nv">mbc</span><span class="p">,</span><span class="nv">mx</span><span class="p">,</span><span class="nv">my</span><span class="p">,</span><span class="nv">maux</span>
+    <span class="kt">real</span><span class="p">(</span><span class="nb">kind</span><span class="o">=</span><span class="mi">8</span><span class="p">),</span> <span class="k">intent</span><span class="p">(</span><span class="nv">inout</span><span class="p">)</span> <span class="kd">::</span> <span class="nv">xlower</span><span class="p">,</span> <span class="nv">ylower</span><span class="p">,</span> <span class="nv">dx</span><span class="p">,</span> <span class="nv">dy</span><span class="p">,</span> <span class="nv">t</span><span class="p">,</span> <span class="nv">dt</span>
     <span class="kt">real</span><span class="p">(</span><span class="nb">kind</span><span class="o">=</span><span class="mi">8</span><span class="p">),</span> <span class="k">intent</span><span class="p">(</span><span class="nv">inout</span><span class="p">)</span> <span class="kd">::</span> <span class="nv">q</span><span class="p">(</span><span class="nv">meqn</span><span class="p">,</span><span class="mi">1</span><span class="o">-</span><span class="nv">mbc</span><span class="p">:</span><span class="nv">mx</span><span class="o">+</span><span class="nv">mbc</span><span class="p">,</span><span class="mi">1</span><span class="o">-</span><span class="nv">mbc</span><span class="p">:</span><span class="nv">my</span><span class="o">+</span><span class="nv">mbc</span><span class="p">)</span>
     <span class="kt">real</span><span class="p">(</span><span class="nb">kind</span><span class="o">=</span><span class="mi">8</span><span class="p">),</span> <span class="k">intent</span><span class="p">(</span><span class="nv">inout</span><span class="p">)</span> <span class="kd">::</span> <span class="nv">aux</span><span class="p">(</span><span class="nv">maux</span><span class="p">,</span><span class="mi">1</span><span class="o">-</span><span class="nv">mbc</span><span class="p">:</span><span class="nv">mx</span><span class="o">+</span><span class="nv">mbc</span><span class="p">,</span><span class="mi">1</span><span class="o">-</span><span class="nv">mbc</span><span class="p">:</span><span class="nv">my</span><span class="o">+</span><span class="nv">mbc</span><span class="p">)</span>
 
     <span class="c">! Local storage</span>
-    <span class="kt">integer</span> <span class="kd">::</span> <span class="nb">index</span><span class="p">,</span><span class="nv">i</span><span class="p">,</span><span class="nv">j</span><span class="p">,</span><span class="nv">k</span>
+    <span class="kt">integer</span> <span class="kd">::</span> <span class="nb">index</span><span class="p">,</span><span class="nv">i</span><span class="p">,</span><span class="nv">j</span><span class="p">,</span><span class="nv">k</span><span class="p">,</span><span class="nv">dummy</span>
     <span class="kt">real</span><span class="p">(</span><span class="nb">kind</span><span class="o">=</span><span class="mi">8</span><span class="p">)</span> <span class="kd">::</span> <span class="nv">h</span><span class="p">,</span><span class="nv">u</span><span class="p">,</span><span class="nv">v</span>
 
     <span class="c">! Check for NaNs in the solution</span>
@@ -285,18 +296,13 @@ with latitude when <cite>coordinate_system == 2</cite>).</p>
         <span class="nv">q</span><span class="p">(</span><span class="mi">2</span><span class="p">:</span><span class="mi">3</span><span class="p">,</span><span class="nv">i</span><span class="p">,</span><span class="nv">j</span><span class="p">)</span> <span class="o">=</span> <span class="mf">0.</span><span class="nv">d0</span>
     <span class="k">end forall</span>
 
-    <span class="c">! Move the topography if needed</span>
-    <span class="c">! write(26,*) &#39;B4STEP2: t, num_dtopo: &#39;, t,num_dtopo</span>
 
-    <span class="k">do </span><span class="nv">i</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="nv">num_dtopo</span>
-        <span class="k">call </span><span class="nv">movetopo</span><span class="p">(</span><span class="nv">mbc</span><span class="p">,</span><span class="nv">mx</span><span class="p">,</span><span class="nv">my</span><span class="p">,</span>                                  <span class="p">&amp;</span>
-                      <span class="nv">xlower</span><span class="p">,</span><span class="nv">ylower</span><span class="p">,</span><span class="nv">dx</span><span class="p">,</span><span class="nv">dy</span><span class="p">,</span><span class="nv">t</span><span class="p">,</span><span class="nv">dt</span><span class="p">,</span><span class="nv">maux</span><span class="p">,</span><span class="nv">aux</span><span class="p">,</span>                      <span class="p">&amp;</span>
-                      <span class="nv">dtopowork</span><span class="p">(</span><span class="nv">i0dtopo</span><span class="p">(</span><span class="nv">i</span><span class="p">):</span><span class="nv">i0dtopo</span><span class="p">(</span><span class="nv">i</span><span class="p">)</span><span class="o">+</span><span class="nv">mdtopo</span><span class="p">(</span><span class="nv">i</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span>           <span class="p">&amp;</span>
-                      <span class="nv">xlowdtopo</span><span class="p">(</span><span class="nv">i</span><span class="p">),</span><span class="nv">ylowdtopo</span><span class="p">(</span><span class="nv">i</span><span class="p">),</span><span class="nv">xhidtopo</span><span class="p">(</span><span class="nv">i</span><span class="p">),</span><span class="nv">yhidtopo</span><span class="p">(</span><span class="nv">i</span><span class="p">),</span>      <span class="p">&amp;</span>
-                      <span class="nv">t0dtopo</span><span class="p">(</span><span class="nv">i</span><span class="p">),</span><span class="nv">tfdtopo</span><span class="p">(</span><span class="nv">i</span><span class="p">),</span><span class="nv">dxdtopo</span><span class="p">(</span><span class="nv">i</span><span class="p">),</span><span class="nv">dydtopo</span><span class="p">(</span><span class="nv">i</span><span class="p">),</span><span class="nv">dtdtopo</span><span class="p">(</span><span class="nv">i</span><span class="p">),</span> <span class="p">&amp;</span>
-                      <span class="nv">mxdtopo</span><span class="p">(</span><span class="nv">i</span><span class="p">),</span><span class="nv">mydtopo</span><span class="p">(</span><span class="nv">i</span><span class="p">),</span><span class="nv">mtdtopo</span><span class="p">(</span><span class="nv">i</span><span class="p">),</span><span class="nv">mdtopo</span><span class="p">(</span><span class="nv">i</span><span class="p">),</span>             <span class="p">&amp;</span>
-                      <span class="nv">minleveldtopo</span><span class="p">(</span><span class="nv">i</span><span class="p">),</span><span class="nv">maxleveldtopo</span><span class="p">(</span><span class="nv">i</span><span class="p">),</span><span class="nv">topoaltered</span><span class="p">(</span><span class="nv">i</span><span class="p">))</span>
-    <span class="nv">enddo</span>
+<span class="k">    if</span> <span class="p">(</span><span class="nv">aux_finalized</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">)</span> <span class="k">then</span>
+        <span class="c">! topo arrays might have been updated by dtopo more recently than</span>
+        <span class="c">! aux arrays were set unless at least 1 step taken on all levels</span>
+        <span class="k">call </span><span class="nv">setaux</span><span class="p">(</span><span class="nv">mbc</span><span class="p">,</span><span class="nv">mx</span><span class="p">,</span><span class="nv">my</span><span class="p">,</span><span class="nv">xlower</span><span class="p">,</span><span class="nv">ylower</span><span class="p">,</span><span class="nv">dx</span><span class="p">,</span><span class="nv">dy</span><span class="p">,</span><span class="nv">maux</span><span class="p">,</span><span class="nv">aux</span><span class="p">)</span>
+        <span class="k">endif</span>
+
 
 <span class="k">end subroutine </span><span class="nv">b4step2</span>
 </pre></div>
