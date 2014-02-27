@@ -7,7 +7,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Release 5.0.1 &mdash; Clawpack 5.0.0 documentation</title>
+    <title>Release 5.1.0 &mdash; Clawpack 5.1.0 documentation</title>
     
     <link rel="stylesheet" href="_static/flasky.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '5.0.0',
+        VERSION:     '5.1.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -29,7 +29,7 @@
     <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="shortcut icon" href="_static/clawicon.ico"/>
     <link rel="author" title="About these documents" href="about.html" />
-    <link rel="top" title="Clawpack 5.0.0 documentation" href="index.html" /> 
+    <link rel="top" title="Clawpack 5.1.0 documentation" href="index.html" /> 
   </head>
   <body>
 <div id="main-wrapper" class="sphinx">
@@ -72,7 +72,7 @@
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="contents.html">Clawpack 5.0.0 documentation</a> &raquo;</li> 
+        <li><a href="contents.html">Clawpack 5.1.0 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -81,10 +81,10 @@
         <div class="bodywrapper">
           <div class="body">
             
-  <div class="section" id="release-5-0-1">
-<span id="id1"></span><h1>Release 5.0.1<a class="headerlink" href="#release-5-0-1" title="Permalink to this headline">¶</a></h1>
-<p>Clawpack 5.0.1rc-alpha release candidate posted on Feb 21, 2014.</p>
-<p>Clawpack 5.0.1 was released on ??.  See <a class="reference internal" href="installing.html#installing"><em>Installation instructions</em></a>.</p>
+  <div class="section" id="release-5-1-0">
+<span id="id1"></span><h1>Release 5.1.0<a class="headerlink" href="#release-5-1-0" title="Permalink to this headline">¶</a></h1>
+<p>Clawpack 5.1.0rc-alpha release candidate posted on Feb</p>
+<p>Clawpack 5.1.0 was released on ??.  See <a class="reference internal" href="installing.html#installing"><em>Installation instructions</em></a>.</p>
 <div class="section" id="changes-to-classic">
 <h2>Changes to classic<a class="headerlink" href="#changes-to-classic" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
@@ -126,8 +126,60 @@ regridding routines.</li>
 </div>
 <div class="section" id="changes-to-geoclaw">
 <h2>Changes to geoclaw<a class="headerlink" href="#changes-to-geoclaw" title="Permalink to this headline">¶</a></h2>
-<ul class="simple">
-<li>Change gauge output to avoid underflow in printing.</li>
+<ul>
+<li><p class="first">Changed gauge output to avoid underflow in printing.</p>
+</li>
+<li><p class="first">Major change to the way moving topography (dtopo) is handled to correct
+problems observed with earlier versions of GeoClaw in which the moving
+topography was not always tracked properly.  A number of other
+improvements were also made to the way topography more generally is
+handled.  Some improvements:</p>
+<blockquote>
+<div><ul class="simple">
+<li>Multiple dtopo files can be specified with overlapping time ranges and
+spatial extent.</li>
+<li>Each dtopo file now results in the automatic creation of a topo array
+at the same resolution as the dtopo array that is updated before each
+time step so that it contains the proper topography plus dtopo.
+These arrays remain after the dtopo stops moving and contain the final
+topography at the final time.  This avoids issues where dtopo might
+have been specified at much finer resolution than the topo files. (In
+earlier versions, the topo arrays were updated to incorporate the
+final topo+dtopo but only stored at the resolution of the original
+topo files.)</li>
+<li>The routine for integrating the bilinear function defined by all
+topo arrays over a grid cell to compute <cite>aux(1,i,j)</cite>  has been improved
+by making it a recursive function that can handle an arbitrary number
+of nested topo grids (including those created automatically from dtopo
+grids).  Previous versions died if there were more than 4 nested topo
+grids.</li>
+</ul>
+</div></blockquote>
+</li>
+<li><p class="first">Several changes to the <cite>Makefile</cite> for a GeoClaw run are required because
+of refactoring of this code.  You must:</p>
+<blockquote>
+<div><ul>
+<li><p class="first">Remove the line</p>
+<div class="highlight-python"><pre>$(GEOLIB)/dtopo_module.f90 \</pre>
+</div>
+</li>
+<li><p class="first">Replace the lines</p>
+<div class="highlight-python"><pre>$(GEOLIB)/movetopo.f \
+$(GEOLIB)/cellgridintegrate.f \</pre>
+</div>
+<p>by</p>
+<div class="highlight-python"><pre>$(GEOLIB)/topo_update.f90 \
+$(GEOLIB)/cellgridintegrate2.f \</pre>
+</div>
+<p>For an example, see the changes made to
+<cite>$CLAW/geoclaw/examples/tsunami/chile2010/Makefile</cite>,</p>
+</li>
+</ul>
+</div></blockquote>
+<p>As always, you should do <cite>make new</cite> in your application directory
+after updating the version.</p>
+</li>
 </ul>
 <p>See <a class="reference external" href="https://github.com/clawpack/geoclaw/compare/eefc8e4ff...master">geoclaw diffs</a></p>
 </div>
@@ -151,11 +203,11 @@ regridding routines.</li>
 <p><a href="http://clawpack.org/">
     <img class="logo" src= "_static/clawlogo.jpg" alt="Logo"/>
 </a>
-<h2>Version 5.0.0</h2>
+<h2>Version 5.1.0</h2>
 </p>
   <h3><a href="contents.html">Table Of Contents</a></h3>
   <ul>
-<li><a class="reference internal" href="#">Release 5.0.1</a><ul>
+<li><a class="reference internal" href="#">Release 5.1.0</a><ul>
 <li><a class="reference internal" href="#changes-to-classic">Changes to classic</a></li>
 <li><a class="reference internal" href="#changes-to-clawutil">Changes to clawutil</a></li>
 <li><a class="reference internal" href="#changes-to-visclaw">Changes to visclaw</a></li>
@@ -173,7 +225,7 @@ regridding routines.</li>
 </ul>
   <h3>This Page</h3>
   <ul class="this-page-menu">
-    <li><a href="_sources/release_5_0_1.txt"
+    <li><a href="_sources/release_5_1_0.txt"
            rel="nofollow">Show Source</a></li>
   </ul>
 <div id="searchbox" style="display: none">
