@@ -83,7 +83,7 @@
             
   <div class="section" id="release-5-1-0">
 <span id="id1"></span><h1>Release 5.1.0<a class="headerlink" href="#release-5-1-0" title="Permalink to this headline">¶</a></h1>
-<p>Clawpack 5.1.0rc-alpha release candidate posted on Feb 26, 2014</p>
+<p>Clawpack 5.1.0rc-alpha release candidate posted on Feb</p>
 <p>Clawpack 5.1.0 was released on ??.  See <a class="reference internal" href="installing.html#installing"><em>Installation instructions</em></a>.</p>
 <div class="section" id="changes-to-classic">
 <h2>Changes to classic<a class="headerlink" href="#changes-to-classic" title="Permalink to this headline">¶</a></h2>
@@ -179,6 +179,17 @@ $(GEOLIB)/cellgridintegrate2.f \</pre>
 </div></blockquote>
 <p>As always, you should do <cite>make new</cite> in your application directory
 after updating the version.</p>
+</li>
+<li><p class="first">A new parameter has been added that can be set in <cite>setrun.py</cite>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">rundata</span><span class="o">.</span><span class="n">dtopo_data</span><span class="o">.</span><span class="n">dt_max_dtopo</span> <span class="o">=</span> <span class="mf">0.2</span>
+</pre></div>
+</div>
+<p>for example will specify that the maximum time step allowed on the
+coarsest level is 0.2 seconds during the time when the topography is
+moving.  This avoids issues where the time step selected by the CFL
+condition is much larger than the time scale over which the topography
+changes.  You must also set <cite>rundata.clawdata.dt_initial</cite> to the same
+value (or smaller) to insure that the first time step is sufficiently small.</p>
 </li>
 </ul>
 <p>See <a class="reference external" href="https://github.com/clawpack/geoclaw/compare/eefc8e4ff...master">geoclaw diffs</a></p>
