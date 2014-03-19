@@ -1,5 +1,3 @@
-.. For a more readable version with a browsable list of files,
-.. execute "make .htmls" and open README.html in a browser
 
 .. _fvmbook_chap3/acousimple:
 
