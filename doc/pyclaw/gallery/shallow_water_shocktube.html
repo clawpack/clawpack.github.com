@@ -7,7 +7,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Shallow water flow &mdash; Clawpack 5.1.0 documentation</title>
+    <title>1-dimensional shallow water equation &mdash; Clawpack 5.1.0 documentation</title>
     
     <link rel="stylesheet" href="../../_static/flasky.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -31,8 +31,8 @@
     <link rel="author" title="About these documents" href="../../about.html" />
     <link rel="top" title="Clawpack 5.1.0 documentation" href="../../index.html" />
     <link rel="up" title="Working with PyClaw’s built-in examples" href="../examples.html" />
-    <link rel="next" title="Woodward-Colella blast wave problem" href="woodward_colella_blast.html" />
-    <link rel="prev" title="Burgers’ equation" href="burgers_1d.html" /> 
+    <link rel="next" title="1-dimensional Euler equations" href="woodward_colella_blast.html" />
+    <link rel="prev" title="1-dimensional Burgers’ equation" href="burgers_1d.html" /> 
   </head>
   <body>
 <div id="main-wrapper" class="sphinx">
@@ -76,10 +76,10 @@
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="woodward_colella_blast.html" title="Woodward-Colella blast wave problem"
+          <a href="woodward_colella_blast.html" title="1-dimensional Euler equations"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="burgers_1d.html" title="Burgers’ equation"
+          <a href="burgers_1d.html" title="1-dimensional Burgers’ equation"
              accesskey="P">previous</a> |</li>
         <li><a href="../../contents.html">Clawpack 5.1.0 documentation</a> &raquo;</li>
           <li><a href="../index.html" >Pyclaw</a> &raquo;</li>
@@ -93,8 +93,10 @@
         <div class="bodywrapper">
           <div class="body">
             
-  <span class="target" id="module-pyclaw.examples.shallow_1d.shallow_water_shocktube"><span id="shallow-water-shocktube"></span></span><div class="section" id="shallow-water-flow">
-<h1>Shallow water flow<a class="headerlink" href="#shallow-water-flow" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="module-pyclaw.examples.shallow_1d.shallow_water_shocktube">
+<span id="dimensional-shallow-water-equation"></span><span id="shallow-water-shocktube"></span><h1>1-dimensional shallow water equation<a class="headerlink" href="#module-pyclaw.examples.shallow_1d.shallow_water_shocktube" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="shallow-water-flow">
+<h2>Shallow water flow<a class="headerlink" href="#shallow-water-flow" title="Permalink to this headline">¶</a></h2>
 <p>Solve the one-dimensional shallow water equations:</p>
 <div class="math">
 \[\begin{split}h_t + (hu)_x + (hv)_y &amp; = 0 \\
@@ -102,6 +104,14 @@
 (hv)_t + (huv)_x + (hv^2 + \frac{1}{2}gh^2)_y &amp; = 0.\end{split}\]</div>
 <p>Here h is the depth, (u,v) is the velocity, and g is the gravitational constant.</p>
 </div>
+<div class="section" id="output">
+<h2>Output:<a class="headerlink" href="#output" title="Permalink to this headline">¶</a></h2>
+<a class="reference external image-reference" href="../../_static/pyclaw/examples/shallow_1d/_plots/frame0000fig0.html"><img alt="../../_images/pyclaw_examples_shallow_1d__plots_frame0000fig0.png" src="../../_images/pyclaw_examples_shallow_1d__plots_frame0000fig0.png" style="width: 5cm;" /></a>
+<a class="reference external image-reference" href="../../_static/pyclaw/examples/shallow_1d/_plots/frame0003fig0.html"><img alt="../../_images/pyclaw_examples_shallow_1d__plots_frame0003fig0.png" src="../../_images/pyclaw_examples_shallow_1d__plots_frame0003fig0.png" style="width: 5cm;" /></a>
+<a class="reference external image-reference" href="../../_static/pyclaw/examples/shallow_1d/_plots/frame0006fig0.html"><img alt="../../_images/pyclaw_examples_shallow_1d__plots_frame0006fig0.png" src="../../_images/pyclaw_examples_shallow_1d__plots_frame0006fig0.png" style="width: 5cm;" /></a>
+</div>
+<div class="section" id="source">
+<h2>Source:<a class="headerlink" href="#source" title="Permalink to this headline">¶</a></h2>
 <div class="highlight-python"><div class="highlight"><pre><span class="c">#!/usr/bin/env python</span>
 <span class="c"># encoding: utf-8</span>
 
@@ -133,7 +143,7 @@
         <span class="kn">from</span> <span class="nn">clawpack</span> <span class="kn">import</span> <span class="n">pyclaw</span>
 
     <span class="k">if</span> <span class="n">kernel_language</span> <span class="o">==</span><span class="s">&#39;Python&#39;</span><span class="p">:</span>
-        <span class="n">rs</span> <span class="o">=</span> <span class="n">riemann</span><span class="o">.</span><span class="n">shallow_1D_py</span><span class="o">.</span><span class="n">shallow_1D</span>
+        <span class="n">rs</span> <span class="o">=</span> <span class="n">riemann</span><span class="o">.</span><span class="n">shallow_1D_py</span><span class="o">.</span><span class="n">shallow_roe_1D</span>
     <span class="k">elif</span> <span class="n">kernel_language</span> <span class="o">==</span><span class="s">&#39;Fortran&#39;</span><span class="p">:</span>
         <span class="n">rs</span> <span class="o">=</span> <span class="n">riemann</span><span class="o">.</span><span class="n">shallow_roe_with_efix_1D</span>
  
@@ -164,6 +174,7 @@
 
     <span class="c"># Parameters</span>
     <span class="n">state</span><span class="o">.</span><span class="n">problem_data</span><span class="p">[</span><span class="s">&#39;grav&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.0</span>
+    <span class="n">state</span><span class="o">.</span><span class="n">problem_data</span><span class="p">[</span><span class="s">&#39;efix&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">False</span>
     
     <span class="n">xc</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">centers</span>
 
@@ -253,6 +264,8 @@
     <span class="n">output</span> <span class="o">=</span> <span class="n">run_app_from_main</span><span class="p">(</span><span class="n">setup</span><span class="p">,</span><span class="n">setplot</span><span class="p">)</span>
 </pre></div>
 </div>
+</div>
+</div>
 
 
           </div>
@@ -264,14 +277,24 @@
     <img class="logo" src= "_static/clawlogo.jpg" alt="Logo"/>
 </a>
 <h2>Version 5.1.0</h2>
-</p><h3>Related Topics</h3>
+</p>
+  <h3><a href="../../contents.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">1-dimensional shallow water equation</a><ul>
+<li><a class="reference internal" href="#shallow-water-flow">Shallow water flow</a></li>
+<li><a class="reference internal" href="#output">Output:</a></li>
+<li><a class="reference internal" href="#source">Source:</a></li>
+</ul>
+</li>
+</ul>
+<h3>Related Topics</h3>
 <ul>
   <li><a href="../../contents.html">Documentation overview</a><ul>
   <li><a href="../index.html">Pyclaw</a><ul>
   <li><a href="../basics.html">PyClaw Basics</a><ul>
   <li><a href="../examples.html">Working with PyClaw&#8217;s built-in examples</a><ul>
-      <li>Previous: <a href="burgers_1d.html" title="previous chapter">Burgers&#8217; equation</a></li>
-      <li>Next: <a href="woodward_colella_blast.html" title="next chapter">Woodward-Colella blast wave problem</a></li>
+      <li>Previous: <a href="burgers_1d.html" title="previous chapter">1-dimensional Burgers&#8217; equation</a></li>
+      <li>Next: <a href="woodward_colella_blast.html" title="next chapter">1-dimensional Euler equations</a></li>
   </ul></li>
   </ul></li>
   </ul></li>
