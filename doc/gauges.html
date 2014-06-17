@@ -141,11 +141,32 @@ Internally the finest level available at each gauge is used, with bilinear
 interpolation to the gauge locations from the 4 nearest cell centers.</p>
 <p>If you wish to change what is output at these points, you should copy the library
 routine <cite>dumpgauge.f</cite> to your own directory and modify it appropriately.</p>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">When doing a restart, previous gauge output is deleted unless
+you are careful to preserve it.  See <a class="reference internal" href="restart.html#restart-output"><em>Output files after a restart</em></a>.</p>
+</div>
 </div>
 <div class="section" id="plotting-tools">
 <h2>Plotting tools<a class="headerlink" href="#plotting-tools" title="Permalink to this headline">¶</a></h2>
 <p>Several Python plotting tools are available to plot the gauge data, so you do not
-have to parse the file <cite>fort.gauge</cite> yourself.  In the <cite>setplot</cite> Python script you
+have to parse the file <cite>fort.gauge</cite> yourself.</p>
+<p>If you want to read in the data for a particular gauge to manipulate it
+yourself, you can do, for example:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">clawpack.visclaw.data</span> <span class="kn">import</span> <span class="n">ClawPlotData</span>
+<span class="n">plotdata</span> <span class="o">=</span> <span class="n">ClawPlotData</span><span class="p">()</span>
+<span class="n">plotdata</span><span class="o">.</span><span class="n">outdir</span> <span class="o">=</span> <span class="s">&#39;_output&#39;</span>   <span class="c"># set to the proper output directory</span>
+<span class="n">gaugeno</span> <span class="o">=</span> <span class="mi">1</span>                   <span class="c"># gauge number to examine</span>
+<span class="n">g</span> <span class="o">=</span> <span class="n">plotdata</span><span class="o">.</span><span class="n">getgauge</span><span class="p">(</span><span class="n">gaugeno</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Then:</p>
+<ul class="simple">
+<li><cite>g.t</cite> is the array of times,</li>
+<li><cite>g.q</cite> is the array of values recorded at the gauges (<cite>g.q[m,n]</cite> is the <cite>m`th
+variable at time `t[n]</cite>)</li>
+</ul>
+<p>In the <cite>setplot</cite> Python script you
 can specify plots that are to be done for each gauge, similar to the manner in
 which you can specify plots that are to be done for each time frame.  For example,
 to plot the component q[0] at each gauge, include in <cite>setplot</cite> lines of this form:</p>
@@ -220,11 +241,6 @@ gauge.</p>
 <p>If you want more control over this plotting you can of course copy the function
 <cite>plot_gauge_locations</cite> from <cite>pyclaw.plotters.gaugetools.py</cite>
 to your setplot.py file and modify at will.</p>
-<div class="admonition warning">
-<p class="first admonition-title">Warning</p>
-<p class="last">When doing a restart, previous gauge output is deleted unless
-you are careful to preserve it.  See <a class="reference internal" href="restart.html#restart-output"><em>Output files after a restart</em></a>.</p>
-</div>
 </div>
 <div class="section" id="examples">
 <h2>Examples<a class="headerlink" href="#examples" title="Permalink to this headline">¶</a></h2>

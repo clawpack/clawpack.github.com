@@ -246,7 +246,8 @@ with latitude when <cite>coordinate_system == 2</cite>).</p>
 56
 57
 58
-59</pre></div></td><td class="code"><div class="highlight"><pre><span class="c">! ============================================</span>
+59
+60</pre></div></td><td class="code"><div class="highlight"><pre><span class="c">! ============================================</span>
 <span class="k">subroutine </span><span class="nv">b4step2</span><span class="p">(</span><span class="nv">mbc</span><span class="p">,</span><span class="nv">mx</span><span class="p">,</span><span class="nv">my</span><span class="p">,</span><span class="nv">meqn</span><span class="p">,</span><span class="nv">q</span><span class="p">,</span><span class="nv">xlower</span><span class="p">,</span><span class="nv">ylower</span><span class="p">,</span><span class="nv">dx</span><span class="p">,</span><span class="nv">dy</span><span class="p">,</span><span class="nv">t</span><span class="p">,</span><span class="nv">dt</span><span class="p">,</span><span class="nv">maux</span><span class="p">,</span><span class="nv">aux</span><span class="p">)</span>
 <span class="c">! ============================================</span>
 <span class="c">!</span>
@@ -270,7 +271,7 @@ with latitude when <cite>coordinate_system == 2</cite>).</p>
     <span class="k">use </span><span class="nv">amr_module</span><span class="p">,</span> <span class="nv">only</span><span class="p">:</span> <span class="nv">ylowdomain</span> <span class="o">=&gt;</span> <span class="nv">ylower</span>
     <span class="k">use </span><span class="nv">amr_module</span><span class="p">,</span> <span class="nv">only</span><span class="p">:</span> <span class="nv">xhidomain</span> <span class="o">=&gt;</span> <span class="nv">xupper</span>
     <span class="k">use </span><span class="nv">amr_module</span><span class="p">,</span> <span class="nv">only</span><span class="p">:</span> <span class="nv">yhidomain</span> <span class="o">=&gt;</span> <span class="nv">yupper</span>
-    <span class="k">use </span><span class="nv">amr_module</span><span class="p">,</span> <span class="nv">only</span><span class="p">:</span> <span class="nv">xperdom</span><span class="p">,</span><span class="nv">yperdom</span><span class="p">,</span><span class="nv">spheredom</span>
+    <span class="k">use </span><span class="nv">amr_module</span><span class="p">,</span> <span class="nv">only</span><span class="p">:</span> <span class="nv">xperdom</span><span class="p">,</span><span class="nv">yperdom</span><span class="p">,</span><span class="nv">spheredom</span><span class="p">,</span><span class="nv">NEEDS_TO_BE_SET</span>
 
     <span class="k">implicit none</span>
 
@@ -300,6 +301,7 @@ with latitude when <cite>coordinate_system == 2</cite>).</p>
 <span class="k">    if</span> <span class="p">(</span><span class="nv">aux_finalized</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">)</span> <span class="k">then</span>
         <span class="c">! topo arrays might have been updated by dtopo more recently than</span>
         <span class="c">! aux arrays were set unless at least 1 step taken on all levels</span>
+        <span class="nv">aux</span><span class="p">(</span><span class="mi">1</span><span class="p">,:,:)</span> <span class="o">=</span> <span class="nv">NEEDS_TO_BE_SET</span> <span class="c">! new system checks this val before setting</span>
         <span class="k">call </span><span class="nv">setaux</span><span class="p">(</span><span class="nv">mbc</span><span class="p">,</span><span class="nv">mx</span><span class="p">,</span><span class="nv">my</span><span class="p">,</span><span class="nv">xlower</span><span class="p">,</span><span class="nv">ylower</span><span class="p">,</span><span class="nv">dx</span><span class="p">,</span><span class="nv">dy</span><span class="p">,</span><span class="nv">maux</span><span class="p">,</span><span class="nv">aux</span><span class="p">)</span>
         <span class="k">endif</span>
 

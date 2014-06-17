@@ -7,7 +7,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>2-dimensional p-system &mdash; Clawpack 5.1.0 documentation</title>
+    <title>&lt;no title&gt; &mdash; Clawpack 5.1.0 documentation</title>
     
     <link rel="stylesheet" href="../../_static/flasky.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -31,8 +31,8 @@
     <link rel="author" title="About these documents" href="../../about.html" />
     <link rel="top" title="Clawpack 5.1.0 documentation" href="../../index.html" />
     <link rel="up" title="Working with PyClaw’s built-in examples" href="../examples.html" />
-    <link rel="next" title="2-dimensional shallow water on the sphere" href="Rossby_wave.html" />
-    <link rel="prev" title="2-dimensional Euler equations" href="shock_bubble_interaction.html" /> 
+    <link rel="next" title="&lt;no title&gt;" href="Rossby_wave.html" />
+    <link rel="prev" title="&lt;no title&gt;" href="shock_bubble_interaction.html" /> 
   </head>
   <body>
 <div id="main-wrapper" class="sphinx">
@@ -76,10 +76,10 @@
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="Rossby_wave.html" title="2-dimensional shallow water on the sphere"
+          <a href="Rossby_wave.html" title="&lt;no title&gt;"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="shock_bubble_interaction.html" title="2-dimensional Euler equations"
+          <a href="shock_bubble_interaction.html" title="&lt;no title&gt;"
              accesskey="P">previous</a> |</li>
         <li><a href="../../contents.html">Clawpack 5.1.0 documentation</a> &raquo;</li>
           <li><a href="../index.html" >Pyclaw</a> &raquo;</li>
@@ -93,31 +93,9 @@
         <div class="bodywrapper">
           <div class="body">
             
-  <div class="section" id="module-pyclaw.examples.psystem_2d.psystem_2d">
-<span id="dimensional-p-system"></span><span id="psystem-2d"></span><h1>2-dimensional p-system<a class="headerlink" href="#module-pyclaw.examples.psystem_2d.psystem_2d" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="two-dimensional-p-system">
-<h2>Two-dimensional p-system<a class="headerlink" href="#two-dimensional-p-system" title="Permalink to this headline">¶</a></h2>
-<p>Solve the two-dimensional generalization of the p-system:</p>
-<div class="math">
-\[\begin{split}\epsilon_t - u_x - v_y &amp; = 0 \\
-\rho(x,y) u_t - \sigma(\epsilon,x,y)_x &amp; = 0 \\
-\rho(x,y) v_t - \sigma(\epsilon,x,y)_y &amp; = 0.\end{split}\]</div>
-<p>We take <span class="math">\(\sigma = e^{K(x,y)\epsilon} - 1\)</span>, and the
-material coefficients <span class="math">\(\rho,K\)</span> vary in a checkerboard
-pattern.  The resulting dynamics lead to solitary waves,
-though much more resolution is needed in order to see them.</p>
-<p>This example shows how to set an aux array, use a b4step function,
-use gauges, compute output functionals, and restart a simulation
-from a checkpoint.</p>
-</div>
-<div class="section" id="output">
-<h2>Output:<a class="headerlink" href="#output" title="Permalink to this headline">¶</a></h2>
-<a class="reference external image-reference" href="../../_static/pyclaw/examples/psystem_2d/_plots/frame0000fig0.html"><img alt="../../_images/pyclaw_examples_psystem_2d__plots_frame0000fig0.png" src="../../_images/pyclaw_examples_psystem_2d__plots_frame0000fig0.png" style="width: 5cm;" /></a>
-<a class="reference external image-reference" href="../../_static/pyclaw/examples/psystem_2d/_plots/frame0004fig0.html"><img alt="../../_images/pyclaw_examples_psystem_2d__plots_frame0004fig0.png" src="../../_images/pyclaw_examples_psystem_2d__plots_frame0004fig0.png" style="width: 5cm;" /></a>
-<a class="reference external image-reference" href="../../_static/pyclaw/examples/psystem_2d/_plots/frame0010fig0.html"><img alt="../../_images/pyclaw_examples_psystem_2d__plots_frame0010fig0.png" src="../../_images/pyclaw_examples_psystem_2d__plots_frame0010fig0.png" style="width: 5cm;" /></a>
-</div>
-<div class="section" id="source">
-<h2>Source:<a class="headerlink" href="#source" title="Permalink to this headline">¶</a></h2>
+  <div class="system-message" id="psystem-2d">
+<p class="system-message-title">System Message: WARNING/2 (<tt class="docutils">/Users/rjl/git/clawpack/doc/doc/pyclaw/gallery/psystem_2d.rst</tt>, line 3)</p>
+autodoc can&#8217;t import/find module &#8216;pyclaw.examples.psystem_2d.psystem_2d&#8217;, it reported error: &#8220;Command &#8216;python setup.py build_ext -i&#8217; returned non-zero exit status 1&#8221;, please check your spelling and sys.path</div>
 <div class="highlight-python"><div class="highlight"><pre><span class="c">#!/usr/bin/env python</span>
 <span class="c"># encoding: utf-8</span>
 <span class="sd">r&quot;&quot;&quot;</span>
@@ -141,8 +119,8 @@ from a checkpoint.</p>
 <span class="sd">from a checkpoint.</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
-
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">clawpack</span> <span class="kn">import</span> <span class="n">riemann</span>
 
 <span class="k">def</span> <span class="nf">qinit</span><span class="p">(</span><span class="n">state</span><span class="p">,</span><span class="n">A</span><span class="p">,</span><span class="n">x0</span><span class="p">,</span><span class="n">y0</span><span class="p">,</span><span class="n">varx</span><span class="p">,</span><span class="n">vary</span><span class="p">):</span>
     <span class="sd">r&quot;&quot;&quot; Set initial conditions:</span>
@@ -180,7 +158,7 @@ from a checkpoint.</p>
                   <span class="o">+</span><span class="n">rhoA</span><span class="o">*</span><span class="p">(</span><span class="n">xf</span> <span class="o">&gt;</span><span class="n">alphax</span><span class="o">*</span><span class="n">deltax</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">yf</span> <span class="o">&gt;</span><span class="n">alphay</span><span class="o">*</span><span class="n">deltay</span><span class="p">)</span>\
                   <span class="o">+</span><span class="n">rhoB</span><span class="o">*</span><span class="p">(</span><span class="n">xf</span> <span class="o">&gt;</span><span class="n">alphax</span><span class="o">*</span><span class="n">deltax</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">yf</span><span class="o">&lt;=</span><span class="n">alphay</span><span class="o">*</span><span class="n">deltay</span><span class="p">)</span>\
                   <span class="o">+</span><span class="n">rhoB</span><span class="o">*</span><span class="p">(</span><span class="n">xf</span><span class="o">&lt;=</span><span class="n">alphax</span><span class="o">*</span><span class="n">deltax</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">yf</span> <span class="o">&gt;</span><span class="n">alphay</span><span class="o">*</span><span class="n">deltay</span><span class="p">)</span>
-        <span class="c">#Young modulus</span>
+        <span class="c">#Young&#39;s modulus</span>
         <span class="n">aux</span><span class="p">[</span><span class="mi">1</span><span class="p">,:,:]</span><span class="o">=</span><span class="n">KA</span><span class="o">*</span><span class="p">(</span><span class="n">xf</span><span class="o">&lt;=</span><span class="n">alphax</span><span class="o">*</span><span class="n">deltax</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">yf</span><span class="o">&lt;=</span><span class="n">alphay</span><span class="o">*</span><span class="n">deltay</span><span class="p">)</span>\
                   <span class="o">+</span><span class="n">KA</span><span class="o">*</span><span class="p">(</span><span class="n">xf</span> <span class="o">&gt;</span><span class="n">alphax</span><span class="o">*</span><span class="n">deltax</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">yf</span> <span class="o">&gt;</span><span class="n">alphay</span><span class="o">*</span><span class="n">deltay</span><span class="p">)</span>\
                   <span class="o">+</span><span class="n">KB</span><span class="o">*</span><span class="p">(</span><span class="n">xf</span> <span class="o">&gt;</span><span class="n">alphax</span><span class="o">*</span><span class="n">deltax</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">yf</span><span class="o">&lt;=</span><span class="n">alphay</span><span class="o">*</span><span class="n">deltay</span><span class="p">)</span>\
@@ -245,11 +223,6 @@ from a checkpoint.</p>
 <span class="k">def</span> <span class="nf">setup</span><span class="p">(</span><span class="n">kernel_language</span><span class="o">=</span><span class="s">&#39;Fortran&#39;</span><span class="p">,</span>
               <span class="n">use_petsc</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span><span class="n">outdir</span><span class="o">=</span><span class="s">&#39;./_output&#39;</span><span class="p">,</span><span class="n">solver_type</span><span class="o">=</span><span class="s">&#39;classic&#39;</span><span class="p">,</span>
               <span class="n">disable_output</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">cells_per_layer</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span> <span class="n">tfinal</span><span class="o">=</span><span class="mf">18.</span><span class="p">):</span>
-
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Solve the p-system in 2D with variable coefficients</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="kn">from</span> <span class="nn">clawpack</span> <span class="kn">import</span> <span class="n">riemann</span>
 
     <span class="k">if</span> <span class="n">use_petsc</span><span class="p">:</span>
         <span class="kn">import</span> <span class="nn">clawpack.petclaw</span> <span class="kn">as</span> <span class="nn">pyclaw</span>
@@ -392,8 +365,6 @@ from a checkpoint.</p>
     <span class="n">output</span> <span class="o">=</span> <span class="n">run_app_from_main</span><span class="p">(</span><span class="n">setup</span><span class="p">,</span><span class="n">setplot</span><span class="p">)</span>
 </pre></div>
 </div>
-</div>
-</div>
 
 
           </div>
@@ -405,24 +376,14 @@ from a checkpoint.</p>
     <img class="logo" src= "_static/clawlogo.jpg" alt="Logo"/>
 </a>
 <h2>Version 5.1.0</h2>
-</p>
-  <h3><a href="../../contents.html">Table Of Contents</a></h3>
-  <ul>
-<li><a class="reference internal" href="#">2-dimensional p-system</a><ul>
-<li><a class="reference internal" href="#two-dimensional-p-system">Two-dimensional p-system</a></li>
-<li><a class="reference internal" href="#output">Output:</a></li>
-<li><a class="reference internal" href="#source">Source:</a></li>
-</ul>
-</li>
-</ul>
-<h3>Related Topics</h3>
+</p><h3>Related Topics</h3>
 <ul>
   <li><a href="../../contents.html">Documentation overview</a><ul>
   <li><a href="../index.html">Pyclaw</a><ul>
   <li><a href="../basics.html">PyClaw Basics</a><ul>
   <li><a href="../examples.html">Working with PyClaw&#8217;s built-in examples</a><ul>
-      <li>Previous: <a href="shock_bubble_interaction.html" title="previous chapter">2-dimensional Euler equations</a></li>
-      <li>Next: <a href="Rossby_wave.html" title="next chapter">2-dimensional shallow water on the sphere</a></li>
+      <li>Previous: <a href="shock_bubble_interaction.html" title="previous chapter">&lt;no title&gt;</a></li>
+      <li>Next: <a href="Rossby_wave.html" title="next chapter">&lt;no title&gt;</a></li>
   </ul></li>
   </ul></li>
   </ul></li>

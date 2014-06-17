@@ -7,7 +7,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>2-dimensional shallow water on the sphere &mdash; Clawpack 5.1.0 documentation</title>
+    <title>&lt;no title&gt; &mdash; Clawpack 5.1.0 documentation</title>
     
     <link rel="stylesheet" href="../../_static/flasky.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -31,8 +31,8 @@
     <link rel="author" title="About these documents" href="../../about.html" />
     <link rel="top" title="Clawpack 5.1.0 documentation" href="../../index.html" />
     <link rel="up" title="Working with PyClaw’s built-in examples" href="../examples.html" />
-    <link rel="next" title="2-dimensional shallow water equations" href="radial_dam_break.html" />
-    <link rel="prev" title="2-dimensional p-system" href="psystem_2d.html" /> 
+    <link rel="next" title="&lt;no title&gt;" href="radial_dam_break.html" />
+    <link rel="prev" title="&lt;no title&gt;" href="psystem_2d.html" /> 
   </head>
   <body>
 <div id="main-wrapper" class="sphinx">
@@ -76,10 +76,10 @@
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="radial_dam_break.html" title="2-dimensional shallow water equations"
+          <a href="radial_dam_break.html" title="&lt;no title&gt;"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="psystem_2d.html" title="2-dimensional p-system"
+          <a href="psystem_2d.html" title="&lt;no title&gt;"
              accesskey="P">previous</a> |</li>
         <li><a href="../../contents.html">Clawpack 5.1.0 documentation</a> &raquo;</li>
           <li><a href="../index.html" >Pyclaw</a> &raquo;</li>
@@ -93,25 +93,9 @@
         <div class="bodywrapper">
           <div class="body">
             
-  <div class="section" id="module-pyclaw.examples.shallow_sphere.Rossby_wave">
-<span id="dimensional-shallow-water-on-the-sphere"></span><span id="rossby-wave"></span><h1>2-dimensional shallow water on the sphere<a class="headerlink" href="#module-pyclaw.examples.shallow_sphere.Rossby_wave" title="Permalink to this headline">¶</a></h1>
-<p>2D shallow water equations on a spherical surface. The approximation of the 
-three-dimensional equations is restricted to the surface of the sphere. 
-Therefore only the solution on the surface is updated.</p>
-<dl class="docutils">
-<dt>Reference: Logically Rectangular Grids and Finite Volume Methods for PDEs in </dt>
-<dd>Circular and Spherical Domains. 
-By Donna A. Calhoun, Christiane Helzel, and Randall J. LeVeque
-SIAM Review 50 (2008), 723-752.</dd>
-</dl>
-<div class="section" id="output">
-<h2>Output:<a class="headerlink" href="#output" title="Permalink to this headline">¶</a></h2>
-<a class="reference external image-reference" href="../../_static/pyclaw/examples/shallow_sphere/_plots/frame0000fig0.html"><img alt="../../_images/pyclaw_examples_shallow_sphere__plots_frame0000fig0.png" src="../../_images/pyclaw_examples_shallow_sphere__plots_frame0000fig0.png" style="width: 5cm;" /></a>
-<a class="reference external image-reference" href="../../_static/pyclaw/examples/shallow_sphere/_plots/frame0004fig0.html"><img alt="../../_images/pyclaw_examples_shallow_sphere__plots_frame0004fig0.png" src="../../_images/pyclaw_examples_shallow_sphere__plots_frame0004fig0.png" style="width: 5cm;" /></a>
-<a class="reference external image-reference" href="../../_static/pyclaw/examples/shallow_sphere/_plots/frame0010fig0.html"><img alt="../../_images/pyclaw_examples_shallow_sphere__plots_frame0010fig0.png" src="../../_images/pyclaw_examples_shallow_sphere__plots_frame0010fig0.png" style="width: 5cm;" /></a>
-</div>
-<div class="section" id="source">
-<h2>Source:<a class="headerlink" href="#source" title="Permalink to this headline">¶</a></h2>
+  <div class="system-message" id="rossby-wave">
+<p class="system-message-title">System Message: WARNING/2 (<tt class="docutils">/Users/rjl/git/clawpack/doc/doc/pyclaw/gallery/Rossby_wave.rst</tt>, line 3)</p>
+autodoc can&#8217;t import/find module &#8216;pyclaw.examples.shallow_sphere.Rossby_wave&#8217;, it reported error: &#8220;Command &#8216;python setup.py build_ext -i&#8217; returned non-zero exit status 1&#8221;, please check your spelling and sys.path</div>
 <div class="highlight-python"><div class="highlight"><pre><span class="c">#!/usr/bin/env python</span>
 <span class="c"># encoding: utf-8</span>
 <span class="sd">&quot;&quot;&quot;</span>
@@ -124,24 +108,32 @@ SIAM Review 50 (2008), 723-752.</dd>
 <span class="sd">           By Donna A. Calhoun, Christiane Helzel, and Randall J. LeVeque</span>
 <span class="sd">           SIAM Review 50 (2008), 723-752. </span>
 <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">math</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+
+<span class="kn">from</span> <span class="nn">clawpack</span> <span class="kn">import</span> <span class="n">pyclaw</span>
+<span class="kn">from</span> <span class="nn">clawpack</span> <span class="kn">import</span> <span class="n">riemann</span>
+<span class="kn">from</span> <span class="nn">clawpack.pyclaw.util</span> <span class="kn">import</span> <span class="n">inplace_build</span>
+
 <span class="k">try</span><span class="p">:</span>
     <span class="kn">import</span> <span class="nn">problem</span>
     <span class="kn">import</span> <span class="nn">classic2</span>
+
 <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
-    <span class="kn">import</span> <span class="nn">warnings</span>
-    <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s">&quot;missing extension modules, running python setup.py build_ext -i&quot;</span><span class="p">)</span>
-    <span class="kn">import</span> <span class="nn">os</span>
-    <span class="kn">import</span> <span class="nn">subprocess</span>
-    <span class="n">thisdir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">__file__</span><span class="p">)</span>
-    <span class="n">subprocess</span><span class="o">.</span><span class="n">check_call</span><span class="p">(</span><span class="s">&#39;python setup.py build_ext -i&#39;</span><span class="p">,</span> <span class="n">shell</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">cwd</span><span class="o">=</span><span class="n">thisdir</span><span class="p">)</span>
-    <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s">&quot;missing extension modules built by running python setup.py build_ext -i&quot;</span><span class="p">)</span>
+    <span class="n">this_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">__file__</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">this_dir</span> <span class="o">==</span> <span class="s">&#39;&#39;</span><span class="p">:</span>
+        <span class="n">this_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="s">&#39;.&#39;</span><span class="p">)</span>
+    <span class="n">inplace_build</span><span class="p">(</span><span class="n">this_dir</span><span class="p">)</span>
+
     <span class="k">try</span><span class="p">:</span>
         <span class="c"># Now try to import again</span>
         <span class="kn">import</span> <span class="nn">problem</span>
         <span class="kn">import</span> <span class="nn">classic2</span>
     <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
-        <span class="kn">import</span> <span class="nn">sys</span>
         <span class="k">print</span> <span class="o">&gt;&gt;</span> <span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="p">,</span> <span class="s">&quot;***</span><span class="se">\n</span><span class="s">Unable to import problem module or automatically build, try running (in the directory of this file):</span><span class="se">\n</span><span class="s"> python setup.py build_ext -i</span><span class="se">\n</span><span class="s">***&quot;</span>
         <span class="k">raise</span>
 
@@ -189,9 +181,7 @@ SIAM Review 50 (2008), 723-752.</dd>
 <span class="sd">                 [array ([xp1, xp2, ...]), array([yp1, yp2, ...]), array([zp1, zp2, ...])]</span>
 
 <span class="sd">    NOTE: this function is not used in the standard script.</span>
-<span class="sd">    &quot;&quot;&quot;</span>  
-    <span class="c"># Import library            </span>
-    <span class="kn">import</span> <span class="nn">math</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="c"># Get number of cells in both directions</span>
     <span class="n">mx</span><span class="p">,</span> <span class="n">my</span> <span class="o">=</span> <span class="n">grid</span><span class="o">.</span><span class="n">num_cells</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">grid</span><span class="o">.</span><span class="n">num_cells</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
@@ -478,9 +468,6 @@ SIAM Review 50 (2008), 723-752.</dd>
     <span class="k">if</span> <span class="n">solver_type</span> <span class="o">!=</span> <span class="s">&#39;classic&#39;</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s">&quot;Only Classic-style solvers (solver_type=&#39;classic&#39;) are supported on mapped grids&quot;</span><span class="p">)</span>
 
-    <span class="kn">from</span> <span class="nn">clawpack</span> <span class="kn">import</span> <span class="n">pyclaw</span>
-    <span class="kn">from</span> <span class="nn">clawpack</span> <span class="kn">import</span> <span class="n">riemann</span>
-
     <span class="n">solver</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">ClawSolver2D</span><span class="p">(</span><span class="n">riemann</span><span class="o">.</span><span class="n">shallow_sphere_2D</span><span class="p">)</span>
     <span class="n">solver</span><span class="o">.</span><span class="n">fmod</span> <span class="o">=</span> <span class="n">classic2</span>
 
@@ -543,12 +530,10 @@ SIAM Review 50 (2008), 723-752.</dd>
     <span class="c"># directions. If odd numbers are used a message is print at screen and the </span>
     <span class="c"># simulation is interrputed.</span>
     <span class="k">if</span><span class="p">(</span><span class="n">mx</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">!=</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">my</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">):</span>
-        <span class="kn">import</span> <span class="nn">sys</span>
         <span class="n">message</span> <span class="o">=</span> <span class="s">&#39;Please, use even numbers of cells in both direction. &#39;</span> \
                   <span class="s">&#39;Only even numbers allow to impose correctly the boundary &#39;</span> \
                   <span class="s">&#39;conditions!&#39;</span>
-        <span class="k">print</span> <span class="n">message</span>
-        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
 
 
     <span class="n">x</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">Dimension</span><span class="p">(</span><span class="s">&#39;x&#39;</span><span class="p">,</span><span class="n">xlower</span><span class="p">,</span><span class="n">xupper</span><span class="p">,</span><span class="n">mx</span><span class="p">)</span>
@@ -638,22 +623,14 @@ SIAM Review 50 (2008), 723-752.</dd>
 <span class="sd">    an ascii file written by pyclaw, without using the pyclaw.io.ascii routines.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="c"># Import some libraries</span>
-    <span class="kn">from</span> <span class="nn">clawpack</span> <span class="kn">import</span> <span class="n">pyclaw</span>
-    <span class="kn">import</span> <span class="nn">setup</span> <span class="kn">as</span> <span class="nn">rh</span>
-    <span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
-
-    <span class="kn">from</span> <span class="nn">mpl_toolkits.basemap</span> <span class="kn">import</span> <span class="n">Basemap</span>
     <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">as</span> <span class="nn">plt</span>
-
-    <span class="kn">import</span> <span class="nn">sys</span>
 
     <span class="c"># Nondimensionalized radius of the earth</span>
     <span class="n">Rsphere</span> <span class="o">=</span> <span class="mf">1.0</span>
 
     <span class="k">def</span> <span class="nf">contourLineSphere</span><span class="p">(</span><span class="n">fileName</span><span class="o">=</span><span class="s">&#39;fort.q0000&#39;</span><span class="p">,</span><span class="n">path</span><span class="o">=</span><span class="s">&#39;./_output&#39;</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        This function plot the contour lines on a spherical surface for the shallow</span>
+<span class="sd">        This function plots the contour lines on a spherical surface for the shallow</span>
 <span class="sd">        water equations solved on a sphere.</span>
 <span class="sd">        &quot;&quot;&quot;</span>  
      
@@ -663,17 +640,12 @@ SIAM Review 50 (2008), 723-752.</dd>
         <span class="c"># Concatenate path and file name</span>
         <span class="n">pathFileName</span> <span class="o">=</span> <span class="n">path</span> <span class="o">+</span> <span class="s">&quot;/&quot;</span> <span class="o">+</span> <span class="n">fileName</span>
 
-        <span class="k">try</span><span class="p">:</span>
-            <span class="n">f</span> <span class="o">=</span> <span class="nb">file</span><span class="p">(</span><span class="n">pathFileName</span><span class="p">,</span><span class="s">&quot;r&quot;</span><span class="p">)</span>
-        <span class="k">except</span> <span class="ne">IOError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-            <span class="k">print</span><span class="p">(</span><span class="s">&quot;({})&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
-            <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">()</span>
-
+        <span class="n">f</span> <span class="o">=</span> <span class="nb">file</span><span class="p">(</span><span class="n">pathFileName</span><span class="p">,</span><span class="s">&quot;r&quot;</span><span class="p">)</span>
 
         <span class="c"># Read file header</span>
         <span class="c"># ================</span>
         <span class="c"># The information contained in the first two lines are not used.</span>
-        <span class="n">unsed</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span>  <span class="c"># patch_number</span>
+        <span class="n">unused</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span>  <span class="c"># patch_number</span>
         <span class="n">unused</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span> <span class="c"># AMR_level</span>
 
         <span class="c"># Read mx, my, xlow, ylow, dx and dy</span>
@@ -714,7 +686,7 @@ SIAM Review 50 (2008), 723-752.</dd>
 
         <span class="c"># Override default mapc2p function</span>
         <span class="c"># ================================</span>
-        <span class="n">patch</span><span class="o">.</span><span class="n">mapc2p</span> <span class="o">=</span> <span class="n">rh</span><span class="o">.</span><span class="n">mapc2p_sphere_vectorized</span>  
+        <span class="n">patch</span><span class="o">.</span><span class="n">mapc2p</span> <span class="o">=</span> <span class="n">mapc2p_sphere_vectorized</span>
 
 
         <span class="c"># Compute the physical coordinates of each cell&#39;s centers</span>
@@ -757,8 +729,6 @@ SIAM Review 50 (2008), 723-752.</dd>
         <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 </div>
-</div>
-</div>
 
 
           </div>
@@ -770,23 +740,14 @@ SIAM Review 50 (2008), 723-752.</dd>
     <img class="logo" src= "_static/clawlogo.jpg" alt="Logo"/>
 </a>
 <h2>Version 5.1.0</h2>
-</p>
-  <h3><a href="../../contents.html">Table Of Contents</a></h3>
-  <ul>
-<li><a class="reference internal" href="#">2-dimensional shallow water on the sphere</a><ul>
-<li><a class="reference internal" href="#output">Output:</a></li>
-<li><a class="reference internal" href="#source">Source:</a></li>
-</ul>
-</li>
-</ul>
-<h3>Related Topics</h3>
+</p><h3>Related Topics</h3>
 <ul>
   <li><a href="../../contents.html">Documentation overview</a><ul>
   <li><a href="../index.html">Pyclaw</a><ul>
   <li><a href="../basics.html">PyClaw Basics</a><ul>
   <li><a href="../examples.html">Working with PyClaw&#8217;s built-in examples</a><ul>
-      <li>Previous: <a href="psystem_2d.html" title="previous chapter">2-dimensional p-system</a></li>
-      <li>Next: <a href="radial_dam_break.html" title="next chapter">2-dimensional shallow water equations</a></li>
+      <li>Previous: <a href="psystem_2d.html" title="previous chapter">&lt;no title&gt;</a></li>
+      <li>Next: <a href="radial_dam_break.html" title="next chapter">&lt;no title&gt;</a></li>
   </ul></li>
   </ul></li>
   </ul></li>

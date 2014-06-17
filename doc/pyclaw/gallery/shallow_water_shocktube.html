@@ -7,7 +7,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>1-dimensional shallow water equation &mdash; Clawpack 5.1.0 documentation</title>
+    <title>&lt;no title&gt; &mdash; Clawpack 5.1.0 documentation</title>
     
     <link rel="stylesheet" href="../../_static/flasky.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -31,8 +31,8 @@
     <link rel="author" title="About these documents" href="../../about.html" />
     <link rel="top" title="Clawpack 5.1.0 documentation" href="../../index.html" />
     <link rel="up" title="Working with PyClaw’s built-in examples" href="../examples.html" />
-    <link rel="next" title="1-dimensional Euler equations" href="woodward_colella_blast.html" />
-    <link rel="prev" title="1-dimensional Burgers’ equation" href="burgers_1d.html" /> 
+    <link rel="next" title="&lt;no title&gt;" href="woodward_colella_blast.html" />
+    <link rel="prev" title="&lt;no title&gt;" href="burgers_1d.html" /> 
   </head>
   <body>
 <div id="main-wrapper" class="sphinx">
@@ -76,10 +76,10 @@
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="woodward_colella_blast.html" title="1-dimensional Euler equations"
+          <a href="woodward_colella_blast.html" title="&lt;no title&gt;"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="burgers_1d.html" title="1-dimensional Burgers’ equation"
+          <a href="burgers_1d.html" title="&lt;no title&gt;"
              accesskey="P">previous</a> |</li>
         <li><a href="../../contents.html">Clawpack 5.1.0 documentation</a> &raquo;</li>
           <li><a href="../index.html" >Pyclaw</a> &raquo;</li>
@@ -93,179 +93,12 @@
         <div class="bodywrapper">
           <div class="body">
             
-  <div class="section" id="module-pyclaw.examples.shallow_1d.shallow_water_shocktube">
-<span id="dimensional-shallow-water-equation"></span><span id="shallow-water-shocktube"></span><h1>1-dimensional shallow water equation<a class="headerlink" href="#module-pyclaw.examples.shallow_1d.shallow_water_shocktube" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="shallow-water-flow">
-<h2>Shallow water flow<a class="headerlink" href="#shallow-water-flow" title="Permalink to this headline">¶</a></h2>
-<p>Solve the one-dimensional shallow water equations:</p>
-<div class="math">
-\[\begin{split}h_t + (hu)_x + (hv)_y &amp; = 0 \\
-(hu)_t + (hu^2 + \frac{1}{2}gh^2)_x + (huv)_y &amp; = 0 \\
-(hv)_t + (huv)_x + (hv^2 + \frac{1}{2}gh^2)_y &amp; = 0.\end{split}\]</div>
-<p>Here h is the depth, (u,v) is the velocity, and g is the gravitational constant.</p>
-</div>
-<div class="section" id="output">
-<h2>Output:<a class="headerlink" href="#output" title="Permalink to this headline">¶</a></h2>
-<a class="reference external image-reference" href="../../_static/pyclaw/examples/shallow_1d/_plots/frame0000fig0.html"><img alt="../../_images/pyclaw_examples_shallow_1d__plots_frame0000fig0.png" src="../../_images/pyclaw_examples_shallow_1d__plots_frame0000fig0.png" style="width: 5cm;" /></a>
-<a class="reference external image-reference" href="../../_static/pyclaw/examples/shallow_1d/_plots/frame0003fig0.html"><img alt="../../_images/pyclaw_examples_shallow_1d__plots_frame0003fig0.png" src="../../_images/pyclaw_examples_shallow_1d__plots_frame0003fig0.png" style="width: 5cm;" /></a>
-<a class="reference external image-reference" href="../../_static/pyclaw/examples/shallow_1d/_plots/frame0006fig0.html"><img alt="../../_images/pyclaw_examples_shallow_1d__plots_frame0006fig0.png" src="../../_images/pyclaw_examples_shallow_1d__plots_frame0006fig0.png" style="width: 5cm;" /></a>
-</div>
-<div class="section" id="source">
-<h2>Source:<a class="headerlink" href="#source" title="Permalink to this headline">¶</a></h2>
-<div class="highlight-python"><div class="highlight"><pre><span class="c">#!/usr/bin/env python</span>
-<span class="c"># encoding: utf-8</span>
-
-<span class="sd">r&quot;&quot;&quot;</span>
-<span class="sd">Shallow water flow</span>
-<span class="sd">==================</span>
-
-<span class="sd">Solve the one-dimensional shallow water equations:</span>
-
-<span class="sd">.. math::</span>
-<span class="sd">    h_t + (hu)_x + (hv)_y &amp; = 0 \\</span>
-<span class="sd">    (hu)_t + (hu^2 + \frac{1}{2}gh^2)_x + (huv)_y &amp; = 0 \\</span>
-<span class="sd">    (hv)_t + (huv)_x + (hv^2 + \frac{1}{2}gh^2)_y &amp; = 0.</span>
-
-<span class="sd">Here h is the depth, (u,v) is the velocity, and g is the gravitational constant.</span>
-<span class="sd">&quot;&quot;&quot;</span>
-
-    
-<span class="k">def</span> <span class="nf">setup</span><span class="p">(</span><span class="n">use_petsc</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span><span class="n">kernel_language</span><span class="o">=</span><span class="s">&#39;Fortran&#39;</span><span class="p">,</span><span class="n">outdir</span><span class="o">=</span><span class="s">&#39;./_output&#39;</span><span class="p">,</span><span class="n">solver_type</span><span class="o">=</span><span class="s">&#39;classic&#39;</span><span class="p">):</span>
-    <span class="c">#===========================================================================</span>
-    <span class="c"># Import libraries</span>
-    <span class="c">#===========================================================================</span>
-    <span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
-    <span class="kn">from</span> <span class="nn">clawpack</span> <span class="kn">import</span> <span class="n">riemann</span>
-
-    <span class="k">if</span> <span class="n">use_petsc</span><span class="p">:</span>
-        <span class="kn">import</span> <span class="nn">clawpack.petclaw</span> <span class="kn">as</span> <span class="nn">pyclaw</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="kn">from</span> <span class="nn">clawpack</span> <span class="kn">import</span> <span class="n">pyclaw</span>
-
-    <span class="k">if</span> <span class="n">kernel_language</span> <span class="o">==</span><span class="s">&#39;Python&#39;</span><span class="p">:</span>
-        <span class="n">rs</span> <span class="o">=</span> <span class="n">riemann</span><span class="o">.</span><span class="n">shallow_1D_py</span><span class="o">.</span><span class="n">shallow_roe_1D</span>
-    <span class="k">elif</span> <span class="n">kernel_language</span> <span class="o">==</span><span class="s">&#39;Fortran&#39;</span><span class="p">:</span>
-        <span class="n">rs</span> <span class="o">=</span> <span class="n">riemann</span><span class="o">.</span><span class="n">shallow_roe_with_efix_1D</span>
- 
-    <span class="k">if</span> <span class="n">solver_type</span> <span class="o">==</span> <span class="s">&#39;classic&#39;</span><span class="p">:</span>
-        <span class="n">solver</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">ClawSolver1D</span><span class="p">(</span><span class="n">rs</span><span class="p">)</span>
-        <span class="n">solver</span><span class="o">.</span><span class="n">limiters</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">limiters</span><span class="o">.</span><span class="n">tvd</span><span class="o">.</span><span class="n">vanleer</span>
-    <span class="k">elif</span> <span class="n">solver_type</span> <span class="o">==</span> <span class="s">&#39;sharpclaw&#39;</span><span class="p">:</span>
-        <span class="n">solver</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">SharpClawSolver1D</span><span class="p">(</span><span class="n">rs</span><span class="p">)</span>
-
-    <span class="c">#===========================================================================</span>
-    <span class="c"># Setup solver and solver parameters</span>
-    <span class="c">#===========================================================================</span>
-    <span class="n">solver</span><span class="o">.</span><span class="n">kernel_language</span><span class="o">=</span><span class="n">kernel_language</span>
-
-    <span class="n">solver</span><span class="o">.</span><span class="n">bc_lower</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">BC</span><span class="o">.</span><span class="n">extrap</span>
-    <span class="n">solver</span><span class="o">.</span><span class="n">bc_upper</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">BC</span><span class="o">.</span><span class="n">extrap</span>
-
-    <span class="c">#===========================================================================</span>
-    <span class="c"># Initialize domain and then initialize the solution associated to the domain</span>
-    <span class="c">#===========================================================================</span>
-    <span class="n">xlower</span> <span class="o">=</span> <span class="o">-</span><span class="mf">5.0</span>
-    <span class="n">xupper</span> <span class="o">=</span> <span class="mf">5.0</span>
-    <span class="n">mx</span> <span class="o">=</span> <span class="mi">500</span>
-    <span class="n">x</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">Dimension</span><span class="p">(</span><span class="s">&#39;x&#39;</span><span class="p">,</span><span class="n">xlower</span><span class="p">,</span><span class="n">xupper</span><span class="p">,</span><span class="n">mx</span><span class="p">)</span>
-    <span class="n">domain</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">Domain</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
-    <span class="n">num_eqn</span> <span class="o">=</span> <span class="mi">2</span>
-    <span class="n">state</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">State</span><span class="p">(</span><span class="n">domain</span><span class="p">,</span><span class="n">num_eqn</span><span class="p">)</span>
-
-    <span class="c"># Parameters</span>
-    <span class="n">state</span><span class="o">.</span><span class="n">problem_data</span><span class="p">[</span><span class="s">&#39;grav&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.0</span>
-    <span class="n">state</span><span class="o">.</span><span class="n">problem_data</span><span class="p">[</span><span class="s">&#39;efix&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">False</span>
-    
-    <span class="n">xc</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">centers</span>
-
-    <span class="n">IC</span><span class="o">=</span><span class="s">&#39;2-shock&#39;</span>
-    <span class="n">x0</span><span class="o">=</span><span class="mf">0.</span>
-
-    <span class="k">if</span> <span class="n">IC</span><span class="o">==</span><span class="s">&#39;dam-break&#39;</span><span class="p">:</span>
-        <span class="n">hl</span> <span class="o">=</span> <span class="mf">3.</span>
-        <span class="n">ul</span> <span class="o">=</span> <span class="mf">0.</span>
-        <span class="n">hr</span> <span class="o">=</span> <span class="mf">1.</span>
-        <span class="n">ur</span> <span class="o">=</span> <span class="mf">0.</span>
-        <span class="n">state</span><span class="o">.</span><span class="n">q</span><span class="p">[</span><span class="mi">0</span><span class="p">,:]</span> <span class="o">=</span> <span class="n">hl</span> <span class="o">*</span> <span class="p">(</span><span class="n">xc</span> <span class="o">&lt;=</span> <span class="n">x0</span><span class="p">)</span> <span class="o">+</span> <span class="n">hr</span> <span class="o">*</span> <span class="p">(</span><span class="n">xc</span> <span class="o">&gt;</span> <span class="n">x0</span><span class="p">)</span>
-        <span class="n">state</span><span class="o">.</span><span class="n">q</span><span class="p">[</span><span class="mi">1</span><span class="p">,:]</span> <span class="o">=</span> <span class="n">hl</span><span class="o">*</span><span class="n">ul</span> <span class="o">*</span> <span class="p">(</span><span class="n">xc</span> <span class="o">&lt;=</span> <span class="n">x0</span><span class="p">)</span> <span class="o">+</span> <span class="n">hr</span><span class="o">*</span><span class="n">ur</span> <span class="o">*</span> <span class="p">(</span><span class="n">xc</span> <span class="o">&gt;</span> <span class="n">x0</span><span class="p">)</span>
-    <span class="k">elif</span> <span class="n">IC</span><span class="o">==</span><span class="s">&#39;2-shock&#39;</span><span class="p">:</span>
-        <span class="n">hl</span> <span class="o">=</span> <span class="mf">1.</span>
-        <span class="n">ul</span> <span class="o">=</span> <span class="mf">1.</span>
-        <span class="n">hr</span> <span class="o">=</span> <span class="mf">1.</span>
-        <span class="n">ur</span> <span class="o">=</span> <span class="o">-</span><span class="mf">1.</span>
-        <span class="n">state</span><span class="o">.</span><span class="n">q</span><span class="p">[</span><span class="mi">0</span><span class="p">,:]</span> <span class="o">=</span> <span class="n">hl</span> <span class="o">*</span> <span class="p">(</span><span class="n">xc</span> <span class="o">&lt;=</span> <span class="n">x0</span><span class="p">)</span> <span class="o">+</span> <span class="n">hr</span> <span class="o">*</span> <span class="p">(</span><span class="n">xc</span> <span class="o">&gt;</span> <span class="n">x0</span><span class="p">)</span>
-        <span class="n">state</span><span class="o">.</span><span class="n">q</span><span class="p">[</span><span class="mi">1</span><span class="p">,:]</span> <span class="o">=</span> <span class="n">hl</span><span class="o">*</span><span class="n">ul</span> <span class="o">*</span> <span class="p">(</span><span class="n">xc</span> <span class="o">&lt;=</span> <span class="n">x0</span><span class="p">)</span> <span class="o">+</span> <span class="n">hr</span><span class="o">*</span><span class="n">ur</span> <span class="o">*</span> <span class="p">(</span><span class="n">xc</span> <span class="o">&gt;</span> <span class="n">x0</span><span class="p">)</span>
-    <span class="k">elif</span> <span class="n">IC</span><span class="o">==</span><span class="s">&#39;perturbation&#39;</span><span class="p">:</span>
-        <span class="n">eps</span><span class="o">=</span><span class="mf">0.1</span>
-        <span class="n">state</span><span class="o">.</span><span class="n">q</span><span class="p">[</span><span class="mi">0</span><span class="p">,:]</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">+</span> <span class="n">eps</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="p">(</span><span class="n">xc</span><span class="o">-</span><span class="n">x0</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="o">/</span><span class="mf">0.5</span><span class="p">)</span>
-        <span class="n">state</span><span class="o">.</span><span class="n">q</span><span class="p">[</span><span class="mi">1</span><span class="p">,:]</span> <span class="o">=</span> <span class="mf">0.</span>
-
-    <span class="c">#===========================================================================</span>
-    <span class="c"># Setup controller and controller paramters</span>
-    <span class="c">#===========================================================================</span>
-    <span class="n">claw</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">Controller</span><span class="p">()</span>
-    <span class="n">claw</span><span class="o">.</span><span class="n">keep_copy</span> <span class="o">=</span> <span class="bp">True</span>
-    <span class="n">claw</span><span class="o">.</span><span class="n">tfinal</span> <span class="o">=</span> <span class="mf">2.0</span>
-    <span class="n">claw</span><span class="o">.</span><span class="n">solution</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">Solution</span><span class="p">(</span><span class="n">state</span><span class="p">,</span><span class="n">domain</span><span class="p">)</span>
-    <span class="n">claw</span><span class="o">.</span><span class="n">solver</span> <span class="o">=</span> <span class="n">solver</span>
-    <span class="n">claw</span><span class="o">.</span><span class="n">outdir</span> <span class="o">=</span> <span class="n">outdir</span>
-    <span class="n">claw</span><span class="o">.</span><span class="n">setplot</span> <span class="o">=</span> <span class="n">setplot</span>
-
-    <span class="k">return</span> <span class="n">claw</span>
-
-
-<span class="c">#--------------------------</span>
-<span class="k">def</span> <span class="nf">setplot</span><span class="p">(</span><span class="n">plotdata</span><span class="p">):</span>
-<span class="c">#--------------------------</span>
-    <span class="sd">&quot;&quot;&quot; </span>
-<span class="sd">    Specify what is to be plotted at each frame.</span>
-<span class="sd">    Input:  plotdata, an instance of visclaw.data.ClawPlotData.</span>
-<span class="sd">    Output: a modified version of plotdata.</span>
-<span class="sd">    &quot;&quot;&quot;</span> 
-    <span class="n">plotdata</span><span class="o">.</span><span class="n">clearfigures</span><span class="p">()</span>  <span class="c"># clear any old figures,axes,items data</span>
-
-    <span class="c"># Figure for q[0]</span>
-    <span class="n">plotfigure</span> <span class="o">=</span> <span class="n">plotdata</span><span class="o">.</span><span class="n">new_plotfigure</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">&#39;Water height&#39;</span><span class="p">,</span> <span class="n">figno</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-
-    <span class="c"># Set up for axes in this figure:</span>
-    <span class="n">plotaxes</span> <span class="o">=</span> <span class="n">plotfigure</span><span class="o">.</span><span class="n">new_plotaxes</span><span class="p">()</span>
-    <span class="n">plotaxes</span><span class="o">.</span><span class="n">xlimits</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mf">5.0</span><span class="p">,</span><span class="mf">5.0</span><span class="p">]</span>
-    <span class="n">plotaxes</span><span class="o">.</span><span class="n">title</span> <span class="o">=</span> <span class="s">&#39;Water height&#39;</span>
-    <span class="n">plotaxes</span><span class="o">.</span><span class="n">axescmd</span> <span class="o">=</span> <span class="s">&#39;subplot(211)&#39;</span>
-
-    <span class="c"># Set up for item on these axes:</span>
-    <span class="n">plotitem</span> <span class="o">=</span> <span class="n">plotaxes</span><span class="o">.</span><span class="n">new_plotitem</span><span class="p">(</span><span class="n">plot_type</span><span class="o">=</span><span class="s">&#39;1d&#39;</span><span class="p">)</span>
-    <span class="n">plotitem</span><span class="o">.</span><span class="n">plot_var</span> <span class="o">=</span> <span class="mi">0</span>
-    <span class="n">plotitem</span><span class="o">.</span><span class="n">plotstyle</span> <span class="o">=</span> <span class="s">&#39;-&#39;</span>
-    <span class="n">plotitem</span><span class="o">.</span><span class="n">color</span> <span class="o">=</span> <span class="s">&#39;b&#39;</span>
-    <span class="n">plotitem</span><span class="o">.</span><span class="n">kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;linewidth&#39;</span><span class="p">:</span><span class="mi">3</span><span class="p">}</span>
-
-    <span class="c"># Figure for q[1]</span>
-    <span class="c">#plotfigure = plotdata.new_plotfigure(name=&#39;Momentum&#39;, figno=1)</span>
-
-    <span class="c"># Set up for axes in this figure:</span>
-    <span class="n">plotaxes</span> <span class="o">=</span> <span class="n">plotfigure</span><span class="o">.</span><span class="n">new_plotaxes</span><span class="p">()</span>
-    <span class="n">plotaxes</span><span class="o">.</span><span class="n">axescmd</span> <span class="o">=</span> <span class="s">&#39;subplot(212)&#39;</span>
-    <span class="n">plotaxes</span><span class="o">.</span><span class="n">xlimits</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mf">5.0</span><span class="p">,</span><span class="mf">5.0</span><span class="p">]</span>
-    <span class="n">plotaxes</span><span class="o">.</span><span class="n">title</span> <span class="o">=</span> <span class="s">&#39;Momentum&#39;</span>
-
-    <span class="c"># Set up for item on these axes:</span>
-    <span class="n">plotitem</span> <span class="o">=</span> <span class="n">plotaxes</span><span class="o">.</span><span class="n">new_plotitem</span><span class="p">(</span><span class="n">plot_type</span><span class="o">=</span><span class="s">&#39;1d&#39;</span><span class="p">)</span>
-    <span class="n">plotitem</span><span class="o">.</span><span class="n">plot_var</span> <span class="o">=</span> <span class="mi">1</span>
-    <span class="n">plotitem</span><span class="o">.</span><span class="n">plotstyle</span> <span class="o">=</span> <span class="s">&#39;-&#39;</span>
-    <span class="n">plotitem</span><span class="o">.</span><span class="n">color</span> <span class="o">=</span> <span class="s">&#39;b&#39;</span>
-    <span class="n">plotitem</span><span class="o">.</span><span class="n">kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;linewidth&#39;</span><span class="p">:</span><span class="mi">3</span><span class="p">}</span>
-    
-    <span class="k">return</span> <span class="n">plotdata</span>
-
-
-<span class="k">if</span> <span class="n">__name__</span><span class="o">==</span><span class="s">&quot;__main__&quot;</span><span class="p">:</span>
-    <span class="kn">from</span> <span class="nn">clawpack.pyclaw.util</span> <span class="kn">import</span> <span class="n">run_app_from_main</span>
-    <span class="n">output</span> <span class="o">=</span> <span class="n">run_app_from_main</span><span class="p">(</span><span class="n">setup</span><span class="p">,</span><span class="n">setplot</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-</div>
+  <div class="system-message" id="shallow-water-shocktube">
+<p class="system-message-title">System Message: WARNING/2 (<tt class="docutils">/Users/rjl/git/clawpack/doc/doc/pyclaw/gallery/shallow_water_shocktube.rst</tt>, line 3)</p>
+autodoc can&#8217;t import/find module &#8216;pyclaw.examples.shallow_1d.shallow_water_shocktube&#8217;, it reported error: &#8220;Command &#8216;python setup.py build_ext -i&#8217; returned non-zero exit status 1&#8221;, please check your spelling and sys.path</div>
+<div class="system-message">
+<p class="system-message-title">System Message: WARNING/2 (<tt class="docutils">/Users/rjl/git/clawpack/doc/doc/pyclaw/gallery/shallow_water_shocktube.rst</tt>, line 5)</p>
+Include file u&#8217;/Users/rjl/git/clawpack/doc/doc/pyclaw/gallery/../../../../pyclaw/examples/shallow_1d/shallow_water_shocktube.py&#8217; not found or reading it failed</div>
 
 
           </div>
@@ -277,24 +110,14 @@
     <img class="logo" src= "_static/clawlogo.jpg" alt="Logo"/>
 </a>
 <h2>Version 5.1.0</h2>
-</p>
-  <h3><a href="../../contents.html">Table Of Contents</a></h3>
-  <ul>
-<li><a class="reference internal" href="#">1-dimensional shallow water equation</a><ul>
-<li><a class="reference internal" href="#shallow-water-flow">Shallow water flow</a></li>
-<li><a class="reference internal" href="#output">Output:</a></li>
-<li><a class="reference internal" href="#source">Source:</a></li>
-</ul>
-</li>
-</ul>
-<h3>Related Topics</h3>
+</p><h3>Related Topics</h3>
 <ul>
   <li><a href="../../contents.html">Documentation overview</a><ul>
   <li><a href="../index.html">Pyclaw</a><ul>
   <li><a href="../basics.html">PyClaw Basics</a><ul>
   <li><a href="../examples.html">Working with PyClaw&#8217;s built-in examples</a><ul>
-      <li>Previous: <a href="burgers_1d.html" title="previous chapter">1-dimensional Burgers&#8217; equation</a></li>
-      <li>Next: <a href="woodward_colella_blast.html" title="next chapter">1-dimensional Euler equations</a></li>
+      <li>Previous: <a href="burgers_1d.html" title="previous chapter">&lt;no title&gt;</a></li>
+      <li>Next: <a href="woodward_colella_blast.html" title="next chapter">&lt;no title&gt;</a></li>
   </ul></li>
   </ul></li>
   </ul></li>

@@ -7,7 +7,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>1-dimensional advection &mdash; Clawpack 5.1.0 documentation</title>
+    <title>&lt;no title&gt; &mdash; Clawpack 5.1.0 documentation</title>
     
     <link rel="stylesheet" href="../../_static/flasky.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -31,7 +31,7 @@
     <link rel="author" title="About these documents" href="../../about.html" />
     <link rel="top" title="Clawpack 5.1.0 documentation" href="../../index.html" />
     <link rel="up" title="Working with PyClaw’s built-in examples" href="../examples.html" />
-    <link rel="next" title="2-dimensional advection" href="advection_2d.html" />
+    <link rel="next" title="&lt;no title&gt;" href="advection_2d.html" />
     <link rel="prev" title="Working with PyClaw’s built-in examples" href="../examples.html" /> 
   </head>
   <body>
@@ -76,7 +76,7 @@
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="advection_2d.html" title="2-dimensional advection"
+          <a href="advection_2d.html" title="&lt;no title&gt;"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="../examples.html" title="Working with PyClaw’s built-in examples"
@@ -93,26 +93,9 @@
         <div class="bodywrapper">
           <div class="body">
             
-  <div class="section" id="module-pyclaw.examples.advection_1d.advection_1d">
-<span id="dimensional-advection"></span><span id="advection-1d"></span><h1>1-dimensional advection<a class="headerlink" href="#module-pyclaw.examples.advection_1d.advection_1d" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="one-dimensional-advection">
-<h2>One-dimensional advection<a class="headerlink" href="#one-dimensional-advection" title="Permalink to this headline">¶</a></h2>
-<p>Solve the linear advection equation:</p>
-<div class="math">
-\[\begin{split}q_t + u q_x &amp; = 0.\end{split}\]</div>
-<p>Here q is the density of some conserved quantity and u is the velocity.</p>
-<p>The initial condition is a Gaussian and the boundary conditions are periodic.
-The final solution is identical to the initial data because the wave has
-crossed the domain exactly once.</p>
-</div>
-<div class="section" id="output">
-<h2>Output:<a class="headerlink" href="#output" title="Permalink to this headline">¶</a></h2>
-<a class="reference external image-reference" href="../../_static/pyclaw/examples/advection_1d/_plots/frame0000fig1.html"><img alt="../../_images/pyclaw_examples_advection_1d__plots_frame0000fig1.png" src="../../_images/pyclaw_examples_advection_1d__plots_frame0000fig1.png" style="width: 5cm;" /></a>
-<a class="reference external image-reference" href="../../_static/pyclaw/examples/advection_1d/_plots/frame0004fig1.html"><img alt="../../_images/pyclaw_examples_advection_1d__plots_frame0004fig1.png" src="../../_images/pyclaw_examples_advection_1d__plots_frame0004fig1.png" style="width: 5cm;" /></a>
-<a class="reference external image-reference" href="../../_static/pyclaw/examples/advection_1d/_plots/frame0010fig1.html"><img alt="../../_images/pyclaw_examples_advection_1d__plots_frame0010fig1.png" src="../../_images/pyclaw_examples_advection_1d__plots_frame0010fig1.png" style="width: 5cm;" /></a>
-</div>
-<div class="section" id="source">
-<h2>Source:<a class="headerlink" href="#source" title="Permalink to this headline">¶</a></h2>
+  <div class="system-message" id="advection-1d">
+<p class="system-message-title">System Message: WARNING/2 (<tt class="docutils">/Users/rjl/git/clawpack/doc/doc/pyclaw/gallery/advection_1d.rst</tt>, line 3)</p>
+autodoc can&#8217;t import/find module &#8216;pyclaw.examples.advection_1d.advection_1d&#8217;, it reported error: &#8220;Command &#8216;python setup.py build_ext -i&#8217; returned non-zero exit status 1&#8221;, please check your spelling and sys.path</div>
 <div class="highlight-python"><div class="highlight"><pre><span class="c">#!/usr/bin/env python</span>
 <span class="c"># encoding: utf-8</span>
 
@@ -131,45 +114,44 @@ crossed the domain exactly once.</p>
 <span class="sd">The final solution is identical to the initial data because the wave has</span>
 <span class="sd">crossed the domain exactly once.</span>
 <span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">clawpack</span> <span class="kn">import</span> <span class="n">riemann</span>
 
 <span class="k">def</span> <span class="nf">setup</span><span class="p">(</span><span class="n">nx</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">kernel_language</span><span class="o">=</span><span class="s">&#39;Python&#39;</span><span class="p">,</span> <span class="n">use_petsc</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">solver_type</span><span class="o">=</span><span class="s">&#39;classic&#39;</span><span class="p">,</span> <span class="n">weno_order</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> 
-        <span class="n">time_integrator</span><span class="o">=</span><span class="s">&#39;SSP104&#39;</span><span class="p">,</span> <span class="n">outdir</span><span class="o">=</span><span class="s">&#39;./_output&#39;</span><span class="p">):</span>
-    <span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
-    <span class="kn">from</span> <span class="nn">clawpack</span> <span class="kn">import</span> <span class="n">riemann</span>
+          <span class="n">time_integrator</span><span class="o">=</span><span class="s">&#39;SSP104&#39;</span><span class="p">,</span> <span class="n">outdir</span><span class="o">=</span><span class="s">&#39;./_output&#39;</span><span class="p">):</span>
 
     <span class="k">if</span> <span class="n">use_petsc</span><span class="p">:</span>
         <span class="kn">import</span> <span class="nn">clawpack.petclaw</span> <span class="kn">as</span> <span class="nn">pyclaw</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="kn">from</span> <span class="nn">clawpack</span> <span class="kn">import</span> <span class="n">pyclaw</span>
 
+    <span class="k">if</span> <span class="n">kernel_language</span> <span class="o">==</span> <span class="s">&#39;Fortran&#39;</span><span class="p">:</span>
+        <span class="n">riemann_solver</span> <span class="o">=</span> <span class="n">riemann</span><span class="o">.</span><span class="n">advection_1D</span>
+    <span class="k">elif</span> <span class="n">kernel_language</span> <span class="o">==</span> <span class="s">&#39;Python&#39;</span><span class="p">:</span>
+        <span class="n">riemann_solver</span> <span class="o">=</span> <span class="n">riemann</span><span class="o">.</span><span class="n">advection_1D_py</span><span class="o">.</span><span class="n">advection_1D</span>
+            
     <span class="k">if</span> <span class="n">solver_type</span><span class="o">==</span><span class="s">&#39;classic&#39;</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">kernel_language</span> <span class="o">==</span> <span class="s">&#39;Fortran&#39;</span><span class="p">:</span>
-            <span class="n">solver</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">ClawSolver1D</span><span class="p">(</span><span class="n">riemann</span><span class="o">.</span><span class="n">advection_1D</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="n">kernel_language</span><span class="o">==</span><span class="s">&#39;Python&#39;</span><span class="p">:</span> 
-            <span class="n">solver</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">ClawSolver1D</span><span class="p">(</span><span class="n">riemann</span><span class="o">.</span><span class="n">advection_1D_py</span><span class="o">.</span><span class="n">advection_1D</span><span class="p">)</span>
+        <span class="n">solver</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">ClawSolver1D</span><span class="p">(</span><span class="n">riemann_solver</span><span class="p">)</span>
     <span class="k">elif</span> <span class="n">solver_type</span><span class="o">==</span><span class="s">&#39;sharpclaw&#39;</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">kernel_language</span> <span class="o">==</span> <span class="s">&#39;Fortran&#39;</span><span class="p">:</span>
-            <span class="n">solver</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">SharpClawSolver1D</span><span class="p">(</span><span class="n">riemann</span><span class="o">.</span><span class="n">advection_1D</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="n">kernel_language</span><span class="o">==</span><span class="s">&#39;Python&#39;</span><span class="p">:</span> 
-            <span class="n">solver</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">SharpClawSolver1D</span><span class="p">(</span><span class="n">riemann</span><span class="o">.</span><span class="n">advection_1D_py</span><span class="o">.</span><span class="n">advection_1D</span><span class="p">)</span>
-        <span class="n">solver</span><span class="o">.</span><span class="n">weno_order</span><span class="o">=</span><span class="n">weno_order</span>
-        <span class="n">solver</span><span class="o">.</span><span class="n">time_integrator</span><span class="o">=</span><span class="n">time_integrator</span>
+        <span class="n">solver</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">SharpClawSolver1D</span><span class="p">(</span><span class="n">riemann_solver</span><span class="p">)</span>
+        <span class="n">solver</span><span class="o">.</span><span class="n">weno_order</span> <span class="o">=</span> <span class="n">weno_order</span>
+        <span class="n">solver</span><span class="o">.</span><span class="n">time_integrator</span> <span class="o">=</span> <span class="n">time_integrator</span>
     <span class="k">else</span><span class="p">:</span> <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s">&#39;Unrecognized value of solver_type.&#39;</span><span class="p">)</span>
 
     <span class="n">solver</span><span class="o">.</span><span class="n">kernel_language</span> <span class="o">=</span> <span class="n">kernel_language</span>
 
-    <span class="n">solver</span><span class="o">.</span><span class="n">bc_lower</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">2</span>
-    <span class="n">solver</span><span class="o">.</span><span class="n">bc_upper</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="n">solver</span><span class="o">.</span><span class="n">bc_lower</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">BC</span><span class="o">.</span><span class="n">periodic</span>
+    <span class="n">solver</span><span class="o">.</span><span class="n">bc_upper</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">BC</span><span class="o">.</span><span class="n">periodic</span>
 
     <span class="n">x</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">Dimension</span><span class="p">(</span><span class="s">&#39;x&#39;</span><span class="p">,</span><span class="mf">0.0</span><span class="p">,</span><span class="mf">1.0</span><span class="p">,</span><span class="n">nx</span><span class="p">)</span>
     <span class="n">domain</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">Domain</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
-    <span class="n">num_eqn</span> <span class="o">=</span> <span class="mi">1</span>
-    <span class="n">state</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">State</span><span class="p">(</span><span class="n">domain</span><span class="p">,</span><span class="n">num_eqn</span><span class="p">)</span>
-    <span class="n">state</span><span class="o">.</span><span class="n">problem_data</span><span class="p">[</span><span class="s">&#39;u&#39;</span><span class="p">]</span><span class="o">=</span><span class="mf">1.</span>
+    <span class="n">state</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">State</span><span class="p">(</span><span class="n">domain</span><span class="p">,</span><span class="n">solver</span><span class="o">.</span><span class="n">num_eqn</span><span class="p">)</span>
 
-    <span class="n">grid</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">grid</span>
-    <span class="n">xc</span><span class="o">=</span><span class="n">grid</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">centers</span>
-    <span class="n">beta</span><span class="o">=</span><span class="mi">100</span><span class="p">;</span> <span class="n">gamma</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span> <span class="n">x0</span><span class="o">=</span><span class="mf">0.75</span>
+    <span class="n">state</span><span class="o">.</span><span class="n">problem_data</span><span class="p">[</span><span class="s">&#39;u&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.</span>  <span class="c"># Advection velocity</span>
+
+    <span class="c"># Initial data</span>
+    <span class="n">xc</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">centers</span>
+    <span class="n">beta</span> <span class="o">=</span> <span class="mi">100</span><span class="p">;</span> <span class="n">gamma</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">x0</span> <span class="o">=</span> <span class="mf">0.75</span>
     <span class="n">state</span><span class="o">.</span><span class="n">q</span><span class="p">[</span><span class="mi">0</span><span class="p">,:]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">beta</span> <span class="o">*</span> <span class="p">(</span><span class="n">xc</span><span class="o">-</span><span class="n">x0</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">gamma</span> <span class="o">*</span> <span class="p">(</span><span class="n">xc</span> <span class="o">-</span> <span class="n">x0</span><span class="p">))</span>
 
     <span class="n">claw</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">Controller</span><span class="p">()</span>
@@ -187,13 +169,9 @@ crossed the domain exactly once.</p>
 
     <span class="k">return</span> <span class="n">claw</span>
 
-<span class="c">#--------------------------</span>
 <span class="k">def</span> <span class="nf">setplot</span><span class="p">(</span><span class="n">plotdata</span><span class="p">):</span>
-<span class="c">#--------------------------</span>
     <span class="sd">&quot;&quot;&quot; </span>
-<span class="sd">    Specify what is to be plotted at each frame.</span>
-<span class="sd">    Input:  plotdata, an instance of visclaw.data.ClawPlotData.</span>
-<span class="sd">    Output: a modified version of plotdata.</span>
+<span class="sd">    Plot solution using VisClaw.</span>
 <span class="sd">    &quot;&quot;&quot;</span> 
     <span class="n">plotdata</span><span class="o">.</span><span class="n">clearfigures</span><span class="p">()</span>  <span class="c"># clear any old figures,axes,items data</span>
 
@@ -219,8 +197,6 @@ crossed the domain exactly once.</p>
     <span class="n">output</span> <span class="o">=</span> <span class="n">run_app_from_main</span><span class="p">(</span><span class="n">setup</span><span class="p">,</span><span class="n">setplot</span><span class="p">)</span>
 </pre></div>
 </div>
-</div>
-</div>
 
 
           </div>
@@ -232,24 +208,14 @@ crossed the domain exactly once.</p>
     <img class="logo" src= "_static/clawlogo.jpg" alt="Logo"/>
 </a>
 <h2>Version 5.1.0</h2>
-</p>
-  <h3><a href="../../contents.html">Table Of Contents</a></h3>
-  <ul>
-<li><a class="reference internal" href="#">1-dimensional advection</a><ul>
-<li><a class="reference internal" href="#one-dimensional-advection">One-dimensional advection</a></li>
-<li><a class="reference internal" href="#output">Output:</a></li>
-<li><a class="reference internal" href="#source">Source:</a></li>
-</ul>
-</li>
-</ul>
-<h3>Related Topics</h3>
+</p><h3>Related Topics</h3>
 <ul>
   <li><a href="../../contents.html">Documentation overview</a><ul>
   <li><a href="../index.html">Pyclaw</a><ul>
   <li><a href="../basics.html">PyClaw Basics</a><ul>
   <li><a href="../examples.html">Working with PyClaw&#8217;s built-in examples</a><ul>
       <li>Previous: <a href="../examples.html" title="previous chapter">Working with PyClaw&#8217;s built-in examples</a></li>
-      <li>Next: <a href="advection_2d.html" title="next chapter">2-dimensional advection</a></li>
+      <li>Next: <a href="advection_2d.html" title="next chapter">&lt;no title&gt;</a></li>
   </ul></li>
   </ul></li>
   </ul></li>
