@@ -216,11 +216,28 @@ The required signature for this function is:</p>
 <dl class="attribute">
 <dt id="SharpClawSolver.time_integrator">
 <tt class="descname">time_integrator</tt><a class="headerlink" href="#SharpClawSolver.time_integrator" title="Permalink to this definition">¶</a></dt>
-<dd><p>Time integrator to be used.
-Euler: forward Euler method.
-SSP33: 3-stages, 3rd-order SSP Runge-Kutta method.
-SSP104: 10-stages, 4th-order SSP Runge-Kutta method.
-<tt class="docutils literal"><span class="pre">Default</span> <span class="pre">=</span> <span class="pre">'SSP104'</span></tt></p>
+<dd><p>Time integrator to be used. Currently implemented methods:</p>
+<p>&#8216;Euler&#8217;  : 1st-order Forward Euler integration
+&#8216;SSP33&#8217;  : 3rd-order strong stability preserving method of Shu &amp; Osher
+&#8216;SSP104&#8217; : 4th-order strong stability preserving method Ketcheson
+&#8216;SSPMS32&#8217;: 2nd-order strong stability preserving 3-step linear multistep method,</p>
+<div class="system-message">
+<p class="system-message-title">System Message: ERROR/3 (<tt class="docutils">/Users/rjl/git/clawpack/pyclaw/src/pyclaw/sharpclaw/solver.py:docstring of pyclaw.sharpclaw.solver.SharpClawSolver</tt>, line 36)</p>
+Unexpected indentation.</div>
+<blockquote>
+<div>using Euler for starting values</div></blockquote>
+<div class="system-message">
+<p class="system-message-title">System Message: WARNING/2 (<tt class="docutils">/Users/rjl/git/clawpack/pyclaw/src/pyclaw/sharpclaw/solver.py:docstring of pyclaw.sharpclaw.solver.SharpClawSolver</tt>, line 37)</p>
+Block quote ends without a blank line; unexpected unindent.</div>
+<dl class="docutils">
+<dt>&#8216;SSPMS43&#8217;: 3rd-order strong stability preserving 4-step linear multistep method</dt>
+<dd>using SSPRK22 for starting values</dd>
+<dt>&#8216;RK&#8217; <span class="classifier-delimiter">:</span> <span class="classifier">Arbitrary Runge-Kutta method, specified by setting <cite>solver.a</cite></span></dt>
+<dd>and <cite>solver.b</cite> to the Butcher arrays of the method.</dd>
+<dt>&#8216;LMM&#8217; <span class="classifier-delimiter">:</span> <span class="classifier">Arbitrary linear multistep method, specified by setting the</span></dt>
+<dd>coefficient arrays <cite>solver.alpha</cite> and <cite>solver.beta</cite>.</dd>
+</dl>
+<p><tt class="docutils literal"><span class="pre">Default</span> <span class="pre">=</span> <span class="pre">'SSP104'</span></tt></p>
 </dd></dl>
 
 <dl class="attribute">
@@ -335,12 +352,8 @@ computes its contribution must be provided.
 <dt id="pyclaw.sharpclaw.solver.SharpClawSolver.step">
 <tt class="descname">step</tt><big>(</big><em>solution</em><big>)</big><a class="headerlink" href="#pyclaw.sharpclaw.solver.SharpClawSolver.step" title="Permalink to this definition">¶</a></dt>
 <dd><p>Evolve q over one time step.</p>
-<p>Take on Runge-Kutta time step or multistep method using the method specified by
-self.time_integrator.  Currently implemented methods:</p>
-<p>&#8216;Euler&#8217;  : 1st-order Forward Euler integration
-&#8216;SSP33&#8217;  : 3rd-order strong stability preserving method of Shu &amp; Osher
-&#8216;SSP104&#8217; : 4th-order strong stability preserving method Ketcheson
-&#8216;SSPMS32&#8217;: 2nd-order strong stability preserving 3-step linear multistep method</p>
+<p>Take one step with a Runge-Kutta or multistep method as specified by
+<cite>solver.time_integrator</cite>.</p>
 </dd></dl>
 
 </dd></dl>

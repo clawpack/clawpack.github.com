@@ -7,7 +7,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Advanced output options &mdash; Clawpack 5.1.0 documentation</title>
+    <title>PyClaw output &mdash; Clawpack 5.1.0 documentation</title>
     
     <link rel="stylesheet" href="../_static/flasky.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -92,8 +92,20 @@
         <div class="bodywrapper">
           <div class="body">
             
-  <div class="section" id="advanced-output-options">
-<span id="output"></span><h1>Advanced output options<a class="headerlink" href="#advanced-output-options" title="Permalink to this headline">¶</a></h1>
+  <div class="contents topic" id="contents">
+<p class="topic-title first">Contents</p>
+<ul class="simple">
+<li><a class="reference internal" href="#pyclaw-output" id="id1">PyClaw output</a><ul>
+<li><a class="reference internal" href="#outputting-derived-quantities" id="id2">Outputting derived quantities</a></li>
+<li><a class="reference internal" href="#outputting-functionals" id="id3">Outputting functionals</a></li>
+<li><a class="reference internal" href="#using-gauges" id="id4">Using gauges</a></li>
+<li><a class="reference internal" href="#logging" id="id5">Logging</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="section" id="pyclaw-output">
+<span id="output"></span><h1><a class="toc-backref" href="#id1">PyClaw output</a><a class="headerlink" href="#pyclaw-output" title="Permalink to this headline">¶</a></h1>
 <p>PyClaw supports options to output more
 than just the solution <span class="math">\(q\)</span>.  It can provide:</p>
 <blockquote>
@@ -113,7 +125,7 @@ to compute them at run-time for large parallel runs.</p>
 gauge, one would otherwise have to write the full solution out at every
 timestep, which might be very slow.</p>
 <div class="section" id="outputting-derived-quantities">
-<h2>Outputting derived quantities<a class="headerlink" href="#outputting-derived-quantities" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id2">Outputting derived quantities</a><a class="headerlink" href="#outputting-derived-quantities" title="Permalink to this headline">¶</a></h2>
 <p>It is sometimes desirable to output quantities other than those
 in the vector q.  To do so, just add a function <cite>p_function</cite> to
 the controller that accepts the state and sets the derived quantities
@@ -127,7 +139,7 @@ in state.p</p>
 </div>
 </div>
 <div class="section" id="outputting-functionals">
-<h2>Outputting functionals<a class="headerlink" href="#outputting-functionals" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id3">Outputting functionals</a><a class="headerlink" href="#outputting-functionals" title="Permalink to this headline">¶</a></h2>
 <p>In PyClaw a functional is a scalar quantity computed from <span class="math">\(q\)</span> that is written
 to file at each output time.  For now, only functionals of the form</p>
 <div class="math">
@@ -146,7 +158,7 @@ function that computes <span class="math">\(f(q)\)</span></p>
 </div>
 </div>
 <div class="section" id="using-gauges">
-<h2>Using gauges<a class="headerlink" href="#using-gauges" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id4">Using gauges</a><a class="headerlink" href="#using-gauges" title="Permalink to this headline">¶</a></h2>
 <p>A gauge in PyClaw is a single grid location for which output is written at
 every time step.  This can be very useful in some applications, like comparing
 with data from tidal gauges (from whence the name is derived) in tsunami modeling.
@@ -166,6 +178,53 @@ To write some other quantity, simply provide a function
 </pre></div>
 </div>
 </div>
+<div class="section" id="logging">
+<h2><a class="toc-backref" href="#id5">Logging</a><a class="headerlink" href="#logging" title="Permalink to this headline">¶</a></h2>
+<p>By default, PyClaw prints a message to the screen each time it writes
+an output file.  This message is also writing to the file <cite>pyclaw.log</cite>
+in the working directory.  There are additional warning or error messages
+that may be sent to the screen or to file.  You can adjust the logger levels
+in order to turn these messages off or to get more detailed debugging
+information.</p>
+<p>The controller provides one means to managing the logging with the
+<tt class="xref py py-attr docutils literal"><span class="pre">verbosity</span></tt> parameter and is provided as an easy
+interace to control the console output (that which is shown on screen).  Valid
+values for <tt class="xref py py-attr docutils literal"><span class="pre">verbosity</span></tt> are:</p>
+<div class="system-message">
+<p class="system-message-title">System Message: ERROR/3 (<tt class="docutils">/Users/rjl/git/clawpack/doc/doc/pyclaw/output.rst</tt>, line 133)</p>
+<p>Malformed table.
+Column span alignment problem in table line 5.</p>
+<div class="highlight-python"><pre>===========  ================
+Verbosity     Message Level
+-----------  ----------------
+0             Critical - This effectively silences the logger, since there are
+              no logging messages in PyClaw that correspond to this level.  May
+              be useful in an IPython notebook for instance if you want the
+              plots to appear immediately below your code.
+1             Error - These are logged by the IO system to indicate that
+              something has gone wrong with either reading or writing a file.
+2             Warning - There are no warning level logger messages.
+3             Info - Additional IO messages are printed and some minor messages
+              dealing with hitting the end time requested.
+4             Debug - If this level is set all logger output is displayed.  This
+              includes the above and detailed time step information for every
+              time step (includes CFL, current dt and whether a time step is
+              rejected).
+===========  ================</pre>
+</div>
+</div>
+<p>When running on a supercomputer, logging to file can be problematic because
+the associated I/O can slow down the entire computation (this is true on
+Shaheen). To turn off all logging (both to screen and to file), you need to
+change the level of the root logger:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">logging</span>
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s">&#39;pyclaw&#39;</span><span class="p">)</span>
+<span class="n">logger</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">CRITICAL</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Again since we don&#8217;t use <cite>CRITICAL</cite> logger messages in PyClaw, this has the
+effect of turning the loggers off.</p>
+</div>
 </div>
 
 
@@ -181,10 +240,11 @@ To write some other quantity, simply provide a function
 </p>
   <h3><a href="../contents.html">Table Of Contents</a></h3>
   <ul>
-<li><a class="reference internal" href="#">Advanced output options</a><ul>
+<li><a class="reference internal" href="#">PyClaw output</a><ul>
 <li><a class="reference internal" href="#outputting-derived-quantities">Outputting derived quantities</a></li>
 <li><a class="reference internal" href="#outputting-functionals">Outputting functionals</a></li>
 <li><a class="reference internal" href="#using-gauges">Using gauges</a></li>
+<li><a class="reference internal" href="#logging">Logging</a></li>
 </ul>
 </li>
 </ul>
