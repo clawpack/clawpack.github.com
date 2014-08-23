@@ -1,4 +1,3 @@
-
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
@@ -16,7 +15,7 @@
     
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    '',
+        URL_ROOT:    './',
         VERSION:     '5.2.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
@@ -114,16 +113,18 @@ example and then to the source code for the application-specific codes.</p>
 <div class="section" id="specifying-the-initial-conditions">
 <span id="user-qinit"></span><h2>Specifying the initial conditions<a class="headerlink" href="#specifying-the-initial-conditions" title="Permalink to this headline">¶</a></h2>
 <p>Calling sequence in 1d:</p>
-<div class="highlight-python"><pre>subroutine qinit(meqn,mbc,mx,xlower,dx,q,maux,aux)</pre>
+<div class="highlight-python"><div class="highlight"><pre>subroutine qinit(meqn,mbc,mx,xlower,dx,q,maux,aux)
+</pre></div>
 </div>
 <p>See the <a class="reference internal" href="qinit_defaults.html#qinit-defaults"><em>qinit default routines</em></a> for other calling sequences and the proper
 declaration of input/output parameters.</p>
 <p>Typically every application directory contains a file <cite>qinit.f</cite> or
 <cite>qinit.f90</cite> that sets the initial conditions, typically in a loop such as:</p>
-<div class="highlight-python"><pre>do i=1,mx
+<div class="highlight-python"><div class="highlight"><pre>do i=1,mx
     xi = xlower + (i-0.5d0)*dx
     q(1,i) = xi**2
-    enddo</pre>
+    enddo
+</pre></div>
 </div>
 <p>This loop would set the value of <span class="math">\(q^1\)</span> in the i&#8217;th cell to
 <span class="math">\(x_i^2\)</span> where <span class="math">\(x_i\)</span> is the cell center.
@@ -205,7 +206,8 @@ of cells with <cite>num_aux</cite> components in each cell.  The value <cite>num
 specified in <cite>setrun.py</cite>, and the contents of the <cite>aux</cite> arrays are filled by
 a subroutine named <cite>setaux</cite>, which in one dimension has the calling
 sequence:</p>
-<div class="highlight-python"><pre>subroutine setaux(mbc,mx,xlower,dx,maux,aux)</pre>
+<div class="highlight-python"><div class="highlight"><pre>subroutine setaux(mbc,mx,xlower,dx,maux,aux)
+</pre></div>
 </div>
 <p>See the <a class="reference internal" href="setaux_defaults.html#setaux-defaults"><em>setaux default routines</em></a> for other calling sequences and the proper
 declaration of input/output parameters.</p>
@@ -223,7 +225,8 @@ before a time step is taken (and after ghost cells have been filled by the
 boundary conditions).  The library version of this routine does
 nothing, but this can be modified to do something prior to every time step.</p>
 <p>In one dimension the calling sequence is:</p>
-<div class="highlight-python"><pre>subroutine b4step1(mbc,mx,meqn,q,xlower,dx,t,dt,maux,aux)</pre>
+<div class="highlight-python"><div class="highlight"><pre>subroutine b4step1(mbc,mx,meqn,q,xlower,dx,t,dt,maux,aux)
+</pre></div>
 </div>
 <p>See the <a class="reference internal" href="b4step_defaults.html#b4step-defaults"><em>b4step default routines</em></a> for other calling sequences and the proper
 declaration of input/output parameters.</p>
@@ -237,10 +240,11 @@ each time step in <cite>b4step2</cite>.</p>
 <p>Problems of the form
 <span class="math">\(q_t(x,t) + f(q(x,t))_x = \psi(q,x,t)\)</span>
 can be solved using a fractional step approach, as described in Chapter 17
-of <a class="reference internal" href="biblio.html#leveque-fvmhp">[LeVeque-FVMHP]</a>.  The user can provide a subroutine named <cite>srcN</cite> in <cite>N</cite>
+of <a class="reference internal" href="biblio.html#leveque-fvmhp" id="id1">[LeVeque-FVMHP]</a>.  The user can provide a subroutine named <cite>srcN</cite> in <cite>N</cite>
 space dimensions that takes a single time step on the equation
 <span class="math">\(q_t = \psi\)</span>.  In one dimension the calling sequence is:</p>
-<div class="highlight-python"><pre>subroutine src1(meqn,mbc,mx,xlower,dx,q,maux,aux,t,dt)</pre>
+<div class="highlight-python"><div class="highlight"><pre>subroutine src1(meqn,mbc,mx,xlower,dx,q,maux,aux,t,dt)
+</pre></div>
 </div>
 <p>On output the <cite>q</cite> array should have been updated by using the input values
 as initial data for a single step of length <cite>dt</cite> starting at time <cite>t</cite>.</p>
@@ -268,7 +272,8 @@ solved in <cite>$CLAW/classic/examples/acoustics_2d_radial</cite>.</p>
 terms, then a subroutine <cite>srcN</cite> must be provided as described above.  In
 addition, for the AMR procedure to work properly it is also necessary to
 provide another subroutine <cite>src1d</cite> with calling sequence:</p>
-<div class="highlight-python"><pre>subroutine src1d(meqn,mbc,mx1d,q1d,maux,aux1d,t,dt)</pre>
+<div class="highlight-python"><div class="highlight"><pre>subroutine src1d(meqn,mbc,mx1d,q1d,maux,aux1d,t,dt)
+</pre></div>
 </div>
 <p>See the <a class="reference internal" href="src1d_defaults.html#src1d-defaults"><em>src1d default routines</em></a> for other calling sequences and the proper
 declaration of input/output parameters.</p>

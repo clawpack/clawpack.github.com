@@ -1,4 +1,3 @@
-
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
@@ -126,10 +125,11 @@ variables</li>
 <p>The first step to succesfully interface the Fortran functions with PyClaw
 is to automate the extension module generation of these routines through f2py.
 You can use <cite>clawpack/pyclaw/examples/shallow_sphere/Makefile</cite> as a template:</p>
-<div class="highlight-python"><pre># Problem's source Fortran files
+<div class="highlight-python"><div class="highlight"><pre># Problem&#39;s source Fortran files
 INITIALIZE_SOURCE = mapc2p.f setaux.f qinit.f src2.f
 problem.so: $(INITIALIZE_SOURCE)
-    $(F2PY) -m problem -c $^</pre>
+    $(F2PY) -m problem -c $^
+</pre></div>
 </div>
 <p>The code above, calls f2py to compile a set of Fortran routines
 and build a module
@@ -142,26 +142,28 @@ see <a class="reference external" href="http://www.scipy.org/F2py">http://www.sc
 function contained in <tt class="docutils literal"><span class="pre">problem.so</span></tt>, which may be different than
 that of the original Fortran function, since f2py eliminates dummy variables.
 One can easily achieve that by using the following commands:</p>
-<div class="highlight-python"><pre>$ ipython
+<div class="highlight-python"><div class="highlight"><pre>$ ipython
 &gt;&gt;&gt; import problem
-&gt;&gt;&gt; problem?</pre>
+&gt;&gt;&gt; problem?
+</pre></div>
 </div>
 <p>The last command queries the content of the module and outputs the functions&#8217;
 signature that must be used in the initialization script to correctly call the
 fortran functions. In the shallow water equations on a sphere example, we get
 the following output:</p>
-<div class="highlight-python"><pre>&gt;&gt;&gt; Type:           module
-&gt;&gt;&gt; Base Class:     &lt;type 'module'&gt;
-&gt;&gt;&gt; String Form:    &lt;module 'problem' from 'problem.so'&gt;
-&gt;&gt;&gt; Namespace:      Interactive
-&gt;&gt;&gt; File:           /Users/../../../clawpack/pyclaw/examples/shallow-sphere/problem.so
-&gt;&gt;&gt; Docstring:
-    This module 'problem' is auto-generated with f2py (version:1).
-    Functions:
-    mapc2p(x1,y1,xp,yp,zp,rsphere)
-    aux = setaux(maxmx,maxmy,num_ghost,mx,my,xlower,ylower,dxc,dyc,aux,rsphere,num_aux=shape(aux,0))
-    q = qinit(maxmx,maxmy,num_ghost,mx,my,xlower,ylower,dx,dy,q,aux,rsphere,num_eqn=shape(q,0),num_aux=shape(aux,0))
-    q = src2(maxmx,maxmy,num_ghost,xlower,ylower,dx,dy,q,aux,t,dt,rsphere,num_eqn=shape(q,0),mx=shape(q,1),my=shape(q,2),num_aux=shape(aux,0))</pre>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">Type</span><span class="p">:</span>           <span class="n">module</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Base</span> <span class="n">Class</span><span class="p">:</span>     <span class="o">&lt;</span><span class="nb">type</span> <span class="s">&#39;module&#39;</span><span class="o">&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">String</span> <span class="n">Form</span><span class="p">:</span>    <span class="o">&lt;</span><span class="n">module</span> <span class="s">&#39;problem&#39;</span> <span class="kn">from</span> <span class="s">&#39;problem.so&#39;</span><span class="o">&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Namespace</span><span class="p">:</span>      <span class="n">Interactive</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">File</span><span class="p">:</span>           <span class="o">/</span><span class="n">Users</span><span class="o">/../../../</span><span class="n">clawpack</span><span class="o">/</span><span class="n">pyclaw</span><span class="o">/</span><span class="n">examples</span><span class="o">/</span><span class="n">shallow</span><span class="o">-</span><span class="n">sphere</span><span class="o">/</span><span class="n">problem</span><span class="o">.</span><span class="n">so</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Docstring</span><span class="p">:</span>
+<span class="go">    This module &#39;problem&#39; is auto-generated with f2py (version:1).</span>
+<span class="go">    Functions:</span>
+<span class="go">    mapc2p(x1,y1,xp,yp,zp,rsphere)</span>
+<span class="go">    aux = setaux(maxmx,maxmy,num_ghost,mx,my,xlower,ylower,dxc,dyc,aux,rsphere,num_aux=shape(aux,0))</span>
+<span class="go">    q = qinit(maxmx,maxmy,num_ghost,mx,my,xlower,ylower,dx,dy,q,aux,rsphere,num_eqn=shape(q,0),num_aux=shape(aux,0))</span>
+<span class="go">    q = src2(maxmx,maxmy,num_ghost,xlower,ylower,dx,dy,q,aux,t,dt,rsphere,num_eqn=shape(q,0),mx=shape(q,1),my=shape(q,2),num_aux=shape(aux,0))</span>
+</pre></div>
 </div>
 <p>For instance, the function <tt class="docutils literal"><span class="pre">src2</span></tt>, which computes the contribution of the
 (non-hyperbolic) source term, has the following intent variables:</p>
@@ -205,18 +207,20 @@ typical example that uses this nice feature. Indeed, to run correctly the proble
 ad-hoc <tt class="docutils literal"><span class="pre">step2</span></tt> function (i.e. the <tt class="docutils literal"><span class="pre">step2qcor</span></tt>) is required. For that problem
 the interesting part of the <a class="reference external" href="http://numerics.kaust.edu.sa/pyclaw/examples/shallow-sphere/shallow_4_Rossby_Haurwitz_wave.py">Makefile</a>
 reads:</p>
-<div class="highlight-python"><pre># Override step2.f with a new function that contains a call to an additional
+<div class="highlight-python"><div class="highlight"><pre># Override step2.f with a new function that contains a call to an additional
 # function, i.e. qcor.f
 # ==========================================================================
 override TWO_D_CLASSIC_SOURCES = step2qcor.f qcor.o flux2.o limiter.o philim.o
 
 qcor.o: qcor.f
-    $(FC) $(FFLAGS) -o qcor.o -c qcor.f</pre>
+    $(FC) $(FFLAGS) -o qcor.o -c qcor.f
+</pre></div>
 </div>
 <p>The user has just to override <tt class="docutils literal"><span class="pre">step2.f</span></tt> with the new function <tt class="docutils literal"><span class="pre">step2qcor.f</span></tt>
 and provide new:</p>
-<div class="highlight-python"><pre>output_filenames : input_filenames
-    actions</pre>
+<div class="highlight-python"><div class="highlight"><pre>output_filenames : input_filenames
+    actions
+</pre></div>
 </div>
 <p>rules to create the targets required by the new Fortran routine.
 Similar changes to the problem-specific Makefile can be used to replace other
