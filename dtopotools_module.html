@@ -1,0 +1,989 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>dtopotools module for moving topography &mdash; Clawpack 5.2.0 documentation</title>
+    
+    <link rel="stylesheet" href="_static/flasky.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/base.css" type="text/css" />
+    <link rel="stylesheet" href="_static/layout.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '5.2.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="shortcut icon" href="_static/clawicon.ico"/>
+    <link rel="author" title="About these documents" href="about.html" />
+    <link rel="top" title="Clawpack 5.2.0 documentation" href="index.html" /> 
+  </head>
+  <body>
+<div id="main-wrapper" class="sphinx">
+<div id="header-wrapper">
+  <section id="header">
+    <!-- <h1><a href="http://clawpack.org/">Clawpack</a></h1> -->
+    <h1><a href="http://clawpack.org/">Clawpack-5</a></h1> 
+    <nav>
+      <ul>
+        <li>
+          <a href="toc_condensed.html">Docs</a>
+        </li>
+        <li>
+          <a href="installing.html">Install</a>
+        </li>
+        <li>
+          <a class="" href="galleries.html">Gallery</a>
+        </li>
+        <li>
+          <a class="active" href="https://groups.google.com/forum/#!forum/claw-users">Support</a>
+        </li>
+        <li>
+          <a class="active" href="http://github.com/organizations/clawpack">Source</a>
+        </li>
+        <li>
+          <a class="" href="developers.html">Develop</a>
+        </li>
+      </ul>
+    </nav>
+  </section>
+<div class="decoration"></div>
+</div>
+
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="contents.html">Clawpack 5.2.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="dtopotools-module-for-moving-topography">
+<span id="dtopotools-module"></span><h1>dtopotools module for moving topography<a class="headerlink" href="#dtopotools-module-for-moving-topography" title="Permalink to this headline">¶</a></h1>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">This describes new tools to be added in Clawpack 5.2.1</p>
+</div>
+<p><a class="reference external" href="http://nbviewer.ipython.org/url/clawpack.github.io/notebooks/dtopotools_examples.ipynb">This IPython notebook</a>
+illustrates how to use some of the tools.</p>
+<div class="system-message">
+<p class="system-message-title">System Message: WARNING/2 (<tt class="docutils">/Users/rjl/git/clawpack/doc/doc/dtopotools_module.rst</tt>, line 5); <em><a href="#id1">backlink</a></em></p>
+Duplicate explicit target name: &#8220;this ipython notebook&#8221;.</div>
+<p>See also <a class="reference external" href="http://nbviewer.ipython.org/url/clawpack.github.io/notebooks/Okada.ipynb">this IPython notebook</a>,
+which illustrates the Okada model using some of these tools.</p>
+<p>The file <cite>$CLAW/geoclaw/tests/test_dtopotools.py</cite> contains some tests of these
+tools.  Looking at these test routines may also give some ideas on
+how to use them.</p>
+<div class="section" id="module-clawpack.geoclaw.dtopotools">
+<span id="documentation-auto-generated-from-the-module-docstrings"></span><h2>Documentation auto-generated from the module docstrings<a class="headerlink" href="#module-clawpack.geoclaw.dtopotools" title="Permalink to this headline">¶</a></h2>
+<p>GeoClaw Moving Topography Tools Module</p>
+<p>Module provides several functions for dealing with moving topography (usually
+due to earthquakes) including reading sub-fault specifications, writing out 
+dtopo files, and calculating Okada based deformations.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Functions:</th><td class="field-body"></td>
+</tr>
+<tr class="field-even field"><th class="field-name" colspan="2">MovingTopography Class:</th></tr>
+<tr class="field-even field"><td>&nbsp;</td><td class="field-body"></td>
+</tr>
+<tr class="field-odd field"><th class="field-name">TODO:</th><td class="field-body"><ul class="first last simple">
+<li>This file contains both the older dtopo functionality and a new class, should
+merge as much functionality into the class as possible ensuring nothing is
+left behind.</li>
+<li>Refactor Okada functionality</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="class">
+<dt id="clawpack.geoclaw.dtopotools.CSVFault">
+<em class="property">class </em><tt class="descclassname">clawpack.geoclaw.dtopotools.</tt><tt class="descname">CSVFault</tt><big>(</big><em>path=None</em>, <em>subfaults=None</em>, <em>units={}</em><big>)</big><a class="headerlink" href="#clawpack.geoclaw.dtopotools.CSVFault" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fault subclass for reading in CSV formatted files</p>
+<p>Assumes that the first row gives the column headings</p>
+<dl class="method">
+<dt id="clawpack.geoclaw.dtopotools.CSVFault.read">
+<tt class="descname">read</tt><big>(</big><em>path</em><big>)</big><a class="headerlink" href="#clawpack.geoclaw.dtopotools.CSVFault.read" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read in subfault specification at <em>path</em>.</p>
+<p>Creates a list of subfaults from the subfault specification file at
+<em>path</em>.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="clawpack.geoclaw.dtopotools.Fault">
+<em class="property">class </em><tt class="descclassname">clawpack.geoclaw.dtopotools.</tt><tt class="descname">Fault</tt><big>(</big><em>path=None</em>, <em>subfaults=None</em>, <em>units={}</em><big>)</big><a class="headerlink" href="#clawpack.geoclaw.dtopotools.Fault" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generic class representing a fault.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">TODO:</th><td class="field-body"><ul class="first last simple">
+<li>Support something other than lat-long</li>
+<li>Provide plots (and other plot types)</li>
+<li>Provide detailed documentation</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="system-message">
+<p class="system-message-title">System Message: SEVERE/4 (<tt class="docutils">/Users/rjl/git/clawpack/clawpack/geoclaw/dtopotools.py:docstring of clawpack.geoclaw.dtopotools.Fault</tt>, line 10)</p>
+<p>Unexpected section title.</p>
+<div class="highlight-python"><div class="highlight"><pre>Fault Parameters
+-------------------
+</pre></div>
+</div>
+</div>
+<div class="system-message">
+<p class="system-message-title">System Message: SEVERE/4 (<tt class="docutils">/Users/rjl/git/clawpack/clawpack/geoclaw/dtopotools.py:docstring of clawpack.geoclaw.dtopotools.Fault</tt>, line 14)</p>
+<p>Unexpected section title.</p>
+<div class="highlight-python"><div class="highlight"><pre>Attributes
+----------
+</pre></div>
+</div>
+</div>
+<blockquote>
+<div><ul class="simple">
+<li><em>units</em> (dict) - Dictionary containing unit specifications for the</li>
+</ul>
+</div></blockquote>
+<div class="system-message">
+<p class="system-message-title">System Message: SEVERE/4 (<tt class="docutils">/Users/rjl/git/clawpack/clawpack/geoclaw/dtopotools.py:docstring of clawpack.geoclaw.dtopotools.Fault</tt>, line 18)</p>
+<p>Unexpected section title.</p>
+<div class="highlight-python"><div class="highlight"><pre>Properties
+----------
+</pre></div>
+</div>
+</div>
+<blockquote>
+<div><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Note:</th><td class="field-body">All properties are in meters and do not match the units dictionary.</td>
+</tr>
+</tbody>
+</table>
+</div></blockquote>
+<dl class="attribute">
+<dt id="clawpack.geoclaw.dtopotools.Fault.Mw">
+<tt class="descname">Mw</tt><a class="headerlink" href="#clawpack.geoclaw.dtopotools.Fault.Mw" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate the effective moment magnitude of all subfaults.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">TODO:</th><td class="field-body"><ul class="first last simple">
+<li>Need to check that this does the right thing</li>
+<li>Need to check mu units</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="clawpack.geoclaw.dtopotools.Fault.X">
+<tt class="descname">X</tt><a class="headerlink" href="#clawpack.geoclaw.dtopotools.Fault.X" title="Permalink to this definition">¶</a></dt>
+<dd><p>2d x-coordinate array.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="clawpack.geoclaw.dtopotools.Fault.Y">
+<tt class="descname">Y</tt><a class="headerlink" href="#clawpack.geoclaw.dtopotools.Fault.Y" title="Permalink to this definition">¶</a></dt>
+<dd><p>2d y-coordinate array.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="clawpack.geoclaw.dtopotools.Fault.calculate_geometry">
+<tt class="descname">calculate_geometry</tt><big>(</big><big>)</big><a class="headerlink" href="#clawpack.geoclaw.dtopotools.Fault.calculate_geometry" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate the fault geometry.</p>
+<p>Routine calculates the class attributes <em>fault_plane_corners</em> and 
+<em>fault_plane_centers</em> which are the corners of the fault plane and 
+points along the centerline respecitvely in 3D space.</p>
+<p>Note that these are simply the largest containing rectangle and the
+average location of the centers.  Really this should be overridden in a
+subclass by a particular type of Fault.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="clawpack.geoclaw.dtopotools.Fault.containing_rect">
+<tt class="descname">containing_rect</tt><big>(</big><big>)</big><a class="headerlink" href="#clawpack.geoclaw.dtopotools.Fault.containing_rect" title="Permalink to this definition">¶</a></dt>
+<dd><p>Find containing rectangle of subfault in x-y plane.</p>
+<p>Returns tuple of x-limits and y-limits.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="clawpack.geoclaw.dtopotools.Fault.convert2meters">
+<tt class="descname">convert2meters</tt><big>(</big><em>parameters</em><big>)</big><a class="headerlink" href="#clawpack.geoclaw.dtopotools.Fault.convert2meters" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert relevant lengths to correct units.</p>
+<p>Returns converted (dimensions, depth, slip)</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="clawpack.geoclaw.dtopotools.Fault.create_2d_coordinate_arrays">
+<tt class="descname">create_2d_coordinate_arrays</tt><big>(</big><big>)</big><a class="headerlink" href="#clawpack.geoclaw.dtopotools.Fault.create_2d_coordinate_arrays" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create 2d-coodrinate arrays.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="clawpack.geoclaw.dtopotools.Fault.create_coordinate_arrays">
+<tt class="descname">create_coordinate_arrays</tt><big>(</big><em>resolution=60</em>, <em>buffer_size=0.5</em><big>)</big><a class="headerlink" href="#clawpack.geoclaw.dtopotools.Fault.create_coordinate_arrays" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create coordinate arrays containing subfault.</p>
+<div class="system-message">
+<p class="system-message-title">System Message: SEVERE/4 (<tt class="docutils">/Users/rjl/git/clawpack/clawpack/geoclaw/dtopotools.py:docstring of clawpack.geoclaw.dtopotools.Fault.create_coordinate_arrays</tt>, line 4)</p>
+<p>Unexpected section title.</p>
+<div class="highlight-python"><div class="highlight"><pre>Input
+-----
+</pre></div>
+</div>
+</div>
+<blockquote>
+<div><ul class="simple">
+<li><em>resolution</em> (int) - Number of grid points per degree.  Defaults to
+1&#8221; resolution.</li>
+<li><em>buffer_size</em> (float) - Buffer distance around edge of fault in 
+degrees, defaults to 0.5 degrees.</li>
+</ul>
+</div></blockquote>
+</dd></dl>
+
+<dl class="method">
+<dt id="clawpack.geoclaw.dtopotools.Fault.create_deformation_array">
+<tt class="descname">create_deformation_array</tt><big>(</big><big>)</big><a class="headerlink" href="#clawpack.geoclaw.dtopotools.Fault.create_deformation_array" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create deformation array dZ.</p>
+<p>Use subfaults&#8217; <cite>create_deformation_array</cite> routine and add all 
+deformations together.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="clawpack.geoclaw.dtopotools.Fault.dZ">
+<tt class="descname">dZ</tt><a class="headerlink" href="#clawpack.geoclaw.dtopotools.Fault.dZ" title="Permalink to this definition">¶</a></dt>
+<dd><p>Deformation dZ of fault.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="clawpack.geoclaw.dtopotools.Fault.fault_plane_centers">
+<tt class="descname">fault_plane_centers</tt><a class="headerlink" href="#clawpack.geoclaw.dtopotools.Fault.fault_plane_centers" title="Permalink to this definition">¶</a></dt>
+<dd><p>Coordinates along the center-line of the fault plane</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="clawpack.geoclaw.dtopotools.Fault.fault_plane_corners">
+<tt class="descname">fault_plane_corners</tt><a class="headerlink" href="#clawpack.geoclaw.dtopotools.Fault.fault_plane_corners" title="Permalink to this definition">¶</a></dt>
+<dd><p>Coordinates of the corners of the fault plane</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="clawpack.geoclaw.dtopotools.Fault.plot">
+<tt class="descname">plot</tt><big>(</big><em>axes=None</em>, <em>region_extent=None</em>, <em>contours=None</em>, <em>coastlines=None</em>, <em>limits=None</em>, <em>cmap=None</em><big>)</big><a class="headerlink" href="#clawpack.geoclaw.dtopotools.Fault.plot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plot subfault deformation.</p>
+<div class="system-message">
+<p class="system-message-title">System Message: SEVERE/4 (<tt class="docutils">/Users/rjl/git/clawpack/clawpack/geoclaw/dtopotools.py:docstring of clawpack.geoclaw.dtopotools.Fault.plot</tt>, line 5)</p>
+<p>Unexpected section title.</p>
+<div class="highlight-python"><div class="highlight"><pre>Input
+-----
+</pre></div>
+</div>
+</div>
+<blockquote>
+<div><ul class="simple">
+<li><em>axes</em> (<cite>matplotlib.axes.Axes</cite>) -</li>
+<li><em>region_extent</em> (list) -</li>
+<li><em>contours</em> (list) -</li>
+<li><em>coastlines</em> (path) -</li>
+<li><em>limits</em> (list) -</li>
+<li><em>cmap</em> (<cite>matplotlib.colors.Colormap</cite>) -</li>
+</ul>
+</div></blockquote>
+<div class="system-message">
+<p class="system-message-title">System Message: SEVERE/4 (<tt class="docutils">/Users/rjl/git/clawpack/clawpack/geoclaw/dtopotools.py:docstring of clawpack.geoclaw.dtopotools.Fault.plot</tt>, line 14)</p>
+<p>Unexpected section title.</p>
+<div class="highlight-python"><div class="highlight"><pre>Output
+------
+</pre></div>
+</div>
+</div>
+<blockquote>
+<div><ul class="simple">
+<li><em>axes</em> (<cite>matplotlib.axes.Axes</cite>) - Axes used for plot, either
+this is created in this method if the input argument <em>axes</em> is None
+or the same object is passed back.</li>
+</ul>
+</div></blockquote>
+</dd></dl>
+
+<dl class="method">
+<dt id="clawpack.geoclaw.dtopotools.Fault.plot_contours">
+<tt class="descname">plot_contours</tt><big>(</big><em>axes=None</em>, <em>dz_interval=0.5</em><big>)</big><a class="headerlink" href="#clawpack.geoclaw.dtopotools.Fault.plot_contours" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plot sea-floor deformation contours</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="clawpack.geoclaw.dtopotools.Fault.plot_fault_rect">
+<tt class="descname">plot_fault_rect</tt><big>(</big><em>axes=None</em>, <em>color='r'</em>, <em>markerstyle='o'</em>, <em>linestyle='-'</em><big>)</big><a class="headerlink" href="#clawpack.geoclaw.dtopotools.Fault.plot_fault_rect" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plot fault rectangle.</p>
+<div class="system-message">
+<p class="system-message-title">System Message: SEVERE/4 (<tt class="docutils">/Users/rjl/git/clawpack/clawpack/geoclaw/dtopotools.py:docstring of clawpack.geoclaw.dtopotools.Fault.plot_fault_rect</tt>, line 4)</p>
+<p>Unexpected section title.</p>
+<div class="highlight-python"><div class="highlight"><pre>Input
+-----
+</pre></div>
+</div>
+</div>
+<blockquote>
+<div><ul class="simple">
+<li><em>axes</em> (<cite>matplotlib.axes.Axes</cite>) -</li>
+</ul>
+</div></blockquote>
+<div class="system-message">
+<p class="system-message-title">System Message: SEVERE/4 (<tt class="docutils">/Users/rjl/git/clawpack/clawpack/geoclaw/dtopotools.py:docstring of clawpack.geoclaw.dtopotools.Fault.plot_fault_rect</tt>, line 8)</p>
+<p>Unexpected section title.</p>
+<div class="highlight-python"><div class="highlight"><pre>Output
+------
+</pre></div>
+</div>
+</div>
+<blockquote>
+<div><ul class="simple">
+<li>(<cite>matplotlib.axes.Axes</cite>) -</li>
+</ul>
+</div></blockquote>
+</dd></dl>
+
+<dl class="method">
+<dt id="clawpack.geoclaw.dtopotools.Fault.plot_seafloor">
+<tt class="descname">plot_seafloor</tt><big>(</big><em>axes=None</em>, <em>cmax_dz=None</em>, <em>dz_interval=None</em><big>)</big><a class="headerlink" href="#clawpack.geoclaw.dtopotools.Fault.plot_seafloor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plot sea floor deformation dtopo as colormap</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="clawpack.geoclaw.dtopotools.Fault.read">
+<tt class="descname">read</tt><big>(</big><em>path, column_map, coordinate_specification='centroid', rupture_type='static', t=[0.0, 0.5, 1.0], skiprows=0, delimiter=None</em><big>)</big><a class="headerlink" href="#clawpack.geoclaw.dtopotools.Fault.read" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read in subfault specification at <em>path</em>.</p>
+<p>Creates a list of subfaults from the subfault specification file at
+<em>path</em>.</p>
+<dl class="docutils">
+<dt>column_map = {&#8220;coordinates&#8221;:(1,0), &#8220;depth&#8221;:2, &#8220;slip&#8221;:3, &#8220;rake&#8221;:4, </dt>
+<dd>&#8220;strike&#8221;:5, &#8220;dip&#8221;:6}</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="clawpack.geoclaw.dtopotools.Fault.read_dtopo">
+<tt class="descname">read_dtopo</tt><big>(</big><em>path</em>, <em>topo_type=3</em><big>)</big><a class="headerlink" href="#clawpack.geoclaw.dtopotools.Fault.read_dtopo" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read in dtopo file at <em>path</em>.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="clawpack.geoclaw.dtopotools.Fault.slip">
+<tt class="descname">slip</tt><a class="headerlink" href="#clawpack.geoclaw.dtopotools.Fault.slip" title="Permalink to this definition">¶</a></dt>
+<dd><p>Total slip accumulated over all subfaults.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="clawpack.geoclaw.dtopotools.Fault.transform">
+<tt class="descname">transform</tt><big>(</big><em>origin</em>, <em>point</em>, <em>theta</em><big>)</big><a class="headerlink" href="#clawpack.geoclaw.dtopotools.Fault.transform" title="Permalink to this definition">¶</a></dt>
+<dd><p>Transform to rotated coordinate system (via strike).</p>
+<div class="system-message">
+<p class="system-message-title">System Message: SEVERE/4 (<tt class="docutils">/Users/rjl/git/clawpack/clawpack/geoclaw/dtopotools.py:docstring of clawpack.geoclaw.dtopotools.Fault.transform</tt>, line 4)</p>
+<p>Unexpected section title.</p>
+<div class="highlight-python"><div class="highlight"><pre>Input
+-----
+</pre></div>
+</div>
+</div>
+<blockquote>
+<div><ul class="simple">
+<li><em>origin</em> (tuple) - Point being rotated about, (x,y).</li>
+<li><em>point</em> (tuple) - Point to be rotated, (x,y).</li>
+<li><em>theta</em> (float) - Angle of rotation in radians.</li>
+</ul>
+</div></blockquote>
+<div class="system-message">
+<p class="system-message-title">System Message: SEVERE/4 (<tt class="docutils">/Users/rjl/git/clawpack/clawpack/geoclaw/dtopotools.py:docstring of clawpack.geoclaw.dtopotools.Fault.transform</tt>, line 10)</p>
+<p>Unexpected section title.</p>
+<div class="highlight-python"><div class="highlight"><pre>Output
+------
+</pre></div>
+</div>
+</div>
+<blockquote>
+<div><ul class="simple">
+<li>(tuple) The result of the transforming <em>point</em> about the point
+<em>origin</em>.</li>
+</ul>
+</div></blockquote>
+</dd></dl>
+
+<dl class="method">
+<dt id="clawpack.geoclaw.dtopotools.Fault.write">
+<tt class="descname">write</tt><big>(</big><em>path</em>, <em>topo_type=None</em><big>)</big><a class="headerlink" href="#clawpack.geoclaw.dtopotools.Fault.write" title="Permalink to this definition">¶</a></dt>
+<dd><p>Write out subfault resulting dtopo to file at <em>path</em>.</p>
+<div class="system-message">
+<p class="system-message-title">System Message: SEVERE/4 (<tt class="docutils">/Users/rjl/git/clawpack/clawpack/geoclaw/dtopotools.py:docstring of clawpack.geoclaw.dtopotools.Fault.write</tt>, line 4)</p>
+<p>Unexpected section title.</p>
+<div class="highlight-python"><div class="highlight"><pre>input
+-----
+</pre></div>
+</div>
+</div>
+<blockquote>
+<div><ul class="simple">
+<li><em>path</em> (path) - Path to the output file to written to.</li>
+<li><em>topo_type</em> (int) - Type of topography file to write out.  Default is 1.</li>
+</ul>
+</div></blockquote>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="clawpack.geoclaw.dtopotools.Fault.x">
+<tt class="descname">x</tt><a class="headerlink" href="#clawpack.geoclaw.dtopotools.Fault.x" title="Permalink to this definition">¶</a></dt>
+<dd><p>Coordinate array (x) for fault.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="clawpack.geoclaw.dtopotools.Fault.y">
+<tt class="descname">y</tt><a class="headerlink" href="#clawpack.geoclaw.dtopotools.Fault.y" title="Permalink to this definition">¶</a></dt>
+<dd><p>Coordinate array (y) for fault.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="clawpack.geoclaw.dtopotools.SubFault">
+<em class="property">class </em><tt class="descclassname">clawpack.geoclaw.dtopotools.</tt><tt class="descname">SubFault</tt><big>(</big><em>path=None</em>, <em>units={}</em><big>)</big><a class="headerlink" href="#clawpack.geoclaw.dtopotools.SubFault" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class representing a single subfault.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">TODO:</th><td class="field-body"><ul class="first last simple">
+<li>Support something other than lat-long</li>
+<li>Provide plots (and other plot types)</li>
+<li>Provide detailed documentation</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="system-message">
+<p class="system-message-title">System Message: SEVERE/4 (<tt class="docutils">/Users/rjl/git/clawpack/clawpack/geoclaw/dtopotools.py:docstring of clawpack.geoclaw.dtopotools.SubFault</tt>, line 10)</p>
+<p>Unexpected section title.</p>
+<div class="highlight-python"><div class="highlight"><pre>Subfault Parameters
+-------------------
+</pre></div>
+</div>
+</div>
+<blockquote>
+<div><ul class="simple">
+<li><em>dimensions</em> (list) - Dimensions of the fault plane.</li>
+<li><em>coordinates</em> (list) - Longitude-latitude of some point on the fault 
+plane.  Point is specified by <em>coordinate_specification</em>.</li>
+<li><em>coordinate_specification</em> (string) - Specifies location relative to the
+fault of the <em>coordinates</em> values.  Valid options include &#8220;top center&#8221;,
+&#8220;bottom center&#8221;, and &#8220;centroid&#8221;.</li>
+<li><em>depth</em> (float) - Depth of the specified point below the sea-floor.</li>
+<li><em>strike</em> (float) - Orientation of the top edge, measured in degrees 
+clockwise from North.  Between 0 and 360. The fault plane dips downward 
+to the right when moving along the top edge in the strike direction.</li>
+<li><em>dip</em> (float) - Angle at which the plane dips downward from the top edge,
+a positive angle between 0 and 90 degrees.</li>
+<li><em>rake</em> (float) - Angle in the fault plane in which the slip occurs,
+measured in degrees counterclockwise from the strike direction. Between 
+-180 and 180.</li>
+<li><em>slip</em> (float) Positive distance the hanging block moves relative to the 
+foot block in the direction specified by the rake. The &#8220;hanging block&#8221; is
+the one above the dipping fault plane (or to the right if you move in the 
+strike direction).</li>
+</ul>
+</div></blockquote>
+<div class="system-message">
+<p class="system-message-title">System Message: SEVERE/4 (<tt class="docutils">/Users/rjl/git/clawpack/clawpack/geoclaw/dtopotools.py:docstring of clawpack.geoclaw.dtopotools.SubFault</tt>, line 32)</p>
+<p>Unexpected section title.</p>
+<div class="highlight-python"><div class="highlight"><pre>Attributes
+----------
+</pre></div>
+</div>
+</div>
+<blockquote>
+<div><ul class="simple">
+<li><em>units</em> (dict) - Dictionary containing unit specifications for the 
+<em>coordinates</em>, <em>dimenstions</em>, <em>slip</em>, and <em>depth</em> subfault parameters.  
+Defaults to &#8220;lat-long&#8221;, &#8220;m&#8221;, &#8220;m&#8221;, &#8220;m&#8221; respectively.</li>
+</ul>
+</div></blockquote>
+<div class="system-message">
+<p class="system-message-title">System Message: SEVERE/4 (<tt class="docutils">/Users/rjl/git/clawpack/clawpack/geoclaw/dtopotools.py:docstring of clawpack.geoclaw.dtopotools.SubFault</tt>, line 38)</p>
+<p>Unexpected section title.</p>
+<div class="highlight-python"><div class="highlight"><pre>Properties
+----------
+</pre></div>
+</div>
+</div>
+<blockquote>
+<div><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Note:</th><td class="field-body">All properties are in meters and do not match the units dictionary.</td>
+</tr>
+</tbody>
+</table>
+</div></blockquote>
+<dl class="attribute">
+<dt id="clawpack.geoclaw.dtopotools.SubFault.Mw">
+<tt class="descname">Mw</tt><a class="headerlink" href="#clawpack.geoclaw.dtopotools.SubFault.Mw" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate the effective moment magnitude of subfault.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="clawpack.geoclaw.dtopotools.SubFault.calculate_geometry">
+<tt class="descname">calculate_geometry</tt><big>(</big><big>)</big><a class="headerlink" href="#clawpack.geoclaw.dtopotools.SubFault.calculate_geometry" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate the fault geometry.</p>
+<p>Routine calculates the class attributes <em>fault_plane_corners</em> and 
+<em>fault_plane_centers</em> which are the corners of the fault plane and 
+points along the centerline respecitvely in 3D space.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="clawpack.geoclaw.dtopotools.SubFault.calculate_slip">
+<tt class="descname">calculate_slip</tt><big>(</big><em>Mw</em><big>)</big><a class="headerlink" href="#clawpack.geoclaw.dtopotools.SubFault.calculate_slip" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set slip based on a moment magnitude <em>Mw</em>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="clawpack.geoclaw.dtopotools.SubFault.create_coordinate_arrays">
+<tt class="descname">create_coordinate_arrays</tt><big>(</big><em>resolution=60</em>, <em>buffer_size=0.5</em><big>)</big><a class="headerlink" href="#clawpack.geoclaw.dtopotools.SubFault.create_coordinate_arrays" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create coordinate arrays containing subfault.</p>
+<div class="system-message">
+<p class="system-message-title">System Message: SEVERE/4 (<tt class="docutils">/Users/rjl/git/clawpack/clawpack/geoclaw/dtopotools.py:docstring of clawpack.geoclaw.dtopotools.SubFault.create_coordinate_arrays</tt>, line 4)</p>
+<p>Unexpected section title.</p>
+<div class="highlight-python"><div class="highlight"><pre>Input
+-----
+</pre></div>
+</div>
+</div>
+<blockquote>
+<div><ul class="simple">
+<li><em>resolution</em> (int) - Number of grid points per degree.  Defaults to
+1&#8221; resolution.</li>
+<li><em>buffer_size</em> (float) - Buffer distance around edge of fault in 
+degrees, defaults to 0.5 degrees.</li>
+</ul>
+</div></blockquote>
+</dd></dl>
+
+<dl class="method">
+<dt id="clawpack.geoclaw.dtopotools.SubFault.create_deformation_array">
+<tt class="descname">create_deformation_array</tt><big>(</big><em>domain=None</em><big>)</big><a class="headerlink" href="#clawpack.geoclaw.dtopotools.SubFault.create_deformation_array" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create deformation array dZ.</p>
+<p>Use Okada model to calculate deformation from subfault parameters 
+contained in this object.</p>
+<p>Currently only calculates the vertical displacement.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="clawpack.geoclaw.dtopotools.SubFault.dimensions">
+<tt class="descname">dimensions</tt><a class="headerlink" href="#clawpack.geoclaw.dtopotools.SubFault.dimensions" title="Permalink to this definition">¶</a></dt>
+<dd><p>Amount of slip on this subfault.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="clawpack.geoclaw.dtopotools.SubFault.plot_rake">
+<tt class="descname">plot_rake</tt><big>(</big><em>axes=None</em>, <em>color='r'</em>, <em>markerstyle='o'</em>, <em>linestyle='-'</em><big>)</big><a class="headerlink" href="#clawpack.geoclaw.dtopotools.SubFault.plot_rake" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plot fault rectangle.</p>
+<div class="system-message">
+<p class="system-message-title">System Message: SEVERE/4 (<tt class="docutils">/Users/rjl/git/clawpack/clawpack/geoclaw/dtopotools.py:docstring of clawpack.geoclaw.dtopotools.SubFault.plot_rake</tt>, line 4)</p>
+<p>Unexpected section title.</p>
+<div class="highlight-python"><div class="highlight"><pre>Input
+-----
+</pre></div>
+</div>
+</div>
+<blockquote>
+<div><ul class="simple">
+<li><em>axes</em> (<cite>matplotlib.axes.Axes</cite>) -</li>
+</ul>
+</div></blockquote>
+<div class="system-message">
+<p class="system-message-title">System Message: SEVERE/4 (<tt class="docutils">/Users/rjl/git/clawpack/clawpack/geoclaw/dtopotools.py:docstring of clawpack.geoclaw.dtopotools.SubFault.plot_rake</tt>, line 8)</p>
+<p>Unexpected section title.</p>
+<div class="highlight-python"><div class="highlight"><pre>Output
+------
+</pre></div>
+</div>
+</div>
+<blockquote>
+<div><ul class="simple">
+<li>(<cite>matplotlib.axes.Axes</cite>) -</li>
+</ul>
+</div></blockquote>
+</dd></dl>
+
+<dl class="method">
+<dt id="clawpack.geoclaw.dtopotools.SubFault.plot_subfault_depth">
+<tt class="descname">plot_subfault_depth</tt><big>(</big><em>axes=None</em><big>)</big><a class="headerlink" href="#clawpack.geoclaw.dtopotools.SubFault.plot_subfault_depth" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plot the depth of each subfault vs. x in one plot and vs. y in a second plot.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="clawpack.geoclaw.dtopotools.SubFault.read">
+<tt class="descname">read</tt><big>(</big><em>path</em><big>)</big><a class="headerlink" href="#clawpack.geoclaw.dtopotools.SubFault.read" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read in subfault specification in from file at <em>path</em></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="clawpack.geoclaw.dtopotools.SubFault.slip">
+<tt class="descname">slip</tt><a class="headerlink" href="#clawpack.geoclaw.dtopotools.SubFault.slip" title="Permalink to this definition">¶</a></dt>
+<dd><p>Amount of slip on this subfault.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="clawpack.geoclaw.dtopotools.UCSBFault">
+<em class="property">class </em><tt class="descclassname">clawpack.geoclaw.dtopotools.</tt><tt class="descname">UCSBFault</tt><big>(</big><em>path=None</em><big>)</big><a class="headerlink" href="#clawpack.geoclaw.dtopotools.UCSBFault" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fault subclass for reading in subfault format models from UCSB</p>
+<p>Read in subfault format models produced by Chen Ji&#8217;s group at UCSB,
+downloadable from:</p>
+<blockquote>
+<div><a class="reference external" href="http://www.geol.ucsb.edu/faculty/ji/big_earthquakes/home.html">http://www.geol.ucsb.edu/faculty/ji/big_earthquakes/home.html</a></div></blockquote>
+<dl class="method">
+<dt id="clawpack.geoclaw.dtopotools.UCSBFault.plot_slip">
+<tt class="descname">plot_slip</tt><big>(</big><em>axes=None</em><big>)</big><a class="headerlink" href="#clawpack.geoclaw.dtopotools.UCSBFault.plot_slip" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plot each subfault with color based on slip magnitude.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="clawpack.geoclaw.dtopotools.UCSBFault.read">
+<tt class="descname">read</tt><big>(</big><em>path</em><big>)</big><a class="headerlink" href="#clawpack.geoclaw.dtopotools.UCSBFault.read" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read in subfault specification at <em>path</em>.</p>
+<p>Creates a list of subfaults from the subfault specification file at
+<em>path</em>.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="clawpack.geoclaw.dtopotools.dip_slip">
+<tt class="descclassname">clawpack.geoclaw.dtopotools.</tt><tt class="descname">dip_slip</tt><big>(</big><em>y1</em>, <em>y2</em>, <em>ang_dip</em>, <em>q</em><big>)</big><a class="headerlink" href="#clawpack.geoclaw.dtopotools.dip_slip" title="Permalink to this definition">¶</a></dt>
+<dd><p>!.....Based on Okada&#8217;s paper (1985)
+!.....Added by Xiaoming Wang
+!&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8211;</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="clawpack.geoclaw.dtopotools.filtermask">
+<tt class="descclassname">clawpack.geoclaw.dtopotools.</tt><tt class="descname">filtermask</tt><big>(</big><em>dZ</em>, <em>faultparams</em><big>)</big><a class="headerlink" href="#clawpack.geoclaw.dtopotools.filtermask" title="Permalink to this definition">¶</a></dt>
+<dd><p>borrowed from code written by Xiaoming Wang and Tom Logan at ARSC</p>
+<p>!.....Filter the deformation using a circular mask centered
+!.....at the epicenter using a calculated radius
+!.....Removes small numerical artifacts away from the epicenter</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="clawpack.geoclaw.dtopotools.make_dtopo_from_subfaults">
+<tt class="descclassname">clawpack.geoclaw.dtopotools.</tt><tt class="descname">make_dtopo_from_subfaults</tt><big>(</big><em>subfaults</em>, <em>dtopo_params</em><big>)</big><a class="headerlink" href="#clawpack.geoclaw.dtopotools.make_dtopo_from_subfaults" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a dtopo file named <em>fname</em> based on applying the Okada
+model to each of the subfaults specified in the list <em>subfaults</em>.
+This should be a list of dictionaries that specify the necessary 
+Okada parameters and optionally &#8216;rupture_time&#8217;, &#8216;rise_time&#8217;,
+&#8216;rise_time_ending&#8217;.</p>
+<p>The dictionary <em>dtopo_params</em> specifies the parameters for the
+dtopo file created.  It must have entries for</p>
+<div class="system-message">
+<p class="system-message-title">System Message: ERROR/3 (<tt class="docutils">/Users/rjl/git/clawpack/clawpack/geoclaw/dtopotools.py:docstring of clawpack.geoclaw.dtopotools.make_dtopo_from_subfaults</tt>, line 9)</p>
+Unexpected indentation.</div>
+<blockquote>
+<div>&#8216;fname&#8217; : file name for dtopo file</div></blockquote>
+<div class="system-message">
+<p class="system-message-title">System Message: WARNING/2 (<tt class="docutils">/Users/rjl/git/clawpack/clawpack/geoclaw/dtopotools.py:docstring of clawpack.geoclaw.dtopotools.make_dtopo_from_subfaults</tt>, line 10)</p>
+Block quote ends without a blank line; unexpected unindent.</div>
+<dl class="docutils">
+<dt>and</dt>
+<dd>&#8216;mx&#8217;, &#8216;my&#8217;, &#8216;xlower&#8217;, &#8216;xupper&#8217;, &#8216;ylower&#8217;, &#8216;yupper&#8217;</dd>
+</dl>
+<div class="system-message">
+<p class="system-message-title">System Message: WARNING/2 (<tt class="docutils">/Users/rjl/git/clawpack/clawpack/geoclaw/dtopotools.py:docstring of clawpack.geoclaw.dtopotools.make_dtopo_from_subfaults</tt>, line 12)</p>
+Definition list ends without a blank line; unexpected unindent.</div>
+<p>specifying the area over which the dz values will be output on an mx by my
+grid.  Note that dz values are at vertices, so to output on a 1 minute
+grid, for example, set</p>
+<div class="system-message">
+<p class="system-message-title">System Message: ERROR/3 (<tt class="docutils">/Users/rjl/git/clawpack/clawpack/geoclaw/dtopotools.py:docstring of clawpack.geoclaw.dtopotools.make_dtopo_from_subfaults</tt>, line 15)</p>
+Unexpected indentation.</div>
+<blockquote>
+<div>mx = 60*(xupper - xlower) + 1</div></blockquote>
+<dl class="docutils">
+<dt>Also </dt>
+<dd>dtopo_params[&#8216;t0&#8217;] initial time for output
+dtopo_params[&#8216;tfinal&#8217;] final time for output
+dtopo_params[&#8216;ntimes&#8217;] &gt;= 2, number of output times</dd>
+</dl>
+<div class="system-message">
+<p class="system-message-title">System Message: WARNING/2 (<tt class="docutils">/Users/rjl/git/clawpack/clawpack/geoclaw/dtopotools.py:docstring of clawpack.geoclaw.dtopotools.make_dtopo_from_subfaults</tt>, line 21)</p>
+Definition list ends without a blank line; unexpected unindent.</div>
+<p>The seafloor deformation dz will be output at ntimes equally spaced
+times between t0 and tfinal.</p>
+<dl class="docutils">
+<dt>If dtopo_params[&#8216;faulttype&#8217;] == &#8216;static&#8217;</dt>
+<dd>then dz at t0 will be 0 and dz at tfinal will be the total dz
+determined by all the subfaults, ignoring the rupture_time and
+rise_time parameters, if any.  Normally in this case it is best to
+specify ntimes = 2 and t0=0, tfinal=1 second, for example.
+If larger ntimes is specified then linear interpolation is used to
+determine dz at intermediate times.</dd>
+<dt>If dtopo_params[&#8216;faulttype&#8217;] == &#8216;kinematic&#8217; or &#8216;dynamic&#8217;</dt>
+<dd>then it is assumed that the rupture_time and rise_time are set and
+will be used to interpolate to the specified output times.</dd>
+<dt>dtopo_params[&#8216;dtopotype&#8217;] = 3 is assumed currently but this could be</dt>
+<dd>extended to allow output with other dtopotypes.</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="clawpack.geoclaw.dtopotools.make_okada_final_dz">
+<tt class="descclassname">clawpack.geoclaw.dtopotools.</tt><tt class="descname">make_okada_final_dz</tt><big>(</big><em>faultparamss</em>, <em>dtopo_params</em><big>)</big><a class="headerlink" href="#clawpack.geoclaw.dtopotools.make_okada_final_dz" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create dz at final time (sum of dz from all subfaults).</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="clawpack.geoclaw.dtopotools.okadamap">
+<tt class="descclassname">clawpack.geoclaw.dtopotools.</tt><tt class="descname">okadamap</tt><big>(</big><em>okadaparams</em>, <em>X</em>, <em>Y</em><big>)</big><a class="headerlink" href="#clawpack.geoclaw.dtopotools.okadamap" title="Permalink to this definition">¶</a></dt>
+<dd><p>create displacement matrix dZ for a surface displacement
+over gridded region defined by X,Y, vectors of length nx,ny
+given okadaparams</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="clawpack.geoclaw.dtopotools.plot_dz_colors">
+<tt class="descclassname">clawpack.geoclaw.dtopotools.</tt><tt class="descname">plot_dz_colors</tt><big>(</big><em>x</em>, <em>y</em>, <em>dz</em>, <em>cmax_dz=None</em>, <em>dz_interval=None</em><big>)</big><a class="headerlink" href="#clawpack.geoclaw.dtopotools.plot_dz_colors" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plot sea floor deformation dtopo as colormap with contours</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="clawpack.geoclaw.dtopotools.plot_subfaults">
+<tt class="descclassname">clawpack.geoclaw.dtopotools.</tt><tt class="descname">plot_subfaults</tt><big>(</big><em>subfaults</em>, <em>plot_centerline=False</em>, <em>slip_color=False</em>, <em>cmap_slip=None</em>, <em>cmin_slip=None</em>, <em>cmax_slip=None</em>, <em>plot_rake=False</em>, <em>xylim=None</em>, <em>plot_box=True</em><big>)</big><a class="headerlink" href="#clawpack.geoclaw.dtopotools.plot_subfaults" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plot each subfault projected onto the surface.
+Describe parameters...</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="clawpack.geoclaw.dtopotools.plot_subfaults_depth">
+<tt class="descclassname">clawpack.geoclaw.dtopotools.</tt><tt class="descname">plot_subfaults_depth</tt><big>(</big><em>subfaults</em><big>)</big><a class="headerlink" href="#clawpack.geoclaw.dtopotools.plot_subfaults_depth" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plot the depth of each subfault vs. x in one plot and vs. y in a second plot.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="clawpack.geoclaw.dtopotools.read_dtopo_old">
+<tt class="descclassname">clawpack.geoclaw.dtopotools.</tt><tt class="descname">read_dtopo_old</tt><big>(</big><em>fname</em>, <em>deftype=None</em>, <em>only_last=True</em><big>)</big><a class="headerlink" href="#clawpack.geoclaw.dtopotools.read_dtopo_old" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read in a deformation file and return arrays X,Y,dZ.
+If deftype == static then data is at a single time and columns of file are x,y,dz.
+If deftype == dynamic then multiple times are in the file and columns are t,x,y,dz.</p>
+<div class="system-message">
+<p class="system-message-title">System Message: ERROR/3 (<tt class="docutils">/Users/rjl/git/clawpack/clawpack/geoclaw/dtopotools.py:docstring of clawpack.geoclaw.dtopotools.read_dtopo_old</tt>, line 4)</p>
+Unexpected indentation.</div>
+<blockquote>
+<div>In this case dZ for the last time is returned.   <strong>Need to improve!</strong></div></blockquote>
+<div class="system-message">
+<p class="system-message-title">System Message: WARNING/2 (<tt class="docutils">/Users/rjl/git/clawpack/clawpack/geoclaw/dtopotools.py:docstring of clawpack.geoclaw.dtopotools.read_dtopo_old</tt>, line 5)</p>
+Block quote ends without a blank line; unexpected unindent.</div>
+<p>If deftype is None, then attempt to determine from file extension.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="clawpack.geoclaw.dtopotools.read_subfault_model">
+<tt class="descclassname">clawpack.geoclaw.dtopotools.</tt><tt class="descname">read_subfault_model</tt><big>(</big><em>fname</em>, <em>columns</em>, <em>units=None</em>, <em>defaults={'latlong_location': 'centroid'}</em>, <em>skiprows=0</em>, <em>delimiter=None</em><big>)</big><a class="headerlink" href="#clawpack.geoclaw.dtopotools.read_subfault_model" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read a subfault model and return a list of dictionaries specifying the
+Okada parameters for each subfault.
+The dictionary may also contain entries &#8216;rupture_time&#8217;, &#8216;rise_time&#8217; and
+perhaps &#8216;rise_time_ending&#8217; if these are specified in the file.</p>
+<p>The file <em>fname</em> is read in using loadtxt.  The first <em>skiprow</em> rows may be
+comments, after that there should be a row for each subfault.  The
+contents of the columns is specified by the input parameter <em>columns</em>, 
+each of whose elements is one of the following:</p>
+<div class="system-message">
+<p class="system-message-title">System Message: ERROR/3 (<tt class="docutils">/Users/rjl/git/clawpack/clawpack/geoclaw/dtopotools.py:docstring of clawpack.geoclaw.dtopotools.read_subfault_model</tt>, line 10)</p>
+Unexpected indentation.</div>
+<blockquote>
+<div>&#8216;latitude&#8217;, &#8216;longitude&#8217;, &#8216;length&#8217;, &#8216;width&#8217;, &#8216;depth&#8217;, 
+&#8216;strike&#8217;, &#8216;dip&#8217;, &#8216;rake&#8217;, &#8216;slip&#8217;, 
+&#8216;rupture_time&#8217;, &#8216;rise_time&#8217;, &#8216;rise_time_ending&#8217;, &#8216;ignore&#8217;</div></blockquote>
+<div class="system-message">
+<p class="system-message-title">System Message: WARNING/2 (<tt class="docutils">/Users/rjl/git/clawpack/clawpack/geoclaw/dtopotools.py:docstring of clawpack.geoclaw.dtopotools.read_subfault_model</tt>, line 13)</p>
+Block quote ends without a blank line; unexpected unindent.</div>
+<p>Columns labelled &#8216;ignore&#8217; will be ignored, others will be used to set
+the corresponding elements of the parameter dictionary for each subfault.</p>
+<p>If some Okada parameters are missing from the columns but have the same
+value for each subfault (e.g. &#8216;latlong_location&#8217;, &#8216;length&#8217; or &#8216;width&#8217;), 
+set these in the <em>defaults</em> dictionary, e.g. 
+defaults = {&#8216;latlong_location&#8217;: &#8216;centroid&#8217;, &#8216;length&#8217;: 100e3, &#8216;width&#8217;: 50e3}</p>
+<p>A dictionary <em>units</em> can also be provided.  By default the units for
+param = &#8216;length&#8217;, &#8216;depth&#8217;, &#8216;width&#8217;, and &#8216;slip&#8217; are assumed to be meters, 
+but you can set units[param] = &#8216;m&#8217; or &#8216;km&#8217; or &#8216;cm&#8217;.</p>
+<p><em>delimiter</em> is the delimiter separating columns.  By default it is any
+whitespace but it could be &#8216;,&#8217; for a csv file, for example.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="clawpack.geoclaw.dtopotools.read_subfault_model_csv">
+<tt class="descclassname">clawpack.geoclaw.dtopotools.</tt><tt class="descname">read_subfault_model_csv</tt><big>(</big><em>path</em>, <em>delimiter='</em>, <em>'</em><big>)</big><a class="headerlink" href="#clawpack.geoclaw.dtopotools.read_subfault_model_csv" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read a subfault model from a csv file</p>
+<p>Assumes that the first row gives the column headings, which should agree 
+with names in <em>valid_labels</em> defined in <em>read_subfault_model</em>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Input:</th><td class="field-body"></td>
+</tr>
+<tr class="field-even field"><th class="field-name">Output:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="clawpack.geoclaw.dtopotools.read_subfault_model_ucsb">
+<tt class="descclassname">clawpack.geoclaw.dtopotools.</tt><tt class="descname">read_subfault_model_ucsb</tt><big>(</big><em>fname</em><big>)</big><a class="headerlink" href="#clawpack.geoclaw.dtopotools.read_subfault_model_ucsb" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read in subfault format models produced by Chen Ji&#8217;s group at UCSB,
+downloadable from:</p>
+<div class="system-message">
+<p class="system-message-title">System Message: ERROR/3 (<tt class="docutils">/Users/rjl/git/clawpack/clawpack/geoclaw/dtopotools.py:docstring of clawpack.geoclaw.dtopotools.read_subfault_model_ucsb</tt>, line 3)</p>
+Unexpected indentation.</div>
+<blockquote>
+<div><a class="reference external" href="http://www.geol.ucsb.edu/faculty/ji/big_earthquakes/home.html">http://www.geol.ucsb.edu/faculty/ji/big_earthquakes/home.html</a></div></blockquote>
+</dd></dl>
+
+<dl class="function">
+<dt id="clawpack.geoclaw.dtopotools.rise_fraction">
+<tt class="descclassname">clawpack.geoclaw.dtopotools.</tt><tt class="descname">rise_fraction</tt><big>(</big><em>t</em>, <em>t0</em>, <em>t_rise</em>, <em>t_rise_ending=None</em><big>)</big><a class="headerlink" href="#clawpack.geoclaw.dtopotools.rise_fraction" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="docutils">
+<dt>A continuously differentiable piecewise quadratic function of t that is </dt>
+<dd>0 for t &lt;= t0, 
+1 for t &gt;= t0 + t_rise + t_rise_ending</dd>
+</dl>
+<div class="system-message">
+<p class="system-message-title">System Message: WARNING/2 (<tt class="docutils">/Users/rjl/git/clawpack/clawpack/geoclaw/dtopotools.py:docstring of clawpack.geoclaw.dtopotools.rise_fraction</tt>, line 4)</p>
+Definition list ends without a blank line; unexpected unindent.</div>
+<p>with maximum slope at t0 + t_rise.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="clawpack.geoclaw.dtopotools.strike_direction">
+<tt class="descclassname">clawpack.geoclaw.dtopotools.</tt><tt class="descname">strike_direction</tt><big>(</big><em>x1</em>, <em>y1</em>, <em>x2</em>, <em>y2</em><big>)</big><a class="headerlink" href="#clawpack.geoclaw.dtopotools.strike_direction" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate strike direction between two points.
+Actually calculates &#8220;initial bearing&#8221; from (x1,y1) in direction
+towards (x2,y2), following</p>
+<div class="system-message">
+<p class="system-message-title">System Message: ERROR/3 (<tt class="docutils">/Users/rjl/git/clawpack/clawpack/geoclaw/dtopotools.py:docstring of clawpack.geoclaw.dtopotools.strike_direction</tt>, line 4)</p>
+Unexpected indentation.</div>
+<blockquote>
+<div><a class="reference external" href="http://www.movable-type.co.uk/scripts/latlong.html">http://www.movable-type.co.uk/scripts/latlong.html</a></div></blockquote>
+</dd></dl>
+
+<dl class="function">
+<dt id="clawpack.geoclaw.dtopotools.strike_slip">
+<tt class="descclassname">clawpack.geoclaw.dtopotools.</tt><tt class="descname">strike_slip</tt><big>(</big><em>y1</em>, <em>y2</em>, <em>ang_dip</em>, <em>q</em><big>)</big><a class="headerlink" href="#clawpack.geoclaw.dtopotools.strike_slip" title="Permalink to this definition">¶</a></dt>
+<dd><p>!.....Used for Okada&#8217;s model
+!.. ..Methods from Yoshimitsu Okada (1985)
+!&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8211;</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="clawpack.geoclaw.dtopotools.write_dtopo_header">
+<tt class="descclassname">clawpack.geoclaw.dtopotools.</tt><tt class="descname">write_dtopo_header</tt><big>(</big><em>dtopo_params</em><big>)</big><a class="headerlink" href="#clawpack.geoclaw.dtopotools.write_dtopo_header" title="Permalink to this definition">¶</a></dt>
+<dd><p>Write header for dtopotype 3 files.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="clawpack.geoclaw.dtopotools.write_dz">
+<tt class="descclassname">clawpack.geoclaw.dtopotools.</tt><tt class="descname">write_dz</tt><big>(</big><em>fname</em>, <em>X</em>, <em>Y</em>, <em>dZ</em>, <em>t0=0.0</em>, <em>tend=1.0</em>, <em>ntimes=2</em><big>)</big><a class="headerlink" href="#clawpack.geoclaw.dtopotools.write_dz" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create dtopo file with instantaneous slip distributed at ntimes between
+t0 and tend.</p>
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<p><a href="http://clawpack.org/">
+    <img class="logo" src= "_static/clawlogo.jpg" alt="Logo"/>
+</a>
+<h2>Version 5.2.0</h2>
+</p>
+  <h3><a href="contents.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">dtopotools module for moving topography</a><ul>
+<li><a class="reference internal" href="#module-clawpack.geoclaw.dtopotools">Documentation auto-generated from the module docstrings</a></li>
+</ul>
+</li>
+</ul>
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="contents.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/dtopotools_module.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+  <div class="footer">
+    &copy; Copyright 2013, The Clawpack Development Team.
+    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
+  </div>
+  
+  </body>
+</html>

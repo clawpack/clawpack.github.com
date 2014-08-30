@@ -1,0 +1,193 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Flagging cells for adaptive refinement &mdash; Clawpack 5.2.0 documentation</title>
+    
+    <link rel="stylesheet" href="_static/flasky.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/base.css" type="text/css" />
+    <link rel="stylesheet" href="_static/layout.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '5.2.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="shortcut icon" href="_static/clawicon.ico"/>
+    <link rel="author" title="About these documents" href="about.html" />
+    <link rel="top" title="Clawpack 5.2.0 documentation" href="index.html" /> 
+  </head>
+  <body>
+<div id="main-wrapper" class="sphinx">
+<div id="header-wrapper">
+  <section id="header">
+    <!-- <h1><a href="http://clawpack.org/">Clawpack</a></h1> -->
+    <h1><a href="http://clawpack.org/">Clawpack-5</a></h1> 
+    <nav>
+      <ul>
+        <li>
+          <a href="toc_condensed.html">Docs</a>
+        </li>
+        <li>
+          <a href="installing.html">Install</a>
+        </li>
+        <li>
+          <a class="" href="galleries.html">Gallery</a>
+        </li>
+        <li>
+          <a class="active" href="https://groups.google.com/forum/#!forum/claw-users">Support</a>
+        </li>
+        <li>
+          <a class="active" href="http://github.com/organizations/clawpack">Source</a>
+        </li>
+        <li>
+          <a class="" href="developers.html">Develop</a>
+        </li>
+      </ul>
+    </nav>
+  </section>
+<div class="decoration"></div>
+</div>
+
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="contents.html">Clawpack 5.2.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="flagging-cells-for-adaptive-refinement">
+<span id="flag"></span><h1>Flagging cells for adaptive refinement<a class="headerlink" href="#flagging-cells-for-adaptive-refinement" title="Permalink to this headline">¶</a></h1>
+<p><strong>Describe flagging  and clustering algorithms in more detail.</strong></p>
+<p>See <a class="reference internal" href="setrun_amrclaw.html#setrun-amrclaw"><em>Specifying AMRClaw run-time parameters in setrun.py</em></a> for a description of the input parameters that define how
+Richardson extrapolation and/or the <cite>flag2refine</cite> subroutine work.</p>
+<div class="section" id="refinement-regions">
+<span id="flag-regions"></span><h2>Refinement regions<a class="headerlink" href="#refinement-regions" title="Permalink to this headline">¶</a></h2>
+<p>In AMRClaw and GeoClaw it is possible to specify space-time regions in which
+refinement to a certain level is forced or a level beyond which refinement if
+forbidden.  These are specified through the parameter <cite>rundata.regiondata.regions</cite> in
+<cite>setrun.py</cite>.
+This is a list of lists, each of which specifies a region in the form
+<cite>[minlevel,maxlevel,t1,t2,x1,x2,y1,y2]</cite>.</p>
+<p>For example, suppose that <cite>amr_levels_max = 6</cite> has been specified along
+with these two regions:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">rundata</span><span class="o">.</span><span class="n">regiondata</span><span class="o">.</span><span class="n">regions</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">rundata</span><span class="o">.</span><span class="n">regiondata</span><span class="o">.</span><span class="n">regions</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mf">10.0</span><span class="p">,</span> <span class="mf">30.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">])</span>
+<span class="n">rundata</span><span class="o">.</span><span class="n">regiondata</span><span class="o">.</span><span class="n">regions</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mf">20.0</span><span class="p">,</span> <span class="mf">40.0</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">])</span>
+</pre></div>
+</div>
+<p>The first region specifies that from time 10 to 30 there should be at least 2
+levels and at most 5 levels of refinement for points in the spatial domain
+<cite>0 &lt; x &lt; 0.5</cite> and <cite>0 &lt; y &lt; 0.5</cite>.</p>
+<p>The second region specifies that from time 20 to 40 there should be at least 3
+level and at most 4 levels of refinement for points in the spatial domain
+<cite>0.2 &lt; x &lt; 1.0</cite> and <cite>0.2 &lt; y &lt; 1.0</cite>.</p>
+<p>Note that these regions overlap in both space and time, and in regions of
+overlap the <em>maximum</em> of the <cite>minlevel</cite> and also the <em>maximum</em> of the
+<cite>maxlevel</cite> parameters applies.  So in the above example, from time 20 to 30
+there will be at least 3 levels and at most 5 levels in the region of
+overlap, <cite>0.2 &lt; x &lt; 0.5</cite> and <cite>0.2 &lt; y &lt; 0.5</cite>.</p>
+<p>Within these regions, how many levels are chosen at each point will be
+determined by the <em>error flagging criteria</em>, i.e. as
+specified by Richardson extrapolation and/or the default or user-supplied
+routine <cite>flag2refine</cite>.  The parameters for these are described in
+<a class="reference internal" href="setrun.html#setrun"><em>Specifying classic run-time parameters in setrun.py</em></a>.</p>
+<p>Points that are not covered by either region are not constrained by the
+regions.  They might
+be refined to any level from 1 to 6 depending on the error flagging criteria.</p>
+<p>It is easiest to explain how this works by summarizing the implementation:</p>
+<p>The regridding algorithm from level L to L+1 loops over all grid cells
+at Level L and flags them or not based on the following criteria, where
+<cite>(xc,yc)</cite> represents the cell center and <cite>t</cite> is the current regridding time:</p>
+<ul class="simple">
+<li>Initialize the flag by applying the error flagging criteria
+specified by Richardson extrapolation and/or the default or user-supplied
+routine <cite>flag2refine</cite> to determine whether this cell should be flagged.</li>
+<li>Loop over all regions (if any) for which <cite>(xc,yc,t)</cite> lies in the region
+specified.<ul>
+<li>If <cite>L &gt;= maxlevel</cite> for <em>any</em> such region, set <cite>flag = False</cite> for this
+cell and go on to the next cell.</li>
+<li>If <cite>L &lt; minlevel</cite> for <em>every</em> such region, set <cite>flag = True</cite> and
+go on to the next grid cell.</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<p><a href="http://clawpack.org/">
+    <img class="logo" src= "_static/clawlogo.jpg" alt="Logo"/>
+</a>
+<h2>Version 5.2.0</h2>
+</p>
+  <h3><a href="contents.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Flagging cells for adaptive refinement</a><ul>
+<li><a class="reference internal" href="#refinement-regions">Refinement regions</a></li>
+</ul>
+</li>
+</ul>
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="contents.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/flag.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+  <div class="footer">
+    &copy; Copyright 2013, The Clawpack Development Team.
+    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
+  </div>
+  
+  </body>
+</html>

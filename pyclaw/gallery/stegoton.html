@@ -1,0 +1,385 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Solitary wave formation in periodic nonlinear elastic media &mdash; Clawpack 5.2.0 documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/flasky.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/base.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/layout.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '5.2.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="shortcut icon" href="../../_static/clawicon.ico"/>
+    <link rel="author" title="About these documents" href="../../about.html" />
+    <link rel="top" title="Clawpack 5.2.0 documentation" href="../../index.html" />
+    <link rel="up" title="Working with PyClaw’s built-in examples" href="../examples.html" />
+    <link rel="next" title="Plotting PyClaw results" href="../plotting.html" />
+    <link rel="prev" title="A non-convex flux scalar model" href="kpp.html" /> 
+  </head>
+  <body>
+<div id="main-wrapper" class="sphinx">
+<div id="header-wrapper">
+  <section id="header">
+    <!-- <h1><a href="http://clawpack.org/">Clawpack</a></h1> -->
+    <h1><a href="http://clawpack.org/">Clawpack-5</a></h1> 
+    <nav>
+      <ul>
+        <li>
+          <a href="../../toc_condensed.html">Docs</a>
+        </li>
+        <li>
+          <a href="../../installing.html">Install</a>
+        </li>
+        <li>
+          <a class="" href="../../galleries.html">Gallery</a>
+        </li>
+        <li>
+          <a class="active" href="https://groups.google.com/forum/#!forum/claw-users">Support</a>
+        </li>
+        <li>
+          <a class="active" href="http://github.com/organizations/clawpack">Source</a>
+        </li>
+        <li>
+          <a class="" href="../../developers.html">Develop</a>
+        </li>
+      </ul>
+    </nav>
+  </section>
+<div class="decoration"></div>
+</div>
+
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../plotting.html" title="Plotting PyClaw results"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="kpp.html" title="A non-convex flux scalar model"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../../contents.html">Clawpack 5.2.0 documentation</a> &raquo;</li>
+          <li><a href="../index.html" >Pyclaw</a> &raquo;</li>
+          <li><a href="../basics.html" >PyClaw Basics</a> &raquo;</li>
+          <li><a href="../examples.html" accesskey="U">Working with PyClaw&#8217;s built-in examples</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <span class="target" id="module-pyclaw.examples.stegoton_1d.stegoton"><span id="stegoton"></span></span><div class="section" id="solitary-wave-formation-in-periodic-nonlinear-elastic-media">
+<h1>Solitary wave formation in periodic nonlinear elastic media<a class="headerlink" href="#solitary-wave-formation-in-periodic-nonlinear-elastic-media" title="Permalink to this headline">¶</a></h1>
+<p>Solve a one-dimensional nonlinear elasticity system:</p>
+<div class="math">
+\[\begin{split}\epsilon_t + u_x &amp; = 0 \\
+(\rho(x) u)_t + \sigma(\epsilon,x)_x &amp; = 0.\end{split}\]</div>
+<p>Here <span class="math">\(\epsilon\)</span> is the strain, <span class="math">\(\sigma\)</span> is the stress, 
+u is the velocity, and <span class="math">\(\rho(x)\)</span> is the density.  
+We take the stress-strain relation <span class="math">\(\sigma = e^{K(x)\epsilon}-1\)</span>;
+<span class="math">\(K(x)\)</span> is the linearized bulk modulus.
+Note that the density and bulk modulus may depend explicitly on x.</p>
+<p>The problem solved here is based on <a class="reference internal" href="../../biblio.html#levyon03" id="id1">[LeVYon03]</a>.  An initial hump
+evolves into two trains of solitary waves.</p>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span class="c">#!/usr/bin/env python</span>
+<span class="c"># encoding: utf-8</span>
+<span class="sd">r&quot;&quot;&quot;</span>
+<span class="sd">Solitary wave formation in periodic nonlinear elastic media</span>
+<span class="sd">===========================================================</span>
+
+<span class="sd">Solve a one-dimensional nonlinear elasticity system:</span>
+
+<span class="sd">.. math::</span>
+<span class="sd">    \epsilon_t + u_x &amp; = 0 \\</span>
+<span class="sd">    (\rho(x) u)_t + \sigma(\epsilon,x)_x &amp; = 0.</span>
+
+<span class="sd">Here :math:`\epsilon` is the strain, :math:`\sigma` is the stress, </span>
+<span class="sd">u is the velocity, and :math:`\rho(x)` is the density.  </span>
+<span class="sd">We take the stress-strain relation :math:`\sigma = e^{K(x)\epsilon}-1`;</span>
+<span class="sd">:math:`K(x)` is the linearized bulk modulus.</span>
+<span class="sd">Note that the density and bulk modulus may depend explicitly on x.</span>
+
+<span class="sd">The problem solved here is based on [LeVYon03]_.  An initial hump</span>
+<span class="sd">evolves into two trains of solitary waves.</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+
+
+<span class="k">def</span> <span class="nf">qinit</span><span class="p">(</span><span class="n">state</span><span class="p">,</span><span class="n">ic</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span><span class="n">a2</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span><span class="n">xupper</span><span class="o">=</span><span class="mf">600.</span><span class="p">):</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">centers</span>
+    
+    <span class="k">if</span> <span class="n">ic</span><span class="o">==</span><span class="mi">1</span><span class="p">:</span> <span class="c">#Zero ic</span>
+        <span class="n">state</span><span class="o">.</span><span class="n">q</span><span class="p">[:,:]</span> <span class="o">=</span> <span class="mf">0.</span>
+    <span class="k">elif</span> <span class="n">ic</span><span class="o">==</span><span class="mi">2</span><span class="p">:</span>
+        <span class="c"># Gaussian</span>
+        <span class="n">sigma</span> <span class="o">=</span> <span class="n">a2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="p">((</span><span class="n">x</span><span class="o">-</span><span class="n">xupper</span><span class="o">/</span><span class="mf">2.</span><span class="p">)</span><span class="o">/</span><span class="mf">10.</span><span class="p">)</span><span class="o">**</span><span class="mf">2.</span><span class="p">)</span>
+        <span class="n">state</span><span class="o">.</span><span class="n">q</span><span class="p">[</span><span class="mi">0</span><span class="p">,:]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">sigma</span><span class="o">+</span><span class="mf">1.</span><span class="p">)</span><span class="o">/</span><span class="n">state</span><span class="o">.</span><span class="n">aux</span><span class="p">[</span><span class="mi">1</span><span class="p">,:]</span>
+        <span class="n">state</span><span class="o">.</span><span class="n">q</span><span class="p">[</span><span class="mi">1</span><span class="p">,:]</span> <span class="o">=</span> <span class="mf">0.</span>
+
+
+<span class="k">def</span> <span class="nf">setaux</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">rhoB</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span><span class="n">KB</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span><span class="n">rhoA</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">KA</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span><span class="n">xlower</span><span class="o">=</span><span class="mf">0.</span><span class="p">,</span><span class="n">xupper</span><span class="o">=</span><span class="mf">600.</span><span class="p">,</span><span class="n">bc</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
+    <span class="n">aux</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">([</span><span class="mi">3</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)],</span><span class="n">order</span><span class="o">=</span><span class="s">&#39;F&#39;</span><span class="p">)</span>
+    <span class="n">xfrac</span> <span class="o">=</span> <span class="n">x</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">floor</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    <span class="c">#Density:</span>
+    <span class="n">aux</span><span class="p">[</span><span class="mi">0</span><span class="p">,:]</span> <span class="o">=</span> <span class="n">rhoA</span><span class="o">*</span><span class="p">(</span><span class="n">xfrac</span><span class="o">&lt;</span><span class="n">alpha</span><span class="p">)</span><span class="o">+</span><span class="n">rhoB</span><span class="o">*</span><span class="p">(</span><span class="n">xfrac</span><span class="o">&gt;=</span><span class="n">alpha</span><span class="p">)</span>
+    <span class="c">#Bulk modulus:</span>
+    <span class="n">aux</span><span class="p">[</span><span class="mi">1</span><span class="p">,:]</span> <span class="o">=</span> <span class="n">KA</span>  <span class="o">*</span><span class="p">(</span><span class="n">xfrac</span><span class="o">&lt;</span><span class="n">alpha</span><span class="p">)</span><span class="o">+</span><span class="n">KB</span>  <span class="o">*</span><span class="p">(</span><span class="n">xfrac</span><span class="o">&gt;=</span><span class="n">alpha</span><span class="p">)</span>
+    <span class="n">aux</span><span class="p">[</span><span class="mi">2</span><span class="p">,:]</span> <span class="o">=</span> <span class="mf">0.</span> <span class="c"># not used</span>
+    <span class="k">return</span> <span class="n">aux</span>
+
+    
+<span class="k">def</span> <span class="nf">b4step</span><span class="p">(</span><span class="n">solver</span><span class="p">,</span><span class="n">state</span><span class="p">):</span>
+    <span class="c">#Reverse velocity at trtime</span>
+    <span class="c">#Note that trtime should be an output point</span>
+    <span class="k">if</span> <span class="n">state</span><span class="o">.</span><span class="n">t</span><span class="o">&gt;=</span><span class="n">state</span><span class="o">.</span><span class="n">problem_data</span><span class="p">[</span><span class="s">&#39;trtime&#39;</span><span class="p">]</span><span class="o">-</span><span class="mf">1.e-10</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">state</span><span class="o">.</span><span class="n">problem_data</span><span class="p">[</span><span class="s">&#39;trdone&#39;</span><span class="p">]:</span>
+        <span class="c">#print &#39;Time reversing&#39;</span>
+        <span class="n">state</span><span class="o">.</span><span class="n">q</span><span class="p">[</span><span class="mi">1</span><span class="p">,:]</span><span class="o">=-</span><span class="n">state</span><span class="o">.</span><span class="n">q</span><span class="p">[</span><span class="mi">1</span><span class="p">,:]</span>
+        <span class="n">state</span><span class="o">.</span><span class="n">q</span><span class="o">=</span><span class="n">state</span><span class="o">.</span><span class="n">q</span>
+        <span class="n">state</span><span class="o">.</span><span class="n">problem_data</span><span class="p">[</span><span class="s">&#39;trdone&#39;</span><span class="p">]</span><span class="o">=</span><span class="bp">True</span>
+        <span class="k">if</span> <span class="n">state</span><span class="o">.</span><span class="n">t</span><span class="o">&gt;</span><span class="n">state</span><span class="o">.</span><span class="n">problem_data</span><span class="p">[</span><span class="s">&#39;trtime&#39;</span><span class="p">]:</span>
+            <span class="k">print</span> <span class="s">&#39;WARNING: trtime is &#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">state</span><span class="o">.</span><span class="n">problem_data</span><span class="p">[</span><span class="s">&#39;trtime&#39;</span><span class="p">])</span><span class="o">+</span>\
+                <span class="s">&#39; but velocities reversed at time &#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">state</span><span class="o">.</span><span class="n">t</span><span class="p">)</span>
+    <span class="c">#Change to periodic BCs after initial pulse </span>
+    <span class="k">if</span> <span class="n">state</span><span class="o">.</span><span class="n">t</span><span class="o">&gt;</span><span class="mi">5</span><span class="o">*</span><span class="n">state</span><span class="o">.</span><span class="n">problem_data</span><span class="p">[</span><span class="s">&#39;tw1&#39;</span><span class="p">]</span> <span class="ow">and</span> <span class="n">solver</span><span class="o">.</span><span class="n">bc_lower</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">==</span><span class="mi">0</span><span class="p">:</span>
+        <span class="n">solver</span><span class="o">.</span><span class="n">bc_lower</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">=</span><span class="mi">2</span>
+        <span class="n">solver</span><span class="o">.</span><span class="n">bc_upper</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">=</span><span class="mi">2</span>
+        <span class="n">solver</span><span class="o">.</span><span class="n">aux_bc_lower</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">=</span><span class="mi">2</span>
+        <span class="n">solver</span><span class="o">.</span><span class="n">aux_bc_upper</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">=</span><span class="mi">2</span>
+
+
+<span class="k">def</span> <span class="nf">zero_bc</span><span class="p">(</span><span class="n">state</span><span class="p">,</span><span class="n">dim</span><span class="p">,</span><span class="n">t</span><span class="p">,</span><span class="n">qbc</span><span class="p">,</span><span class="n">num_ghost</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Set everything to zero&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">dim</span><span class="o">.</span><span class="n">on_upper_boundary</span><span class="p">:</span>
+        <span class="n">qbc</span><span class="p">[:,</span><span class="o">-</span><span class="n">num_ghost</span><span class="p">:]</span><span class="o">=</span><span class="mf">0.</span>
+
+<span class="k">def</span> <span class="nf">moving_wall_bc</span><span class="p">(</span><span class="n">state</span><span class="p">,</span><span class="n">dim</span><span class="p">,</span><span class="n">t</span><span class="p">,</span><span class="n">qbc</span><span class="p">,</span><span class="n">num_ghost</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Initial pulse generated at left boundary by prescribed motion&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">dim</span><span class="o">.</span><span class="n">on_lower_boundary</span><span class="p">:</span>
+        <span class="n">qbc</span><span class="p">[</span><span class="mi">0</span><span class="p">,:</span><span class="n">num_ghost</span><span class="p">]</span><span class="o">=</span><span class="n">qbc</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="n">num_ghost</span><span class="p">]</span> 
+        <span class="n">t</span><span class="o">=</span><span class="n">state</span><span class="o">.</span><span class="n">t</span><span class="p">;</span> <span class="n">t1</span><span class="o">=</span><span class="n">state</span><span class="o">.</span><span class="n">problem_data</span><span class="p">[</span><span class="s">&#39;t1&#39;</span><span class="p">];</span> <span class="n">tw1</span><span class="o">=</span><span class="n">state</span><span class="o">.</span><span class="n">problem_data</span><span class="p">[</span><span class="s">&#39;tw1&#39;</span><span class="p">]</span>
+        <span class="n">a1</span><span class="o">=</span><span class="n">state</span><span class="o">.</span><span class="n">problem_data</span><span class="p">[</span><span class="s">&#39;a1&#39;</span><span class="p">];</span>
+        <span class="n">t0</span> <span class="o">=</span> <span class="p">(</span><span class="n">t</span><span class="o">-</span><span class="n">t1</span><span class="p">)</span><span class="o">/</span><span class="n">tw1</span>
+        <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">t0</span><span class="p">)</span><span class="o">&lt;=</span><span class="mf">1.</span><span class="p">:</span> <span class="n">vwall</span> <span class="o">=</span> <span class="o">-</span><span class="n">a1</span><span class="o">*</span><span class="p">(</span><span class="mf">1.</span><span class="o">+</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">t0</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span> <span class="n">vwall</span><span class="o">=</span><span class="mf">0.</span>
+        <span class="k">for</span> <span class="n">ibc</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="n">num_ghost</span><span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+            <span class="n">qbc</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="n">num_ghost</span><span class="o">-</span><span class="n">ibc</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mi">2</span><span class="o">*</span><span class="n">vwall</span><span class="o">*</span><span class="n">state</span><span class="o">.</span><span class="n">aux</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="n">ibc</span><span class="p">]</span> <span class="o">-</span> <span class="n">qbc</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="n">num_ghost</span><span class="o">+</span><span class="n">ibc</span><span class="p">]</span>
+
+
+
+<span class="k">def</span> <span class="nf">setup</span><span class="p">(</span><span class="n">use_petsc</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span><span class="n">kernel_language</span><span class="o">=</span><span class="s">&#39;Fortran&#39;</span><span class="p">,</span><span class="n">solver_type</span><span class="o">=</span><span class="s">&#39;classic&#39;</span><span class="p">,</span><span class="n">outdir</span><span class="o">=</span><span class="s">&#39;./_output&#39;</span><span class="p">):</span>
+    <span class="kn">from</span> <span class="nn">clawpack</span> <span class="kn">import</span> <span class="n">riemann</span>
+
+    <span class="k">if</span> <span class="n">use_petsc</span><span class="p">:</span>
+        <span class="kn">import</span> <span class="nn">clawpack.petclaw</span> <span class="kn">as</span> <span class="nn">pyclaw</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="kn">from</span> <span class="nn">clawpack</span> <span class="kn">import</span> <span class="n">pyclaw</span>
+
+    <span class="k">if</span> <span class="n">kernel_language</span><span class="o">==</span><span class="s">&#39;Python&#39;</span><span class="p">:</span>
+        <span class="n">rs</span> <span class="o">=</span> <span class="n">riemann</span><span class="o">.</span><span class="n">nonlinear_elasticity_1D_py</span><span class="o">.</span><span class="n">nonlinear_elasticity_1D</span>
+    <span class="k">elif</span> <span class="n">kernel_language</span><span class="o">==</span><span class="s">&#39;Fortran&#39;</span><span class="p">:</span>
+        <span class="n">rs</span> <span class="o">=</span> <span class="n">riemann</span><span class="o">.</span><span class="n">nonlinear_elasticity_fwave_1D</span>
+
+    <span class="k">if</span> <span class="n">solver_type</span><span class="o">==</span><span class="s">&#39;sharpclaw&#39;</span><span class="p">:</span>
+        <span class="n">solver</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">SharpClawSolver1D</span><span class="p">(</span><span class="n">rs</span><span class="p">)</span>
+        <span class="n">solver</span><span class="o">.</span><span class="n">char_decomp</span><span class="o">=</span><span class="mi">0</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">solver</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">ClawSolver1D</span><span class="p">(</span><span class="n">rs</span><span class="p">)</span>
+
+    <span class="n">solver</span><span class="o">.</span><span class="n">kernel_language</span> <span class="o">=</span> <span class="n">kernel_language</span>
+
+    <span class="n">solver</span><span class="o">.</span><span class="n">bc_lower</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">BC</span><span class="o">.</span><span class="n">custom</span>
+    <span class="n">solver</span><span class="o">.</span><span class="n">bc_upper</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">BC</span><span class="o">.</span><span class="n">extrap</span>
+
+    <span class="c">#Use the same BCs for the aux array</span>
+    <span class="n">solver</span><span class="o">.</span><span class="n">aux_bc_lower</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">BC</span><span class="o">.</span><span class="n">extrap</span>
+    <span class="n">solver</span><span class="o">.</span><span class="n">aux_bc_upper</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">BC</span><span class="o">.</span><span class="n">extrap</span>
+
+    <span class="n">xlower</span><span class="o">=</span><span class="mf">0.0</span><span class="p">;</span> <span class="n">xupper</span><span class="o">=</span><span class="mf">300.0</span>
+    <span class="n">cells_per_layer</span><span class="o">=</span><span class="mi">12</span><span class="p">;</span> <span class="n">mx</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">xupper</span><span class="o">-</span><span class="n">xlower</span><span class="p">))</span><span class="o">*</span><span class="n">cells_per_layer</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">Dimension</span><span class="p">(</span><span class="s">&#39;x&#39;</span><span class="p">,</span><span class="n">xlower</span><span class="p">,</span><span class="n">xupper</span><span class="p">,</span><span class="n">mx</span><span class="p">)</span>
+    <span class="n">domain</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">Domain</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    <span class="n">state</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">State</span><span class="p">(</span><span class="n">domain</span><span class="p">,</span><span class="n">solver</span><span class="o">.</span><span class="n">num_eqn</span><span class="p">)</span>
+
+    <span class="c">#Set global parameters</span>
+    <span class="n">alpha</span> <span class="o">=</span> <span class="mf">0.5</span>
+    <span class="n">KA</span>    <span class="o">=</span> <span class="mf">1.0</span>
+    <span class="n">KB</span>    <span class="o">=</span> <span class="mf">4.0</span>
+    <span class="n">rhoA</span>  <span class="o">=</span> <span class="mf">1.0</span>
+    <span class="n">rhoB</span>  <span class="o">=</span> <span class="mf">4.0</span>
+    <span class="n">state</span><span class="o">.</span><span class="n">problem_data</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">state</span><span class="o">.</span><span class="n">problem_data</span><span class="p">[</span><span class="s">&#39;t1&#39;</span><span class="p">]</span>    <span class="o">=</span> <span class="mf">10.0</span>
+    <span class="n">state</span><span class="o">.</span><span class="n">problem_data</span><span class="p">[</span><span class="s">&#39;tw1&#39;</span><span class="p">]</span>   <span class="o">=</span> <span class="mf">10.0</span>
+    <span class="n">state</span><span class="o">.</span><span class="n">problem_data</span><span class="p">[</span><span class="s">&#39;a1&#39;</span><span class="p">]</span>    <span class="o">=</span> <span class="mf">0.1</span>
+    <span class="n">state</span><span class="o">.</span><span class="n">problem_data</span><span class="p">[</span><span class="s">&#39;alpha&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">alpha</span>
+    <span class="n">state</span><span class="o">.</span><span class="n">problem_data</span><span class="p">[</span><span class="s">&#39;KA&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">KA</span>
+    <span class="n">state</span><span class="o">.</span><span class="n">problem_data</span><span class="p">[</span><span class="s">&#39;KB&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">KB</span>
+    <span class="n">state</span><span class="o">.</span><span class="n">problem_data</span><span class="p">[</span><span class="s">&#39;rhoA&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">rhoA</span>
+    <span class="n">state</span><span class="o">.</span><span class="n">problem_data</span><span class="p">[</span><span class="s">&#39;rhoB&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">rhoB</span>
+    <span class="n">state</span><span class="o">.</span><span class="n">problem_data</span><span class="p">[</span><span class="s">&#39;trtime&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">999999999.0</span>
+    <span class="n">state</span><span class="o">.</span><span class="n">problem_data</span><span class="p">[</span><span class="s">&#39;trdone&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">False</span>
+
+    <span class="c">#Initialize q and aux</span>
+    <span class="n">xc</span><span class="o">=</span><span class="n">state</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">centers</span>
+    <span class="n">state</span><span class="o">.</span><span class="n">aux</span><span class="o">=</span><span class="n">setaux</span><span class="p">(</span><span class="n">xc</span><span class="p">,</span><span class="n">rhoB</span><span class="p">,</span><span class="n">KB</span><span class="p">,</span><span class="n">rhoA</span><span class="p">,</span><span class="n">KA</span><span class="p">,</span><span class="n">alpha</span><span class="p">,</span><span class="n">xlower</span><span class="o">=</span><span class="n">xlower</span><span class="p">,</span><span class="n">xupper</span><span class="o">=</span><span class="n">xupper</span><span class="p">)</span>
+    <span class="n">qinit</span><span class="p">(</span><span class="n">state</span><span class="p">,</span><span class="n">ic</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">a2</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span><span class="n">xupper</span><span class="o">=</span><span class="n">xupper</span><span class="p">)</span>
+
+    <span class="n">tfinal</span><span class="o">=</span><span class="mf">500.</span><span class="p">;</span> <span class="n">num_output_times</span> <span class="o">=</span> <span class="mi">20</span><span class="p">;</span>
+
+    <span class="n">solver</span><span class="o">.</span><span class="n">max_steps</span> <span class="o">=</span> <span class="mi">5000000</span>
+    <span class="n">solver</span><span class="o">.</span><span class="n">fwave</span> <span class="o">=</span> <span class="bp">True</span> 
+    <span class="n">solver</span><span class="o">.</span><span class="n">before_step</span> <span class="o">=</span> <span class="n">b4step</span> 
+    <span class="n">solver</span><span class="o">.</span><span class="n">user_bc_lower</span><span class="o">=</span><span class="n">moving_wall_bc</span>
+    <span class="n">solver</span><span class="o">.</span><span class="n">user_bc_upper</span><span class="o">=</span><span class="n">zero_bc</span>
+
+    <span class="n">claw</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">Controller</span><span class="p">()</span>
+    <span class="n">claw</span><span class="o">.</span><span class="n">output_style</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">claw</span><span class="o">.</span><span class="n">num_output_times</span> <span class="o">=</span> <span class="n">num_output_times</span>
+    <span class="n">claw</span><span class="o">.</span><span class="n">tfinal</span> <span class="o">=</span> <span class="n">tfinal</span>
+    <span class="n">claw</span><span class="o">.</span><span class="n">solution</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">Solution</span><span class="p">(</span><span class="n">state</span><span class="p">,</span><span class="n">domain</span><span class="p">)</span>
+    <span class="n">claw</span><span class="o">.</span><span class="n">solver</span> <span class="o">=</span> <span class="n">solver</span>
+    <span class="n">claw</span><span class="o">.</span><span class="n">setplot</span> <span class="o">=</span> <span class="n">setplot</span>
+    <span class="n">claw</span><span class="o">.</span><span class="n">keep_copy</span> <span class="o">=</span> <span class="bp">True</span>
+
+    <span class="k">return</span> <span class="n">claw</span>
+
+
+<span class="c">#--------------------------</span>
+<span class="k">def</span> <span class="nf">setplot</span><span class="p">(</span><span class="n">plotdata</span><span class="p">):</span>
+<span class="c">#--------------------------</span>
+    <span class="sd">&quot;&quot;&quot; </span>
+<span class="sd">    Specify what is to be plotted at each frame.</span>
+<span class="sd">    Input:  plotdata, an instance of visclaw.data.ClawPlotData.</span>
+<span class="sd">    Output: a modified version of plotdata.</span>
+<span class="sd">    &quot;&quot;&quot;</span> 
+    <span class="n">plotdata</span><span class="o">.</span><span class="n">clearfigures</span><span class="p">()</span>  <span class="c"># clear any old figures,axes,items data</span>
+
+    <span class="c"># Figure for q[0]</span>
+    <span class="n">plotfigure</span> <span class="o">=</span> <span class="n">plotdata</span><span class="o">.</span><span class="n">new_plotfigure</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">&#39;Stress&#39;</span><span class="p">,</span> <span class="n">figno</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="c"># Set up for axes in this figure:</span>
+    <span class="n">plotaxes</span> <span class="o">=</span> <span class="n">plotfigure</span><span class="o">.</span><span class="n">new_plotaxes</span><span class="p">()</span>
+    <span class="n">plotaxes</span><span class="o">.</span><span class="n">title</span> <span class="o">=</span> <span class="s">&#39;Stress&#39;</span>
+    <span class="n">plotaxes</span><span class="o">.</span><span class="n">ylimits</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mf">0.1</span><span class="p">,</span><span class="mf">1.0</span><span class="p">]</span>
+
+    <span class="c"># Set up for item on these axes:</span>
+    <span class="n">plotitem</span> <span class="o">=</span> <span class="n">plotaxes</span><span class="o">.</span><span class="n">new_plotitem</span><span class="p">(</span><span class="n">plot_type</span><span class="o">=</span><span class="s">&#39;1d_plot&#39;</span><span class="p">)</span>
+    <span class="n">plotitem</span><span class="o">.</span><span class="n">plot_var</span> <span class="o">=</span> <span class="n">stress</span>
+    <span class="n">plotitem</span><span class="o">.</span><span class="n">kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;linewidth&#39;</span><span class="p">:</span><span class="mi">2</span><span class="p">}</span>
+    
+    <span class="c"># Figure for q[1]</span>
+    <span class="n">plotfigure</span> <span class="o">=</span> <span class="n">plotdata</span><span class="o">.</span><span class="n">new_plotfigure</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">&#39;Velocity&#39;</span><span class="p">,</span> <span class="n">figno</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+
+    <span class="c"># Set up for axes in this figure:</span>
+    <span class="n">plotaxes</span> <span class="o">=</span> <span class="n">plotfigure</span><span class="o">.</span><span class="n">new_plotaxes</span><span class="p">()</span>
+    <span class="n">plotaxes</span><span class="o">.</span><span class="n">xlimits</span> <span class="o">=</span> <span class="s">&#39;auto&#39;</span>
+    <span class="n">plotaxes</span><span class="o">.</span><span class="n">ylimits</span> <span class="o">=</span> <span class="p">[</span><span class="o">-.</span><span class="mi">5</span><span class="p">,</span><span class="mf">0.1</span><span class="p">]</span>
+    <span class="n">plotaxes</span><span class="o">.</span><span class="n">title</span> <span class="o">=</span> <span class="s">&#39;Velocity&#39;</span>
+
+    <span class="c"># Set up for item on these axes:</span>
+    <span class="n">plotitem</span> <span class="o">=</span> <span class="n">plotaxes</span><span class="o">.</span><span class="n">new_plotitem</span><span class="p">(</span><span class="n">plot_type</span><span class="o">=</span><span class="s">&#39;1d_plot&#39;</span><span class="p">)</span>
+    <span class="n">plotitem</span><span class="o">.</span><span class="n">plot_var</span> <span class="o">=</span> <span class="n">velocity</span>
+    <span class="n">plotitem</span><span class="o">.</span><span class="n">kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;linewidth&#39;</span><span class="p">:</span><span class="mi">2</span><span class="p">}</span>
+    
+    <span class="k">return</span> <span class="n">plotdata</span>
+
+ 
+<span class="k">def</span> <span class="nf">velocity</span><span class="p">(</span><span class="n">current_data</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Compute velocity from strain and momentum&quot;&quot;&quot;</span>
+    <span class="kn">from</span> <span class="nn">stegoton</span> <span class="kn">import</span> <span class="n">setaux</span>
+    <span class="n">aux</span><span class="o">=</span><span class="n">setaux</span><span class="p">(</span><span class="n">current_data</span><span class="o">.</span><span class="n">x</span><span class="p">,</span><span class="n">rhoB</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span><span class="n">KB</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+    <span class="n">velocity</span> <span class="o">=</span> <span class="n">current_data</span><span class="o">.</span><span class="n">q</span><span class="p">[</span><span class="mi">1</span><span class="p">,:]</span><span class="o">/</span><span class="n">aux</span><span class="p">[</span><span class="mi">0</span><span class="p">,:]</span>
+    <span class="k">return</span> <span class="n">velocity</span>
+
+<span class="k">def</span> <span class="nf">stress</span><span class="p">(</span><span class="n">current_data</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Compute stress from strain and momentum&quot;&quot;&quot;</span>
+    <span class="kn">from</span> <span class="nn">stegoton</span> <span class="kn">import</span> <span class="n">setaux</span>
+    <span class="kn">from</span> <span class="nn">clawpack.riemann.nonlinear_elasticity_1D_py</span> <span class="kn">import</span> <span class="n">sigma</span> 
+    <span class="n">aux</span><span class="o">=</span><span class="n">setaux</span><span class="p">(</span><span class="n">current_data</span><span class="o">.</span><span class="n">x</span><span class="p">)</span>
+    <span class="n">epsilon</span> <span class="o">=</span> <span class="n">current_data</span><span class="o">.</span><span class="n">q</span><span class="p">[</span><span class="mi">0</span><span class="p">,:]</span>
+    <span class="n">stress</span> <span class="o">=</span> <span class="n">sigma</span><span class="p">(</span><span class="n">epsilon</span><span class="p">,</span><span class="n">aux</span><span class="p">[</span><span class="mi">1</span><span class="p">,:])</span>
+    <span class="k">return</span> <span class="n">stress</span>
+
+<span class="k">if</span> <span class="n">__name__</span><span class="o">==</span><span class="s">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">clawpack.pyclaw.util</span> <span class="kn">import</span> <span class="n">run_app_from_main</span>
+    <span class="n">output</span> <span class="o">=</span> <span class="n">run_app_from_main</span><span class="p">(</span><span class="n">setup</span><span class="p">,</span><span class="n">setplot</span><span class="p">)</span>
+</pre></div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<p><a href="http://clawpack.org/">
+    <img class="logo" src= "_static/clawlogo.jpg" alt="Logo"/>
+</a>
+<h2>Version 5.2.0</h2>
+</p><h3>Related Topics</h3>
+<ul>
+  <li><a href="../../contents.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Pyclaw</a><ul>
+  <li><a href="../basics.html">PyClaw Basics</a><ul>
+  <li><a href="../examples.html">Working with PyClaw&#8217;s built-in examples</a><ul>
+      <li>Previous: <a href="kpp.html" title="previous chapter">A non-convex flux scalar model</a></li>
+      <li>Next: <a href="../plotting.html" title="next chapter">Plotting PyClaw results</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../../_sources/pyclaw/gallery/stegoton.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+  <div class="footer">
+    &copy; Copyright 2013, The Clawpack Development Team.
+    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
+  </div>
+  
+  </body>
+</html>

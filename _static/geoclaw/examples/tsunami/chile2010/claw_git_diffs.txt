@@ -1,0 +1,101 @@
+Clawpack git diffs...
+
+===========
+classic
+===========
+
+
+===========
+amrclaw
+===========
+diff --git a/tests/advection_2d_square/regression_tests.py b/tests/advection_2d_square/regression_tests.py
+index 5defbfe..3042814 100644
+--- a/tests/advection_2d_square/regression_tests.py
++++ b/tests/advection_2d_square/regression_tests.py
+@@ -35,7 +35,7 @@ def test1():
+     Compile and run the code
+     """
+     subprocess.check_call(['make', 'clean'])
+-    subprocess.check_call(['make', '.output'])
++    subprocess.check_call(['make', '.output FFLAGS=-ffast-math'])
+ 
+ 
+ def test2(save_new_regression_data=False):
+@@ -61,8 +61,10 @@ def test2(save_new_regression_data=False):
+     regression_data = np.loadtxt(fname_data)
+ 
+     tol = 1e-14
++    new_string = len(new_data)*"   %22.16e" % tuple(new_data)
++    regression_string = len(regression_data)*"   %22.16e" % tuple(regression_data)
+     assert np.allclose(new_data,regression_data,tol), \
+-        "\n  new_data: %s, \n  expected: %s"  % (new_data, regression_data)
++        "\n  new_data: %s, \n  expected: %s"  % (new_string, regression_string)
+     print "Gauge %i ok" % gaugeno
+ 
+ 
+
+
+===========
+clawutil
+===========
+
+
+===========
+pyclaw
+===========
+
+
+===========
+visclaw
+===========
+
+
+===========
+riemann
+===========
+diff --git a/src/rp1_traffic_vc.f90 b/src/rp1_traffic_vc.f90
+index 21d3ccc..556c324 100644
+--- a/src/rp1_traffic_vc.f90
++++ b/src/rp1_traffic_vc.f90
+@@ -44,19 +44,19 @@ subroutine rp1(maxm,meqn,mwaves,maux,mbc,mx,ql,qr,auxl,auxr,fwave,s,amdq,apdq)
+          fwave(1,1,i) = fi - fim1
+ 
+ !        # compute characteristic speed in each cell:
+-	 sim1 = auxl(1,i-1)*(1.d0 - 2.d0*ql(1,i-1))
+-	 si = auxl(1,i)*(1.d0 - 2.d0*ql(1,i))
++         sim1 = auxl(1,i-1)*(1.d0 - 2.d0*ql(1,i-1))
++         si = auxl(1,i)*(1.d0 - 2.d0*ql(1,i))
+ 
+          if (sim1 .lt. 0.d0 .and. si .le. 0.d0) then
+ !             # left-going
+               s(1,i) = sim1
+-	      amdq(1,i) = fwave(1,1,i)
+-	      apdq(1,i) = 0.d0
++              amdq(1,i) = fwave(1,1,i)
++              apdq(1,i) = 0.d0
+             else if (sim1 .ge. 0.d0 .and. si .gt. 0.d0) then
+ !             # right-going
+               s(1,i) = si
+-	      amdq(1,i) = 0.d0
+-	      apdq(1,i) = fwave(1,1,i)
++              amdq(1,i) = 0.d0
++              apdq(1,i) = fwave(1,1,i)
+             else if (sim1 .lt. 0.d0 .and. si .gt. 0.d0) then
+ !             # transonic rarefaction
+ !             # split fwave between amdq and apdq:
+@@ -80,8 +80,8 @@ subroutine rp1(maxm,meqn,mwaves,maux,mbc,mx,ql,qr,auxl,auxr,fwave,s,amdq,apdq)
+                    amdq(1,i) = 0.d0
+                    apdq(1,i) = fwave(1,1,i)
+                 else
+-	           amdq(1,i) = 0.5d0 * fwave(1,1,i) 
+-	           apdq(1,i) = 0.5d0 * fwave(1,1,i)
++                   amdq(1,i) = 0.5d0 * fwave(1,1,i) 
++                   apdq(1,i) = 0.5d0 * fwave(1,1,i)
+                 endif
+             endif
+ !
+
+
+===========
+geoclaw
+===========
