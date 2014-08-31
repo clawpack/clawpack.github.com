@@ -93,35 +93,35 @@ tools.  Looking at these test routines may also give some ideas on
 how to use them.</p>
 <div class="section" id="module-clawpack.geoclaw.topotools">
 <span id="documentation-auto-generated-from-the-module-docstrings"></span><h2>Documentation auto-generated from the module docstrings<a class="headerlink" href="#module-clawpack.geoclaw.topotools" title="Permalink to this headline">¶</a></h2>
-<p>GeoClaw Topography Tools Module</p>
+<p>GeoClaw topotools Module  <cite>$CLAW/geoclaw/src/python/geoclaw/topotools.py</cite></p>
 <p>Module provides several functions for reading, writing and manipulating
 topography (bathymetry) files.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Functions:</th><td class="field-body"><ul class="first simple">
-<li>dms2decimal - Convert (degrees, minutes, seconds) to decimal degrees</li>
-<li>dist_meters2latlong - Convert dx, dy distance in meters to degrees</li>
-<li>dist_latlong2meters - Convert dx, dy distance in degrees to meters</li>
-<li>haversine - Calculate the haversine based great circle distance</li>
-<li>inv_haversine - Inverts the haversine distance</li>
+<tr class="field-odd field"><th class="field-name">Classes:</th><td class="field-body"><ul class="first simple">
+<li>Topography</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name" colspan="2">Topography Class:</th></tr>
-<tr class="field-even field"><td>&nbsp;</td><td class="field-body"></td>
+<tr class="field-even field"><th class="field-name">Functions:</th><td class="field-body"><ul class="first simple">
+<li>determine_topo_type</li>
+<li>create_topo_func</li>
+<li>topo1writer</li>
+<li>topo2writer</li>
+<li>topo3writer</li>
+<li>swapheader</li>
+</ul>
+</td>
 </tr>
 <tr class="field-odd field"><th class="field-name">TODO:</th><td class="field-body"><ul class="first last simple">
-<li>Tests are implemented but not passing, should we expect the arrays to be 
-identical?</li>
 <li>Add sub and super sampling capababilities</li>
 <li>Add functions for creating topography based off a topo function, incorporate
 the create_topo_func into Topography class, maybe allow more broad 
 initialization ability to the class to handle this?</li>
 <li>Fix <cite>in_poly</cite> function</li>
 <li>Add remove/fill no data value</li>
-<li>Probably should better handle remote files (fetching from http)</li>
 <li>Add more robust plotting capabilities</li>
 </ul>
 </td>
@@ -221,42 +221,32 @@ leave the resulting topography as unstructured effectively.</li>
 <tt class="descname">in_poly</tt><big>(</big><em>polygon</em><big>)</big><a class="headerlink" href="#clawpack.geoclaw.topotools.Topography.in_poly" title="Permalink to this definition">¶</a></dt>
 <dd><p>Mask points (x,y) that are not in the specified polygon.</p>
 <p>Uses simple ray casting algorithm for speed so beware of corner cases!</p>
-<div class="system-message">
-<p class="system-message-title">System Message: SEVERE/4 (<tt class="docutils">/Users/rjl/git/clawpack/clawpack/geoclaw/topotools.py:docstring of clawpack.geoclaw.topotools.Topography.in_poly</tt>, line 6)</p>
-<p>Unexpected section title.</p>
-<div class="highlight-python"><div class="highlight"><pre>Input
------
-</pre></div>
-</div>
-</div>
-<blockquote>
-<div><ul class="simple">
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Input:</th><td class="field-body"><ul class="first simple">
 <li><em>polygon</em> (list) List of points that comprise the polygon.  Note that
 order of the points will effect if this works (positive versus negative
 winding order).  Points should be in counter-clockwise arrangement.</li>
 </ul>
-</div></blockquote>
-<div class="system-message">
-<p class="system-message-title">System Message: SEVERE/4 (<tt class="docutils">/Users/rjl/git/clawpack/clawpack/geoclaw/topotools.py:docstring of clawpack.geoclaw.topotools.Topography.in_poly</tt>, line 12)</p>
-<p>Unexpected section title.</p>
-<div class="highlight-python"><div class="highlight"><pre>Returns
--------
-</pre></div>
-</div>
-</div>
-<blockquote>
-<div><ul class="simple">
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><ul class="first last simple">
 <li><em>X_mask</em> (numpy.ma.MaskedArray) Masked array of X coordinates where those
 points outside of the polygon have been masked.</li>
 <li><em>Y</em> (numpy.ndarray) Coordinates in y direction in a meshgrid type of
 configuration.</li>
 </ul>
-</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="method">
 <dt id="clawpack.geoclaw.topotools.Topography.interp_unstructured">
-<tt class="descname">interp_unstructured</tt><big>(</big><em>fill_topo</em>, <em>extent=None</em>, <em>method='nearest'</em>, <em>delta_limit=20.0</em>, <em>no_data_value=-9999</em>, <em>buffer_length=100.0</em>, <em>proximity_radius=100.0</em>, <em>resolution_limit=2000</em><big>)</big><a class="headerlink" href="#clawpack.geoclaw.topotools.Topography.interp_unstructured" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">interp_unstructured</tt><big>(</big><em>fill_topo</em>, <em>extent=None</em>, <em>method='nearest'</em>, <em>delta=None</em>, <em>delta_limit=20.0</em>, <em>no_data_value=-9999</em>, <em>buffer_length=100.0</em>, <em>proximity_radius=100.0</em>, <em>resolution_limit=2000</em><big>)</big><a class="headerlink" href="#clawpack.geoclaw.topotools.Topography.interp_unstructured" title="Permalink to this definition">¶</a></dt>
 <dd><p>Interpolate unstructured data on to regular grid.</p>
 <p>Function to interpolate the unstructured data in the topo object onto a
 structured grid.  Utilizes a bounding box plus a buffer of size 
@@ -277,42 +267,54 @@ remove the masked data.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Input:</th><td class="field-body"><ul class="first last">
-<li><p class="first"><em>fill_topo</em> (list) - List of Topography objects to use as fill data
-in the projection.</p>
-</li>
-<li><p class="first"><em>extent</em> (tuple) - A tuple defining the rectangle of the sub-section.  
-Must be in the form (x lower,x upper,y lower, y upper).</p>
-</li>
-<li><p class="first"><em>method</em> (string) - Method used for interpolation, valid methods are
-found in <em>scipy.interpolate.griddata</em>.  Default is <em>nearest</em>.</p>
-</li>
-<li><p class="first"><em>delta_limit</em> (float) - Limit of finest horizontal resolution, 
-default is 20 meters.</p>
-</li>
-<li><p class="first"><em>no_data_value</em> (float) - Value to use if no data was found to fill in a 
-missing value, ignored if <cite>method = &#8216;nearest&#8217;</cite>. Default is <cite>-9999</cite>.</p>
-</li>
-<li><p class="first"><em>buffer_length</em> (float) - Buffer around bounding box, only applicable
-when <em>extent</em> is None.  Default is <em>100.0</em> meters.</p>
-</li>
-<li><p class="first"><em>proximity_radius</em> (float) - Radius every unstructured data point
-used to mask the fill data with.  Default is <em>100.0</em> meters.</p>
-</li>
-<li><p class="first"><em>resolution_limit</em> (int) - Limit the number of grid points in a
+<tr class="field-odd field"><th class="field-name">Input:</th><td class="field-body"><ul class="first last simple">
+<li><em>fill_topo</em> (list) - List of Topography objects to use as fill data
+in the projection.</li>
+<li><em>extent</em> (tuple) - A tuple defining the rectangle of the sub-section.  
+Must be in the form (x lower,x upper,y lower, y upper).</li>
+<li><em>method</em> (string) - Method used for interpolation, valid methods are
+found in <em>scipy.interpolate.griddata</em>.  Default is <em>nearest</em>.</li>
+<li><em>delta</em> (float) - Directly set the grid spacing of the interpolation
+rather than determining it from the data itself.  Defaults to <em>None</em>
+which causes the method to determine this value itself.</li>
+<li><em>delta_limit</em> (float) - Limit of finest horizontal resolution, 
+default is 20 meters.</li>
+<li><em>no_data_value</em> (float) - Value to use if no data was found to fill in a 
+missing value, ignored if <cite>method = &#8216;nearest&#8217;</cite>. Default is <cite>-9999</cite>.</li>
+<li><em>buffer_length</em> (float) - Buffer around bounding box, only applicable
+when <em>extent</em> is None.  Default is <cite>100.0</cite> meters.</li>
+<li><em>proximity_radius</em> (float) - Radius every unstructured data point
+used to mask the fill data with.  Default is <cite>100.0</cite> meters.</li>
+<li><em>resolution_limit</em> (int) - Limit the number of grid points in a
 single dimension.  Raises a <em>ValueError</em> if the limit is violated.
-Default value is <a href="#id1"><span class="problematic" id="id2">``</span></a>2000&#8217;&#8216;.</p>
-<div class="system-message" id="id1">
-<p class="system-message-title">System Message: WARNING/2 (<tt class="docutils">/Users/rjl/git/clawpack/clawpack/geoclaw/topotools.py:docstring of clawpack.geoclaw.topotools.Topography.interp_unstructured</tt>, line 35); <em><a href="#id2">backlink</a></em></p>
-<p>Inline literal start-string without end-string.</p>
-</div>
-</li>
+Default value is <cite>2000</cite>.</li>
 </ul>
 </td>
 </tr>
 </tbody>
 </table>
 <p>Sets this object&#8217;s <em>unstructured</em> attribute to <em>False</em> if successful.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="clawpack.geoclaw.topotools.Topography.make_shoreline_xy">
+<tt class="descname">make_shoreline_xy</tt><big>(</big><em>sea_level=0</em><big>)</big><a class="headerlink" href="#clawpack.geoclaw.topotools.Topography.make_shoreline_xy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns an array <em>shoreline_xy</em> with 2 columns containing x and y values
+for all segements of the shoreline (defined to be the contour 
+where self.z = sea_level) separated by [nan,nan] pairs.  
+This allows all shorelines to be quickly plotted via:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">plot</span><span class="p">(</span><span class="n">shoreline_xy</span><span class="p">[:,</span><span class="mi">0</span><span class="p">],</span> <span class="n">shoreline_xy</span><span class="p">[:,</span><span class="mi">1</span><span class="p">])</span>
+</pre></div>
+</div>
+<p>The shoreline can be saved as a binary <em>.npy</em> file via:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">numpy</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">shoreline_xy</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>which is much smaller than the original topography file. 
+Reload via:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">shoreline_xy</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="method">
@@ -359,9 +361,6 @@ Default value is <a href="#id1"><span class="problematic" id="id2">``</span></a>
 </tr>
 </tbody>
 </table>
-<div class="system-message">
-<p class="system-message-title">System Message: WARNING/2 (<tt class="docutils">/Users/rjl/git/clawpack/clawpack/geoclaw/topotools.py:docstring of clawpack.geoclaw.topotools.Topography.read</tt>, line 12)</p>
-Field list ends without a blank line; unexpected unindent.</div>
 <p>The first three might have already been set when instatiating object.</p>
 </dd></dl>
 
@@ -383,15 +382,15 @@ swapped.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Methods:</th><td class="field-body"><ul class="first last">
-<li><p class="first"><em>fill</em> - Fill in all <em>no_data_value*s with *value</em></p>
-</li>
-<li><p class="first"><em>nearest</em> - Fill in <a href="#id3"><span class="problematic" id="id4">*</span></a>no_data_value*s with average of nearest
-neighbors.</p>
-<div class="system-message" id="id3">
-<p class="system-message-title">System Message: WARNING/2 (<tt class="docutils">/Users/rjl/git/clawpack/clawpack/geoclaw/topotools.py:docstring of clawpack.geoclaw.topotools.Topography.replace_no_data_values</tt>, line 7); <em><a href="#id4">backlink</a></em></p>
-<p>Inline emphasis start-string without end-string.</p>
-</div>
+<tr class="field-odd field"><th class="field-name">Input:</th><td class="field-body"><ul class="first last">
+<li><p class="first"><em>method</em> can be one of:</p>
+<blockquote>
+<div><ul class="simple">
+<li><em>fill</em> - Fill in all <em>no_data_value</em> locations with <em>value</em></li>
+<li><em>nearest</em> - Fill in <em>no_data_value</em> locations with 
+average of nearest neighbors.</li>
+</ul>
+</div></blockquote>
 </li>
 </ul>
 </td>
@@ -481,32 +480,24 @@ topgraphy at the point (x,y).  (The resulting function is constant in y.)</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Example:</th><td class="field-body"></td>
-</tr>
-</tbody>
-</table>
-<div class="system-message">
-<p class="system-message-title">System Message: WARNING/2 (<tt class="docutils">/Users/rjl/git/clawpack/clawpack/geoclaw/topotools.py:docstring of clawpack.geoclaw.topotools.create_topo_func</tt>, line 6)</p>
-Field list ends without a blank line; unexpected unindent.</div>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="n">create_topo_profile_func</span><span class="p">(</span><span class="n">loc</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">b</span> <span class="o">=</span> <span class="n">f</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">)</span>
+<tr class="field-odd field"><th class="field-name">Example:</th><td class="field-body"><div class="first highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="n">create_topo_func</span><span class="p">(</span><span class="n">loc</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">b</span> <span class="o">=</span> <span class="n">f</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
 </pre></div>
 </div>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Input:</th><td class="field-body"><ul class="first last">
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Input:</th><td class="field-body"><ul class="first last">
 <li><p class="first"><em>loc</em> (list) - Create a topography file with the profile denoted by the
 tuples inside of loc.  A sample set of points are shown below.  Note 
 that the first value of the list is the x location and the second is 
 the height of the topography.</p>
+<p><strong>This figure doesn&#8217;t show up properly in Sphinx docs...</strong></p>
 <blockquote>
 <div><p>z (m)
 ^                                                  o loc[5]  o
 |                                                    
 |                                          loc[4]   
-<a href="#id5"><span class="problematic" id="id6">|</span></a>&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8211;o&#8212;&#8211;&gt; x (m) (sea level)
+<a href="#id1"><span class="problematic" id="id2">|</span></a>&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8211;o&#8212;&#8211;&gt; x (m) (sea level)
 |                                            
 |                                o loc[2] o loc[3]
 |                         
@@ -514,14 +505,14 @@ the height of the topography.</p>
 |                           o loc[1]
 |           
 |                               
-<a href="#id7"><span class="problematic" id="id8">|</span></a>__________________o loc[0]
+<a href="#id3"><span class="problematic" id="id4">|</span></a>__________________o loc[0]
 0.0</p>
-<div class="system-message" id="id5">
-<p class="system-message-title">System Message: WARNING/2 (<tt class="docutils">/Users/rjl/git/clawpack/clawpack/geoclaw/topotools.py:docstring of clawpack.geoclaw.topotools.create_topo_func</tt>, line 15); <em><a href="#id6">backlink</a></em></p>
+<div class="system-message" id="id1">
+<p class="system-message-title">System Message: WARNING/2 (<tt class="docutils">/Users/rjl/git/clawpack/clawpack/geoclaw/topotools.py:docstring of clawpack.geoclaw.topotools.create_topo_func</tt>, line 18); <em><a href="#id2">backlink</a></em></p>
 <p>Inline substitution_reference start-string without end-string.</p>
 </div>
-<div class="system-message" id="id7">
-<p class="system-message-title">System Message: WARNING/2 (<tt class="docutils">/Users/rjl/git/clawpack/clawpack/geoclaw/topotools.py:docstring of clawpack.geoclaw.topotools.create_topo_func</tt>, line 15); <em><a href="#id8">backlink</a></em></p>
+<div class="system-message" id="id3">
+<p class="system-message-title">System Message: WARNING/2 (<tt class="docutils">/Users/rjl/git/clawpack/clawpack/geoclaw/topotools.py:docstring of clawpack.geoclaw.topotools.create_topo_func</tt>, line 18); <em><a href="#id4">backlink</a></em></p>
 <p>Inline substitution_reference start-string without end-string.</p>
 </div>
 </div></blockquote>
@@ -534,48 +525,31 @@ the height of the topography.</p>
 </dd></dl>
 
 <dl class="function">
-<dt id="clawpack.geoclaw.topotools.dist_latlong2meters">
-<tt class="descclassname">clawpack.geoclaw.topotools.</tt><tt class="descname">dist_latlong2meters</tt><big>(</big><em>dx</em>, <em>dy</em>, <em>latitude=0.0</em><big>)</big><a class="headerlink" href="#clawpack.geoclaw.topotools.dist_latlong2meters" title="Permalink to this definition">¶</a></dt>
-<dd><p>Convert distance from degrees longitude-latitude to meters.</p>
-<p>Takes the distance described by <em>dx</em> and <em>dy</em> in degrees and converts it into
-distances in meters.</p>
-<p>returns (float, float)</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="clawpack.geoclaw.topotools.dist_meters2latlong">
-<tt class="descclassname">clawpack.geoclaw.topotools.</tt><tt class="descname">dist_meters2latlong</tt><big>(</big><em>dx</em>, <em>dy</em>, <em>latitude=0.0</em><big>)</big><a class="headerlink" href="#clawpack.geoclaw.topotools.dist_meters2latlong" title="Permalink to this definition">¶</a></dt>
-<dd><p>Convert distance from meters to degrees of longitude-latitude.</p>
-<p>Takes the distance described by <em>dx</em> and <em>dy</em> in meters and converts it into
-distances in the longitudinal and latitudinal directions in degrees.</p>
-<p>returns (float, float)</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="clawpack.geoclaw.topotools.dms2decimal">
-<tt class="descclassname">clawpack.geoclaw.topotools.</tt><tt class="descname">dms2decimal</tt><big>(</big><em>d</em>, <em>m</em>, <em>s</em>, <em>coord='N'</em><big>)</big><a class="headerlink" href="#clawpack.geoclaw.topotools.dms2decimal" title="Permalink to this definition">¶</a></dt>
-<dd><p>Convert coordinates in (degrees, minutes, seconds) to decimal form.</p>
-<p>If coord == &#8216;S&#8217; or coord == &#8216;W&#8217; then value is negated too.
-Example:</p>
-<div class="system-message">
-<p class="system-message-title">System Message: ERROR/3 (<tt class="docutils">/Users/rjl/git/clawpack/clawpack/geoclaw/topotools.py:docstring of clawpack.geoclaw.topotools.dms2decimal</tt>, line 5)</p>
-Unexpected indentation.</div>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">topotools</span><span class="o">.</span><span class="n">dms2decimal</span><span class="p">(</span><span class="mi">7</span><span class="p">,</span><span class="mi">30</span><span class="p">,</span><span class="mi">36</span><span class="p">,</span><span class="s">&#39;W&#39;</span><span class="p">)</span>
-<span class="go">-7.51</span>
-</pre></div>
-</div>
-<div class="system-message">
-<p class="system-message-title">System Message: WARNING/2 (<tt class="docutils">/Users/rjl/git/clawpack/clawpack/geoclaw/topotools.py:docstring of clawpack.geoclaw.topotools.dms2decimal</tt>, line 7)</p>
-Block quote ends without a blank line; unexpected unindent.</div>
-<p>(Note that you might want to add 360 to resulting W coordinate
-if using E coordinates everywhere in a computation spanning date line.)</p>
-<p>returns float</p>
+<dt id="clawpack.geoclaw.topotools.determine_topo_type">
+<tt class="descclassname">clawpack.geoclaw.topotools.</tt><tt class="descname">determine_topo_type</tt><big>(</big><em>path</em>, <em>default=None</em><big>)</big><a class="headerlink" href="#clawpack.geoclaw.topotools.determine_topo_type" title="Permalink to this definition">¶</a></dt>
+<dd><p>Using the file suffix of path, attempt to deterimine the topo type.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Input:</th><td class="field-body"><ul class="first last simple">
+<li><em>path</em> (string) - Path to the file.  Can include archive extensions (they
+will be stripped off).</li>
+<li><em>default</em> (object) - Value returned if no suitable topo type was 
+determined.  Default is <em>None</em>.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p>returns integer between 1-3 or <em>default</em> if nothing matches.</p>
 </dd></dl>
 
 <dl class="function">
 <dt id="clawpack.geoclaw.topotools.fetch_topo_url">
-<tt class="descclassname">clawpack.geoclaw.topotools.</tt><tt class="descname">fetch_topo_url</tt><big>(</big><em>url</em>, <em>local_fname=None</em>, <em>force=None</em><big>)</big><a class="headerlink" href="#clawpack.geoclaw.topotools.fetch_topo_url" title="Permalink to this definition">¶</a></dt>
-<dd><p>Replaces get_topo function.</p>
+<tt class="descclassname">clawpack.geoclaw.topotools.</tt><tt class="descname">fetch_topo_url</tt><big>(</big><em>url</em>, <em>local_fname=None</em>, <em>force=None</em>, <em>verbose=False</em>, <em>ask_user=False</em><big>)</big><a class="headerlink" href="#clawpack.geoclaw.topotools.fetch_topo_url" title="Permalink to this definition">¶</a></dt>
+<dd><p>DEPRECATED:  Use <em>clawpack.geoclaw.util.get_remote_file</em> instead (see note below).</p>
+<p>Replaces get_topo function.</p>
 <p>Download a topo file from the web, provided the file does not
 already exist locally.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -592,24 +566,22 @@ If <em>local_fname == None</em>, take file name from URL</li>
 </tr>
 </tbody>
 </table>
-<dl class="docutils">
-<dt>For GeoClaw examples, some topo files can be found in</dt>
-<dd><a class="reference external" href="http://www.clawpack.org/geoclaw/topo">http://www.clawpack.org/geoclaw/topo</a></dd>
-</dl>
-<div class="system-message">
-<p class="system-message-title">System Message: WARNING/2 (<tt class="docutils">/Users/rjl/git/clawpack/clawpack/geoclaw/topotools.py:docstring of clawpack.geoclaw.topotools.fetch_topo_url</tt>, line 14)</p>
-Definition list ends without a blank line; unexpected unindent.</div>
-<p>See that website for a list of archived topo datasets.</p>
+<p>For GeoClaw examples, some topo files can be found in
+<a href="#id5"><span class="problematic" id="id6">`http://www.geoclaw.org/topo`_</span></a>
+See that website for a list of archived topo datasets.</p>
 <p>If force==False then prompt the user to make sure it&#8217;s ok to download,</p>
 <p>If force==None then check for environment variable CLAW_TOPO_DOWNLOAD
 and if this exists use its value.  This is useful for the script
 python/run_examples.py that runs all examples so it won&#8217;t stop to prompt.</p>
+<p>This routine has been deprecated in favor of 
+<em>clawpack.geoclaw.util.get_remote_file</em>.  All the functionality should be 
+the same but calls the other routine internally.</p>
 </dd></dl>
 
 <dl class="function">
 <dt id="clawpack.geoclaw.topotools.get_topo">
 <tt class="descclassname">clawpack.geoclaw.topotools.</tt><tt class="descname">get_topo</tt><big>(</big><em>topo_fname</em>, <em>remote_directory</em>, <em>force=None</em><big>)</big><a class="headerlink" href="#clawpack.geoclaw.topotools.get_topo" title="Permalink to this definition">¶</a></dt>
-<dd><p>DEPRECATED:  Use <em>fetch_topo_url</em> instead.</p>
+<dd><p>DEPRECATED:  Use <em>clawpack.geoclaw.util.get_remote_file</em> instead</p>
 <p>Download a topo file from the web, provided the file does not
 already exist locally.</p>
 <p>remote_directory should be a URL.  For GeoClaw data it may be a
@@ -620,21 +592,6 @@ with option to first get small file of metadata.</p>
 <p>If force==None then check for environment variable CLAW_TOPO_DOWNLOAD
 and if this exists use its value.  This is useful for the script
 python/run_examples.py that runs all examples so it won&#8217;t stop to prompt.</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="clawpack.geoclaw.topotools.haversine">
-<tt class="descclassname">clawpack.geoclaw.topotools.</tt><tt class="descname">haversine</tt><big>(</big><em>x</em>, <em>y</em>, <em>units='degrees'</em><big>)</big><a class="headerlink" href="#clawpack.geoclaw.topotools.haversine" title="Permalink to this definition">¶</a></dt>
-<dd><p>Compute the great circle distance on the earth between points x and y.</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="clawpack.geoclaw.topotools.inv_haversine">
-<tt class="descclassname">clawpack.geoclaw.topotools.</tt><tt class="descname">inv_haversine</tt><big>(</big><em>d</em>, <em>x1</em>, <em>y1</em>, <em>y2</em>, <em>Rsphere=6367500.0</em>, <em>units='degrees'</em><big>)</big><a class="headerlink" href="#clawpack.geoclaw.topotools.inv_haversine" title="Permalink to this definition">¶</a></dt>
-<dd><p>Invert the Haversine function to find dx given a distance and point.</p>
-<p>Invert the haversine function to find dx given distance d and (x1,y1) and y2.
-The corresponding x2 can be x1+dx or x1-dx.
-May return NaN if no solution.</p>
 </dd></dl>
 
 <dl class="function">
@@ -720,7 +677,7 @@ topography object and writes it out.</p>
       <div class="clearer"></div>
     </div>
   <div class="footer">
-    &copy; Copyright 2013, The Clawpack Development Team.
+    &copy; Copyright 2014, The Clawpack Development Team.
     Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
   </div>
   

@@ -88,45 +88,166 @@
 </div>
 <div class="section" id="module-clawpack.geoclaw.kmltools">
 <span id="documentation-auto-generated-from-the-module-docstrings"></span><h2>Documentation auto-generated from the module docstrings<a class="headerlink" href="#module-clawpack.geoclaw.kmltools" title="Permalink to this headline">¶</a></h2>
+<p>kmltools module: $CLAW/geoclaw/src/python/geoclaw/kmltools.py</p>
 <p>Tools to make kml files to overlay on Google Earth.
-Note that color is in KML format, GBR with 2 hex digits for each, e.g.</p>
-<div class="system-message">
-<p class="system-message-title">System Message: ERROR/3 (<tt class="docutils">/Users/rjl/git/clawpack/clawpack/geoclaw/kmltools.py:docstring of clawpack.geoclaw.kmltools</tt>, line 3)</p>
-Unexpected indentation.</div>
+Note that color is in KML format, BGR with 2 hex digits for each, e.g.</p>
 <blockquote>
 <div>FF0000 is blue, 00FF00 is green,  0000FF is red, 00FF00 is yellow.</div></blockquote>
-<div class="system-message">
-<p class="system-message-title">System Message: WARNING/2 (<tt class="docutils">/Users/rjl/git/clawpack/clawpack/geoclaw/kmltools.py:docstring of clawpack.geoclaw.kmltools</tt>, line 4)</p>
-Block quote ends without a blank line; unexpected unindent.</div>
 <p>Actually it&#8217;s an 8 hex digit number, where the first two digits are
 transparency, but in this module these default to &#8216;FF&#8217; (but you can specify
 the full 8 digits if you want it transparent).</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Functions:</th><td class="field-body"><ul class="first last simple">
+<li>deg2dms - convert decimal degrees to (degrees, minutes, seconds)</li>
+<li>regions2kml - create a kml outline for each regions specified in setrun</li>
+<li>box2kml - create a kml outline from a rectangular box</li>
+<li>quad2kml - create a kml outline for an arbitrary quadrilateral</li>
+<li>gauges2kml - create a kml marker for each gauge specified in setrun</li>
+<li>kml_header - used internally</li>
+<li>kml_footer - used internally</li>
+<li>kml_region - used internally</li>
+<li>kml_gauge - used internally</li>
+<li>strip_archive_extensions - strip off things like .tar or .gz</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
 <dl class="function">
 <dt id="clawpack.geoclaw.kmltools.box2kml">
-<tt class="descclassname">clawpack.geoclaw.kmltools.</tt><tt class="descname">box2kml</tt><big>(</big><em>xy</em>, <em>fname='box.kml'</em>, <em>name='box'</em>, <em>color='FF0000'</em><big>)</big><a class="headerlink" href="#clawpack.geoclaw.kmltools.box2kml" title="Permalink to this definition">¶</a></dt>
-<dd><p>Make a box with default color blue.
-xy should be a tuple (x1,x2,y1,y2).</p>
+<tt class="descclassname">clawpack.geoclaw.kmltools.</tt><tt class="descname">box2kml</tt><big>(</big><em>xy</em>, <em>fname='box.kml'</em>, <em>name='box'</em>, <em>color='FF0000'</em>, <em>verbose=True</em><big>)</big><a class="headerlink" href="#clawpack.geoclaw.kmltools.box2kml" title="Permalink to this definition">¶</a></dt>
+<dd><p>Make a KML box with default color blue.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Inputs:</th><td class="field-body"><ul class="first last simple">
+<li><em>xy</em> a tuple (x1,x2,y1,y2)</li>
+<li><em>fname</em> (str) name of resulting kml file</li>
+<li><em>name</em> (str) name to appear in box on Google Earth</li>
+<li><em>color</em> (str) Color in format aaggbbrr</li>
+<li><em>verbose</em> (bool) - If <em>True</em>, print out info</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="clawpack.geoclaw.kmltools.deg2dms">
+<tt class="descclassname">clawpack.geoclaw.kmltools.</tt><tt class="descname">deg2dms</tt><big>(</big><em>dy</em><big>)</big><a class="headerlink" href="#clawpack.geoclaw.kmltools.deg2dms" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert decimal degrees to tuple (degrees, minutes, seconds)</p>
 </dd></dl>
 
 <dl class="function">
 <dt id="clawpack.geoclaw.kmltools.gauges2kml">
-<tt class="descclassname">clawpack.geoclaw.kmltools.</tt><tt class="descname">gauges2kml</tt><big>(</big><em>rundata=None</em>, <em>fname='gauges.kml'</em><big>)</big><a class="headerlink" href="#clawpack.geoclaw.kmltools.gauges2kml" title="Permalink to this definition">¶</a></dt>
-<dd><p>Read in the gauge locations from setrun.py and create a kml point for each.</p>
+<tt class="descclassname">clawpack.geoclaw.kmltools.</tt><tt class="descname">gauges2kml</tt><big>(</big><em>rundata=None</em>, <em>fname='gauges.kml'</em>, <em>verbose=True</em><big>)</big><a class="headerlink" href="#clawpack.geoclaw.kmltools.gauges2kml" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a KML marker for each gauge specified for a GeoClaw run.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Inputs:</th><td class="field-body"><ul class="first">
+<li><p class="first"><em>rundata</em> - an object of class <em>ClawRunData</em> or None</p>
+<p>If <em>rundata==None</em>, try to create based on executing function <em>setrun</em>
+from the <cite>setrun.py</cite> file in the current directory.</p>
+</li>
+<li><p class="first"><em>fname</em> (str) - resulting kml file.</p>
+</li>
+<li><p class="first"><em>verbose</em> (bool) - If <em>True</em>, print out info about each region found</p>
+</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Example:</th><td class="field-body"><div class="first last highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">clawpack.geoclaw</span> <span class="kn">import</span> <span class="n">kmltools</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">kmltools</span><span class="o">.</span><span class="n">gauges2kml</span><span class="p">()</span>
+</pre></div>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+<p>is equivalent to:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">clawpack.geoclaw</span> <span class="kn">import</span> <span class="n">kmltools</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">setrun</span> <span class="kn">import</span> <span class="n">setrun</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">rundata</span> <span class="o">=</span> <span class="n">setrun</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">kmltools</span><span class="o">.</span><span class="n">gauges2kml</span><span class="p">(</span><span class="n">rundata</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>By default this creates a file named <em>gauges.kml</em> that can be opened in
+Google Earth.</p>
 </dd></dl>
 
 <dl class="function">
-<dt id="clawpack.geoclaw.kmltools.kml_header">
-<tt class="descclassname">clawpack.geoclaw.kmltools.</tt><tt class="descname">kml_header</tt><big>(</big><big>)</big><a class="headerlink" href="#clawpack.geoclaw.kmltools.kml_header" title="Permalink to this definition">¶</a></dt>
-<dd><p>Color is a BGR hex string used to set color of lines.
-default is red.</p>
+<dt id="clawpack.geoclaw.kmltools.quad2kml">
+<tt class="descclassname">clawpack.geoclaw.kmltools.</tt><tt class="descname">quad2kml</tt><big>(</big><em>xy</em>, <em>fname='quad.kml'</em>, <em>name='quad'</em>, <em>color='FF0000'</em>, <em>verbose=True</em><big>)</big><a class="headerlink" href="#clawpack.geoclaw.kmltools.quad2kml" title="Permalink to this definition">¶</a></dt>
+<dd><p>Make a KML quadrilateral with default color blue.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Inputs:</th><td class="field-body"><ul class="first last simple">
+<li><em>xy</em> a tuple (x1,y1,x2,y2,x3,y3,x4,y4).</li>
+<li><em>fname</em> (str) name of resulting kml file</li>
+<li><em>name</em> (str) name to appear in box on Google Earth</li>
+<li><em>color</em> (str) Color in format aaggbbrr</li>
+<li><em>verbose</em> (bool) - If <em>True</em>, print out info</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="function">
 <dt id="clawpack.geoclaw.kmltools.regions2kml">
-<tt class="descclassname">clawpack.geoclaw.kmltools.</tt><tt class="descname">regions2kml</tt><big>(</big><em>rundata=None</em>, <em>fname='regions.kml'</em><big>)</big><a class="headerlink" href="#clawpack.geoclaw.kmltools.regions2kml" title="Permalink to this definition">¶</a></dt>
-<dd><p>Read in the AMR regions from setrun.py and create a kml box for each.
-First create a box for the entire domain (in red) and then a box
+<tt class="descclassname">clawpack.geoclaw.kmltools.</tt><tt class="descname">regions2kml</tt><big>(</big><em>rundata=None</em>, <em>fname='regions.kml'</em>, <em>verbose=True</em><big>)</big><a class="headerlink" href="#clawpack.geoclaw.kmltools.regions2kml" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a KML box for each AMR region specified for a GeoClaw run.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Inputs:</th><td class="field-body"><ul class="first last">
+<li><p class="first"><em>rundata</em> - an object of class <em>ClawRunData</em> or None</p>
+<p>If <em>rundata==None</em>, try to create based on executing function <em>setrun</em>
+from the <cite>setrun.py</cite> file in the current directory.</p>
+</li>
+<li><p class="first"><em>fname</em> (str) - resulting kml file.</p>
+</li>
+<li><p class="first"><em>verbose</em> (bool) - If <em>True</em>, print out info about each region found</p>
+</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p>First create a box for the entire domain (in red) and then a box
 for each region (in white).</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Example:</th><td class="field-body"><div class="first last highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">clawpack.geoclaw</span> <span class="kn">import</span> <span class="n">kmltools</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">kmltools</span><span class="o">.</span><span class="n">regions2kml</span><span class="p">()</span>
+</pre></div>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+<p>is equivalent to:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">clawpack.geoclaw</span> <span class="kn">import</span> <span class="n">kmltools</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">setrun</span> <span class="kn">import</span> <span class="n">setrun</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">rundata</span> <span class="o">=</span> <span class="n">setrun</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">kmltools</span><span class="o">.</span><span class="n">regions2kml</span><span class="p">(</span><span class="n">rundata</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>By default this creates a file named <em>regions.kml</em> that can be opened in
+Google Earth.</p>
 </dd></dl>
 
 </div>
@@ -178,7 +299,7 @@ for each region (in white).</p>
       <div class="clearer"></div>
     </div>
   <div class="footer">
-    &copy; Copyright 2013, The Clawpack Development Team.
+    &copy; Copyright 2014, The Clawpack Development Team.
     Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
   </div>
   
