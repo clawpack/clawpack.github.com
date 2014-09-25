@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>&lt;no title&gt; &mdash; Clawpack 5.2.0 documentation</title>
+    <title>Shallow water flow on the sphere &mdash; Clawpack 5.2.0 documentation</title>
     
     <link rel="stylesheet" href="../../_static/flasky.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -30,7 +30,7 @@
     <link rel="author" title="About these documents" href="../../about.html" />
     <link rel="top" title="Clawpack 5.2.0 documentation" href="../../index.html" />
     <link rel="up" title="Working with PyClaw’s built-in examples" href="../examples.html" />
-    <link rel="next" title="&lt;no title&gt;" href="radial_dam_break.html" />
+    <link rel="next" title="2D shallow water: radial dam break" href="radial_dam_break.html" />
     <link rel="prev" title="Two-dimensional p-system" href="psystem_2d.html" /> 
   </head>
   <body>
@@ -75,7 +75,7 @@
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="radial_dam_break.html" title="&lt;no title&gt;"
+          <a href="radial_dam_break.html" title="2D shallow water: radial dam break"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="psystem_2d.html" title="Two-dimensional p-system"
@@ -92,7 +92,9 @@
         <div class="bodywrapper">
           <div class="body">
             
-  <span class="target" id="module-pyclaw.examples.shallow_sphere.Rossby_wave"><span id="rossby-wave"></span></span><p>2D shallow water equations on a spherical surface. The approximation of the 
+  <span class="target" id="module-pyclaw.examples.shallow_sphere.Rossby_wave"><span id="rossby-wave"></span></span><div class="section" id="shallow-water-flow-on-the-sphere">
+<h1>Shallow water flow on the sphere<a class="headerlink" href="#shallow-water-flow-on-the-sphere" title="Permalink to this headline">¶</a></h1>
+<p>2D shallow water equations on a spherical surface. The approximation of the 
 three-dimensional equations is restricted to the surface of the sphere. 
 Therefore only the solution on the surface is updated.</p>
 <dl class="docutils">
@@ -101,9 +103,13 @@ Therefore only the solution on the surface is updated.</p>
 By Donna A. Calhoun, Christiane Helzel, and Randall J. LeVeque
 SIAM Review 50 (2008), 723-752.</dd>
 </dl>
+</div>
 <div class="highlight-python"><div class="highlight"><pre><span class="c">#!/usr/bin/env python</span>
 <span class="c"># encoding: utf-8</span>
 <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Shallow water flow on the sphere</span>
+<span class="sd">================================</span>
+
 <span class="sd">2D shallow water equations on a spherical surface. The approximation of the </span>
 <span class="sd">three-dimensional equations is restricted to the surface of the sphere. </span>
 <span class="sd">Therefore only the solution on the surface is updated. </span>
@@ -408,7 +414,7 @@ SIAM Review 50 (2008), 723-752.</dd>
             <span class="n">state</span><span class="o">.</span><span class="n">q</span><span class="p">[</span><span class="mi">3</span><span class="p">,</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">q</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">]</span><span class="o">*</span><span class="n">Uout</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> 
 
 
-<span class="k">def</span> <span class="nf">qbc_lower_y</span><span class="p">(</span><span class="n">state</span><span class="p">,</span><span class="n">dim</span><span class="p">,</span><span class="n">t</span><span class="p">,</span><span class="n">qbc</span><span class="p">,</span><span class="n">num_ghost</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">qbc_lower_y</span><span class="p">(</span><span class="n">state</span><span class="p">,</span><span class="n">dim</span><span class="p">,</span><span class="n">t</span><span class="p">,</span><span class="n">qbc</span><span class="p">,</span><span class="n">auxbc</span><span class="p">,</span><span class="n">num_ghost</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Impose periodic boundary condition to q at the bottom boundary for the </span>
 <span class="sd">    sphere. This function does not work in parallel.</span>
@@ -418,7 +424,7 @@ SIAM Review 50 (2008), 723-752.</dd>
         <span class="n">qbc</span><span class="p">[:,:,</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">qbc1D</span><span class="p">[:,::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
 
 
-<span class="k">def</span> <span class="nf">qbc_upper_y</span><span class="p">(</span><span class="n">state</span><span class="p">,</span><span class="n">dim</span><span class="p">,</span><span class="n">t</span><span class="p">,</span><span class="n">qbc</span><span class="p">,</span><span class="n">num_ghost</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">qbc_upper_y</span><span class="p">(</span><span class="n">state</span><span class="p">,</span><span class="n">dim</span><span class="p">,</span><span class="n">t</span><span class="p">,</span><span class="n">qbc</span><span class="p">,</span><span class="n">auxbc</span><span class="p">,</span><span class="n">num_ghost</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Impose periodic boundary condition to q at the top boundary for the sphere.</span>
 <span class="sd">    This function does not work in parallel.</span>
@@ -429,7 +435,7 @@ SIAM Review 50 (2008), 723-752.</dd>
         <span class="n">qbc</span><span class="p">[:,:,</span><span class="n">my</span><span class="o">+</span><span class="n">num_ghost</span><span class="o">+</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">qbc1D</span><span class="p">[:,::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
 
 
-<span class="k">def</span> <span class="nf">auxbc_lower_y</span><span class="p">(</span><span class="n">state</span><span class="p">,</span><span class="n">dim</span><span class="p">,</span><span class="n">t</span><span class="p">,</span><span class="n">auxbc</span><span class="p">,</span><span class="n">num_ghost</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">auxbc_lower_y</span><span class="p">(</span><span class="n">state</span><span class="p">,</span><span class="n">dim</span><span class="p">,</span><span class="n">t</span><span class="p">,</span><span class="n">qbc</span><span class="p">,</span><span class="n">auxbc</span><span class="p">,</span><span class="n">num_ghost</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Impose periodic boundary condition to aux at the bottom boundary for the </span>
 <span class="sd">    sphere.</span>
@@ -447,7 +453,7 @@ SIAM Review 50 (2008), 723-752.</dd>
     <span class="n">auxtemp</span> <span class="o">=</span> <span class="n">problem</span><span class="o">.</span><span class="n">setaux</span><span class="p">(</span><span class="n">mx</span><span class="p">,</span><span class="n">my</span><span class="p">,</span><span class="n">num_ghost</span><span class="p">,</span><span class="n">mx</span><span class="p">,</span><span class="n">my</span><span class="p">,</span><span class="n">xlower</span><span class="p">,</span><span class="n">ylower</span><span class="p">,</span><span class="n">dx</span><span class="p">,</span><span class="n">dy</span><span class="p">,</span><span class="n">auxtemp</span><span class="p">,</span><span class="n">Rsphere</span><span class="p">)</span>
     <span class="n">auxbc</span><span class="p">[:,:,:</span><span class="n">num_ghost</span><span class="p">]</span> <span class="o">=</span> <span class="n">auxtemp</span><span class="p">[:,:,:</span><span class="n">num_ghost</span><span class="p">]</span>
 
-<span class="k">def</span> <span class="nf">auxbc_upper_y</span><span class="p">(</span><span class="n">state</span><span class="p">,</span><span class="n">dim</span><span class="p">,</span><span class="n">t</span><span class="p">,</span><span class="n">auxbc</span><span class="p">,</span><span class="n">num_ghost</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">auxbc_upper_y</span><span class="p">(</span><span class="n">state</span><span class="p">,</span><span class="n">dim</span><span class="p">,</span><span class="n">t</span><span class="p">,</span><span class="n">qbc</span><span class="p">,</span><span class="n">auxbc</span><span class="p">,</span><span class="n">num_ghost</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Impose periodic boundary condition to aux at the top boundary for the </span>
 <span class="sd">    sphere. </span>
@@ -752,7 +758,7 @@ SIAM Review 50 (2008), 723-752.</dd>
   <li><a href="../basics.html">PyClaw Basics</a><ul>
   <li><a href="../examples.html">Working with PyClaw&#8217;s built-in examples</a><ul>
       <li>Previous: <a href="psystem_2d.html" title="previous chapter">Two-dimensional p-system</a></li>
-      <li>Next: <a href="radial_dam_break.html" title="next chapter">&lt;no title&gt;</a></li>
+      <li>Next: <a href="radial_dam_break.html" title="next chapter">2D shallow water: radial dam break</a></li>
   </ul></li>
   </ul></li>
   </ul></li>

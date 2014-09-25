@@ -15,7 +15,7 @@
            <font FACE="HELVETICA,ARIAL">
            
 <!-- Created from the file /Users/rjl/git/clawpack/geoclaw/examples/tsunami/chile2010/setrun.py -->
-<!-- Date: Wed Jan  8 2014 at 14:12:16 -->
+<!-- Date: Mon Sep  1 2014 at 18:55:51 -->
 
 <table bgcolor="#FFEE99"> <tr> <td>
 &nbsp;<font size=6> setrun.py.html </font> </td>
@@ -27,7 +27,7 @@
 </td></tr><tr><td>
 &nbsp;Directory:  &nbsp; /Users/rjl/git/clawpack/geoclaw/examples/tsunami/chile2010 
 </td></tr><tr><td>
-&nbsp;Converted:  &nbsp; Wed Jan  8 2014 at 14:12:16 
+&nbsp;Converted:  &nbsp; Mon Sep  1 2014 at 18:55:51 
 &nbsp; using <a href="http://clawpack.github.io//doc/application_documentation.html#clawcode2html">clawcode2html</a>
 </td></tr><tr><td>
 <font color="#BB3300"> &nbsp;This documentation file will 
@@ -45,6 +45,14 @@ that will be read in by the Fortran code.
 
 import os
 import numpy as np
+
+try:
+    CLAW = os.environ['CLAW']
+except:
+    raise Exception("*** Must first set CLAW enviornment variable")
+
+<font color="blue"># Scratch directory for storing topo and dtopo files:</font>
+scratch_dir = os.path.join(CLAW, 'geoclaw', 'SCRATCH')
 
 
 <font color="blue">#------------------------------</font>
@@ -121,7 +129,7 @@ def setrun(claw_pkg='geoclaw'):
     clawdata.num_eqn = 3
 
     <font color="blue"># Number of auxiliary variables in the aux array (initialized in setaux)</font>
-    clawdata.num_aux = 4
+    clawdata.num_aux = 3
 
     <font color="blue"># Index of aux array corresponding to capacity function, if there is one:</font>
     clawdata.capa_index = 2
@@ -201,7 +209,7 @@ def setrun(claw_pkg='geoclaw'):
 
     <font color="blue"># Initial time step for variable dt.</font>
     <font color="blue"># If dt_variable==0 then dt=dt_initial for all steps:</font>
-    clawdata.dt_initial = 2.
+    clawdata.dt_initial = 0.2
 
     <font color="blue"># Max time step to be allowed if variable dt used:</font>
     clawdata.dt_max = 1e+99
@@ -321,7 +329,7 @@ def setrun(claw_pkg='geoclaw'):
     <font color="blue"># This must be a list of length maux, each element of which is one of:</font>
     <font color="blue">#   'center',  'capacity', 'xleft', or 'yleft'  (see documentation).</font>
 
-    amrdata.aux_type = ['center','capacity','yleft','center']
+    amrdata.aux_type = ['center','capacity','yleft']
 
 
     <font color="blue"># Flag using refinement routine flag2refine rather than richardson error</font>
@@ -419,13 +427,16 @@ def setgeo(rundata):
     topo_data = rundata.topo_data
     <font color="blue"># for topography, append lines of the form</font>
     <font color="blue">#    [topotype, minlevel, maxlevel, t1, t2, fname]</font>
-    topo_data.topofiles.append([2, 1, 3, 0., 1.e10, 'etopo10min120W60W60S0S.asc'])
+    topo_path = os.path.join(scratch_dir, 'etopo10min120W60W60S0S.asc')
+    topo_data.topofiles.append([2, 1, 3, 0., 1.e10, topo_path])
 
     <font color="blue"># == setdtopo.data values ==</font>
     dtopo_data = rundata.dtopo_data
     <font color="blue"># for moving topography, append lines of the form :   (<= 1 allowed for now!)</font>
     <font color="blue">#   [topotype, minlevel,maxlevel,fname]</font>
-    dtopo_data.dtopofiles.append([1,3,3,'usgs100227.tt1'])
+    dtopo_path = os.path.join(scratch_dir, 'dtopo_usgs100227.tt3')
+    dtopo_data.dtopofiles.append([3,3,3,dtopo_path])
+    dtopo_data.dt_max_dtopo = 0.2
 
 
     <font color="blue"># == setqinit.data values ==</font>

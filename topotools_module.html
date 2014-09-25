@@ -206,13 +206,13 @@ leave the resulting topography as unstructured effectively.</li>
 
 <dl class="method">
 <dt id="clawpack.geoclaw.topotools.Topography.generate_2d_coordinates">
-<tt class="descname">generate_2d_coordinates</tt><big>(</big><em>mask=True</em><big>)</big><a class="headerlink" href="#clawpack.geoclaw.topotools.Topography.generate_2d_coordinates" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">generate_2d_coordinates</tt><big>(</big><em>mask=False</em><big>)</big><a class="headerlink" href="#clawpack.geoclaw.topotools.Topography.generate_2d_coordinates" title="Permalink to this definition">¶</a></dt>
 <dd><p>Generate 2d coordinate arrays.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="clawpack.geoclaw.topotools.Topography.generate_2d_topo">
-<tt class="descname">generate_2d_topo</tt><big>(</big><em>mask=True</em><big>)</big><a class="headerlink" href="#clawpack.geoclaw.topotools.Topography.generate_2d_topo" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">generate_2d_topo</tt><big>(</big><em>mask=False</em><big>)</big><a class="headerlink" href="#clawpack.geoclaw.topotools.Topography.generate_2d_topo" title="Permalink to this definition">¶</a></dt>
 <dd><p>Generate a 2d array of the topo.</p>
 </dd></dl>
 
@@ -319,30 +319,52 @@ Reload via:</p>
 
 <dl class="method">
 <dt id="clawpack.geoclaw.topotools.Topography.plot">
-<tt class="descname">plot</tt><big>(</big><em>axes=None</em>, <em>region_extent=None</em>, <em>contours=None</em>, <em>coastlines=True</em>, <em>limits=None</em>, <em>cmap=None</em>, <em>add_colorbar=True</em>, <em>fig_kwargs={}</em><big>)</big><a class="headerlink" href="#clawpack.geoclaw.topotools.Topography.plot" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">plot</tt><big>(</big><em>axes=None</em>, <em>contour_levels=None</em>, <em>contour_kwargs={}</em>, <em>limits=None</em>, <em>cmap=None</em>, <em>add_colorbar=True</em>, <em>plot_box=False</em>, <em>fig_kwargs={}</em><big>)</big><a class="headerlink" href="#clawpack.geoclaw.topotools.Topography.plot" title="Permalink to this definition">¶</a></dt>
 <dd><p>Plot the topography.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Input:</th><td class="field-body"><ul class="first last simple">
-<li><em>axes</em> (matplotlib.pyplot.axes) -</li>
-<li><em>region_extent</em> (tuple) -</li>
-<li><em>contours</em> (list) -</li>
-<li><em>coastlines</em> (bool) -</li>
-<li><em>limits</em> (list) -</li>
-<li><em>cmap</em> (matplotlib.colors.Colormap) -</li>
-<li><em>fig_kawargs</em> (dict) -</li>
+<tr class="field-odd field"><th class="field-name">Input:</th><td class="field-body"><ul class="first simple">
+<li><em>axes</em> (matplotlib.pyplot.axes) - If passed in, plot will be
+added to this axes.  Otherwise a new plot figure will be created
+(using <em>fig_kwargs</em>) and a new <em>axes</em> object created and returned.</li>
+<li><em>contour_levels</em> (list) - levels for contour lines if these are 
+to be added (default <em>None</em>).  Set to [0.] to plot shoreline.</li>
+<li><em>contour_kwargs</em> (dict) - keyword arguments to be passed to
+contour command, e.g. {&#8216;colors&#8217;:&#8217;r&#8217;, &#8216;linestyles&#8217;: &#8216;-&#8216;}.
+Default is empty dict.</li>
+<li><em>limits</em> (list) - (min, max) of topo values for color map.  
+Defaults to None, in which case (self.Z.min(), self.Z.max()) used.</li>
+<li><em>cmap</em> (matplotlib.colors.Colormap) - colormap, defaults to
+specialized map with blues for bathymetry and green/browns for topo.</li>
+<li><em>fig_kwargs</em> (dict) - keyword arguments to be passed to figure.</li>
+<li><em>plot_box</em> (bool or color specifier) - If evaluates to True, plot
+a box around limits of this topo.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Output:</th><td class="field-body"><ul class="first last simple">
+<li><em>axes</em> (matplotlib.pyplot.axes) - the axes on which plot created.</li>
 </ul>
 </td>
 </tr>
 </tbody>
 </table>
+<dl class="docutils">
+<dt>Note that:</dt>
+<dd><ul class="first last simple">
+<li>if <em>type(self.Z)</em> is <em>numpy.ma.MaskedArray</em> then <em>pcolor</em> is used,</li>
+<li>if <em>type(self.Z)</em> is <em>numpy.ndarray</em> then <em>imshow</em> is used.
+(This is faster for large files)</li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="clawpack.geoclaw.topotools.Topography.read">
-<tt class="descname">read</tt><big>(</big><em>path=None</em>, <em>topo_type=None</em>, <em>unstructured=False</em>, <em>mask=True</em>, <em>filter_region=None</em>, <em>force=False</em><big>)</big><a class="headerlink" href="#clawpack.geoclaw.topotools.Topography.read" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">read</tt><big>(</big><em>path=None</em>, <em>topo_type=None</em>, <em>unstructured=False</em>, <em>mask=False</em>, <em>filter_region=None</em>, <em>force=False</em><big>)</big><a class="headerlink" href="#clawpack.geoclaw.topotools.Topography.read" title="Permalink to this definition">¶</a></dt>
 <dd><p>Read in the data from the object&#8217;s <em>path</em> attribute.</p>
 <p>Stores the resulting data in one of the sets of <em>x</em>, <em>y</em>, and <em>z</em> or 
 <em>X</em>, <em>Y</em>, and <em>Z</em>.</p>
@@ -351,10 +373,11 @@ Reload via:</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Input:</th><td class="field-body"><ul class="first last simple">
-<li><em>path</em> (str)  file to read, or url</li>
-<li><em>topo_type</em> (int)</li>
-<li><em>unstructured</em> (bool)</li>
-<li><em>mask</em> (bool)</li>
+<li><em>path</em> (str)  file to read</li>
+<li><em>topo_type</em> (int) - GeoClaw format topo_type</li>
+<li><em>unstructured</em> (bool) - default is False for lat-long grids.</li>
+<li><em>mask</em> (bool) - whether to store as masked array for missing
+values (default if False)</li>
 <li><em>filter_region</em> (tuple)</li>
 </ul>
 </td>

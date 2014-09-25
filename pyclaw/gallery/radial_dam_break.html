@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>&lt;no title&gt; &mdash; Clawpack 5.2.0 documentation</title>
+    <title>2D shallow water: radial dam break &mdash; Clawpack 5.2.0 documentation</title>
     
     <link rel="stylesheet" href="../../_static/flasky.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -31,7 +31,7 @@
     <link rel="top" title="Clawpack 5.2.0 documentation" href="../../index.html" />
     <link rel="up" title="Working with PyClaw’s built-in examples" href="../examples.html" />
     <link rel="next" title="A non-convex flux scalar model" href="kpp.html" />
-    <link rel="prev" title="&lt;no title&gt;" href="Rossby_wave.html" /> 
+    <link rel="prev" title="Shallow water flow on the sphere" href="Rossby_wave.html" /> 
   </head>
   <body>
 <div id="main-wrapper" class="sphinx">
@@ -78,7 +78,7 @@
           <a href="kpp.html" title="A non-convex flux scalar model"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="Rossby_wave.html" title="&lt;no title&gt;"
+          <a href="Rossby_wave.html" title="Shallow water flow on the sphere"
              accesskey="P">previous</a> |</li>
         <li><a href="../../contents.html">Clawpack 5.2.0 documentation</a> &raquo;</li>
           <li><a href="../index.html" >Pyclaw</a> &raquo;</li>
@@ -92,25 +92,19 @@
         <div class="bodywrapper">
           <div class="body">
             
-  <span class="target" id="module-pyclaw.examples.shallow_2d.radial_dam_break"><span id="radial-dam-break"></span></span><p>Solve the 2D shallow water equations:</p>
-<div class="system-message">
-<p class="system-message-title">System Message: WARNING/2 (<tt class="docutils">/Users/rjl/git/clawpack/pyclaw/src/pyclaw/examples/shallow_2d/radial_dam_break.py:docstring of pyclaw.examples.shallow_2d.radial_dam_break</tt>, line 6)</p>
-Explicit markup ends without a blank line; unexpected unindent.</div>
-<dl class="docutils">
-<dt>rac{1}{2}gh^2)_x + (huv)_y &amp; = 0 </dt>
-<dd>(hv)_t + (huv)_x + (hv^2 +</dd>
-</dl>
-<div class="system-message">
-<p class="system-message-title">System Message: WARNING/2 (<tt class="docutils">/Users/rjl/git/clawpack/pyclaw/src/pyclaw/examples/shallow_2d/radial_dam_break.py:docstring of pyclaw.examples.shallow_2d.radial_dam_break</tt>, line 8)</p>
-Definition list ends without a blank line; unexpected unindent.</div>
-<p>rac{1}{2}gh^2)_y &amp; = 0.</p>
+  <span class="target" id="module-pyclaw.examples.shallow_2d.radial_dam_break"><span id="radial-dam-break"></span></span><div class="section" id="d-shallow-water-radial-dam-break">
+<h1>2D shallow water: radial dam break<a class="headerlink" href="#d-shallow-water-radial-dam-break" title="Permalink to this headline">¶</a></h1>
+<p>Solve the 2D shallow water equations:</p>
 <p>The initial condition is a circular area with high depth surrounded by lower-depth water.
 The top and right boundary conditions reflect, while the bottom and left boundaries
 are outflow.</p>
+</div>
 <div class="highlight-python"><div class="highlight"><pre><span class="c">#!/usr/bin/env python</span>
 <span class="c"># encoding: utf-8</span>
+<span class="sd">r&quot;&quot;&quot;</span>
+<span class="sd">2D shallow water: radial dam break</span>
+<span class="sd">==================================</span>
 
-<span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">Solve the 2D shallow water equations:</span>
 
 <span class="sd">.. :math:</span>
@@ -125,6 +119,7 @@ are outflow.</p>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
 <span class="kn">from</span> <span class="nn">clawpack</span> <span class="kn">import</span> <span class="n">riemann</span>
+<span class="kn">from</span> <span class="nn">clawpack.riemann.shallow_roe_with_efix_2D_constants</span> <span class="kn">import</span> <span class="n">depth</span><span class="p">,</span> <span class="n">x_momentum</span><span class="p">,</span> <span class="n">y_momentum</span><span class="p">,</span> <span class="n">num_eqn</span>
 
 <span class="k">def</span> <span class="nf">qinit</span><span class="p">(</span><span class="n">state</span><span class="p">,</span><span class="n">h_in</span><span class="o">=</span><span class="mf">2.</span><span class="p">,</span><span class="n">h_out</span><span class="o">=</span><span class="mf">1.</span><span class="p">,</span><span class="n">dam_radius</span><span class="o">=</span><span class="mf">0.5</span><span class="p">):</span>
     <span class="n">x0</span><span class="o">=</span><span class="mf">0.</span>
@@ -132,12 +127,9 @@ are outflow.</p>
     <span class="n">X</span><span class="p">,</span> <span class="n">Y</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">p_centers</span>
     <span class="n">r</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">((</span><span class="n">X</span><span class="o">-</span><span class="n">x0</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="p">(</span><span class="n">Y</span><span class="o">-</span><span class="n">y0</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
 
-    <span class="c"># Height</span>
-    <span class="n">state</span><span class="o">.</span><span class="n">q</span><span class="p">[</span><span class="mi">0</span><span class="p">,:,:]</span> <span class="o">=</span> <span class="n">h_in</span><span class="o">*</span><span class="p">(</span><span class="n">r</span><span class="o">&lt;=</span><span class="n">dam_radius</span><span class="p">)</span> <span class="o">+</span> <span class="n">h_out</span><span class="o">*</span><span class="p">(</span><span class="n">r</span><span class="o">&gt;</span><span class="n">dam_radius</span><span class="p">)</span>
-    <span class="c"># x-momentum</span>
-    <span class="n">state</span><span class="o">.</span><span class="n">q</span><span class="p">[</span><span class="mi">1</span><span class="p">,:,:]</span> <span class="o">=</span> <span class="mf">0.</span>
-    <span class="c"># y-momentum</span>
-    <span class="n">state</span><span class="o">.</span><span class="n">q</span><span class="p">[</span><span class="mi">2</span><span class="p">,:,:]</span> <span class="o">=</span> <span class="mf">0.</span>
+    <span class="n">state</span><span class="o">.</span><span class="n">q</span><span class="p">[</span><span class="n">depth</span>     <span class="p">,:,:]</span> <span class="o">=</span> <span class="n">h_in</span><span class="o">*</span><span class="p">(</span><span class="n">r</span><span class="o">&lt;=</span><span class="n">dam_radius</span><span class="p">)</span> <span class="o">+</span> <span class="n">h_out</span><span class="o">*</span><span class="p">(</span><span class="n">r</span><span class="o">&gt;</span><span class="n">dam_radius</span><span class="p">)</span>
+    <span class="n">state</span><span class="o">.</span><span class="n">q</span><span class="p">[</span><span class="n">x_momentum</span><span class="p">,:,:]</span> <span class="o">=</span> <span class="mf">0.</span>
+    <span class="n">state</span><span class="o">.</span><span class="n">q</span><span class="p">[</span><span class="n">y_momentum</span><span class="p">,:,:]</span> <span class="o">=</span> <span class="mf">0.</span>
 
     
 <span class="k">def</span> <span class="nf">setup</span><span class="p">(</span><span class="n">use_petsc</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span><span class="n">outdir</span><span class="o">=</span><span class="s">&#39;./_output&#39;</span><span class="p">,</span><span class="n">solver_type</span><span class="o">=</span><span class="s">&#39;classic&#39;</span><span class="p">):</span>
@@ -169,7 +161,7 @@ are outflow.</p>
     <span class="n">y</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">Dimension</span><span class="p">(</span><span class="s">&#39;y&#39;</span><span class="p">,</span><span class="n">ylower</span><span class="p">,</span><span class="n">yupper</span><span class="p">,</span><span class="n">my</span><span class="p">)</span>
     <span class="n">domain</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">Domain</span><span class="p">([</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">])</span>
 
-    <span class="n">state</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">State</span><span class="p">(</span><span class="n">domain</span><span class="p">,</span><span class="n">solver</span><span class="o">.</span><span class="n">num_eqn</span><span class="p">)</span>
+    <span class="n">state</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">State</span><span class="p">(</span><span class="n">domain</span><span class="p">,</span><span class="n">num_eqn</span><span class="p">)</span>
 
     <span class="c"># Gravitational constant</span>
     <span class="n">state</span><span class="o">.</span><span class="n">problem_data</span><span class="p">[</span><span class="s">&#39;grav&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.0</span>
@@ -199,7 +191,7 @@ are outflow.</p>
 
     <span class="n">plotdata</span><span class="o">.</span><span class="n">clearfigures</span><span class="p">()</span>  <span class="c"># clear any old figures,axes,items data</span>
 
-    <span class="c"># Figure for q[0]</span>
+    <span class="c"># Figure for depth</span>
     <span class="n">plotfigure</span> <span class="o">=</span> <span class="n">plotdata</span><span class="o">.</span><span class="n">new_plotfigure</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">&#39;Water height&#39;</span><span class="p">,</span> <span class="n">figno</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
 
     <span class="c"># Set up for axes in this figure:</span>
@@ -217,7 +209,7 @@ are outflow.</p>
     <span class="n">plotitem</span><span class="o">.</span><span class="n">pcolor_cmax</span> <span class="o">=</span> <span class="mf">1.5</span>
     <span class="n">plotitem</span><span class="o">.</span><span class="n">add_colorbar</span> <span class="o">=</span> <span class="bp">True</span>
     
-    <span class="c"># Scatter plot of q[0]</span>
+    <span class="c"># Scatter plot of depth</span>
     <span class="n">plotfigure</span> <span class="o">=</span> <span class="n">plotdata</span><span class="o">.</span><span class="n">new_plotfigure</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">&#39;Scatter plot of h&#39;</span><span class="p">,</span> <span class="n">figno</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 
     <span class="c"># Set up for axes in this figure:</span>
@@ -228,19 +220,19 @@ are outflow.</p>
 
     <span class="c"># Set up for item on these axes:</span>
     <span class="n">plotitem</span> <span class="o">=</span> <span class="n">plotaxes</span><span class="o">.</span><span class="n">new_plotitem</span><span class="p">(</span><span class="n">plot_type</span><span class="o">=</span><span class="s">&#39;1d_from_2d_data&#39;</span><span class="p">)</span>
-    <span class="n">plotitem</span><span class="o">.</span><span class="n">plot_var</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">plotitem</span><span class="o">.</span><span class="n">plot_var</span> <span class="o">=</span> <span class="n">depth</span>
     <span class="k">def</span> <span class="nf">q_vs_radius</span><span class="p">(</span><span class="n">current_data</span><span class="p">):</span>
         <span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="n">sqrt</span>
         <span class="n">x</span> <span class="o">=</span> <span class="n">current_data</span><span class="o">.</span><span class="n">x</span>
         <span class="n">y</span> <span class="o">=</span> <span class="n">current_data</span><span class="o">.</span><span class="n">y</span>
         <span class="n">r</span> <span class="o">=</span> <span class="n">sqrt</span><span class="p">(</span><span class="n">x</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">y</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
-        <span class="n">q</span> <span class="o">=</span> <span class="n">current_data</span><span class="o">.</span><span class="n">q</span><span class="p">[</span><span class="mi">0</span><span class="p">,:,:]</span>
+        <span class="n">q</span> <span class="o">=</span> <span class="n">current_data</span><span class="o">.</span><span class="n">q</span><span class="p">[</span><span class="n">depth</span><span class="p">,:,:]</span>
         <span class="k">return</span> <span class="n">r</span><span class="p">,</span><span class="n">q</span>
     <span class="n">plotitem</span><span class="o">.</span><span class="n">map_2d_to_1d</span> <span class="o">=</span> <span class="n">q_vs_radius</span>
     <span class="n">plotitem</span><span class="o">.</span><span class="n">plotstyle</span> <span class="o">=</span> <span class="s">&#39;o&#39;</span>
 
 
-    <span class="c"># Figure for q[1]</span>
+    <span class="c"># Figure for x-momentum</span>
     <span class="n">plotfigure</span> <span class="o">=</span> <span class="n">plotdata</span><span class="o">.</span><span class="n">new_plotfigure</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">&#39;Momentum in x direction&#39;</span><span class="p">,</span> <span class="n">figno</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
 
     <span class="c"># Set up for axes in this figure:</span>
@@ -252,13 +244,13 @@ are outflow.</p>
 
     <span class="c"># Set up for item on these axes:</span>
     <span class="n">plotitem</span> <span class="o">=</span> <span class="n">plotaxes</span><span class="o">.</span><span class="n">new_plotitem</span><span class="p">(</span><span class="n">plot_type</span><span class="o">=</span><span class="s">&#39;2d_pcolor&#39;</span><span class="p">)</span>
-    <span class="n">plotitem</span><span class="o">.</span><span class="n">plot_var</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">plotitem</span><span class="o">.</span><span class="n">plot_var</span> <span class="o">=</span> <span class="n">x_momentum</span>
     <span class="n">plotitem</span><span class="o">.</span><span class="n">pcolor_cmap</span> <span class="o">=</span> <span class="n">colormaps</span><span class="o">.</span><span class="n">yellow_red_blue</span>
     <span class="n">plotitem</span><span class="o">.</span><span class="n">add_colorbar</span> <span class="o">=</span> <span class="bp">True</span>
     <span class="n">plotitem</span><span class="o">.</span><span class="n">show</span> <span class="o">=</span> <span class="bp">False</span>       <span class="c"># show on plot?</span>
     
 
-    <span class="c"># Figure for q[2]</span>
+    <span class="c"># Figure for y-momentum</span>
     <span class="n">plotfigure</span> <span class="o">=</span> <span class="n">plotdata</span><span class="o">.</span><span class="n">new_plotfigure</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">&#39;Momentum in y direction&#39;</span><span class="p">,</span> <span class="n">figno</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
 
     <span class="c"># Set up for axes in this figure:</span>
@@ -270,7 +262,7 @@ are outflow.</p>
 
     <span class="c"># Set up for item on these axes:</span>
     <span class="n">plotitem</span> <span class="o">=</span> <span class="n">plotaxes</span><span class="o">.</span><span class="n">new_plotitem</span><span class="p">(</span><span class="n">plot_type</span><span class="o">=</span><span class="s">&#39;2d_pcolor&#39;</span><span class="p">)</span>
-    <span class="n">plotitem</span><span class="o">.</span><span class="n">plot_var</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="n">plotitem</span><span class="o">.</span><span class="n">plot_var</span> <span class="o">=</span> <span class="n">y_momentum</span>
     <span class="n">plotitem</span><span class="o">.</span><span class="n">pcolor_cmap</span> <span class="o">=</span> <span class="n">colormaps</span><span class="o">.</span><span class="n">yellow_red_blue</span>
     <span class="n">plotitem</span><span class="o">.</span><span class="n">add_colorbar</span> <span class="o">=</span> <span class="bp">True</span>
     <span class="n">plotitem</span><span class="o">.</span><span class="n">show</span> <span class="o">=</span> <span class="bp">False</span>       <span class="c"># show on plot?</span>
@@ -300,7 +292,7 @@ are outflow.</p>
   <li><a href="../index.html">Pyclaw</a><ul>
   <li><a href="../basics.html">PyClaw Basics</a><ul>
   <li><a href="../examples.html">Working with PyClaw&#8217;s built-in examples</a><ul>
-      <li>Previous: <a href="Rossby_wave.html" title="previous chapter">&lt;no title&gt;</a></li>
+      <li>Previous: <a href="Rossby_wave.html" title="previous chapter">Shallow water flow on the sphere</a></li>
       <li>Next: <a href="kpp.html" title="next chapter">A non-convex flux scalar model</a></li>
   </ul></li>
   </ul></li>

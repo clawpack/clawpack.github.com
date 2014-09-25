@@ -30,7 +30,7 @@
     <link rel="author" title="About these documents" href="../../about.html" />
     <link rel="top" title="Clawpack 5.2.0 documentation" href="../../index.html" />
     <link rel="up" title="Working with PyClaw’s built-in examples" href="../examples.html" />
-    <link rel="next" title="&lt;no title&gt;" href="Rossby_wave.html" />
+    <link rel="next" title="Shallow water flow on the sphere" href="Rossby_wave.html" />
     <link rel="prev" title="Compressible Euler flow in cylindrical symmetry" href="shock_bubble_interaction.html" /> 
   </head>
   <body>
@@ -75,7 +75,7 @@
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="Rossby_wave.html" title="&lt;no title&gt;"
+          <a href="Rossby_wave.html" title="Shallow water flow on the sphere"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="shock_bubble_interaction.html" title="Compressible Euler flow in cylindrical symmetry"
@@ -231,6 +231,7 @@ from a checkpoint.</p>
     <span class="n">p</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">q</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="n">aux</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span><span class="o">-</span><span class="mi">1</span>
     <span class="k">return</span> <span class="p">[</span><span class="n">p</span><span class="p">,</span><span class="mi">10</span><span class="o">*</span><span class="n">p</span><span class="p">]</span>
 
+
 <span class="k">def</span> <span class="nf">setup</span><span class="p">(</span><span class="n">kernel_language</span><span class="o">=</span><span class="s">&#39;Fortran&#39;</span><span class="p">,</span>
               <span class="n">use_petsc</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span><span class="n">outdir</span><span class="o">=</span><span class="s">&#39;./_output&#39;</span><span class="p">,</span><span class="n">solver_type</span><span class="o">=</span><span class="s">&#39;classic&#39;</span><span class="p">,</span>
               <span class="n">disable_output</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">cells_per_layer</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span> <span class="n">tfinal</span><span class="o">=</span><span class="mf">18.</span><span class="p">):</span>
@@ -257,13 +258,9 @@ from a checkpoint.</p>
     <span class="n">y0</span><span class="o">=</span><span class="mf">0.25</span> <span class="c"># Center of initial perturbation</span>
     <span class="n">varx</span><span class="o">=</span><span class="mf">0.5</span><span class="p">;</span> <span class="n">vary</span><span class="o">=</span><span class="mf">0.5</span> <span class="c"># Width of initial perturbation</span>
 
-    <span class="c"># Boundary conditions</span>
-    <span class="n">bc_x_lower</span><span class="o">=</span><span class="n">pyclaw</span><span class="o">.</span><span class="n">BC</span><span class="o">.</span><span class="n">wall</span><span class="p">;</span> <span class="n">bc_x_upper</span><span class="o">=</span><span class="n">pyclaw</span><span class="o">.</span><span class="n">BC</span><span class="o">.</span><span class="n">extrap</span>
-    <span class="n">bc_y_lower</span><span class="o">=</span><span class="n">pyclaw</span><span class="o">.</span><span class="n">BC</span><span class="o">.</span><span class="n">wall</span><span class="p">;</span> <span class="n">bc_y_upper</span><span class="o">=</span><span class="n">pyclaw</span><span class="o">.</span><span class="n">BC</span><span class="o">.</span><span class="n">extrap</span>
+    <span class="n">num_output_times</span> <span class="o">=</span> <span class="mi">10</span>
 
-    <span class="n">num_output_times</span><span class="o">=</span><span class="mi">10</span>
-
-    <span class="k">if</span> <span class="n">solver_type</span><span class="o">==</span><span class="s">&#39;classic&#39;</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">solver_type</span> <span class="o">==</span> <span class="s">&#39;classic&#39;</span><span class="p">:</span>
         <span class="n">solver</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">ClawSolver2D</span><span class="p">(</span><span class="n">riemann</span><span class="o">.</span><span class="n">psystem_2D</span><span class="p">)</span>
         <span class="n">solver</span><span class="o">.</span><span class="n">dimensional_split</span><span class="o">=</span><span class="bp">False</span>
         <span class="n">solver</span><span class="o">.</span><span class="n">cfl_max</span> <span class="o">=</span> <span class="mf">0.9</span>
@@ -275,10 +272,15 @@ from a checkpoint.</p>
     <span class="k">if</span> <span class="n">kernel_language</span> <span class="o">!=</span> <span class="s">&#39;Fortran&#39;</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s">&#39;Unrecognized value of kernel_language for 2D psystem&#39;</span><span class="p">)</span>
 
-    <span class="n">solver</span><span class="o">.</span><span class="n">bc_lower</span>     <span class="o">=</span> <span class="p">[</span><span class="n">bc_x_lower</span><span class="p">,</span> <span class="n">bc_y_lower</span><span class="p">]</span>
-    <span class="n">solver</span><span class="o">.</span><span class="n">bc_upper</span>     <span class="o">=</span> <span class="p">[</span><span class="n">bc_x_upper</span><span class="p">,</span> <span class="n">bc_y_upper</span><span class="p">]</span>
-    <span class="n">solver</span><span class="o">.</span><span class="n">aux_bc_lower</span> <span class="o">=</span> <span class="p">[</span><span class="n">bc_x_lower</span><span class="p">,</span> <span class="n">bc_y_lower</span><span class="p">]</span>
-    <span class="n">solver</span><span class="o">.</span><span class="n">aux_bc_upper</span> <span class="o">=</span> <span class="p">[</span><span class="n">bc_x_upper</span><span class="p">,</span> <span class="n">bc_y_upper</span><span class="p">]</span>
+    <span class="c"># Boundary conditions</span>
+    <span class="n">solver</span><span class="o">.</span><span class="n">bc_lower</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">BC</span><span class="o">.</span><span class="n">wall</span>
+    <span class="n">solver</span><span class="o">.</span><span class="n">bc_upper</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">BC</span><span class="o">.</span><span class="n">extrap</span>
+    <span class="n">solver</span><span class="o">.</span><span class="n">bc_lower</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">BC</span><span class="o">.</span><span class="n">wall</span>
+    <span class="n">solver</span><span class="o">.</span><span class="n">bc_upper</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">BC</span><span class="o">.</span><span class="n">extrap</span>
+    <span class="n">solver</span><span class="o">.</span><span class="n">aux_bc_lower</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">BC</span><span class="o">.</span><span class="n">wall</span>
+    <span class="n">solver</span><span class="o">.</span><span class="n">aux_bc_upper</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">BC</span><span class="o">.</span><span class="n">extrap</span>
+    <span class="n">solver</span><span class="o">.</span><span class="n">aux_bc_lower</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">BC</span><span class="o">.</span><span class="n">wall</span>
+    <span class="n">solver</span><span class="o">.</span><span class="n">aux_bc_upper</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">BC</span><span class="o">.</span><span class="n">extrap</span>
 
     <span class="n">solver</span><span class="o">.</span><span class="n">fwave</span> <span class="o">=</span> <span class="bp">True</span>
     <span class="n">solver</span><span class="o">.</span><span class="n">before_step</span> <span class="o">=</span> <span class="n">b4step</span>
@@ -394,7 +396,7 @@ from a checkpoint.</p>
   <li><a href="../basics.html">PyClaw Basics</a><ul>
   <li><a href="../examples.html">Working with PyClaw&#8217;s built-in examples</a><ul>
       <li>Previous: <a href="shock_bubble_interaction.html" title="previous chapter">Compressible Euler flow in cylindrical symmetry</a></li>
-      <li>Next: <a href="Rossby_wave.html" title="next chapter">&lt;no title&gt;</a></li>
+      <li>Next: <a href="Rossby_wave.html" title="next chapter">Shallow water flow on the sphere</a></li>
   </ul></li>
   </ul></li>
   </ul></li>
