@@ -93,8 +93,7 @@
 <div class="admonition warning">
 <p class="first admonition-title">Warning</p>
 <p class="last">This feature has been modified and this documentation describes
-the version introduced in 5.2.1.
-The documentation is also still incomplete.</p>
+the version introduced in 5.2.1.</p>
 </div>
 <p>See also:</p>
 <blockquote>
@@ -132,7 +131,14 @@ of monitoring maxima or arrival times.</p>
 <p>The GeoClaw Fortran code reads in one or more files that specify grid(s) for
 monitoring values during the computation.</p>
 <p>The input file(s) are specified to GeoClaw by a list of file names set in
-<cite>setrun.py</cite> by setting <cite>rundata.fgmax_data.fgmax_files</cite>.</p>
+<cite>setrun.py</cite> by setting <cite>rundata.fgmax_data.fgmax_files</cite>.
+The order the files appear in this list determines the number assigned to
+this grid (starting with 1) that may be needed for processing or plotting
+the results.</p>
+<p>Currently at most 5 fgmax grids are allowed by default.  If you need more,
+you can adjust the parameter <cite>FG_MAXNUM_FGRIDS</cite> in
+<cite>$CLAW/geoclaw/src/2d/shallow/fgmax_module.f90</cite> and the do <cite>make new</cite> to
+recomile everything that depends on this module.</p>
 <p>Each input file describing a grid of points has the following form:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="n">tstart_max</span>
 <span class="n">tend_max</span>
@@ -277,8 +283,9 @@ the order they appear in the list of input files.</p>
 <p>These files are most easily dealt with using <a class="reference internal" href="fgmax_tools_module.html#fgmax-tools-module"><em>fgmax_tools module for fixed grid output</em></a> by
 defining an object of class <cite>fgmax_tools.FGmaxGrid</cite> and using the
 class function <cite>read_output</cite> to read the output.</p>
-<p>For an example see <cite>apps/tsunami/chile2010_fgmax</cite> in the <a class="reference internal" href="apps.html#apps"><em>Clawpack Applications repository</em></a>.
-To obtain this, see <a class="reference internal" href="apps.html#apps"><em>Clawpack Applications repository</em></a>.</p>
+<p>For some examples, see <cite>apps/tsunami/chile2010_fgmax</cite> and
+<cite>apps/tsunami/bowl_radial_fgmax</cite> in the <a class="reference internal" href="apps.html#apps"><em>Clawpack Applications repository</em></a>.
+Sample results appear in the <a class="reference internal" href="gallery/gallery_geoclaw.html#gallery-geoclaw"><em>Gallery of GeoClaw applications</em></a>.</p>
 <p>TODO:  Add a simple example here?</p>
 </div>
 <div class="section" id="format-of-the-output-files">
