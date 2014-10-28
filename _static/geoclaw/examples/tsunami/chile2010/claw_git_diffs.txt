@@ -8,34 +8,6 @@ classic
 ===========
 amrclaw
 ===========
-diff --git a/src/2d/amr_module.f90 b/src/2d/amr_module.f90
-index 2cce8d9..346d82c 100644
---- a/src/2d/amr_module.f90
-+++ b/src/2d/amr_module.f90
-@@ -57,8 +57,8 @@ module amr_module
- 
-     ! The max1d parameter should be changed if using OpenMP grid based 
-     ! looping, usually set to max1d = 60
--    integer, parameter :: max1d = 60 
--    !integer, parameter :: max1d = 100 
-+    !integer, parameter :: max1d = 60 
-+    integer, parameter :: max1d = 240 
-     !integer, parameter :: max1d = 80 
-     !integer, parameter :: max1d = 500 
- 
-diff --git a/src/2d/flux2.f b/src/2d/flux2.f
-index 53d5037..c1a33e3 100644
---- a/src/2d/flux2.f
-+++ b/src/2d/flux2.f
-@@ -163,7 +163,7 @@ c
- c
-        if (method(3).eq.0) go to 999   !# no transverse propagation
- c
--       if (method(3).eq.2) then
-+       if (method(2).gt.1 .and. method(3).eq.2) then
- c         # incorporate cqxx into amdq and apdq so that it is split also.
-           do 150 i = 1, mx+1
-              do 150 m=1,meqn
 
 
 ===========
@@ -61,29 +33,3 @@ riemann
 ===========
 geoclaw
 ===========
-diff --git a/examples/tsunami/chile2010/setrun.py b/examples/tsunami/chile2010/setrun.py
-index 15d83b2..c272838 100644
---- a/examples/tsunami/chile2010/setrun.py
-+++ b/examples/tsunami/chile2010/setrun.py
-@@ -15,7 +15,7 @@ except:
-     raise Exception("*** Must first set CLAW enviornment variable")
- 
- # Scratch directory for storing topo and dtopo files:
--scratch_dir = os.path.join(CLAW, 'geoclaw', 'SCRATCH')
-+scratch_dir = os.path.join(CLAW, 'geoclaw', 'scratch')
- 
- 
- #------------------------------
-diff --git a/src/2d/shallow/flux2fw.f b/src/2d/shallow/flux2fw.f
-index e9460ec..44117a1 100644
---- a/src/2d/shallow/flux2fw.f
-+++ b/src/2d/shallow/flux2fw.f
-@@ -208,7 +208,7 @@ c
- c
-        if (method(3).eq.0) go to 999   !# no transverse propagation
- c
--       if (method(3).eq.2) then
-+       if (method(2).gt.1 .and. method(3).eq.2) then
- c         # incorporate cqxx into amdq and apdq so that it is split also.
-           do 150 i = 1, mx+1
-              do 150 m=1,meqn

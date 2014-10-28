@@ -1,0 +1,189 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Chile 2010 test case for fgmax routines &mdash; Clawpack 5.2.2 documentation</title>
+    
+    <link rel="stylesheet" href="../../../../_static/flasky.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../_static/base.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../_static/layout.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../../',
+        VERSION:     '5.2.2',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="shortcut icon" href="../../../../_static/clawicon.ico"/>
+    <link rel="author" title="About these documents" href="../../../../about.html" />
+    <link rel="top" title="Clawpack 5.2.2 documentation" href="../../../../index.html" /> 
+  </head>
+  <body>
+<div id="main-wrapper" class="sphinx">
+<div id="header-wrapper">
+  <section id="header">
+    <!-- <h1><a href="http://clawpack.org/">Clawpack</a></h1> -->
+    <h1><a href="http://clawpack.org/">Clawpack-5</a></h1> 
+    <nav>
+      <ul>
+        <li>
+          <a href="../../../../toc_condensed.html">Docs</a>
+        </li>
+        <li>
+          <a href="../../../../installing.html">Install</a>
+        </li>
+        <li>
+          <a class="" href="../../../../galleries.html">Gallery</a>
+        </li>
+        <li>
+          <a class="active" href="https://groups.google.com/forum/#!forum/claw-users">Support</a>
+        </li>
+        <li>
+          <a class="active" href="http://github.com/organizations/clawpack">Source</a>
+        </li>
+        <li>
+          <a class="" href="../../../../developers.html">Develop</a>
+        </li>
+      </ul>
+    </nav>
+  </section>
+<div class="decoration"></div>
+</div>
+
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../../contents.html">Clawpack 5.2.2 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="chile-2010-test-case-for-fgmax-routines">
+<span id="apps-tsunami-chile2010-fgmax"></span><h1>Chile 2010 test case for fgmax routines<a class="headerlink" href="#chile-2010-test-case-for-fgmax-routines" title="Permalink to this headline">¶</a></h1>
+<p>Illustrates how to set up a grid of points to monitor the maximum amplitude of
+the wave at each point in the domain and the arrival times.
+This uses the &#8220;fgmax&#8221; (fixed grid maxima monitoring)
+capabilities described in <a class="reference external" href="http://www.clawpack.org/fgmax.html">http://www.clawpack.org/fgmax.html</a>.</p>
+<p>To test:</p>
+<div class="highlight-python"><div class="highlight"><pre>python make_fgmax.py   # to create fgmax_grid.txt
+make .output
+python plot_fgmax.py   # to plot fgmax results
+make plots
+</pre></div>
+</div>
+<p>Or simply:</p>
+<div class="highlight-python"><div class="highlight"><pre>make all
+</pre></div>
+</div>
+<p>This should produce
+<a class="reference external" href="./_plots/amplitude_times.png">_plots/amplitude_times.png</a>,
+a color map of maximum amplitudes along with contours of arrival
+time.  A link to this plot should show up in <cite>_plots/_PlotIndex.html</cite>
+along with the usual time frame plots.</p>
+<p><em>Note:</em></p>
+<ul>
+<li><p class="first">See <a class="reference external" href="http://www.clawpack.org/fgmax.html">http://www.clawpack.org/fgmax.html</a> for more information about
+specifying fgmax parameters.</p>
+</li>
+<li><p class="first">The file <cite>make_fgmax.py</cite> is used to create the input file for
+<cite>fgmax_grid.txt</cite> that is needed as input for the Fortran code.
+The following lines in <cite>setrun.py</cite> specify this:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="c"># == fgmax.data values ==</span>
+<span class="n">fgmax_files</span> <span class="o">=</span> <span class="n">rundata</span><span class="o">.</span><span class="n">fgmax_data</span><span class="o">.</span><span class="n">fgmax_files</span>
+<span class="c"># for fixed grids append to this list names of any fgmax input files</span>
+<span class="n">fgmax_files</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s">&#39;fgmax_grid.txt&#39;</span><span class="p">)</span>
+<span class="n">rundata</span><span class="o">.</span><span class="n">fgmax_data</span><span class="o">.</span><span class="n">num_fgmax_val</span> <span class="o">=</span> <span class="mi">1</span>  <span class="c"># Save depth only</span>
+</pre></div>
+</div>
+<p>The last line above indicates that we only want to keep track of maximum
+depth (and elevation), not speed, momentum flux, etc.</p>
+</li>
+<li><p class="first">The time <cite>tstart_max</cite> in this file is set to 10 seconds so that the
+topography in the source region has been finalized following the
+earthquake before we start monitoring the maxima.  (Since the topo on the
+fixed grid must also be stored for later postprocessing.)</p>
+</li>
+<li><p class="first">The refinement parameters and regions are set so that the maximum
+amplitude we wish to capture always appears on a level 3 grid and
+<cite>min_level_check = 3</cite> is set in <cite>make_fgmax.py</cite>.  Other choices of these
+parameters may give misleading or bizarre results.  The fgmax capabilities
+were designed with the assumption that the region of interest will always
+be refined to the maximum level allowed.</p>
+</li>
+<li><p class="first">The file <cite>plot_fgmax.py</cite> is used to plot the fgmax results. Also the file
+<cite>setplot.py</cite> includes the lines:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">otherfigure</span> <span class="o">=</span> <span class="n">plotdata</span><span class="o">.</span><span class="n">new_otherfigure</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">&#39;max amplitude and arrival times&#39;</span><span class="p">,</span>
+             <span class="n">fname</span><span class="o">=</span><span class="s">&#39;amplitude_times.png&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>This results in the link found on <cite>_plots/_PlotIndex.html</cite>.</p>
+</li>
+</ul>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<p><a href="http://clawpack.org/">
+    <img class="logo" src= "_static/clawlogo.jpg" alt="Logo"/>
+</a>
+<h2>Version 5.2.2</h2>
+</p><h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../../contents.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../../../../_sources/gallery/apps/tsunami/chile2010_fgmax/README.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+  <div class="footer">
+    &copy; Copyright 2014, The Clawpack Development Team.
+    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
+  </div>
+  
+  </body>
+</html>
