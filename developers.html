@@ -30,7 +30,7 @@
     <link rel="author" title="About these documents" href="about.html" />
     <link rel="top" title="Clawpack 5.2.2 documentation" href="index.html" />
     <link rel="next" title="git resources" href="git_resources.html" />
-    <link rel="prev" title="Using PyClaw’s solvers: Classic and SharpClaw" href="pyclaw/solvers.html" /> 
+    <link rel="prev" title="Plotting with VisIt" href="visit_plotting.html" /> 
   </head>
   <body>
 <div id="main-wrapper" class="sphinx">
@@ -41,7 +41,7 @@
     <nav>
       <ul>
         <li>
-          <a href="toc_condensed.html">Docs</a>
+          <a href="contents.html">Docs</a>
         </li>
         <li>
           <a href="installing.html">Install</a>
@@ -77,7 +77,7 @@
           <a href="git_resources.html" title="git resources"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="pyclaw/solvers.html" title="Using PyClaw’s solvers: Classic and SharpClaw"
+          <a href="visit_plotting.html" title="Plotting with VisIt"
              accesskey="P">previous</a> |</li>
         <li><a href="contents.html">Clawpack 5.2.2 documentation</a> &raquo;</li> 
       </ul>
@@ -89,10 +89,71 @@
           <div class="body">
             
   <div class="section" id="developers-guide">
-<span id="developers"></span><h1>Developers&#8217; Guide<a class="headerlink" href="#developers-guide" title="Permalink to this headline">¶</a></h1>
-<p>See <a class="reference internal" href="pyclaw/devel/gitwash/git_resources.html#git-resources"><em>git resources</em></a> for some useful links.</p>
+<span id="developers"></span><h1><a class="toc-backref" href="#id1">Developers&#8217; Guide</a><a class="headerlink" href="#developers-guide" title="Permalink to this headline">¶</a></h1>
+<div class="contents topic" id="contents">
+<p class="topic-title first">Contents</p>
+<ul class="simple">
+<li><a class="reference internal" href="#developers-guide" id="id1">Developers&#8217; Guide</a><ul>
+<li><a class="reference internal" href="#guidelines-for-contributing" id="id2">Guidelines for contributing</a><ul>
+<li><a class="reference internal" href="#reporting-and-fixing-bugs" id="id3">Reporting and fixing bugs</a></li>
+<li><a class="reference internal" href="#developer-communication" id="id4">Developer communication</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#installation-instructions-for-developers" id="id5">Installation instructions for developers</a><ul>
+<li><a class="reference internal" href="#cloning-the-most-recent-code-from-github" id="id6">Cloning the most recent code from Github</a></li>
+<li><a class="reference internal" href="#updating-to-the-latest-development-version" id="id7">Updating to the latest development version</a></li>
+<li><a class="reference internal" href="#adding-your-fork-as-a-remote" id="id8">Adding your fork as a remote</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#modifying-code" id="id9">Modifying code</a><ul>
+<li><a class="reference internal" href="#issuing-a-pull-request" id="id10">Issuing a pull request</a></li>
+<li><a class="reference internal" href="#testing-a-pull-request" id="id11">Testing a pull request</a></li>
+<li><a class="reference internal" href="#top-level-pull-requests" id="id12">Top-level pull requests</a></li>
+<li><a class="reference internal" href="#git-workflow" id="id13">Git workflow</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#catching-errors-with-pyflakes-and-pylint" id="id14">Catching errors with Pyflakes and Pylint</a></li>
+<li><a class="reference internal" href="#checking-test-coverage" id="id15">Checking test coverage</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="section" id="guidelines-for-contributing">
+<h2><a class="toc-backref" href="#id2">Guidelines for contributing</a><a class="headerlink" href="#guidelines-for-contributing" title="Permalink to this headline">¶</a></h2>
+<p>When preparing contributions, please follow the guidelines in
+<em class="xref std std-ref">contribution</em>.  Also:</p>
+<blockquote>
+<div><ul class="simple">
+<li>If the planned changes are substantial or will be backward-incompatible,
+it&#8217;s best to discuss them on the <a class="reference external" href="http://groups.google.com/group/claw-dev">claw-dev Google group</a> before starting.</li>
+<li>Make sure all tests pass and all the built-in examples run correctly.</li>
+<li>Be verbose and detailed in your commit messages and your pull request.</li>
+<li>It may be wise to have one of the maintainers look at your changes before
+they are complete
+(especially if the changes will necessitate modifications of tests
+and/or examples).</li>
+<li>If your changes are not backward-compatible, your pull request should
+include instructions for users to update their own application codes.</li>
+</ul>
+</div></blockquote>
+<div class="section" id="reporting-and-fixing-bugs">
+<h3><a class="toc-backref" href="#id3">Reporting and fixing bugs</a><a class="headerlink" href="#reporting-and-fixing-bugs" title="Permalink to this headline">¶</a></h3>
+<p>If you find a bug, post an issue with as much explanation as possible on the
+appropriate issue tracker (for instance, the PyClaw issue tracker is at
+<a class="reference external" href="https://github.com/clawpack/pyclaw/issues">https://github.com/clawpack/pyclaw/issues</a>.  If you&#8217;re looking
+for something useful to do, try tackling one of the issues listed there.</p>
+</div>
+<div class="section" id="developer-communication">
+<h3><a class="toc-backref" href="#id4">Developer communication</a><a class="headerlink" href="#developer-communication" title="Permalink to this headline">¶</a></h3>
+<p>Developer communication takes place on the google group at
+<a class="reference external" href="http://groups.google.com/group/claw-dev/">http://groups.google.com/group/claw-dev/</a>, and (increasingly) within the issue
+trackers on Github.</p>
+</div>
+</div>
+<div class="section" id="installation-instructions-for-developers">
+<span id="setup-dev"></span><span id="developers-gitclone"></span><h2><a class="toc-backref" href="#id5">Installation instructions for developers</a><a class="headerlink" href="#installation-instructions-for-developers" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="cloning-the-most-recent-code-from-github">
-<span id="developers-gitclone"></span><h2>Cloning the most recent code from Github<a class="headerlink" href="#cloning-the-most-recent-code-from-github" title="Permalink to this headline">¶</a></h2>
+<h3><a class="toc-backref" href="#id6">Cloning the most recent code from Github</a><a class="headerlink" href="#cloning-the-most-recent-code-from-github" title="Permalink to this headline">¶</a></h3>
 <p>You can create a read-only development version of Clawpack via:</p>
 <div class="highlight-python"><div class="highlight"><pre>git clone git://github.com/clawpack/clawpack.git
 cd clawpack
@@ -137,11 +198,9 @@ file.</p>
 etc., you need to set environment variables and proceed as described at
 <a class="reference internal" href="installing.html#setenv"><em>Set environment variables</em></a>.</p>
 </div>
-<div class="section" id="installation-instructions-for-developers">
-<span id="setup-dev"></span><h2>Installation instructions for developers<a class="headerlink" href="#installation-instructions-for-developers" title="Permalink to this headline">¶</a></h2>
-<p>Install a read-only copy of all the main repositories as described above in
-<a class="reference internal" href="#developers-gitclone"><em>Cloning the most recent code from Github</em></a>.</p>
-<p><strong>Important Note:</strong> The repositories will each be checked out to a specific commit and
+<div class="section" id="updating-to-the-latest-development-version">
+<h3><a class="toc-backref" href="#id7">Updating to the latest development version</a><a class="headerlink" href="#updating-to-the-latest-development-version" title="Permalink to this headline">¶</a></h3>
+<p>The repositories will each be checked out to a specific commit and
 will probably be in a detached-head state.  You will need to checkout
 <cite>master</cite> in each repository to see the current head of the master branch.</p>
 <p>You should never commit to <cite>master</cite>, only to a feature branch, so
@@ -159,8 +218,8 @@ git merge origin/master
 <p>Remember that you need to do this in each repository before running anything
 to make sure everything is up to date with <em>master</em>.</p>
 </div>
-<div class="section" id="setting-a-remote-to-point-to-your-fork">
-<span id="dev-remote"></span><h2>Setting a remote to point to your fork<a class="headerlink" href="#setting-a-remote-to-point-to-your-fork" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="adding-your-fork-as-a-remote">
+<span id="dev-remote"></span><h3><a class="toc-backref" href="#id8">Adding your fork as a remote</a><a class="headerlink" href="#adding-your-fork-as-a-remote" title="Permalink to this headline">¶</a></h3>
 <p>If you plan to make changes and issue pull requests to one or more
 repositories, you will need to do the following steps for each such
 repository:</p>
@@ -193,28 +252,28 @@ You can get one of these in read-only mode by doing, e.g.:</p>
 <div class="highlight-python"><div class="highlight"><pre>git clone git://github.com/clawpack/doc.git
 </pre></div>
 </div>
-<p>Then go through the above steps to add a remote to your own fork of the
-repository if you plan to modify and issue pull requests.</p>
+<p>Then go through the above steps to add your own fork as a remote
+if you plan to modify code and issue pull requests.</p>
+</div>
 </div>
 <div class="section" id="modifying-code">
-<h2>Modifying code<a class="headerlink" href="#modifying-code" title="Permalink to this headline">¶</a></h2>
-<p>Before making changes, you generally want to make sure <em>master</em> is up to
-date:</p>
+<h2><a class="toc-backref" href="#id9">Modifying code</a><a class="headerlink" href="#modifying-code" title="Permalink to this headline">¶</a></h2>
+<p>Before making changes, make sure <em>master</em> is up to date:</p>
 <div class="highlight-python"><div class="highlight"><pre>git checkout master
 git pull
 </pre></div>
 </div>
 <p>Then create a new branch based on <cite>master</cite> for any new commits:</p>
 <div class="highlight-python"><div class="highlight"><pre>git checkout -b new_feature master
-
-# make some changes
-# git add the modified files
-git commit -m &quot;describe the changes&quot;
 </pre></div>
 </div>
 <p>Now make changes, add and commit them,
 and then push to your own fork:</p>
-<div class="highlight-python"><div class="highlight"><pre>git push username new_feature
+<div class="highlight-python"><div class="highlight"><pre># make some changes
+# git add the modified files
+git commit -m &quot;describe the changes&quot;
+
+git push username new_feature
 </pre></div>
 </div>
 <p>If you want these changes pulled into <em>master</em>,
@@ -242,9 +301,8 @@ git checkout -b master origin/master
 </div>
 <p>This deletes your local branch named <cite>master</cite> and recreates a branch with
 the same name based on <cite>origin/master</cite>, which is what you want.</p>
-</div>
-<div class="section" id="pull-requests">
-<span id="developers-pr"></span><h2>Pull requests<a class="headerlink" href="#pull-requests" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="issuing-a-pull-request">
+<span id="developers-pr"></span><h3><a class="toc-backref" href="#id10">Issuing a pull request</a><a class="headerlink" href="#issuing-a-pull-request" title="Permalink to this headline">¶</a></h3>
 <p>Before issuing a pull request, you should make sure you have not broken
 anything:</p>
 <ol class="arabic">
@@ -286,8 +344,8 @@ nosetests
 repository in question, select the branch from which you want the pull
 request to originate, and then click the <em>Pull Request</em> button.</p>
 </div>
-<div class="section" id="testing-out-a-pull-request">
-<span id="test-pr"></span><h2>Testing out a pull request<a class="headerlink" href="#testing-out-a-pull-request" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="testing-a-pull-request">
+<span id="test-pr"></span><h3><a class="toc-backref" href="#id11">Testing a pull request</a><a class="headerlink" href="#testing-a-pull-request" title="Permalink to this headline">¶</a></h3>
 <p>To test out someone else&#8217;s pull request, follow these  instructions:
 For
 example, if you want to try out a pull request coming from a branch named
@@ -310,7 +368,7 @@ git branch -D rjleveque-bug-fix
 </div>
 </div>
 <div class="section" id="top-level-pull-requests">
-<span id="toplevel-pr"></span><h2>Top level pull requests<a class="headerlink" href="#top-level-pull-requests" title="Permalink to this headline">¶</a></h2>
+<span id="toplevel-pr"></span><h3><a class="toc-backref" href="#id12">Top-level pull requests</a><a class="headerlink" href="#top-level-pull-requests" title="Permalink to this headline">¶</a></h3>
 <p>The top level <em>clawpack</em> repository keeps track of what versions of the
 subrepositories work well together.</p>
 <p>If you make pull requests in two different repositories that are linked, say
@@ -327,8 +385,43 @@ git push username pyclaw-riemann-changes
 </div>
 </div>
 <div class="section" id="git-workflow">
-<h2>Git workflow<a class="headerlink" href="#git-workflow" title="Permalink to this headline">¶</a></h2>
-<p>See <a class="reference internal" href="pyclaw/devel/gitwash/git_resources.html#git-resources"><em>git resources</em></a> for useful links.</p>
+<h3><a class="toc-backref" href="#id13">Git workflow</a><a class="headerlink" href="#git-workflow" title="Permalink to this headline">¶</a></h3>
+<p>See <em class="xref std std-ref">git-resources</em> for useful links.</p>
+</div>
+</div>
+<div class="section" id="catching-errors-with-pyflakes-and-pylint">
+<h2><a class="toc-backref" href="#id14">Catching errors with Pyflakes and Pylint</a><a class="headerlink" href="#catching-errors-with-pyflakes-and-pylint" title="Permalink to this headline">¶</a></h2>
+<p>Pyflakes and Pylint are Python packages designed to help you catch errors or
+poor coding practices.  To run pylint on the whole PyClaw package, do:</p>
+<div class="highlight-python"><div class="highlight"><pre>cd $PYCLAW
+pylint -d C pyclaw
+</pre></div>
+</div>
+<p>The <cite>-d</cite> option suppresses a lot of style warnings, since PyClaw doesn&#8217;t
+generally conform to PEP8.  To run pylint on just one module, use something
+like:</p>
+<div class="highlight-python"><div class="highlight"><pre>pylint -d C pyclaw.state
+</pre></div>
+</div>
+<p>Since pylint output can be long, it&#8217;s helpful to write it to an html file
+and open that in a web browser:</p>
+<div class="highlight-python"><div class="highlight"><pre>pylint -d C pyclaw.state -f html &gt; pylint.html
+</pre></div>
+</div>
+<p>Pyflakes is similar to pylint but aims only to catch errors.  If you
+use Vim, there is a nice extension package
+<a class="reference external" href="https://github.com/kevinw/pyflakes-vim">pyflakes.vim</a>
+that will catch errors as you code and underline them in red.</p>
+</div>
+<div class="section" id="checking-test-coverage">
+<h2><a class="toc-backref" href="#id15">Checking test coverage</a><a class="headerlink" href="#checking-test-coverage" title="Permalink to this headline">¶</a></h2>
+<p>You can use nose to see how much of the code is covered by the current
+suite of tests and track progress if you add more tests</p>
+<div class="highlight-python"><div class="highlight"><pre>nosetests --with-coverage --cover-package=pyclaw --cover-html
+</pre></div>
+</div>
+<p>This creates a set of html files in <cite>./cover</cite>, showing exactly which lines
+of code have been tested.</p>
 </div>
 </div>
 
@@ -346,21 +439,33 @@ git push username pyclaw-riemann-changes
   <h3><a href="contents.html">Table Of Contents</a></h3>
   <ul>
 <li><a class="reference internal" href="#">Developers&#8217; Guide</a><ul>
+<li><a class="reference internal" href="#guidelines-for-contributing">Guidelines for contributing</a><ul>
+<li><a class="reference internal" href="#reporting-and-fixing-bugs">Reporting and fixing bugs</a></li>
+<li><a class="reference internal" href="#developer-communication">Developer communication</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#installation-instructions-for-developers">Installation instructions for developers</a><ul>
 <li><a class="reference internal" href="#cloning-the-most-recent-code-from-github">Cloning the most recent code from Github</a></li>
-<li><a class="reference internal" href="#installation-instructions-for-developers">Installation instructions for developers</a></li>
-<li><a class="reference internal" href="#setting-a-remote-to-point-to-your-fork">Setting a remote to point to your fork</a></li>
-<li><a class="reference internal" href="#modifying-code">Modifying code</a></li>
-<li><a class="reference internal" href="#pull-requests">Pull requests</a></li>
-<li><a class="reference internal" href="#testing-out-a-pull-request">Testing out a pull request</a></li>
-<li><a class="reference internal" href="#top-level-pull-requests">Top level pull requests</a></li>
+<li><a class="reference internal" href="#updating-to-the-latest-development-version">Updating to the latest development version</a></li>
+<li><a class="reference internal" href="#adding-your-fork-as-a-remote">Adding your fork as a remote</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#modifying-code">Modifying code</a><ul>
+<li><a class="reference internal" href="#issuing-a-pull-request">Issuing a pull request</a></li>
+<li><a class="reference internal" href="#testing-a-pull-request">Testing a pull request</a></li>
+<li><a class="reference internal" href="#top-level-pull-requests">Top-level pull requests</a></li>
 <li><a class="reference internal" href="#git-workflow">Git workflow</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#catching-errors-with-pyflakes-and-pylint">Catching errors with Pyflakes and Pylint</a></li>
+<li><a class="reference internal" href="#checking-test-coverage">Checking test coverage</a></li>
 </ul>
 </li>
 </ul>
 <h3>Related Topics</h3>
 <ul>
   <li><a href="contents.html">Documentation overview</a><ul>
-      <li>Previous: <a href="pyclaw/solvers.html" title="previous chapter">Using PyClaw&#8217;s solvers: Classic and SharpClaw</a></li>
+      <li>Previous: <a href="visit_plotting.html" title="previous chapter">Plotting with VisIt</a></li>
       <li>Next: <a href="git_resources.html" title="next chapter">git resources</a></li>
   </ul></li>
 </ul>
