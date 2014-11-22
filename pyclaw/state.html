@@ -51,7 +51,7 @@
           <a class="" href="../galleries.html">Gallery</a>
         </li>
         <li>
-          <a class="active" href="https://groups.google.com/forum/#!forum/claw-users">Support</a>
+          <a class="" href="../community.html">Community</a>
         </li>
         <li>
           <a class="active" href="http://github.com/organizations/clawpack">Source</a>
@@ -109,23 +109,35 @@ are interested in the geometry of the local state you can find it through the
 <em class="property">class </em><tt class="descclassname">pyclaw.state.</tt><tt class="descname">State</tt><big>(</big><em>geom</em>, <em>num_eqn</em>, <em>num_aux=0</em><big>)</big><a class="headerlink" href="#pyclaw.state.State" title="Permalink to this definition">¶</a></dt>
 <dd><p>A PyClaw State object contains the current state on a particular patch,
 including the unkowns q, the time t, and the auxiliary coefficients aux.</p>
-<p>Both q and aux are initialized to None.  They cannot be accessed until
-num_eqn and num_aux (respectively) are set.</p>
+<p>The variables num_eqn and num_aux determine the length of the first
+dimension of the q and aux arrays.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">State Data:</th><td class="field-body">The arrays <tt class="xref py py-attr docutils literal"><span class="pre">q</span></tt>, and <tt class="xref py py-attr docutils literal"><span class="pre">aux</span></tt> have variable 
 extents based on the patch dimensions and the values of 
-<tt class="xref py py-attr docutils literal"><span class="pre">num_eqn</span></tt> and <tt class="xref py py-attr docutils literal"><span class="pre">num_aux</span></tt>.  Note that these are initialy set to 
-None and later set to appropriately sized empty numpy arrays when
-<tt class="xref py py-attr docutils literal"><span class="pre">num_eqn</span></tt> and <tt class="xref py py-attr docutils literal"><span class="pre">num_aux</span></tt> are set.</td>
+<tt class="xref py py-attr docutils literal"><span class="pre">num_eqn</span></tt> and <tt class="xref py py-attr docutils literal"><span class="pre">num_aux</span></tt>.</td>
 </tr>
 </tbody>
 </table>
-<p>To instantiate a State, we first need a patch:</p>
+<p>A State object is automatically created upon instantiation of a Solution object
+from a Domain object:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">clawpack</span> <span class="kn">import</span> <span class="n">pyclaw</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">Dimension</span><span class="p">(</span><span class="s">&#39;x&#39;</span><span class="p">,</span><span class="mf">0.</span><span class="p">,</span><span class="mf">1.</span><span class="p">,</span><span class="mi">100</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">Dimension</span><span class="p">(</span><span class="s">&#39;x&#39;</span><span class="p">,</span><span class="mf">0.0</span><span class="p">,</span><span class="mf">1.0</span><span class="p">,</span><span class="mi">100</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">domain</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">Domain</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">num_eqn</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">solution</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">Solution</span><span class="p">(</span><span class="n">num_eqn</span><span class="p">,</span><span class="n">domain</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">solution</span><span class="o">.</span><span class="n">state</span>
+<span class="go">PyClaw State object</span>
+<span class="go">Patch dimensions: [100]</span>
+<span class="go">Time  t=0.0</span>
+<span class="go">Number of conserved quantities: 1</span>
+</pre></div>
+</div>
+<p>A State lives on a Patch, and can be instantiated directly
+by first creating a Patch:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">Dimension</span><span class="p">(</span><span class="s">&#39;x&#39;</span><span class="p">,</span><span class="mf">0.</span><span class="p">,</span><span class="mf">1.</span><span class="p">,</span><span class="mi">100</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">patch</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">Patch</span><span class="p">((</span><span class="n">x</span><span class="p">))</span>
 </pre></div>
 </div>
@@ -174,8 +186,8 @@ can be set using the dictionary state.problem_data.</p>
 <dl class="docutils">
 <dt>The state is declared valid based on the following criteria:</dt>
 <dd><ul class="first last simple">
-<li><tt class="xref py py-attr docutils literal"><span class="pre">q</span></tt> is not None</li>
-<li><tt class="xref py py-attr docutils literal"><span class="pre">num_eqn</span></tt> &gt; 0</li>
+<li><tt class="xref py py-attr docutils literal"><span class="pre">q</span></tt> is Fortran contiguous</li>
+<li><tt class="xref py py-attr docutils literal"><span class="pre">aux</span></tt> is Fortran contiguous</li>
 </ul>
 </dd>
 </dl>
@@ -223,8 +235,8 @@ all appear in problem_data.</p>
 <dl class="method">
 <dt id="pyclaw.state.State.set_q_from_qbc">
 <tt class="descname">set_q_from_qbc</tt><big>(</big><em>num_ghost</em>, <em>qbc</em><big>)</big><a class="headerlink" href="#pyclaw.state.State.set_q_from_qbc" title="Permalink to this definition">¶</a></dt>
-<dd><p>Set the value of q using the array qbc.  This is called after
-qbc is updated by the solver.</p>
+<dd><p>Set the value of q using the array qbc. Typically this is called
+after qbc has been updated by the solver.</p>
 </dd></dl>
 
 <dl class="attribute">
@@ -434,9 +446,7 @@ to <tt class="docutils literal"><span class="pre">True</span></tt></p>
 <dl class="attribute">
 <dt id="petclaw.state.State.q">
 <tt class="descname">q</tt><a class="headerlink" href="#petclaw.state.State.q" title="Permalink to this definition">¶</a></dt>
-<dd><p>Array to store solution (q) values.</p>
-<p>Settting state.num_eqn automatically allocates space for q, as does
-setting q itself.</p>
+<dd><p>Array of solution values.</p>
 </dd></dl>
 
 <dl class="attribute">
@@ -505,6 +515,16 @@ setting q itself.</p>
     &copy; Copyright 2014, The Clawpack Development Team.
     Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
   </div>
+  <script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-44811544-1', 'auto');
+  ga('send', 'pageview');
+
+  </script>
   
   </body>
 </html>
