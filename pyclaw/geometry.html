@@ -290,7 +290,7 @@ grid&#8217;s extent and resolution</p>
 <dl class="class">
 <dt id="pyclaw.geometry.Grid">
 <em class="property">class </em><tt class="descclassname">pyclaw.geometry.</tt><tt class="descname">Grid</tt><big>(</big><em>dimensions</em><big>)</big><a class="headerlink" href="#pyclaw.geometry.Grid" title="Permalink to this definition">¶</a></dt>
-<dd><p>Basic representation of a single grid in Pyclaw</p>
+<dd><p>Representation of a single grid.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -324,13 +324,18 @@ be associated with this grid</li>
 </table>
 <p>A PyClaw grid is usually constructed from a tuple of PyClaw Dimension objects:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">clawpack.pyclaw.geometry</span> <span class="kn">import</span> <span class="n">Dimension</span><span class="p">,</span> <span class="n">Grid</span>      
-<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">Dimension</span><span class="p">(</span><span class="s">&#39;x&#39;</span><span class="p">,</span><span class="mf">0.</span><span class="p">,</span><span class="mf">1.</span><span class="p">,</span><span class="mi">10</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">y</span> <span class="o">=</span> <span class="n">Dimension</span><span class="p">(</span><span class="s">&#39;y&#39;</span><span class="p">,</span><span class="o">-</span><span class="mf">1.</span><span class="p">,</span><span class="mf">1.</span><span class="p">,</span><span class="mi">25</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">Dimension</span><span class="p">(</span><span class="mf">0.</span><span class="p">,</span><span class="mf">1.</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="n">name</span><span class="o">=</span><span class="s">&#39;x&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">y</span> <span class="o">=</span> <span class="n">Dimension</span><span class="p">(</span><span class="o">-</span><span class="mf">1.</span><span class="p">,</span><span class="mf">1.</span><span class="p">,</span><span class="mi">25</span><span class="p">,</span><span class="n">name</span><span class="o">=</span><span class="s">&#39;y&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">grid</span> <span class="o">=</span> <span class="n">Grid</span><span class="p">((</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">))</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">grid</span>
-<span class="go">Dimension x:  (num_cells,delta,[lower,upper]) = (10,0.1,[0.0,1.0])</span>
-<span class="go">Dimension y:  (num_cells,delta,[lower,upper]) = (25,0.08,[-1.0,1.0])</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">grid</span><span class="o">.</span><span class="n">num_dim</span>
+<span class="go">2-dimensional domain (x,y)</span>
+<span class="go">No mapping</span>
+<span class="go">Extent:  [0.0, 1.0] x [-1.0, 1.0]</span>
+<span class="go">Cells:  10 x 25</span>
+</pre></div>
+</div>
+<p>We can query various properties of the grid:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">grid</span><span class="o">.</span><span class="n">num_dim</span>
 <span class="go">2</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">grid</span><span class="o">.</span><span class="n">num_cells</span>
 <span class="go">[10, 25]</span>
@@ -341,18 +346,70 @@ be associated with this grid</li>
 </pre></div>
 </div>
 <p>A grid can be extended to higher dimensions using the add_dimension() method:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">z</span><span class="o">=</span><span class="n">Dimension</span><span class="p">(</span><span class="s">&#39;z&#39;</span><span class="p">,</span><span class="o">-</span><span class="mf">2.0</span><span class="p">,</span><span class="mf">2.0</span><span class="p">,</span><span class="mi">21</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">z</span><span class="o">=</span><span class="n">Dimension</span><span class="p">(</span><span class="o">-</span><span class="mf">2.0</span><span class="p">,</span><span class="mf">2.0</span><span class="p">,</span><span class="mi">21</span><span class="p">,</span><span class="n">name</span><span class="o">=</span><span class="s">&#39;z&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">grid</span><span class="o">.</span><span class="n">add_dimension</span><span class="p">(</span><span class="n">z</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">grid</span><span class="o">.</span><span class="n">num_dim</span>
 <span class="go">3</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">grid</span><span class="o">.</span><span class="n">num_cells</span>
 <span class="go">[10, 25, 21]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">grid</span><span class="o">.</span><span class="n">c_edges</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span>
+</pre></div>
+</div>
+<div class="system-message">
+<p class="system-message-title">System Message: SEVERE/4 (<tt class="docutils">/Users/rjl/git/clawpack/pyclaw/src/pyclaw/geometry.py:docstring of pyclaw.geometry.Grid</tt>, line 56)</p>
+<p>Unexpected section title.</p>
+<div class="highlight-python"><div class="highlight"><pre>Coordinates
+===========
+</pre></div>
+</div>
+</div>
+<p>We can get the x, y, and z-coordinate arrays of cell edges and centers from the grid.
+Properties beginning with &#8216;c&#8217; refer to the computational (unmapped) domain, while
+properties beginning with &#8216;p&#8217; refer to the physical (mapped) domain.  For grids with
+no mapping, the two are identical.  Also note the difference between &#8216;center&#8217; and
+&#8216;centers&#8217;.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">set_printoptions</span><span class="p">(</span><span class="n">precision</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>  <span class="c"># avoid doctest issues with roundoff</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">grid</span><span class="o">.</span><span class="n">c_center</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">])</span>
+<span class="go">array([ 0.15, -0.8 , -1.33])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">grid</span><span class="o">.</span><span class="n">p_edges</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span>
 <span class="go">0.0</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">grid</span><span class="o">.</span><span class="n">c_edges</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">grid</span><span class="o">.</span><span class="n">p_edges</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span>
 <span class="go">-1.0</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">grid</span><span class="o">.</span><span class="n">c_edges</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">grid</span><span class="o">.</span><span class="n">p_edges</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span>
 <span class="go">-2.0</span>
+</pre></div>
+</div>
+<p>It&#8217;s also possible to get coordinates for ghost cell arrays:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">Dimension</span><span class="p">(</span><span class="mf">0.</span><span class="p">,</span><span class="mf">1.</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="n">name</span><span class="o">=</span><span class="s">&#39;x&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">grid1d</span> <span class="o">=</span> <span class="n">Grid</span><span class="p">([</span><span class="n">x</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">grid1d</span><span class="o">.</span><span class="n">c_centers</span>
+<span class="go">[array([ 0.1,  0.3,  0.5,  0.7,  0.9])]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">grid1d</span><span class="o">.</span><span class="n">c_centers_with_ghost</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+<span class="go">[array([-0.3, -0.1,  0.1,  0.3,  0.5,  0.7,  0.9,  1.1,  1.3])]</span>
+</pre></div>
+</div>
+<div class="system-message">
+<p class="system-message-title">System Message: SEVERE/4 (<tt class="docutils">/Users/rjl/git/clawpack/pyclaw/src/pyclaw/geometry.py:docstring of pyclaw.geometry.Grid</tt>, line 84)</p>
+<p>Unexpected section title.</p>
+<div class="highlight-python"><div class="highlight"><pre>Mappings
+========
+</pre></div>
+</div>
+</div>
+<p>A grid mapping can be used to solve in a domain that is not rectangular,
+or to adjust the local spacing of grid cells.  For instance, we can
+use smaller cells on the left and larger cells on the right by doing:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">double</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">xarr</span> <span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">x</span><span class="o">**</span><span class="mi">2</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">xarr</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">grid1d</span><span class="o">.</span><span class="n">mapc2p</span> <span class="o">=</span> <span class="n">double</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">grid1d</span><span class="o">.</span><span class="n">p_centers</span>
+<span class="go">array([ 0.01,  0.09,  0.25,  0.49,  0.81])</span>
+</pre></div>
+</div>
+<p>Note that the &#8216;edges&#8217; (or nodes) of the mapped grid are the mapped values
+of the computational edges.  In general, they are not the midpoints between
+mapped centers:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">grid1d</span><span class="o">.</span><span class="n">p_edges</span>
+<span class="go">array([ 0.  ,  0.04,  0.16,  0.36,  0.64,  1.  ])</span>
 </pre></div>
 </div>
 <dl class="method">
@@ -380,150 +437,40 @@ with their cell indices.</p>
 </dd></dl>
 
 <dl class="method">
+<dt id="pyclaw.geometry.Grid.c_center">
+<tt class="descname">c_center</tt><big>(</big><em>ind</em><big>)</big><a class="headerlink" href="#pyclaw.geometry.Grid.c_center" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute center of computational cell with index ind.</p>
+</dd></dl>
+
+<dl class="method">
 <dt id="pyclaw.geometry.Grid.c_centers_with_ghost">
 <tt class="descname">c_centers_with_ghost</tt><big>(</big><em>num_ghost</em><big>)</big><a class="headerlink" href="#pyclaw.geometry.Grid.c_centers_with_ghost" title="Permalink to this definition">¶</a></dt>
-<dd><p>(list of ndarray(...)) - List containing the arrays locating
-the computational locations of cell centers, see 
-<tt class="xref py py-meth docutils literal"><span class="pre">compute_c_centers()</span></tt> for more info.</p>
+<dd><p>Calculate the coordinates of the cell centers, including
+ghost cells, in the computational domain.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Input:</th><td class="field-body"><ul class="first last simple">
+<li><em>num_ghost</em> - (int) Number of ghost cell layers</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="method">
 <dt id="pyclaw.geometry.Grid.c_edges_with_ghost">
 <tt class="descname">c_edges_with_ghost</tt><big>(</big><em>num_ghost</em><big>)</big><a class="headerlink" href="#pyclaw.geometry.Grid.c_edges_with_ghost" title="Permalink to this definition">¶</a></dt>
-<dd><p>(list of ndarray(...)) - List containing the arrays locating
-the computational locations of cell edges, see 
-<tt class="xref py py-meth docutils literal"><span class="pre">compute_c_edges()</span></tt> for more info.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="pyclaw.geometry.Grid.compute_c_centers">
-<tt class="descname">compute_c_centers</tt><big>(</big><em>recompute=False</em><big>)</big><a class="headerlink" href="#pyclaw.geometry.Grid.compute_c_centers" title="Permalink to this definition">¶</a></dt>
-<dd><p>Calculate the <tt class="xref py py-attr docutils literal"><span class="pre">c_centers</span></tt> array</p>
-<p>This array is computed only when requested and then stored for later
-use unless the recompute flag is set to True.</p>
-<p>Access the resulting computational coodinate array via the
-corresponding dimensions or via the computational grid properties
-<tt class="xref py py-attr docutils literal"><span class="pre">c_centers</span></tt>.</p>
+<dd><p>Calculate the coordinates of the cell edges (corners), including
+ghost cells, in the computational domain.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Input:</th><td class="field-body"><ul class="first last simple">
-<li><em>recompute</em> - (bool) Whether to force a recompute of the arrays</li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="pyclaw.geometry.Grid.compute_c_centers_with_ghost">
-<tt class="descname">compute_c_centers_with_ghost</tt><big>(</big><em>num_ghost</em>, <em>recompute=False</em><big>)</big><a class="headerlink" href="#pyclaw.geometry.Grid.compute_c_centers_with_ghost" title="Permalink to this definition">¶</a></dt>
-<dd><p>Calculate the <tt class="xref py py-attr docutils literal"><span class="pre">c_centers_with_ghost</span></tt> array</p>
-<p>This array is computed only when requested and then stored for later
-use unless the recompute flag is set to True.</p>
-<p>Access the resulting computational coodinate array via the
-corresponding dimensions or via the computational grid properties
-<tt class="xref py py-attr docutils literal"><span class="pre">c_centers_with_ghost</span></tt>.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Input:</th><td class="field-body"><ul class="first last simple">
-<li><em>recompute</em> - (bool) Whether to force a recompute of the arrays</li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="pyclaw.geometry.Grid.compute_c_edges">
-<tt class="descname">compute_c_edges</tt><big>(</big><em>recompute=False</em><big>)</big><a class="headerlink" href="#pyclaw.geometry.Grid.compute_c_edges" title="Permalink to this definition">¶</a></dt>
-<dd><p>Calculate the <tt class="xref py py-attr docutils literal"><span class="pre">c_edges</span></tt> array</p>
-<p>This array is computed only when requested and then stored for later
-use unless the recompute flag is set to True.</p>
-<p>Access the resulting computational coodinate array via the
-corresponding dimensions or via the computational grid properties
-<tt class="xref py py-attr docutils literal"><span class="pre">c_edges</span></tt>.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Input:</th><td class="field-body"><ul class="first last simple">
-<li><em>recompute</em> - (bool) Whether to force a recompute of the arrays</li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="pyclaw.geometry.Grid.compute_c_edges_with_ghost">
-<tt class="descname">compute_c_edges_with_ghost</tt><big>(</big><em>num_ghost</em>, <em>recompute=False</em><big>)</big><a class="headerlink" href="#pyclaw.geometry.Grid.compute_c_edges_with_ghost" title="Permalink to this definition">¶</a></dt>
-<dd><p>Calculate the <tt class="xref py py-attr docutils literal"><span class="pre">c_centers_with_ghost</span></tt> array</p>
-<p>This array is computed only when requested and then stored for later
-use unless the recompute flag is set to True.</p>
-<p>Access the resulting computational coodinate array via the
-corresponding dimensions or via the computational grid properties
-<tt class="xref py py-attr docutils literal"><span class="pre">c_centers_with_ghost</span></tt>.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Input:</th><td class="field-body"><ul class="first last simple">
-<li><em>recompute</em> - (bool) Whether to force a recompute of the arrays</li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="pyclaw.geometry.Grid.compute_p_centers">
-<tt class="descname">compute_p_centers</tt><big>(</big><em>recompute=False</em><big>)</big><a class="headerlink" href="#pyclaw.geometry.Grid.compute_p_centers" title="Permalink to this definition">¶</a></dt>
-<dd><p>Calculates the <tt class="xref py py-attr docutils literal"><span class="pre">p_centers</span></tt> array, which contains the physical
-coordinates of the cell centers when a mapping is used.</p>
-<p>grid._p_centers is a list of numpy arrays.  Each array has shape equal
-to the shape of the grid; the number of arrays is equal to the 
-dimension of the embedding space for the mapping.</p>
-<p>This array is computed only when requested and then stored for later 
-use unless the recompute flag is set to True (you may want to do this
-for time-dependent mappings).</p>
-<p>Access the resulting physical coordinate array via the corresponding
-dimensions or via the computational grid properties <tt class="xref py py-attr docutils literal"><span class="pre">p_centers</span></tt>.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Input:</th><td class="field-body"><ul class="first last simple">
-<li><em>recompute</em> - (bool) Whether to force a recompute of the arrays</li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="pyclaw.geometry.Grid.compute_p_edges">
-<tt class="descname">compute_p_edges</tt><big>(</big><em>recompute=False</em><big>)</big><a class="headerlink" href="#pyclaw.geometry.Grid.compute_p_edges" title="Permalink to this definition">¶</a></dt>
-<dd><p>Calculates the <tt class="xref py py-attr docutils literal"><span class="pre">p_edges</span></tt> array</p>
-<p>This array is computed only when requested and then stored for later 
-use unless the recompute flag is set to True (you may want to do this
-for time dependent mappings).</p>
-<p>Access the resulting physical coordinate array via the corresponding
-dimensions or via the computational grid properties <tt class="xref py py-attr docutils literal"><span class="pre">p_edges</span></tt>.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Input:</th><td class="field-body"><ul class="first last simple">
-<li><em>recompute</em> - (bool) Whether to force a recompute of the arrays</li>
+<li><em>num_ghost</em> - (int) Number of ghost cell layers</li>
 </ul>
 </td>
 </tr>
@@ -538,6 +485,22 @@ dimensions or via the computational grid properties <tt class="xref py py-attr d
 </dd></dl>
 
 <dl class="method">
+<dt id="pyclaw.geometry.Grid.p_center">
+<tt class="descname">p_center</tt><big>(</big><em>ind</em><big>)</big><a class="headerlink" href="#pyclaw.geometry.Grid.p_center" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute center of physical cell with index ind.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyclaw.geometry.Grid.plot">
+<tt class="descname">plot</tt><big>(</big><em>num_ghost=0</em>, <em>mapped=True</em>, <em>mark_nodes=False</em>, <em>mark_centers=False</em><big>)</big><a class="headerlink" href="#pyclaw.geometry.Grid.plot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Make a plot of the grid.</p>
+<p>By default the plot uses the mapping
+grid.mapc2p and does not show any ghost cells.  This can be modified
+via the arguments <cite>mapped</cite> and <cite>num_ghost</cite>.</p>
+<p>Returns a handle to the plot axis object.</p>
+</dd></dl>
+
+<dl class="method">
 <dt id="pyclaw.geometry.Grid.setup_gauge_files">
 <tt class="descname">setup_gauge_files</tt><big>(</big><em>outdir</em><big>)</big><a class="headerlink" href="#pyclaw.geometry.Grid.setup_gauge_files" title="Permalink to this definition">¶</a></dt>
 <dd><p>Creates and opens file objects for gauges.</p>
@@ -548,7 +511,7 @@ dimensions or via the computational grid properties <tt class="xref py py-attr d
 <tt class="descname">c_centers</tt><a class="headerlink" href="#pyclaw.geometry.Grid.c_centers" title="Permalink to this definition">¶</a></dt>
 <dd><p>(list of ndarray(...)) - List containing the arrays locating
 the computational locations of cell centers, see 
-<tt class="xref py py-meth docutils literal"><span class="pre">compute_c_centers()</span></tt> for more info.</p>
+<tt class="xref py py-meth docutils literal"><span class="pre">_compute_c_centers()</span></tt> for more info.</p>
 </dd></dl>
 
 <dl class="attribute">
@@ -556,7 +519,7 @@ the computational locations of cell centers, see
 <tt class="descname">c_edges</tt><a class="headerlink" href="#pyclaw.geometry.Grid.c_edges" title="Permalink to this definition">¶</a></dt>
 <dd><p>(list of ndarray(...)) - List containing the arrays locating
 the computational locations of cell edges, see 
-<tt class="xref py py-meth docutils literal"><span class="pre">compute_c_edges()</span></tt> for more info.</p>
+<tt class="xref py py-meth docutils literal"><span class="pre">_compute_c_edges()</span></tt> for more info.</p>
 </dd></dl>
 
 <dl class="attribute">
@@ -594,12 +557,6 @@ method.</p>
 </dd></dl>
 
 <dl class="attribute">
-<dt id="pyclaw.geometry.Grid.mapc2p">
-<tt class="descname">mapc2p</tt><em class="property"> = None</em><a class="headerlink" href="#pyclaw.geometry.Grid.mapc2p" title="Permalink to this definition">¶</a></dt>
-<dd><p>(func) - Coordinate mapping function</p>
-</dd></dl>
-
-<dl class="attribute">
 <dt id="pyclaw.geometry.Grid.num_dim">
 <tt class="descname">num_dim</tt><a class="headerlink" href="#pyclaw.geometry.Grid.num_dim" title="Permalink to this definition">¶</a></dt>
 <dd><p>(int) - Number of dimensions</p>
@@ -609,16 +566,16 @@ method.</p>
 <dt id="pyclaw.geometry.Grid.p_centers">
 <tt class="descname">p_centers</tt><a class="headerlink" href="#pyclaw.geometry.Grid.p_centers" title="Permalink to this definition">¶</a></dt>
 <dd><p>(list of ndarray(...)) - List containing the arrays locating
-the physical locations of cell centers, see 
-<tt class="xref py py-meth docutils literal"><span class="pre">compute_p_centers()</span></tt> for more info.</p>
+the physical locations of cell centers, see
+<tt class="xref py py-meth docutils literal"><span class="pre">_compute_p_centers()</span></tt> for more info.</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="pyclaw.geometry.Grid.p_edges">
 <tt class="descname">p_edges</tt><a class="headerlink" href="#pyclaw.geometry.Grid.p_edges" title="Permalink to this definition">¶</a></dt>
 <dd><p>(list of ndarray(...)) - List containing the arrays locating
-the physical locations of cell edges, see 
-<tt class="xref py py-meth docutils literal"><span class="pre">compute_p_edges()</span></tt> for more info.</p>
+the physical locations of cell edges, see
+<tt class="xref py py-meth docutils literal"><span class="pre">_compute_p_edges()</span></tt> for more info.</p>
 </dd></dl>
 
 </dd></dl>
@@ -639,12 +596,16 @@ the physical locations of cell edges, see
 </tbody>
 </table>
 <dl class="docutils">
-<dt>Input:</dt>
+<dt>Required arguments, order:</dt>
 <dd><ul class="first last simple">
-<li><em>name</em> - (string) string Name of dimension</li>
 <li><em>lower</em> - (float) Lower extent of dimension</li>
 <li><em>upper</em> - (float) Upper extent of dimension</li>
-<li><em>n</em> - (int) Number of cells</li>
+<li><em>num_cells</em> - (int) Number of cells</li>
+</ul>
+</dd>
+<dt>Optional (keyword) arguments:</dt>
+<dd><ul class="first last simple">
+<li><em>name</em> - (string) string Name of dimension</li>
 <li><em>units</em> - (string) Type of units, used for informational purposes only</li>
 </ul>
 </dd>
@@ -656,7 +617,7 @@ the physical locations of cell edges, see
 </dl>
 <p>Example:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">clawpack.pyclaw.geometry</span> <span class="kn">import</span> <span class="n">Dimension</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">Dimension</span><span class="p">(</span><span class="s">&#39;x&#39;</span><span class="p">,</span><span class="mf">0.</span><span class="p">,</span><span class="mf">1.</span><span class="p">,</span><span class="mi">100</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">Dimension</span><span class="p">(</span><span class="mf">0.</span><span class="p">,</span><span class="mf">1.</span><span class="p">,</span><span class="mi">100</span><span class="p">,</span><span class="n">name</span><span class="o">=</span><span class="s">&#39;x&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">x</span>
 <span class="go">Dimension x:  (num_cells,delta,[lower,upper]) = (100,0.01,[0.0,1.0])</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="o">.</span><span class="n">name</span>
@@ -679,18 +640,25 @@ the physical locations of cell edges, see
 <span class="go">101</span>
 </pre></div>
 </div>
+<dl class="method">
+<dt id="pyclaw.geometry.Dimension.centers_with_ghost">
+<tt class="descname">centers_with_ghost</tt><big>(</big><em>num_ghost</em><big>)</big><a class="headerlink" href="#pyclaw.geometry.Dimension.centers_with_ghost" title="Permalink to this definition">¶</a></dt>
+<dd><p>(ndarrary(:)) - Location of all cell center coordinates
+for this dimension, including centers of ghost cells.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyclaw.geometry.Dimension.edges_with_ghost">
+<tt class="descname">edges_with_ghost</tt><big>(</big><em>num_ghost</em><big>)</big><a class="headerlink" href="#pyclaw.geometry.Dimension.edges_with_ghost" title="Permalink to this definition">¶</a></dt>
+<dd><p>(ndarrary(:)) - Location of all edge coordinates
+for this dimension, including edges of ghost cells.</p>
+</dd></dl>
+
 <dl class="attribute">
 <dt id="pyclaw.geometry.Dimension.centers">
 <tt class="descname">centers</tt><a class="headerlink" href="#pyclaw.geometry.Dimension.centers" title="Permalink to this definition">¶</a></dt>
 <dd><p>(ndarrary(:)) - Location of all cell center coordinates
 for this dimension</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="pyclaw.geometry.Dimension.centers_with_ghost">
-<tt class="descname">centers_with_ghost</tt><a class="headerlink" href="#pyclaw.geometry.Dimension.centers_with_ghost" title="Permalink to this definition">¶</a></dt>
-<dd><p>(ndarrary(:)) - Location of all cell center coordinates
-for this dimension, including centers of ghost cells.</p>
 </dd></dl>
 
 <dl class="attribute">
@@ -707,33 +675,21 @@ for this dimension</p>
 </dd></dl>
 
 <dl class="attribute">
-<dt id="pyclaw.geometry.Dimension.lower">
-<tt class="descname">lower</tt><em class="property"> = None</em><a class="headerlink" href="#pyclaw.geometry.Dimension.lower" title="Permalink to this definition">¶</a></dt>
-<dd><p>(float) - Lower computational dimension extent</p>
-</dd></dl>
-
-<dl class="attribute">
 <dt id="pyclaw.geometry.Dimension.name">
 <tt class="descname">name</tt><em class="property"> = None</em><a class="headerlink" href="#pyclaw.geometry.Dimension.name" title="Permalink to this definition">¶</a></dt>
 <dd><p>(string) Name of this coordinate dimension (e.g. &#8216;x&#8217;)</p>
 </dd></dl>
 
 <dl class="attribute">
-<dt id="pyclaw.geometry.Dimension.num_cells">
-<tt class="descname">num_cells</tt><em class="property"> = None</em><a class="headerlink" href="#pyclaw.geometry.Dimension.num_cells" title="Permalink to this definition">¶</a></dt>
-<dd><p>(int) - Number of cells in this dimension <tt class="xref py py-attr docutils literal"><span class="pre">units</span></tt></p>
-</dd></dl>
-
-<dl class="attribute">
 <dt id="pyclaw.geometry.Dimension.on_lower_boundary">
 <tt class="descname">on_lower_boundary</tt><em class="property"> = None</em><a class="headerlink" href="#pyclaw.geometry.Dimension.on_lower_boundary" title="Permalink to this definition">¶</a></dt>
-<dd><p>(bool) - Whether the dimension is crossing a lower boundary.</p>
+<dd><p>(bool) - Whether the dimension is touching a lower boundary.</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="pyclaw.geometry.Dimension.on_upper_boundary">
 <tt class="descname">on_upper_boundary</tt><em class="property"> = None</em><a class="headerlink" href="#pyclaw.geometry.Dimension.on_upper_boundary" title="Permalink to this definition">¶</a></dt>
-<dd><p>(bool) - Whether the dimension is crossing an upper boundary.</p>
+<dd><p>(bool) - Whether the dimension is touching an upper boundary.</p>
 </dd></dl>
 
 <dl class="attribute">
@@ -741,12 +697,6 @@ for this dimension</p>
 <tt class="descname">units</tt><em class="property"> = None</em><a class="headerlink" href="#pyclaw.geometry.Dimension.units" title="Permalink to this definition">¶</a></dt>
 <dd><p>(string) Corresponding physical units of this dimension (e.g.
 &#8216;m/s&#8217;), <tt class="docutils literal"><span class="pre">default</span> <span class="pre">=</span> <span class="pre">None</span></tt></p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="pyclaw.geometry.Dimension.upper">
-<tt class="descname">upper</tt><em class="property"> = None</em><a class="headerlink" href="#pyclaw.geometry.Dimension.upper" title="Permalink to this definition">¶</a></dt>
-<dd><p>(float) - Upper computational dimension extent</p>
 </dd></dl>
 
 </dd></dl>

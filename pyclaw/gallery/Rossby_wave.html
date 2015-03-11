@@ -175,35 +175,27 @@ SIAM Review 50 (2008), 723-752.</dd>
     <span class="n">state</span><span class="o">.</span><span class="n">q</span> <span class="o">=</span> <span class="n">problem</span><span class="o">.</span><span class="n">src2</span><span class="p">(</span><span class="n">mx</span><span class="p">,</span><span class="n">my</span><span class="p">,</span><span class="n">num_ghost</span><span class="p">,</span><span class="n">xlower</span><span class="p">,</span><span class="n">ylower</span><span class="p">,</span><span class="n">dx</span><span class="p">,</span><span class="n">dy</span><span class="p">,</span><span class="n">q</span><span class="p">,</span><span class="n">aux</span><span class="p">,</span><span class="n">t</span><span class="p">,</span><span class="n">dt</span><span class="p">,</span><span class="n">Rsphere</span><span class="p">)</span>
 
 
-<span class="k">def</span> <span class="nf">mapc2p_sphere_nonvectorized</span><span class="p">(</span><span class="n">grid</span><span class="p">,</span><span class="n">mC</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">mapc2p_sphere_nonvectorized</span><span class="p">(</span><span class="n">X</span><span class="p">,</span><span class="n">Y</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Maps to points on a sphere of radius Rsphere. Nonvectorized version (slow).</span>
 <span class="sd">    </span>
-<span class="sd">    Takes as input: array_list made by x_coordinates, y_ccordinates in the map </span>
-<span class="sd">                    space.</span>
+<span class="sd">    Inputs: x-coordinates, y-coordinates in the computational space.</span>
 
-<span class="sd">    Returns as output: array_list made by x_coordinates, y_ccordinates in the </span>
-<span class="sd">                       physical space.</span>
-
-<span class="sd">    Inputs: mC = list composed by two arrays</span>
-<span class="sd">                 [array ([xc1, xc2, ...]), array([yc1, yc2, ...])]</span>
-
-<span class="sd">    Output: pC = list composed by three arrays</span>
-<span class="sd">                 [array ([xp1, xp2, ...]), array([yp1, yp2, ...]), array([zp1, zp2, ...])]</span>
+<span class="sd">    Output: list of x-, y- and z-coordinates in the physical space.</span>
 
 <span class="sd">    NOTE: this function is not used in the standard script.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="c"># Get number of cells in both directions</span>
-    <span class="n">mx</span><span class="p">,</span> <span class="n">my</span> <span class="o">=</span> <span class="n">grid</span><span class="o">.</span><span class="n">num_cells</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">grid</span><span class="o">.</span><span class="n">num_cells</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">mx</span><span class="p">,</span> <span class="n">my</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">shape</span>
 
     <span class="c"># Define new list of numpy array, pC = physical coordinates</span>
     <span class="n">pC</span> <span class="o">=</span> <span class="p">[]</span>
 
     <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">mx</span><span class="p">):</span>
         <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">my</span><span class="p">):</span>
-            <span class="n">xc</span> <span class="o">=</span> <span class="n">mC</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span>
-            <span class="n">yc</span> <span class="o">=</span> <span class="n">mC</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span>
+            <span class="n">xc</span> <span class="o">=</span> <span class="n">X</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span>
+            <span class="n">yc</span> <span class="o">=</span> <span class="n">Y</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span>
 
             <span class="c"># Ghost cell values outside of [-3,1]x[-1,1] get mapped to other</span>
             <span class="c"># hemisphere:</span>
@@ -256,34 +248,26 @@ SIAM Review 50 (2008), 723-752.</dd>
     <span class="k">return</span> <span class="n">pC</span>
 
 
-<span class="k">def</span> <span class="nf">mapc2p_sphere_vectorized</span><span class="p">(</span><span class="n">grid</span><span class="p">,</span><span class="n">mC</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">mapc2p_sphere_vectorized</span><span class="p">(</span><span class="n">X</span><span class="p">,</span><span class="n">Y</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Maps to points on a sphere of radius Rsphere. Vectorized version (fast).  </span>
 
-<span class="sd">    Takes as input: array_list made by x_coordinates, y_ccordinates in the map </span>
-<span class="sd">                    space.</span>
+<span class="sd">    Inputs: x-coordinates, y-coordinates in the computational space.</span>
 
-<span class="sd">    Returns as output: array_list made by x_coordinates, y_ccordinates in the </span>
-<span class="sd">                       physical space.</span>
-
-<span class="sd">    Inputs: mC = list composed by two arrays</span>
-<span class="sd">                 [array ([xc1, xc2, ...]), array([yc1, yc2, ...])]</span>
-
-<span class="sd">    Output: pC = list composed by three arrays</span>
-<span class="sd">                 [array ([xp1, xp2, ...]), array([yp1, yp2, ...]), array([zp1, zp2, ...])]</span>
+<span class="sd">    Output: list of x-, y- and z-coordinates in the physical space.</span>
 
 <span class="sd">    NOTE: this function is used in the standard script.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="c"># Get number of cells in both directions</span>
-    <span class="n">mx</span><span class="p">,</span> <span class="n">my</span> <span class="o">=</span> <span class="n">grid</span><span class="o">.</span><span class="n">num_cells</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">grid</span><span class="o">.</span><span class="n">num_cells</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">mx</span><span class="p">,</span> <span class="n">my</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">shape</span>
     
     <span class="c"># 2D array useful for the vectorization of the function</span>
     <span class="n">sgnz</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="n">mx</span><span class="p">,</span><span class="n">my</span><span class="p">))</span>
 
     <span class="c"># 2D coordinates in the computational domain</span>
-    <span class="n">xc</span> <span class="o">=</span> <span class="n">mC</span><span class="p">[</span><span class="mi">0</span><span class="p">][:][:]</span>
-    <span class="n">yc</span> <span class="o">=</span> <span class="n">mC</span><span class="p">[</span><span class="mi">1</span><span class="p">][:][:]</span>
+    <span class="n">xc</span> <span class="o">=</span> <span class="n">X</span><span class="p">[:][:]</span>
+    <span class="n">yc</span> <span class="o">=</span> <span class="n">Y</span><span class="p">[:][:]</span>
 
     <span class="c"># Compute 3D coordinates in the physical domain</span>
     <span class="c"># =============================================</span>
@@ -547,8 +531,8 @@ SIAM Review 50 (2008), 723-752.</dd>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
 
 
-    <span class="n">x</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">Dimension</span><span class="p">(</span><span class="s">&#39;x&#39;</span><span class="p">,</span><span class="n">xlower</span><span class="p">,</span><span class="n">xupper</span><span class="p">,</span><span class="n">mx</span><span class="p">)</span>
-    <span class="n">y</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">Dimension</span><span class="p">(</span><span class="s">&#39;y&#39;</span><span class="p">,</span><span class="n">ylower</span><span class="p">,</span><span class="n">yupper</span><span class="p">,</span><span class="n">my</span><span class="p">)</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">Dimension</span><span class="p">(</span><span class="n">xlower</span><span class="p">,</span><span class="n">xupper</span><span class="p">,</span><span class="n">mx</span><span class="p">,</span><span class="n">name</span><span class="o">=</span><span class="s">&#39;x&#39;</span><span class="p">)</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">Dimension</span><span class="p">(</span><span class="n">ylower</span><span class="p">,</span><span class="n">yupper</span><span class="p">,</span><span class="n">my</span><span class="p">,</span><span class="n">name</span><span class="o">=</span><span class="s">&#39;y&#39;</span><span class="p">)</span>
     <span class="n">domain</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">Domain</span><span class="p">([</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">])</span>
     <span class="n">dx</span> <span class="o">=</span> <span class="n">domain</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">delta</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
     <span class="n">dy</span> <span class="o">=</span> <span class="n">domain</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">delta</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
@@ -690,8 +674,8 @@ SIAM Review 50 (2008), 723-752.</dd>
         <span class="n">xupper</span> <span class="o">=</span> <span class="n">xlower</span> <span class="o">+</span> <span class="n">mx</span> <span class="o">*</span> <span class="n">dx</span>
         <span class="n">yupper</span> <span class="o">=</span> <span class="n">ylower</span> <span class="o">+</span> <span class="n">my</span> <span class="o">*</span> <span class="n">dy</span>
 
-        <span class="n">x</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">Dimension</span><span class="p">(</span><span class="s">&#39;x&#39;</span><span class="p">,</span><span class="n">xlower</span><span class="p">,</span><span class="n">xupper</span><span class="p">,</span><span class="n">mx</span><span class="p">)</span>
-        <span class="n">y</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">Dimension</span><span class="p">(</span><span class="s">&#39;y&#39;</span><span class="p">,</span><span class="n">ylower</span><span class="p">,</span><span class="n">yupper</span><span class="p">,</span><span class="n">my</span><span class="p">)</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">Dimension</span><span class="p">(</span><span class="n">xlower</span><span class="p">,</span><span class="n">xupper</span><span class="p">,</span><span class="n">mx</span><span class="p">,</span><span class="n">name</span><span class="o">=</span><span class="s">&#39;x&#39;</span><span class="p">)</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">Dimension</span><span class="p">(</span><span class="n">ylower</span><span class="p">,</span><span class="n">yupper</span><span class="p">,</span><span class="n">my</span><span class="p">,</span><span class="n">name</span><span class="o">=</span><span class="s">&#39;y&#39;</span><span class="p">)</span>
         <span class="n">patch</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">Patch</span><span class="p">([</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">])</span>
 
 

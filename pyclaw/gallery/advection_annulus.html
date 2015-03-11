@@ -122,7 +122,7 @@ field.  We take a rotational velocity field: <span class="math">\(u = \cos(\thet
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
 
-<span class="k">def</span> <span class="nf">mapc2p_annulus</span><span class="p">(</span><span class="n">grid</span><span class="p">,</span><span class="n">c_centers</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">mapc2p_annulus</span><span class="p">(</span><span class="n">xc</span><span class="p">,</span> <span class="n">yc</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Specifies the mapping to curvilinear coordinates.</span>
 
@@ -135,8 +135,8 @@ field.  We take a rotational velocity field: <span class="math">\(u = \cos(\thet
     <span class="n">p_centers</span> <span class="o">=</span> <span class="p">[]</span>
 
     <span class="c"># Polar coordinates (first coordinate = radius,  second coordinate = theta)</span>
-    <span class="n">p_centers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">c_centers</span><span class="p">[</span><span class="mi">0</span><span class="p">][:]</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">c_centers</span><span class="p">[</span><span class="mi">1</span><span class="p">][:]))</span>
-    <span class="n">p_centers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">c_centers</span><span class="p">[</span><span class="mi">0</span><span class="p">][:]</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">c_centers</span><span class="p">[</span><span class="mi">1</span><span class="p">][:]))</span>
+    <span class="n">p_centers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">xc</span><span class="p">[:]</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">yc</span><span class="p">[:]))</span>
+    <span class="n">p_centers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">xc</span><span class="p">[:]</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">yc</span><span class="p">[:]))</span>
     
     <span class="k">return</span> <span class="n">p_centers</span>
 
@@ -167,13 +167,10 @@ field.  We take a rotational velocity field: <span class="math">\(u = \cos(\thet
 <span class="sd">    Set the velocities for the ghost cells outside the outer radius of the annulus.</span>
 <span class="sd">    In the computational domain, these are the cells at the top of the grid.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="kn">from</span> <span class="nn">mapc2p</span> <span class="kn">import</span> <span class="n">mapc2p</span>
-
     <span class="n">grid</span><span class="o">=</span><span class="n">state</span><span class="o">.</span><span class="n">grid</span>
     <span class="k">if</span> <span class="n">dim</span> <span class="o">==</span> <span class="n">grid</span><span class="o">.</span><span class="n">dimensions</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
         <span class="n">dx</span><span class="p">,</span> <span class="n">dy</span> <span class="o">=</span> <span class="n">grid</span><span class="o">.</span><span class="n">delta</span>
-        <span class="n">X_edges</span><span class="p">,</span> <span class="n">Y_edges</span> <span class="o">=</span> <span class="n">grid</span><span class="o">.</span><span class="n">c_edges_with_ghost</span><span class="p">(</span><span class="n">num_ghost</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
-        <span class="n">R_edges</span><span class="p">,</span><span class="n">Theta_edges</span> <span class="o">=</span> <span class="n">mapc2p</span><span class="p">(</span><span class="n">X_edges</span><span class="p">,</span><span class="n">Y_edges</span><span class="p">)</span>  <span class="c"># Compute edge coordinates in physical domain</span>
+        <span class="n">R_edges</span><span class="p">,</span><span class="n">Theta_edges</span> <span class="o">=</span> <span class="n">grid</span><span class="o">.</span><span class="n">p_edges_with_ghost</span><span class="p">(</span><span class="n">num_ghost</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
 
         <span class="n">auxbc</span><span class="p">[:,</span><span class="o">-</span><span class="n">num_ghost</span><span class="p">:,:]</span> <span class="o">=</span> <span class="n">edge_velocities_and_area</span><span class="p">(</span><span class="n">R_edges</span><span class="p">[</span><span class="o">-</span><span class="n">num_ghost</span><span class="o">-</span><span class="mi">1</span><span class="p">:,:],</span><span class="n">Theta_edges</span><span class="p">[</span><span class="o">-</span><span class="n">num_ghost</span><span class="o">-</span><span class="mi">1</span><span class="p">:,:],</span><span class="n">dx</span><span class="p">,</span><span class="n">dy</span><span class="p">)</span>
 
@@ -186,13 +183,10 @@ field.  We take a rotational velocity field: <span class="math">\(u = \cos(\thet
 <span class="sd">    Set the velocities for the ghost cells outside the inner radius of the annulus.</span>
 <span class="sd">    In the computational domain, these are the cells at the bottom of the grid.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="kn">from</span> <span class="nn">mapc2p</span> <span class="kn">import</span> <span class="n">mapc2p</span>
-
     <span class="n">grid</span><span class="o">=</span><span class="n">state</span><span class="o">.</span><span class="n">grid</span>
     <span class="k">if</span> <span class="n">dim</span> <span class="o">==</span> <span class="n">grid</span><span class="o">.</span><span class="n">dimensions</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
         <span class="n">dx</span><span class="p">,</span> <span class="n">dy</span> <span class="o">=</span> <span class="n">grid</span><span class="o">.</span><span class="n">delta</span>
-        <span class="n">X_edges</span><span class="p">,</span> <span class="n">Y_edges</span> <span class="o">=</span> <span class="n">grid</span><span class="o">.</span><span class="n">c_edges_with_ghost</span><span class="p">(</span><span class="n">num_ghost</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
-        <span class="n">R_edges</span><span class="p">,</span><span class="n">Theta_edges</span> <span class="o">=</span> <span class="n">mapc2p</span><span class="p">(</span><span class="n">X_edges</span><span class="p">,</span><span class="n">Y_edges</span><span class="p">)</span>
+        <span class="n">R_edges</span><span class="p">,</span><span class="n">Theta_edges</span> <span class="o">=</span> <span class="n">grid</span><span class="o">.</span><span class="n">p_edges_with_ghost</span><span class="p">(</span><span class="n">num_ghost</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
 
         <span class="n">auxbc</span><span class="p">[:,</span><span class="mi">0</span><span class="p">:</span><span class="n">num_ghost</span><span class="p">,:]</span> <span class="o">=</span> <span class="n">edge_velocities_and_area</span><span class="p">(</span><span class="n">R_edges</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="n">num_ghost</span><span class="o">+</span><span class="mi">1</span><span class="p">,:],</span><span class="n">Theta_edges</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="n">num_ghost</span><span class="o">+</span><span class="mi">1</span><span class="p">,:],</span><span class="n">dx</span><span class="p">,</span><span class="n">dy</span><span class="p">)</span>
 
@@ -293,10 +287,11 @@ field.  We take a rotational velocity field: <span class="math">\(u = \cos(\thet
     <span class="n">theta_upper</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">*</span><span class="mf">2.0</span>
     <span class="n">m_theta</span> <span class="o">=</span> <span class="mi">120</span>
 
-    <span class="n">r</span>     <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">Dimension</span><span class="p">(</span><span class="s">&#39;r&#39;</span><span class="p">,</span>    <span class="n">r_lower</span><span class="p">,</span><span class="n">r_upper</span><span class="p">,</span><span class="n">m_r</span><span class="p">)</span>
-    <span class="n">theta</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">Dimension</span><span class="p">(</span><span class="s">&#39;theta&#39;</span><span class="p">,</span><span class="n">theta_lower</span><span class="p">,</span><span class="n">theta_upper</span><span class="p">,</span><span class="n">m_theta</span><span class="p">)</span>
+    <span class="n">r</span>     <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">Dimension</span><span class="p">(</span><span class="n">r_lower</span><span class="p">,</span><span class="n">r_upper</span><span class="p">,</span><span class="n">m_r</span><span class="p">,</span><span class="n">name</span><span class="o">=</span><span class="s">&#39;r&#39;</span><span class="p">)</span>
+    <span class="n">theta</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">Dimension</span><span class="p">(</span><span class="n">theta_lower</span><span class="p">,</span><span class="n">theta_upper</span><span class="p">,</span><span class="n">m_theta</span><span class="p">,</span><span class="n">name</span><span class="o">=</span><span class="s">&#39;theta&#39;</span><span class="p">)</span>
     <span class="n">domain</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">Domain</span><span class="p">([</span><span class="n">r</span><span class="p">,</span><span class="n">theta</span><span class="p">])</span>
     <span class="n">domain</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">mapc2p</span> <span class="o">=</span> <span class="n">mapc2p_annulus</span>
+    <span class="n">domain</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">num_ghost</span> <span class="o">=</span> <span class="n">solver</span><span class="o">.</span><span class="n">num_ghost</span>
 
     <span class="n">num_eqn</span> <span class="o">=</span> <span class="mi">1</span>
     <span class="n">state</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">State</span><span class="p">(</span><span class="n">domain</span><span class="p">,</span><span class="n">num_eqn</span><span class="p">)</span>
