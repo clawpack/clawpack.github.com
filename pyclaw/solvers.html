@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Using PyClaw’s solvers: Classic and SharpClaw &mdash; Clawpack 5.2.2 documentation</title>
+    <title>Using PyClaw’s solvers: Classic and SharpClaw &mdash; Clawpack 5.3.0 documentation</title>
     
     <link rel="stylesheet" href="../_static/flasky.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -16,7 +16,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '5.2.2',
+        VERSION:     '5.3.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -28,7 +28,7 @@
     <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="shortcut icon" href="../_static/clawicon.ico"/>
     <link rel="author" title="About these documents" href="../about.html" />
-    <link rel="top" title="Clawpack 5.2.2 documentation" href="../index.html" />
+    <link rel="top" title="Clawpack 5.3.0 documentation" href="../index.html" />
     <link rel="up" title="Pyclaw" href="index.html" />
     <link rel="next" title="Pyclaw Limiters" href="evolve/limiters.html" />
     <link rel="prev" title="Pyclaw Controller Class" href="controller.html" /> 
@@ -54,7 +54,7 @@
           <a class="" href="../community.html">Community</a>
         </li>
         <li>
-          <a class="active" href="http://github.com/organizations/clawpack">Source</a>
+          <a class="active" href="http://github.com/clawpack">Source</a>
         </li>
         <li>
           <a class="" href="../developers.html">Develop</a>
@@ -80,7 +80,7 @@
         <li class="right" >
           <a href="controller.html" title="Pyclaw Controller Class"
              accesskey="P">previous</a> |</li>
-        <li><a href="../contents.html">Clawpack 5.2.2 documentation</a> &raquo;</li>
+        <li><a href="../contents.html">Clawpack 5.3.0 documentation</a> &raquo;</li>
           <li><a href="index.html" accesskey="U">Pyclaw</a> &raquo;</li> 
       </ul>
     </div>  
@@ -191,14 +191,6 @@ semi-discrete step (the dq() function).  If another method-of-lines
 solver is implemented in the future, it should be based on this class,
 which then ought to be renamed to something like &#8220;MOLSolver&#8221;.</p>
 <dl class="attribute">
-<dt id="SharpClawSolver.before_step">
-<tt class="descname">before_step</tt><a class="headerlink" href="#SharpClawSolver.before_step" title="Permalink to this definition">¶</a></dt>
-<dd><p>Function called before each time step is taken.
-The required signature for this function is:</p>
-<p>def before_step(solver,solution)</p>
-</dd></dl>
-
-<dl class="attribute">
 <dt id="SharpClawSolver.lim_type">
 <tt class="descname">lim_type</tt><a class="headerlink" href="#SharpClawSolver.lim_type" title="Permalink to this definition">¶</a></dt>
 <dd><p>Limiter(s) to be used.
@@ -222,17 +214,17 @@ The required signature for this function is:</p>
 <p>&#8216;Euler&#8217;  : 1st-order Forward Euler integration
 &#8216;SSP33&#8217;  : 3rd-order strong stability preserving method of Shu &amp; Osher
 &#8216;SSP104&#8217; : 4th-order strong stability preserving method Ketcheson
-&#8216;SSPMS32&#8217;: 2nd-order strong stability preserving 3-step linear multistep method,</p>
+&#8216;SSPLMM32&#8217;: 2nd-order strong stability preserving 3-step linear multistep method,</p>
 <div class="system-message">
-<p class="system-message-title">System Message: ERROR/3 (<tt class="docutils">/Users/rjl/git/clawpack/pyclaw/src/pyclaw/sharpclaw/solver.py:docstring of pyclaw.sharpclaw.solver.SharpClawSolver</tt>, line 36)</p>
+<p class="system-message-title">System Message: ERROR/3 (<tt class="docutils">/Users/rjl/git/clawpack/pyclaw/src/pyclaw/sharpclaw/solver.py:docstring of pyclaw.sharpclaw.solver.SharpClawSolver</tt>, line 29)</p>
 Unexpected indentation.</div>
 <blockquote>
 <div>using Euler for starting values</div></blockquote>
 <div class="system-message">
-<p class="system-message-title">System Message: WARNING/2 (<tt class="docutils">/Users/rjl/git/clawpack/pyclaw/src/pyclaw/sharpclaw/solver.py:docstring of pyclaw.sharpclaw.solver.SharpClawSolver</tt>, line 37)</p>
+<p class="system-message-title">System Message: WARNING/2 (<tt class="docutils">/Users/rjl/git/clawpack/pyclaw/src/pyclaw/sharpclaw/solver.py:docstring of pyclaw.sharpclaw.solver.SharpClawSolver</tt>, line 30)</p>
 Block quote ends without a blank line; unexpected unindent.</div>
 <dl class="docutils">
-<dt>&#8216;SSPMS43&#8217;: 3rd-order strong stability preserving 4-step linear multistep method</dt>
+<dt>&#8216;SSPLMM43&#8217;: 3rd-order strong stability preserving 4-step linear multistep method</dt>
 <dd>using SSPRK22 for starting values</dd>
 <dt>&#8216;RK&#8217; <span class="classifier-delimiter">:</span> <span class="classifier">Arbitrary Runge-Kutta method, specified by setting <cite>solver.a</cite></span></dt>
 <dd>and <cite>solver.b</cite> to the Butcher arrays of the method.</dd>
@@ -328,6 +320,26 @@ computes its contribution must be provided.
 </dd></dl>
 
 <dl class="method">
+<dt id="pyclaw.sharpclaw.solver.SharpClawSolver.accept_reject_step">
+<tt class="descname">accept_reject_step</tt><big>(</big><em>state</em><big>)</big><a class="headerlink" href="#pyclaw.sharpclaw.solver.SharpClawSolver.accept_reject_step" title="Permalink to this definition">¶</a></dt>
+<dd><p>Decide whether to accept or not the current step.
+For Runge-Kutta methods the step is accepted if cfl &lt;= cfl_max.
+For SSPLMM32 the choice of step-size guarantees the cfl condition is satisfied for the steps the LMM
+is used. Hence, we need to check the cfl condition only for the starting steps.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyclaw.sharpclaw.solver.SharpClawSolver.check_3rd_ord_cond">
+<tt class="descname">check_3rd_ord_cond</tt><big>(</big><em>state</em>, <em>step_index</em>, <em>dtFE</em><big>)</big><a class="headerlink" href="#pyclaw.sharpclaw.solver.SharpClawSolver.check_3rd_ord_cond" title="Permalink to this definition">¶</a></dt>
+<dd><p>This routine checks the additional conditions for the 3rd-order SSPLMMs.
+This is a posteriori check after a step is accepted.
+In particular, there is a condition on the step size for the starting values and 
+a condition on the ratio of forward Euler step sizes at very step.
+If the conditions are violated we muct retrieve the previous solution and discard
+that step; otherwise the step is accepted.</p>
+</dd></dl>
+
+<dl class="method">
 <dt id="pyclaw.sharpclaw.solver.SharpClawSolver.dq">
 <tt class="descname">dq</tt><big>(</big><em>state</em><big>)</big><a class="headerlink" href="#pyclaw.sharpclaw.solver.SharpClawSolver.dq" title="Permalink to this definition">¶</a></dt>
 <dd><p>Evaluate dq/dt * (delta t)</p>
@@ -340,15 +352,10 @@ computes its contribution must be provided.
 </dd></dl>
 
 <dl class="method">
-<dt id="pyclaw.sharpclaw.solver.SharpClawSolver.get_cfl_max">
-<tt class="descname">get_cfl_max</tt><big>(</big><big>)</big><a class="headerlink" href="#pyclaw.sharpclaw.solver.SharpClawSolver.get_cfl_max" title="Permalink to this definition">¶</a></dt>
-<dd><p>Set maximum CFL number for current step depending on time integrator</p>
-</dd></dl>
-
-<dl class="method">
 <dt id="pyclaw.sharpclaw.solver.SharpClawSolver.get_dt_new">
 <tt class="descname">get_dt_new</tt><big>(</big><big>)</big><a class="headerlink" href="#pyclaw.sharpclaw.solver.SharpClawSolver.get_dt_new" title="Permalink to this definition">¶</a></dt>
-<dd><p>Set time-step for next step depending on time integrator</p>
+<dd><p>Set size of next step depending on the time integrator and
+whether or not the current step was accepted.</p>
 </dd></dl>
 
 <dl class="method">
@@ -359,10 +366,18 @@ computes its contribution must be provided.
 
 <dl class="method">
 <dt id="pyclaw.sharpclaw.solver.SharpClawSolver.step">
-<tt class="descname">step</tt><big>(</big><em>solution</em><big>)</big><a class="headerlink" href="#pyclaw.sharpclaw.solver.SharpClawSolver.step" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">step</tt><big>(</big><em>solution</em>, <em>take_one_step</em>, <em>tstart</em>, <em>tend</em><big>)</big><a class="headerlink" href="#pyclaw.sharpclaw.solver.SharpClawSolver.step" title="Permalink to this definition">¶</a></dt>
 <dd><p>Evolve q over one time step.</p>
 <p>Take one step with a Runge-Kutta or multistep method as specified by
 <cite>solver.time_integrator</cite>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyclaw.sharpclaw.solver.SharpClawSolver.update_saved_values">
+<tt class="descname">update_saved_values</tt><big>(</big><em>state</em>, <em>step_index</em><big>)</big><a class="headerlink" href="#pyclaw.sharpclaw.solver.SharpClawSolver.update_saved_values" title="Permalink to this definition">¶</a></dt>
+<dd><p>Updates lists of saved function evaluations, solution values, dt and dtFE for LMMs.
+For 3rd-order SSPLMM additional conditions are checked if self.check_lmm_cond is set to True.
+If these conditions are violated, the step is rejected.</p>
 </dd></dl>
 
 </dd></dl>
@@ -449,14 +464,6 @@ The required signature for this function is:</p>
 </dd></dl>
 
 <dl class="attribute">
-<dt id="ClawSolver.before_step">
-<tt class="descname">before_step</tt><a class="headerlink" href="#ClawSolver.before_step" title="Permalink to this definition">¶</a></dt>
-<dd><p>Function called before each time step is taken.
-The required signature for this function is:</p>
-<p>def before_step(solver,solution)</p>
-</dd></dl>
-
-<dl class="attribute">
 <dt id="ClawSolver.kernel_language">
 <tt class="descname">kernel_language</tt><a class="headerlink" href="#ClawSolver.kernel_language" title="Permalink to this definition">¶</a></dt>
 <dd><p>Specifies whether to use wrapped Fortran routines (&#8216;Fortran&#8217;)
@@ -479,11 +486,11 @@ solver.step() may be called.</p>
 
 <dl class="method">
 <dt id="clawpack.pyclaw.classic.solver.ClawSolver.step">
-<tt class="descname">step</tt><big>(</big><em>solution</em><big>)</big><a class="headerlink" href="#clawpack.pyclaw.classic.solver.ClawSolver.step" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">step</tt><big>(</big><em>solution</em>, <em>take_one_step</em>, <em>tstart</em>, <em>tend</em><big>)</big><a class="headerlink" href="#clawpack.pyclaw.classic.solver.ClawSolver.step" title="Permalink to this definition">¶</a></dt>
 <dd><p>Evolve solution one time step</p>
 <p>The elements of the algorithm for taking one step are:</p>
 <ol class="arabic simple">
-<li>The <a class="reference internal" href="#ClawSolver.before_step" title="ClawSolver.before_step"><tt class="xref py py-meth docutils literal"><span class="pre">before_step()</span></tt></a> function is called</li>
+<li>Pick a step size as specified by the base solver attribute <tt class="xref py py-func docutils literal"><span class="pre">get_dt()</span></tt></li>
 <li>A half step on the source term <a class="reference internal" href="#ClawSolver.step_source" title="ClawSolver.step_source"><tt class="xref py py-func docutils literal"><span class="pre">step_source()</span></tt></a> if Strang splitting is 
 being used (<a class="reference internal" href="#ClawSolver.source_split" title="ClawSolver.source_split"><tt class="xref py py-attr docutils literal"><span class="pre">source_split</span></tt></a> = 2)</li>
 <li>A step on the homogeneous problem <span class="math">\(q_t + f(q)_x = 0\)</span> is taken</li>
@@ -555,7 +562,7 @@ supported when version 6.0 is released.  This addition is available in versions 
 <p><a href="http://clawpack.org/">
     <img class="logo" src= "_static/clawlogo.jpg" alt="Logo"/>
 </a>
-<h2>Version 5.2.2</h2>
+<h2>Version 5.3.0</h2>
 </p>
   <h3><a href="../contents.html">Table Of Contents</a></h3>
   <ul>
@@ -604,7 +611,7 @@ supported when version 6.0 is released.  This addition is available in versions 
       <div class="clearer"></div>
     </div>
   <div class="footer">
-    &copy; Copyright 2014, The Clawpack Development Team.
+    &copy; Copyright 2015, The Clawpack Development Team.
     Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
   </div>
   <script>

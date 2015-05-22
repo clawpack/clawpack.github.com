@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>b4step default routines &mdash; Clawpack 5.2.2 documentation</title>
+    <title>b4step default routines &mdash; Clawpack 5.3.0 documentation</title>
     
     <link rel="stylesheet" href="_static/flasky.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -16,7 +16,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '5.2.2',
+        VERSION:     '5.3.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -28,7 +28,7 @@
     <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="shortcut icon" href="_static/clawicon.ico"/>
     <link rel="author" title="About these documents" href="about.html" />
-    <link rel="top" title="Clawpack 5.2.2 documentation" href="index.html" /> 
+    <link rel="top" title="Clawpack 5.3.0 documentation" href="index.html" /> 
   </head>
   <body>
 <div id="main-wrapper" class="sphinx">
@@ -51,7 +51,7 @@
           <a class="" href="community.html">Community</a>
         </li>
         <li>
-          <a class="active" href="http://github.com/organizations/clawpack">Source</a>
+          <a class="active" href="http://github.com/clawpack">Source</a>
         </li>
         <li>
           <a class="" href="developers.html">Develop</a>
@@ -71,7 +71,7 @@
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="contents.html">Clawpack 5.2.2 documentation</a> &raquo;</li> 
+        <li><a href="contents.html">Clawpack 5.3.0 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -101,7 +101,7 @@ as needed.  Remember to change to <cite>Makefile</cite> to point to the proper v
 11
 12
 13
-14</pre></div></td><td class="code"><div class="highlight"><pre><span class="k">subroutine </span><span class="nv">b4step1</span><span class="p">(</span><span class="nv">mbc</span><span class="p">,</span><span class="nv">mx</span><span class="p">,</span><span class="nv">meqn</span><span class="p">,</span><span class="nv">q</span><span class="p">,</span><span class="nv">xlower</span><span class="p">,</span><span class="nv">dx</span><span class="p">,</span><span class="nv">t</span><span class="p">,</span><span class="nv">dt</span><span class="p">,</span><span class="nv">maux</span><span class="p">,</span><span class="nv">aux</span><span class="p">)</span>
+14</pre></div></td><td class="code"><div class="highlight"><pre><span class="k">subroutine </span><span class="n">b4step1</span><span class="p">(</span><span class="n">mbc</span><span class="p">,</span><span class="n">mx</span><span class="p">,</span><span class="n">meqn</span><span class="p">,</span><span class="n">q</span><span class="p">,</span><span class="n">xlower</span><span class="p">,</span><span class="n">dx</span><span class="p">,</span><span class="n">t</span><span class="p">,</span><span class="n">dt</span><span class="p">,</span><span class="n">maux</span><span class="p">,</span><span class="n">aux</span><span class="p">)</span>
 
     <span class="c">! Called before each call to step1.</span>
     <span class="c">! Use to set time-dependent aux arrays or perform other tasks.</span>
@@ -109,12 +109,12 @@ as needed.  Remember to change to <cite>Makefile</cite> to point to the proper v
     <span class="c">! This default version does nothing. </span>
  
     <span class="k">implicit none</span>
-<span class="k">    </span><span class="kt">integer</span><span class="p">,</span> <span class="k">intent</span><span class="p">(</span><span class="nv">in</span><span class="p">)</span> <span class="kd">::</span> <span class="nv">mbc</span><span class="p">,</span><span class="nv">mx</span><span class="p">,</span><span class="nv">meqn</span><span class="p">,</span><span class="nv">maux</span>
-    <span class="kt">real</span><span class="p">(</span><span class="nb">kind</span><span class="o">=</span><span class="mi">8</span><span class="p">),</span> <span class="k">intent</span><span class="p">(</span><span class="nv">in</span><span class="p">)</span> <span class="kd">::</span> <span class="nv">xlower</span><span class="p">,</span><span class="nv">dx</span><span class="p">,</span><span class="nv">t</span><span class="p">,</span><span class="nv">dt</span>
-    <span class="kt">real</span><span class="p">(</span><span class="nb">kind</span><span class="o">=</span><span class="mi">8</span><span class="p">),</span> <span class="k">intent</span><span class="p">(</span><span class="nv">inout</span><span class="p">)</span> <span class="kd">::</span> <span class="nv">q</span><span class="p">(</span><span class="nv">meqn</span><span class="p">,</span><span class="mi">1</span><span class="o">-</span><span class="nv">mbc</span><span class="p">:</span><span class="nv">mx</span><span class="o">+</span><span class="nv">mbc</span><span class="p">)</span>
-    <span class="kt">real</span><span class="p">(</span><span class="nb">kind</span><span class="o">=</span><span class="mi">8</span><span class="p">),</span> <span class="k">intent</span><span class="p">(</span><span class="nv">inout</span><span class="p">)</span> <span class="kd">::</span> <span class="nv">aux</span><span class="p">(</span><span class="nv">maux</span><span class="p">,</span><span class="mi">1</span><span class="o">-</span><span class="nv">mbc</span><span class="p">:</span><span class="nv">mx</span><span class="o">+</span><span class="nv">mbc</span><span class="p">)</span>
+<span class="k">    </span><span class="kt">integer</span><span class="p">,</span> <span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">)</span> <span class="kd">::</span> <span class="n">mbc</span><span class="p">,</span><span class="n">mx</span><span class="p">,</span><span class="n">meqn</span><span class="p">,</span><span class="n">maux</span>
+    <span class="kt">real</span><span class="p">(</span><span class="nb">kind</span><span class="o">=</span><span class="mi">8</span><span class="p">),</span> <span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">)</span> <span class="kd">::</span> <span class="n">xlower</span><span class="p">,</span><span class="n">dx</span><span class="p">,</span><span class="n">t</span><span class="p">,</span><span class="n">dt</span>
+    <span class="kt">real</span><span class="p">(</span><span class="nb">kind</span><span class="o">=</span><span class="mi">8</span><span class="p">),</span> <span class="k">intent</span><span class="p">(</span><span class="n">inout</span><span class="p">)</span> <span class="kd">::</span> <span class="n">q</span><span class="p">(</span><span class="n">meqn</span><span class="p">,</span><span class="mi">1</span><span class="o">-</span><span class="n">mbc</span><span class="p">:</span><span class="n">mx</span><span class="o">+</span><span class="n">mbc</span><span class="p">)</span>
+    <span class="kt">real</span><span class="p">(</span><span class="nb">kind</span><span class="o">=</span><span class="mi">8</span><span class="p">),</span> <span class="k">intent</span><span class="p">(</span><span class="n">inout</span><span class="p">)</span> <span class="kd">::</span> <span class="n">aux</span><span class="p">(</span><span class="n">maux</span><span class="p">,</span><span class="mi">1</span><span class="o">-</span><span class="n">mbc</span><span class="p">:</span><span class="n">mx</span><span class="o">+</span><span class="n">mbc</span><span class="p">)</span>
 
-<span class="k">end subroutine </span><span class="nv">b4step1</span>
+<span class="k">end subroutine </span><span class="n">b4step1</span>
 </pre></div>
 </td></tr></table></div>
 <p><cite>$CLAW/classic/src/2d/b4step2.f90</cite>:</p>
@@ -131,7 +131,7 @@ as needed.  Remember to change to <cite>Makefile</cite> to point to the proper v
 11
 12
 13
-14</pre></div></td><td class="code"><div class="highlight"><pre><span class="k">subroutine </span><span class="nv">b4step2</span><span class="p">(</span><span class="nv">mbc</span><span class="p">,</span><span class="nv">mx</span><span class="p">,</span><span class="nv">my</span><span class="p">,</span><span class="nv">meqn</span><span class="p">,</span><span class="nv">q</span><span class="p">,</span><span class="nv">xlower</span><span class="p">,</span><span class="nv">ylower</span><span class="p">,</span><span class="nv">dx</span><span class="p">,</span><span class="nv">dy</span><span class="p">,</span><span class="nv">t</span><span class="p">,</span><span class="nv">dt</span><span class="p">,</span><span class="nv">maux</span><span class="p">,</span><span class="nv">aux</span><span class="p">)</span>
+14</pre></div></td><td class="code"><div class="highlight"><pre><span class="k">subroutine </span><span class="n">b4step2</span><span class="p">(</span><span class="n">mbc</span><span class="p">,</span><span class="n">mx</span><span class="p">,</span><span class="n">my</span><span class="p">,</span><span class="n">meqn</span><span class="p">,</span><span class="n">q</span><span class="p">,</span><span class="n">xlower</span><span class="p">,</span><span class="n">ylower</span><span class="p">,</span><span class="n">dx</span><span class="p">,</span><span class="n">dy</span><span class="p">,</span><span class="n">t</span><span class="p">,</span><span class="n">dt</span><span class="p">,</span><span class="n">maux</span><span class="p">,</span><span class="n">aux</span><span class="p">)</span>
 
     <span class="c">! Called before each call to step2.</span>
     <span class="c">! Use to set time-dependent aux arrays or perform other tasks.</span>
@@ -139,12 +139,12 @@ as needed.  Remember to change to <cite>Makefile</cite> to point to the proper v
     <span class="c">! This default version does nothing. </span>
  
     <span class="k">implicit none</span>
-<span class="k">    </span><span class="kt">integer</span><span class="p">,</span> <span class="k">intent</span><span class="p">(</span><span class="nv">in</span><span class="p">)</span> <span class="kd">::</span> <span class="nv">mbc</span><span class="p">,</span><span class="nv">mx</span><span class="p">,</span><span class="nv">my</span><span class="p">,</span><span class="nv">meqn</span><span class="p">,</span><span class="nv">maux</span>
-    <span class="kt">real</span><span class="p">(</span><span class="nb">kind</span><span class="o">=</span><span class="mi">8</span><span class="p">),</span> <span class="k">intent</span><span class="p">(</span><span class="nv">in</span><span class="p">)</span> <span class="kd">::</span> <span class="nv">xlower</span><span class="p">,</span><span class="nv">ylower</span><span class="p">,</span><span class="nv">dx</span><span class="p">,</span><span class="nv">dy</span><span class="p">,</span><span class="nv">t</span><span class="p">,</span><span class="nv">dt</span>
-    <span class="kt">real</span><span class="p">(</span><span class="nb">kind</span><span class="o">=</span><span class="mi">8</span><span class="p">),</span> <span class="k">intent</span><span class="p">(</span><span class="nv">inout</span><span class="p">)</span> <span class="kd">::</span> <span class="nv">q</span><span class="p">(</span><span class="nv">meqn</span><span class="p">,</span><span class="mi">1</span><span class="o">-</span><span class="nv">mbc</span><span class="p">:</span><span class="nv">mx</span><span class="o">+</span><span class="nv">mbc</span><span class="p">,</span><span class="mi">1</span><span class="o">-</span><span class="nv">mbc</span><span class="p">:</span><span class="nv">my</span><span class="o">+</span><span class="nv">mbc</span><span class="p">)</span>
-    <span class="kt">real</span><span class="p">(</span><span class="nb">kind</span><span class="o">=</span><span class="mi">8</span><span class="p">),</span> <span class="k">intent</span><span class="p">(</span><span class="nv">inout</span><span class="p">)</span> <span class="kd">::</span> <span class="nv">aux</span><span class="p">(</span><span class="nv">maux</span><span class="p">,</span><span class="mi">1</span><span class="o">-</span><span class="nv">mbc</span><span class="p">:</span><span class="nv">mx</span><span class="o">+</span><span class="nv">mbc</span><span class="p">,</span><span class="mi">1</span><span class="o">-</span><span class="nv">mbc</span><span class="p">:</span><span class="nv">my</span><span class="o">+</span><span class="nv">mbc</span><span class="p">)</span>
+<span class="k">    </span><span class="kt">integer</span><span class="p">,</span> <span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">)</span> <span class="kd">::</span> <span class="n">mbc</span><span class="p">,</span><span class="n">mx</span><span class="p">,</span><span class="n">my</span><span class="p">,</span><span class="n">meqn</span><span class="p">,</span><span class="n">maux</span>
+    <span class="kt">real</span><span class="p">(</span><span class="nb">kind</span><span class="o">=</span><span class="mi">8</span><span class="p">),</span> <span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">)</span> <span class="kd">::</span> <span class="n">xlower</span><span class="p">,</span><span class="n">ylower</span><span class="p">,</span><span class="n">dx</span><span class="p">,</span><span class="n">dy</span><span class="p">,</span><span class="n">t</span><span class="p">,</span><span class="n">dt</span>
+    <span class="kt">real</span><span class="p">(</span><span class="nb">kind</span><span class="o">=</span><span class="mi">8</span><span class="p">),</span> <span class="k">intent</span><span class="p">(</span><span class="n">inout</span><span class="p">)</span> <span class="kd">::</span> <span class="n">q</span><span class="p">(</span><span class="n">meqn</span><span class="p">,</span><span class="mi">1</span><span class="o">-</span><span class="n">mbc</span><span class="p">:</span><span class="n">mx</span><span class="o">+</span><span class="n">mbc</span><span class="p">,</span><span class="mi">1</span><span class="o">-</span><span class="n">mbc</span><span class="p">:</span><span class="n">my</span><span class="o">+</span><span class="n">mbc</span><span class="p">)</span>
+    <span class="kt">real</span><span class="p">(</span><span class="nb">kind</span><span class="o">=</span><span class="mi">8</span><span class="p">),</span> <span class="k">intent</span><span class="p">(</span><span class="n">inout</span><span class="p">)</span> <span class="kd">::</span> <span class="n">aux</span><span class="p">(</span><span class="n">maux</span><span class="p">,</span><span class="mi">1</span><span class="o">-</span><span class="n">mbc</span><span class="p">:</span><span class="n">mx</span><span class="o">+</span><span class="n">mbc</span><span class="p">,</span><span class="mi">1</span><span class="o">-</span><span class="n">mbc</span><span class="p">:</span><span class="n">my</span><span class="o">+</span><span class="n">mbc</span><span class="p">)</span>
 
-<span class="k">end subroutine </span><span class="nv">b4step2</span>
+<span class="k">end subroutine </span><span class="n">b4step2</span>
 </pre></div>
 </td></tr></table></div>
 <p><cite>$CLAW/classic/src/3d/b4step3.f90</cite>:</p>
@@ -162,8 +162,8 @@ as needed.  Remember to change to <cite>Makefile</cite> to point to the proper v
 12
 13
 14
-15</pre></div></td><td class="code"><div class="highlight"><pre><span class="k">subroutine </span><span class="nv">b4step3</span><span class="p">(</span><span class="nv">mbc</span><span class="p">,</span><span class="nv">mx</span><span class="p">,</span><span class="nv">my</span><span class="p">,</span><span class="nv">mz</span><span class="p">,</span><span class="nv">meqn</span><span class="p">,</span><span class="nv">q</span><span class="p">,</span><span class="nv">xlower</span><span class="p">,</span><span class="nv">ylower</span><span class="p">,</span><span class="nv">zlower</span><span class="p">,</span> <span class="p">&amp;</span>
-    <span class="nv">dx</span><span class="p">,</span><span class="nv">dy</span><span class="p">,</span><span class="nv">dz</span><span class="p">,</span><span class="nv">t</span><span class="p">,</span><span class="nv">dt</span><span class="p">,</span><span class="nv">maux</span><span class="p">,</span><span class="nv">aux</span><span class="p">)</span>
+15</pre></div></td><td class="code"><div class="highlight"><pre><span class="k">subroutine </span><span class="n">b4step3</span><span class="p">(</span><span class="n">mbc</span><span class="p">,</span><span class="n">mx</span><span class="p">,</span><span class="n">my</span><span class="p">,</span><span class="n">mz</span><span class="p">,</span><span class="n">meqn</span><span class="p">,</span><span class="n">q</span><span class="p">,</span><span class="n">xlower</span><span class="p">,</span><span class="n">ylower</span><span class="p">,</span><span class="n">zlower</span><span class="p">,</span> <span class="p">&amp;</span>
+    <span class="n">dx</span><span class="p">,</span><span class="n">dy</span><span class="p">,</span><span class="n">dz</span><span class="p">,</span><span class="n">t</span><span class="p">,</span><span class="n">dt</span><span class="p">,</span><span class="n">maux</span><span class="p">,</span><span class="n">aux</span><span class="p">)</span>
 
     <span class="c">! Called before each call to step3.</span>
     <span class="c">! Use to set time-dependent aux arrays or perform other tasks.</span>
@@ -171,12 +171,12 @@ as needed.  Remember to change to <cite>Makefile</cite> to point to the proper v
     <span class="c">! This default version does nothing. </span>
  
     <span class="k">implicit none</span>
-<span class="k">    </span><span class="kt">integer</span><span class="p">,</span> <span class="k">intent</span><span class="p">(</span><span class="nv">in</span><span class="p">)</span> <span class="kd">::</span> <span class="nv">mbc</span><span class="p">,</span><span class="nv">mx</span><span class="p">,</span><span class="nv">my</span><span class="p">,</span><span class="nv">mz</span><span class="p">,</span><span class="nv">meqn</span><span class="p">,</span><span class="nv">maux</span>
-    <span class="kt">real</span><span class="p">(</span><span class="nb">kind</span><span class="o">=</span><span class="mi">8</span><span class="p">),</span> <span class="k">intent</span><span class="p">(</span><span class="nv">in</span><span class="p">)</span> <span class="kd">::</span> <span class="nv">xlower</span><span class="p">,</span><span class="nv">ylower</span><span class="p">,</span><span class="nv">zlower</span><span class="p">,</span><span class="nv">dx</span><span class="p">,</span><span class="nv">dy</span><span class="p">,</span><span class="nv">dz</span><span class="p">,</span><span class="nv">t</span><span class="p">,</span><span class="nv">dt</span>
-    <span class="kt">real</span><span class="p">(</span><span class="nb">kind</span><span class="o">=</span><span class="mi">8</span><span class="p">),</span> <span class="k">intent</span><span class="p">(</span><span class="nv">inout</span><span class="p">)</span> <span class="kd">::</span> <span class="nv">q</span><span class="p">(</span><span class="nv">meqn</span><span class="p">,</span><span class="mi">1</span><span class="o">-</span><span class="nv">mbc</span><span class="p">:</span><span class="nv">mx</span><span class="o">+</span><span class="nv">mbc</span><span class="p">,</span><span class="mi">1</span><span class="o">-</span><span class="nv">mbc</span><span class="p">:</span><span class="nv">my</span><span class="o">+</span><span class="nv">mbc</span><span class="p">,</span><span class="mi">1</span><span class="o">-</span><span class="nv">mbc</span><span class="p">:</span><span class="nv">mz</span><span class="o">+</span><span class="nv">mbc</span><span class="p">)</span>
-    <span class="kt">real</span><span class="p">(</span><span class="nb">kind</span><span class="o">=</span><span class="mi">8</span><span class="p">),</span> <span class="k">intent</span><span class="p">(</span><span class="nv">inout</span><span class="p">)</span> <span class="kd">::</span> <span class="nv">aux</span><span class="p">(</span><span class="nv">maux</span><span class="p">,</span><span class="mi">1</span><span class="o">-</span><span class="nv">mbc</span><span class="p">:</span><span class="nv">mx</span><span class="o">+</span><span class="nv">mbc</span><span class="p">,</span><span class="mi">1</span><span class="o">-</span><span class="nv">mbc</span><span class="p">:</span><span class="nv">my</span><span class="o">+</span><span class="nv">mbc</span><span class="p">,</span><span class="mi">1</span><span class="o">-</span><span class="nv">mbc</span><span class="p">:</span><span class="nv">mz</span><span class="o">+</span><span class="nv">mbc</span><span class="p">)</span>
+<span class="k">    </span><span class="kt">integer</span><span class="p">,</span> <span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">)</span> <span class="kd">::</span> <span class="n">mbc</span><span class="p">,</span><span class="n">mx</span><span class="p">,</span><span class="n">my</span><span class="p">,</span><span class="n">mz</span><span class="p">,</span><span class="n">meqn</span><span class="p">,</span><span class="n">maux</span>
+    <span class="kt">real</span><span class="p">(</span><span class="nb">kind</span><span class="o">=</span><span class="mi">8</span><span class="p">),</span> <span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">)</span> <span class="kd">::</span> <span class="n">xlower</span><span class="p">,</span><span class="n">ylower</span><span class="p">,</span><span class="n">zlower</span><span class="p">,</span><span class="n">dx</span><span class="p">,</span><span class="n">dy</span><span class="p">,</span><span class="n">dz</span><span class="p">,</span><span class="n">t</span><span class="p">,</span><span class="n">dt</span>
+    <span class="kt">real</span><span class="p">(</span><span class="nb">kind</span><span class="o">=</span><span class="mi">8</span><span class="p">),</span> <span class="k">intent</span><span class="p">(</span><span class="n">inout</span><span class="p">)</span> <span class="kd">::</span> <span class="n">q</span><span class="p">(</span><span class="n">meqn</span><span class="p">,</span><span class="mi">1</span><span class="o">-</span><span class="n">mbc</span><span class="p">:</span><span class="n">mx</span><span class="o">+</span><span class="n">mbc</span><span class="p">,</span><span class="mi">1</span><span class="o">-</span><span class="n">mbc</span><span class="p">:</span><span class="n">my</span><span class="o">+</span><span class="n">mbc</span><span class="p">,</span><span class="mi">1</span><span class="o">-</span><span class="n">mbc</span><span class="p">:</span><span class="n">mz</span><span class="o">+</span><span class="n">mbc</span><span class="p">)</span>
+    <span class="kt">real</span><span class="p">(</span><span class="nb">kind</span><span class="o">=</span><span class="mi">8</span><span class="p">),</span> <span class="k">intent</span><span class="p">(</span><span class="n">inout</span><span class="p">)</span> <span class="kd">::</span> <span class="n">aux</span><span class="p">(</span><span class="n">maux</span><span class="p">,</span><span class="mi">1</span><span class="o">-</span><span class="n">mbc</span><span class="p">:</span><span class="n">mx</span><span class="o">+</span><span class="n">mbc</span><span class="p">,</span><span class="mi">1</span><span class="o">-</span><span class="n">mbc</span><span class="p">:</span><span class="n">my</span><span class="o">+</span><span class="n">mbc</span><span class="p">,</span><span class="mi">1</span><span class="o">-</span><span class="n">mbc</span><span class="p">:</span><span class="n">mz</span><span class="o">+</span><span class="n">mbc</span><span class="p">)</span>
 
-<span class="k">end subroutine </span><span class="nv">b4step3</span>
+<span class="k">end subroutine </span><span class="n">b4step3</span>
 </pre></div>
 </td></tr></table></div>
 <div class="section" id="b4step-routine-in-geoclaw">
@@ -246,8 +246,12 @@ with latitude when <cite>coordinate_system == 2</cite>).</p>
 57
 58
 59
-60</pre></div></td><td class="code"><div class="highlight"><pre><span class="c">! ============================================</span>
-<span class="k">subroutine </span><span class="nv">b4step2</span><span class="p">(</span><span class="nv">mbc</span><span class="p">,</span><span class="nv">mx</span><span class="p">,</span><span class="nv">my</span><span class="p">,</span><span class="nv">meqn</span><span class="p">,</span><span class="nv">q</span><span class="p">,</span><span class="nv">xlower</span><span class="p">,</span><span class="nv">ylower</span><span class="p">,</span><span class="nv">dx</span><span class="p">,</span><span class="nv">dy</span><span class="p">,</span><span class="nv">t</span><span class="p">,</span><span class="nv">dt</span><span class="p">,</span><span class="nv">maux</span><span class="p">,</span><span class="nv">aux</span><span class="p">)</span>
+60
+61
+62
+63
+64</pre></div></td><td class="code"><div class="highlight"><pre><span class="c">! ============================================</span>
+<span class="k">subroutine </span><span class="n">b4step2</span><span class="p">(</span><span class="n">mbc</span><span class="p">,</span><span class="n">mx</span><span class="p">,</span><span class="n">my</span><span class="p">,</span><span class="n">meqn</span><span class="p">,</span><span class="n">q</span><span class="p">,</span><span class="n">xlower</span><span class="p">,</span><span class="n">ylower</span><span class="p">,</span><span class="n">dx</span><span class="p">,</span><span class="n">dy</span><span class="p">,</span><span class="n">t</span><span class="p">,</span><span class="n">dt</span><span class="p">,</span><span class="n">maux</span><span class="p">,</span><span class="n">aux</span><span class="p">)</span>
 <span class="c">! ============================================</span>
 <span class="c">!</span>
 <span class="c">! # called before each call to step</span>
@@ -260,52 +264,56 @@ with latitude when <cite>coordinate_system == 2</cite>).</p>
 <span class="c">!</span>
 <span class="c">! Also calls movetopo if topography might be moving.</span>
 
-    <span class="k">use </span><span class="nv">geoclaw_module</span><span class="p">,</span> <span class="nv">only</span><span class="p">:</span> <span class="nv">dry_tolerance</span>
-    <span class="k">use </span><span class="nv">geoclaw_module</span><span class="p">,</span> <span class="nv">only</span><span class="p">:</span> <span class="nv">g</span> <span class="o">=&gt;</span> <span class="nv">grav</span>
-    <span class="k">use </span><span class="nv">topo_module</span><span class="p">,</span> <span class="nv">only</span><span class="p">:</span> <span class="nv">num_dtopo</span><span class="p">,</span><span class="nv">topotime</span>
-    <span class="k">use </span><span class="nv">topo_module</span><span class="p">,</span> <span class="nv">only</span><span class="p">:</span> <span class="nv">aux_finalized</span>
-    <span class="k">use </span><span class="nv">topo_module</span><span class="p">,</span> <span class="nv">only</span><span class="p">:</span> <span class="nv">xlowdtopo</span><span class="p">,</span><span class="nv">xhidtopo</span><span class="p">,</span><span class="nv">ylowdtopo</span><span class="p">,</span><span class="nv">yhidtopo</span>
+    <span class="k">use </span><span class="n">geoclaw_module</span><span class="p">,</span> <span class="n">only</span><span class="p">:</span> <span class="n">dry_tolerance</span>
+    <span class="k">use </span><span class="n">geoclaw_module</span><span class="p">,</span> <span class="n">only</span><span class="p">:</span> <span class="n">g</span> <span class="o">=&gt;</span> <span class="n">grav</span>
+    <span class="k">use </span><span class="n">topo_module</span><span class="p">,</span> <span class="n">only</span><span class="p">:</span> <span class="n">num_dtopo</span><span class="p">,</span><span class="n">topotime</span>
+    <span class="k">use </span><span class="n">topo_module</span><span class="p">,</span> <span class="n">only</span><span class="p">:</span> <span class="n">aux_finalized</span>
+    <span class="k">use </span><span class="n">topo_module</span><span class="p">,</span> <span class="n">only</span><span class="p">:</span> <span class="n">xlowdtopo</span><span class="p">,</span><span class="n">xhidtopo</span><span class="p">,</span><span class="n">ylowdtopo</span><span class="p">,</span><span class="n">yhidtopo</span>
 
-    <span class="k">use </span><span class="nv">amr_module</span><span class="p">,</span> <span class="nv">only</span><span class="p">:</span> <span class="nv">xlowdomain</span> <span class="o">=&gt;</span> <span class="nv">xlower</span>
-    <span class="k">use </span><span class="nv">amr_module</span><span class="p">,</span> <span class="nv">only</span><span class="p">:</span> <span class="nv">ylowdomain</span> <span class="o">=&gt;</span> <span class="nv">ylower</span>
-    <span class="k">use </span><span class="nv">amr_module</span><span class="p">,</span> <span class="nv">only</span><span class="p">:</span> <span class="nv">xhidomain</span> <span class="o">=&gt;</span> <span class="nv">xupper</span>
-    <span class="k">use </span><span class="nv">amr_module</span><span class="p">,</span> <span class="nv">only</span><span class="p">:</span> <span class="nv">yhidomain</span> <span class="o">=&gt;</span> <span class="nv">yupper</span>
-    <span class="k">use </span><span class="nv">amr_module</span><span class="p">,</span> <span class="nv">only</span><span class="p">:</span> <span class="nv">xperdom</span><span class="p">,</span><span class="nv">yperdom</span><span class="p">,</span><span class="nv">spheredom</span><span class="p">,</span><span class="nv">NEEDS_TO_BE_SET</span>
+    <span class="k">use </span><span class="n">amr_module</span><span class="p">,</span> <span class="n">only</span><span class="p">:</span> <span class="n">xlowdomain</span> <span class="o">=&gt;</span> <span class="n">xlower</span>
+    <span class="k">use </span><span class="n">amr_module</span><span class="p">,</span> <span class="n">only</span><span class="p">:</span> <span class="n">ylowdomain</span> <span class="o">=&gt;</span> <span class="n">ylower</span>
+    <span class="k">use </span><span class="n">amr_module</span><span class="p">,</span> <span class="n">only</span><span class="p">:</span> <span class="n">xhidomain</span> <span class="o">=&gt;</span> <span class="n">xupper</span>
+    <span class="k">use </span><span class="n">amr_module</span><span class="p">,</span> <span class="n">only</span><span class="p">:</span> <span class="n">yhidomain</span> <span class="o">=&gt;</span> <span class="n">yupper</span>
+    <span class="k">use </span><span class="n">amr_module</span><span class="p">,</span> <span class="n">only</span><span class="p">:</span> <span class="n">xperdom</span><span class="p">,</span><span class="n">yperdom</span><span class="p">,</span><span class="n">spheredom</span><span class="p">,</span><span class="n">NEEDS_TO_BE_SET</span>
+
+    <span class="k">use </span><span class="n">storm_module</span><span class="p">,</span> <span class="n">only</span><span class="p">:</span> <span class="n">set_storm_fields</span>
 
     <span class="k">implicit none</span>
 
     <span class="c">! Subroutine arguments</span>
-    <span class="kt">integer</span><span class="p">,</span> <span class="k">intent</span><span class="p">(</span><span class="nv">in</span><span class="p">)</span> <span class="kd">::</span> <span class="nv">meqn</span>
-    <span class="kt">integer</span><span class="p">,</span> <span class="k">intent</span><span class="p">(</span><span class="nv">inout</span><span class="p">)</span> <span class="kd">::</span> <span class="nv">mbc</span><span class="p">,</span><span class="nv">mx</span><span class="p">,</span><span class="nv">my</span><span class="p">,</span><span class="nv">maux</span>
-    <span class="kt">real</span><span class="p">(</span><span class="nb">kind</span><span class="o">=</span><span class="mi">8</span><span class="p">),</span> <span class="k">intent</span><span class="p">(</span><span class="nv">inout</span><span class="p">)</span> <span class="kd">::</span> <span class="nv">xlower</span><span class="p">,</span> <span class="nv">ylower</span><span class="p">,</span> <span class="nv">dx</span><span class="p">,</span> <span class="nv">dy</span><span class="p">,</span> <span class="nv">t</span><span class="p">,</span> <span class="nv">dt</span>
-    <span class="kt">real</span><span class="p">(</span><span class="nb">kind</span><span class="o">=</span><span class="mi">8</span><span class="p">),</span> <span class="k">intent</span><span class="p">(</span><span class="nv">inout</span><span class="p">)</span> <span class="kd">::</span> <span class="nv">q</span><span class="p">(</span><span class="nv">meqn</span><span class="p">,</span><span class="mi">1</span><span class="o">-</span><span class="nv">mbc</span><span class="p">:</span><span class="nv">mx</span><span class="o">+</span><span class="nv">mbc</span><span class="p">,</span><span class="mi">1</span><span class="o">-</span><span class="nv">mbc</span><span class="p">:</span><span class="nv">my</span><span class="o">+</span><span class="nv">mbc</span><span class="p">)</span>
-    <span class="kt">real</span><span class="p">(</span><span class="nb">kind</span><span class="o">=</span><span class="mi">8</span><span class="p">),</span> <span class="k">intent</span><span class="p">(</span><span class="nv">inout</span><span class="p">)</span> <span class="kd">::</span> <span class="nv">aux</span><span class="p">(</span><span class="nv">maux</span><span class="p">,</span><span class="mi">1</span><span class="o">-</span><span class="nv">mbc</span><span class="p">:</span><span class="nv">mx</span><span class="o">+</span><span class="nv">mbc</span><span class="p">,</span><span class="mi">1</span><span class="o">-</span><span class="nv">mbc</span><span class="p">:</span><span class="nv">my</span><span class="o">+</span><span class="nv">mbc</span><span class="p">)</span>
+    <span class="kt">integer</span><span class="p">,</span> <span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">)</span> <span class="kd">::</span> <span class="n">meqn</span>
+    <span class="kt">integer</span><span class="p">,</span> <span class="k">intent</span><span class="p">(</span><span class="n">inout</span><span class="p">)</span> <span class="kd">::</span> <span class="n">mbc</span><span class="p">,</span><span class="n">mx</span><span class="p">,</span><span class="n">my</span><span class="p">,</span><span class="n">maux</span>
+    <span class="kt">real</span><span class="p">(</span><span class="nb">kind</span><span class="o">=</span><span class="mi">8</span><span class="p">),</span> <span class="k">intent</span><span class="p">(</span><span class="n">inout</span><span class="p">)</span> <span class="kd">::</span> <span class="n">xlower</span><span class="p">,</span> <span class="n">ylower</span><span class="p">,</span> <span class="n">dx</span><span class="p">,</span> <span class="n">dy</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">dt</span>
+    <span class="kt">real</span><span class="p">(</span><span class="nb">kind</span><span class="o">=</span><span class="mi">8</span><span class="p">),</span> <span class="k">intent</span><span class="p">(</span><span class="n">inout</span><span class="p">)</span> <span class="kd">::</span> <span class="n">q</span><span class="p">(</span><span class="n">meqn</span><span class="p">,</span><span class="mi">1</span><span class="o">-</span><span class="n">mbc</span><span class="p">:</span><span class="n">mx</span><span class="o">+</span><span class="n">mbc</span><span class="p">,</span><span class="mi">1</span><span class="o">-</span><span class="n">mbc</span><span class="p">:</span><span class="n">my</span><span class="o">+</span><span class="n">mbc</span><span class="p">)</span>
+    <span class="kt">real</span><span class="p">(</span><span class="nb">kind</span><span class="o">=</span><span class="mi">8</span><span class="p">),</span> <span class="k">intent</span><span class="p">(</span><span class="n">inout</span><span class="p">)</span> <span class="kd">::</span> <span class="n">aux</span><span class="p">(</span><span class="n">maux</span><span class="p">,</span><span class="mi">1</span><span class="o">-</span><span class="n">mbc</span><span class="p">:</span><span class="n">mx</span><span class="o">+</span><span class="n">mbc</span><span class="p">,</span><span class="mi">1</span><span class="o">-</span><span class="n">mbc</span><span class="p">:</span><span class="n">my</span><span class="o">+</span><span class="n">mbc</span><span class="p">)</span>
 
     <span class="c">! Local storage</span>
-    <span class="kt">integer</span> <span class="kd">::</span> <span class="nb">index</span><span class="p">,</span><span class="nv">i</span><span class="p">,</span><span class="nv">j</span><span class="p">,</span><span class="nv">k</span><span class="p">,</span><span class="nv">dummy</span>
-    <span class="kt">real</span><span class="p">(</span><span class="nb">kind</span><span class="o">=</span><span class="mi">8</span><span class="p">)</span> <span class="kd">::</span> <span class="nv">h</span><span class="p">,</span><span class="nv">u</span><span class="p">,</span><span class="nv">v</span>
+    <span class="kt">integer</span> <span class="kd">::</span> <span class="nb">index</span><span class="p">,</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">,</span><span class="n">k</span><span class="p">,</span><span class="n">dummy</span>
+    <span class="kt">real</span><span class="p">(</span><span class="nb">kind</span><span class="o">=</span><span class="mi">8</span><span class="p">)</span> <span class="kd">::</span> <span class="n">h</span><span class="p">,</span><span class="n">u</span><span class="p">,</span><span class="n">v</span>
 
     <span class="c">! Check for NaNs in the solution</span>
-    <span class="k">call </span><span class="nv">check4nans</span><span class="p">(</span><span class="nv">meqn</span><span class="p">,</span><span class="nv">mbc</span><span class="p">,</span><span class="nv">mx</span><span class="p">,</span><span class="nv">my</span><span class="p">,</span><span class="nv">q</span><span class="p">,</span><span class="nv">t</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">call </span><span class="n">check4nans</span><span class="p">(</span><span class="n">meqn</span><span class="p">,</span><span class="n">mbc</span><span class="p">,</span><span class="n">mx</span><span class="p">,</span><span class="n">my</span><span class="p">,</span><span class="n">q</span><span class="p">,</span><span class="n">t</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
 
     <span class="c">! check for h &lt; 0 and reset to zero</span>
     <span class="c">! check for h &lt; drytolerance</span>
     <span class="c">! set hu = hv = 0 in all these cells</span>
-    <span class="k">forall</span><span class="p">(</span><span class="nv">i</span><span class="o">=</span><span class="mi">1</span><span class="o">-</span><span class="nv">mbc</span><span class="p">:</span><span class="nv">mx</span><span class="o">+</span><span class="nv">mbc</span><span class="p">,</span> <span class="nv">j</span><span class="o">=</span><span class="mi">1</span><span class="o">-</span><span class="nv">mbc</span><span class="p">:</span><span class="nv">my</span><span class="o">+</span><span class="nv">mbc</span><span class="p">,</span><span class="nv">q</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="nv">i</span><span class="p">,</span><span class="nv">j</span><span class="p">)</span> <span class="o">&lt;</span> <span class="nv">dry_tolerance</span><span class="p">)</span>
-        <span class="nv">q</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="nv">i</span><span class="p">,</span><span class="nv">j</span><span class="p">)</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="nv">q</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="nv">i</span><span class="p">,</span><span class="nv">j</span><span class="p">),</span><span class="mf">0.</span><span class="nv">d0</span><span class="p">)</span>
-        <span class="nv">q</span><span class="p">(</span><span class="mi">2</span><span class="p">:</span><span class="mi">3</span><span class="p">,</span><span class="nv">i</span><span class="p">,</span><span class="nv">j</span><span class="p">)</span> <span class="o">=</span> <span class="mf">0.</span><span class="nv">d0</span>
+    <span class="k">forall</span><span class="p">(</span><span class="n">i</span><span class="o">=</span><span class="mi">1</span><span class="o">-</span><span class="n">mbc</span><span class="p">:</span><span class="n">mx</span><span class="o">+</span><span class="n">mbc</span><span class="p">,</span> <span class="n">j</span><span class="o">=</span><span class="mi">1</span><span class="o">-</span><span class="n">mbc</span><span class="p">:</span><span class="n">my</span><span class="o">+</span><span class="n">mbc</span><span class="p">,</span><span class="n">q</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">dry_tolerance</span><span class="p">)</span>
+        <span class="n">q</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">)</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">q</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">),</span><span class="mf">0.</span><span class="n">d0</span><span class="p">)</span>
+        <span class="n">q</span><span class="p">(</span><span class="mi">2</span><span class="p">:</span><span class="mi">3</span><span class="p">,</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">)</span> <span class="o">=</span> <span class="mf">0.</span><span class="n">d0</span>
     <span class="k">end forall</span>
 
 
-<span class="k">    if</span> <span class="p">(</span><span class="nv">aux_finalized</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">)</span> <span class="k">then</span>
+<span class="k">    if</span> <span class="p">(</span><span class="n">aux_finalized</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">)</span> <span class="k">then</span>
         <span class="c">! topo arrays might have been updated by dtopo more recently than</span>
         <span class="c">! aux arrays were set unless at least 1 step taken on all levels</span>
-        <span class="nv">aux</span><span class="p">(</span><span class="mi">1</span><span class="p">,:,:)</span> <span class="o">=</span> <span class="nv">NEEDS_TO_BE_SET</span> <span class="c">! new system checks this val before setting</span>
-        <span class="k">call </span><span class="nv">setaux</span><span class="p">(</span><span class="nv">mbc</span><span class="p">,</span><span class="nv">mx</span><span class="p">,</span><span class="nv">my</span><span class="p">,</span><span class="nv">xlower</span><span class="p">,</span><span class="nv">ylower</span><span class="p">,</span><span class="nv">dx</span><span class="p">,</span><span class="nv">dy</span><span class="p">,</span><span class="nv">maux</span><span class="p">,</span><span class="nv">aux</span><span class="p">)</span>
-        <span class="k">endif</span>
+        <span class="n">aux</span><span class="p">(</span><span class="mi">1</span><span class="p">,:,:)</span> <span class="o">=</span> <span class="n">NEEDS_TO_BE_SET</span> <span class="c">! new system checks this val before setting</span>
+        <span class="k">call </span><span class="n">setaux</span><span class="p">(</span><span class="n">mbc</span><span class="p">,</span><span class="n">mx</span><span class="p">,</span><span class="n">my</span><span class="p">,</span><span class="n">xlower</span><span class="p">,</span><span class="n">ylower</span><span class="p">,</span><span class="n">dx</span><span class="p">,</span><span class="n">dy</span><span class="p">,</span><span class="n">maux</span><span class="p">,</span><span class="n">aux</span><span class="p">)</span>
+    <span class="n">endif</span>
 
+    <span class="c">! Set wind and pressure aux variables for this grid</span>
+    <span class="k">call </span><span class="n">set_storm_fields</span><span class="p">(</span><span class="n">maux</span><span class="p">,</span><span class="n">mbc</span><span class="p">,</span><span class="n">mx</span><span class="p">,</span><span class="n">my</span><span class="p">,</span><span class="n">xlower</span><span class="p">,</span><span class="n">ylower</span><span class="p">,</span><span class="n">dx</span><span class="p">,</span><span class="n">dy</span><span class="p">,</span><span class="n">t</span><span class="p">,</span><span class="n">aux</span><span class="p">)</span>
 
-<span class="k">end subroutine </span><span class="nv">b4step2</span>
+<span class="k">end subroutine </span><span class="n">b4step2</span>
 </pre></div>
 </td></tr></table></div>
 </div>
@@ -320,7 +328,7 @@ with latitude when <cite>coordinate_system == 2</cite>).</p>
 <p><a href="http://clawpack.org/">
     <img class="logo" src= "_static/clawlogo.jpg" alt="Logo"/>
 </a>
-<h2>Version 5.2.2</h2>
+<h2>Version 5.3.0</h2>
 </p>
   <h3><a href="contents.html">Table Of Contents</a></h3>
   <ul>
@@ -357,7 +365,7 @@ with latitude when <cite>coordinate_system == 2</cite>).</p>
       <div class="clearer"></div>
     </div>
   <div class="footer">
-    &copy; Copyright 2014, The Clawpack Development Team.
+    &copy; Copyright 2015, The Clawpack Development Team.
     Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
   </div>
   <script>

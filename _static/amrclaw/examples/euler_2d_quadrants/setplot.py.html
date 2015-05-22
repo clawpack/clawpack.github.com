@@ -15,7 +15,7 @@
            <font FACE="HELVETICA,ARIAL">
            
 <!-- Created from the file /Users/rjl/git/clawpack/amrclaw/examples/euler_2d_quadrants/setplot.py -->
-<!-- Date: Mon Sep  1 2014 at 16:28:16 -->
+<!-- Date: Sun May 17 2015 at 20:33:15 -->
 
 <table bgcolor="#FFEE99"> <tr> <td>
 &nbsp;<font size=6> setplot.py.html </font> </td>
@@ -27,7 +27,7 @@
 </td></tr><tr><td>
 &nbsp;Directory:  &nbsp; /Users/rjl/git/clawpack/amrclaw/examples/euler_2d_quadrants 
 </td></tr><tr><td>
-&nbsp;Converted:  &nbsp; Mon Sep  1 2014 at 16:28:16 
+&nbsp;Converted:  &nbsp; Sun May 17 2015 at 20:33:15 
 &nbsp; using <a href="http://clawpack.github.io//doc/application_documentation.html#clawcode2html">clawcode2html</a>
 </td></tr><tr><td>
 <font color="#BB3300"> &nbsp;This documentation file will 
@@ -69,7 +69,8 @@ def setplot(plotdata):
     plotaxes.xlimits = 'auto'
     plotaxes.ylimits = 'auto'
     plotaxes.title = 'Density'
-    plotaxes.afteraxes = "pylab.axis('scaled')" 
+    plotaxes.scaled = True
+    plotaxes.afteraxes = addgauges
 
     <font color="blue"># Set up for item on these axes:</font>
     plotitem = plotaxes.new_plotitem(plot_type='2d_pcolor')
@@ -117,6 +118,25 @@ def setplot(plotdata):
     plotitem.amr_patchedges_show = [1]
 
 
+    <font color="blue">#-----------------------------------------</font>
+    <font color="blue"># Figures for gauges</font>
+    <font color="blue">#-----------------------------------------</font>
+    plotfigure = plotdata.new_plotfigure(name='q', figno=300, \
+                    type='each_gauge')
+    plotfigure.clf_each_gauge = True
+
+    <font color="blue"># Set up for axes in this figure:</font>
+    plotaxes = plotfigure.new_plotaxes()
+    plotaxes.xlimits = 'auto'
+    plotaxes.ylimits = 'auto'
+    plotaxes.title = 'Density'
+
+    <font color="blue"># Plot q as blue curve:</font>
+    plotitem = plotaxes.new_plotitem(plot_type='1d_plot')
+    plotitem.plot_var = 0
+    plotitem.plotstyle = 'b-'
+
+
     <font color="blue"># Parameters used only when creating html and/or latex hardcopy</font>
     <font color="blue"># e.g., via clawpack.visclaw.frametools.printframes:</font>
 
@@ -135,4 +155,11 @@ def setplot(plotdata):
     return plotdata
 
     
+<font color="blue"># To plot gauge locations on pcolor or contour plot, use this as</font>
+<font color="blue"># an afteraxis function:</font>
+
+def addgauges(current_data):
+    from clawpack.visclaw import gaugetools
+    gaugetools.plot_gauge_locations(current_data.plotdata, \
+         gaugenos='all', format_string='ko', add_labels=True)
 </pre></html>

@@ -15,7 +15,7 @@
            <font FACE="HELVETICA,ARIAL">
            
 <!-- Created from the file /Users/rjl/git/clawpack/geoclaw/examples/storm-surge/ike/setrun.py -->
-<!-- Date: Mon Sep  1 2014 at 16:45:43 -->
+<!-- Date: Sun May 17 2015 at 21:13:15 -->
 
 <table bgcolor="#FFEE99"> <tr> <td>
 &nbsp;<font size=6> setrun.py.html </font> </td>
@@ -27,7 +27,7 @@
 </td></tr><tr><td>
 &nbsp;Directory:  &nbsp; /Users/rjl/git/clawpack/geoclaw/examples/storm-surge/ike 
 </td></tr><tr><td>
-&nbsp;Converted:  &nbsp; Mon Sep  1 2014 at 16:45:43 
+&nbsp;Converted:  &nbsp; Sun May 17 2015 at 21:13:15 
 &nbsp; using <a href="http://clawpack.github.io//doc/application_documentation.html#clawcode2html">clawcode2html</a>
 </td></tr><tr><td>
 <font color="#BB3300"> &nbsp;This documentation file will 
@@ -49,14 +49,15 @@ import datetime
 
 import numpy as np
 
-import clawpack.geoclaw.surge.data as surge
-
 <font color="blue"># Need to adjust the date a bit due to weirdness with leap year (I think)</font>
 ike_landfall = datetime.datetime(2008,9,13 - 1,7) - datetime.datetime(2008,1,1,0)
 
 <font color="blue">#                           days   s/hour    hours/day            </font>
 days2seconds = lambda days: days * 60.0**2 * 24.0
 seconds2days = lambda seconds: seconds / (60.0**2 * 24.0)
+
+<font color="blue"># Scratch directory for storing topo and dtopo files:</font>
+scratch_dir = os.path.join(os.environ["CLAW"], 'geoclaw', 'scratch')
 
 <font color="blue">#------------------------------</font>
 def setrun(claw_pkg='geoclaw'):
@@ -430,7 +431,8 @@ def setgeo(rundata):
     <font color="blue"># See regions for control over these regions, need better bathy data for the</font>
     <font color="blue"># smaller domains</font>
     topo_data.topofiles.append([3, 1, 5, rundata.clawdata.t0, rundata.clawdata.tfinal, 
-                              'gulf_caribbean.tt3'])
+                                os.path.join(scratch_dir, 'gulf_caribbean.tt3')])
+
     <font color="blue"># == setdtopo.data values ==</font>
     dtopo_data = rundata.dtopo_data
     dtopo_data.dtopofiles = []
@@ -449,14 +451,10 @@ def setgeo(rundata):
     <font color="blue"># [t1,t2,noutput,x1,x2,y1,y2,xpoints,ypoints,\</font>
     <font color="blue">#  ioutarrivaltimes,ioutsurfacemax]</font>
 
-    return rundata
-    <font color="blue"># end of function setgeo</font>
-    <font color="blue"># ----------------------</font>
-
-
-def set_storm(rundata):
-
-    data = rundata.stormdata
+    <font color="blue"># ================</font>
+    <font color="blue">#  Set Surge Data</font>
+    <font color="blue"># ================</font>
+    data = rundata.surge_data
 
     <font color="blue"># Physics parameters</font>
     data.rho_air = 1.15
@@ -478,12 +476,10 @@ def set_storm(rundata):
     <font color="blue"># Storm type 2 - Idealized storm track</font>
     data.storm_file = os.path.expandvars(os.path.join(os.getcwd(),'ike.storm'))
 
-    return data
-
-
-def set_friction(rundata):
-
-    data = rundata.frictiondata
+    <font color="blue"># =======================</font>
+    <font color="blue">#  Set Variable Friction</font>
+    <font color="blue"># =======================</font>
+    data = rundata.friction_data
 
     <font color="blue"># Variable friction</font>
     data.variable_friction = True
@@ -500,7 +496,9 @@ def set_friction(rundata):
                                   [np.infty,-10.0,-200.0,-np.infty],
                                   [0.030, 0.012, 0.022]])
 
-    return data
+    return rundata
+    <font color="blue"># end of function setgeo</font>
+    <font color="blue"># ----------------------</font>
 
 
 if __name__ == '__main__':
@@ -510,11 +508,6 @@ if __name__ == '__main__':
         rundata = setrun(sys.argv[1])
     else:
         rundata = setrun()
-
-    rundata.add_data(surge.SurgeData(),'stormdata')
-    set_storm(rundata)
-    rundata.add_data(surge.FrictionData(),'frictiondata')
-    set_friction(rundata)
 
     rundata.write()
 </pre></html>
