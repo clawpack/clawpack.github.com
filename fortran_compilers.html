@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Fortran Compilers &mdash; Clawpack 5.3.0 documentation</title>
+    <title>Fortran Compilers &mdash; Clawpack 5.3.1 documentation</title>
     
     <link rel="stylesheet" href="_static/flasky.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -16,7 +16,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '5.3.0',
+        VERSION:     '5.3.1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -28,11 +28,11 @@
     <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="shortcut icon" href="_static/clawicon.ico"/>
     <link rel="author" title="About these documents" href="about.html" />
-    <link rel="top" title="Clawpack 5.3.0 documentation" href="index.html" />
+    <link rel="top" title="Clawpack 5.3.1 documentation" href="contents.html" />
     <link rel="next" title="User files required for the Fortran code" href="user_routines.html" />
     <link rel="prev" title="Fortran version" href="fortran.html" /> 
   </head>
-  <body>
+  <body role="document">
 <div id="main-wrapper" class="sphinx">
 <div id="header-wrapper">
   <section id="header">
@@ -64,7 +64,7 @@
 <div class="decoration"></div>
 </div>
 
-    <div class="related">
+    <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -79,14 +79,14 @@
         <li class="right" >
           <a href="fortran.html" title="Fortran version"
              accesskey="P">previous</a> |</li>
-        <li><a href="contents.html">Clawpack 5.3.0 documentation</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="contents.html">Clawpack 5.3.1 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
-          <div class="body">
+          <div class="body" role="main">
             
   <div class="section" id="fortran-compilers">
 <span id="id1"></span><h1>Fortran Compilers<a class="headerlink" href="#fortran-compilers" title="Permalink to this headline">¶</a></h1>
@@ -128,6 +128,23 @@ code, and this dependency is not handled automatically.  So always do:</p>
 </div>
 <p>before rerunning an example with <cite>make .output</cite> or <cite>make .plots</cite>.</p>
 </div>
+<div class="section" id="lflags-environment-variable">
+<span id="fortran-lfags"></span><h2><cite>LFLAGS</cite> environment variable<a class="headerlink" href="#lflags-environment-variable" title="Permalink to this headline">¶</a></h2>
+<p>The <cite>LFLAGS</cite> environment variable is used to provide flags that are needed when
+linking the final binary.  The most likely use for this flag would be to link a
+particular library with the binary (such as a NetCDF library) or provide a path
+to a compiled module. If this variable is not set in the environment then
+<cite>LFLAGS</cite> defaults to the relevant flags in <cite>FFLAGS</cite>.</p>
+</div>
+<div class="section" id="pre-processor-and-the-ppflags-environment-variable">
+<span id="fortran-ppflags"></span><h2>Pre-Processor and the <cite>PPFLAGS</cite> environment variable<a class="headerlink" href="#pre-processor-and-the-ppflags-environment-variable" title="Permalink to this headline">¶</a></h2>
+<p>Compilers often provide a pre-processor that can scan source code before
+compilation providing some ability to define variables at compile time or
+transform the code.  Currently the pre-processor is always called before
+Clawpack compilation to support optional dependencies, such as NetCDF support,
+and some testing abilities.  The <cite>PPFLAGS</cite> environment variable is meant to
+provide further control of the pre-processor.</p>
+</div>
 <div class="section" id="gfortran-compiler">
 <span id="fortran-gfortran"></span><h2>gfortran compiler<a class="headerlink" href="#gfortran-compiler" title="Permalink to this headline">¶</a></h2>
 <p><em>Some useful flags:</em></p>
@@ -147,8 +164,16 @@ code, and this dependency is not handled automatically.  So always do:</p>
 </pre></div>
 </div>
 <p>In this case you should also set some  environment variables.  See
-<a class="reference internal" href="openmp.html#openmp"><em>Using OpenMP</em></a> for details.</p>
+<a class="reference internal" href="openmp.html#openmp"><span>Using OpenMP</span></a> for details.</p>
 <p><strong>Note:</strong> Versions of gfortran before 4.6 are known to have OpenMP bugs.</p>
+</li>
+<li><p class="first">For using NetCDF:</p>
+<div class="highlight-python"><div class="highlight"><pre>FFLAGS = -DNETCDF -lnetcdf -I$(NETCDF4_DIR)/include
+LFLAGS = -lnetcdf
+</pre></div>
+</div>
+<p>The <cite>FFLAGS</cite> can also be put into <cite>PPFLAGS</cite>.  Note that the variable
+<cite>NETCDF4_DIR</cite> should be defined in the environment.</p>
 </li>
 </ul>
 </div>
@@ -174,6 +199,13 @@ code, and this dependency is not handled automatically.  So always do:</p>
 <p>In this case you should also set the environment variable <cite>OMP_NUM_THREADS</cite>
 to indicate how many threads to use.</p>
 </li>
+<li><p class="first">For using NetCDF:</p>
+<div class="highlight-python"><div class="highlight"><pre>FFLAGS = -DNETCDF -lnetcdf -I$(NETCDF4_DIR)/include
+LFLAGS = -lnetcdf
+</pre></div>
+</div>
+<p>Same as for gfortran above.</p>
+</li>
 </ul>
 </div>
 </div>
@@ -182,18 +214,20 @@ to indicate how many threads to use.</p>
           </div>
         </div>
       </div>
-      <div class="sphinxsidebar">
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
 <p><a href="http://clawpack.org/">
     <img class="logo" src= "_static/clawlogo.jpg" alt="Logo"/>
 </a>
-<h2>Version 5.3.0</h2>
+<h2>Version 5.3.1</h2>
 </p>
   <h3><a href="contents.html">Table Of Contents</a></h3>
   <ul>
 <li><a class="reference internal" href="#">Fortran Compilers</a><ul>
 <li><a class="reference internal" href="#fc-environment-variable"><cite>FC</cite> environment variable</a></li>
 <li><a class="reference internal" href="#fflags-environment-variable"><cite>FFLAGS</cite> environment variable</a></li>
+<li><a class="reference internal" href="#lflags-environment-variable"><cite>LFLAGS</cite> environment variable</a></li>
+<li><a class="reference internal" href="#pre-processor-and-the-ppflags-environment-variable">Pre-Processor and the <cite>PPFLAGS</cite> environment variable</a></li>
 <li><a class="reference internal" href="#gfortran-compiler">gfortran compiler</a></li>
 <li><a class="reference internal" href="#intel-fortran-compiler">Intel fortran compiler</a></li>
 </ul>
@@ -206,12 +240,14 @@ to indicate how many threads to use.</p>
       <li>Next: <a href="user_routines.html" title="next chapter">User files required for the Fortran code</a></li>
   </ul></li>
 </ul>
-  <h3>This Page</h3>
-  <ul class="this-page-menu">
-    <li><a href="_sources/fortran_compilers.txt"
-           rel="nofollow">Show Source</a></li>
-  </ul>
-<div id="searchbox" style="display: none">
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/fortran_compilers.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
     <form class="search" action="search.html" method="get">
       <input type="text" name="q" />

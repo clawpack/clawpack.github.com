@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Adaptive mesh refinement (AMR) algorithms &mdash; Clawpack 5.3.0 documentation</title>
+    <title>Adaptive mesh refinement (AMR) algorithms &mdash; Clawpack 5.3.1 documentation</title>
     
     <link rel="stylesheet" href="_static/flasky.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -16,7 +16,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '5.3.0',
+        VERSION:     '5.3.1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -28,11 +28,11 @@
     <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="shortcut icon" href="_static/clawicon.ico"/>
     <link rel="author" title="About these documents" href="about.html" />
-    <link rel="top" title="Clawpack 5.3.0 documentation" href="index.html" />
+    <link rel="top" title="Clawpack 5.3.1 documentation" href="contents.html" />
     <link rel="next" title="AMR refinement criteria" href="refinement.html" />
     <link rel="prev" title="Sample setrun.py module for AMRClaw" href="setrun_amrclaw_sample.html" /> 
   </head>
-  <body>
+  <body role="document">
 <div id="main-wrapper" class="sphinx">
 <div id="header-wrapper">
   <section id="header">
@@ -64,7 +64,7 @@
 <div class="decoration"></div>
 </div>
 
-    <div class="related">
+    <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -79,27 +79,27 @@
         <li class="right" >
           <a href="setrun_amrclaw_sample.html" title="Sample setrun.py module for AMRClaw"
              accesskey="P">previous</a> |</li>
-        <li><a href="contents.html">Clawpack 5.3.0 documentation</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="contents.html">Clawpack 5.3.1 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
-          <div class="body">
+          <div class="body" role="main">
             
   <div class="section" id="adaptive-mesh-refinement-amr-algorithms">
 <span id="amr-algorithm"></span><h1>Adaptive mesh refinement (AMR) algorithms<a class="headerlink" href="#adaptive-mesh-refinement-amr-algorithms" title="Permalink to this headline">¶</a></h1>
-<p>The basic adaptive refinment strategy used in <a class="reference internal" href="amrclaw.html#amrclaw"><em>AMRClaw</em></a> is
+<p>The basic adaptive refinment strategy used in <a class="reference internal" href="amrclaw.html#amrclaw"><span>AMRClaw</span></a> is
 to refine on logically rectangular patches.  A single Level 1 grid covers
 the entire domain (usually &#8212; if it is too large it may be split into
 multiple Level 1 grids).  Some rectangular portions of this grid are covered
 by Level 2 grids refined by some refinement factor <em>R</em> in each direction
-(anisotropic refinement is now allowed too &#8212; see <a class="reference internal" href="setrun_amrclaw.html#setrun-amrclaw"><em>Specifying AMRClaw run-time parameters in setrun.py</em></a>).
+(anisotropic refinement is now allowed too &#8212; see <a class="reference internal" href="setrun_amrclaw.html#setrun-amrclaw"><span>Specifying AMRClaw run-time parameters in setrun.py</span></a>).
 Regions of each Level 2 grid may be covered by Level 3 grids, that are
 further refined (perhaps with a different refinement ratio).  And so on.</p>
 <p>For the hyperbolic solvers in Clawpack the time step is limited by the
-Courant number (see Section <em class="xref std std-ref">cfl</em>), and so if the spatial resolution is
+Courant number (see Section <span class="xref std std-ref">cfl</span>), and so if the spatial resolution is
 refined by a factor of <em>R</em> in each direction then the time step will
 generally have to be reduced by a factor <em>R</em> as well.</p>
 <p>The AMR code thus proceeds as follows:</p>
@@ -118,7 +118,7 @@ Level 2 grid, where <em>R</em> denotes the desired refinement ratio in
 time from Level 1 to Level 2.</p>
 <p>For each of these time step, ghost cell
 values must be filled in around all boundaries of each Level 2 grid.
-This procedure is defined below in <a class="reference internal" href="#amr-bc"><em>Ghost cells and boundary conditions for AMR</em></a>.</p>
+This procedure is defined below in <a class="reference internal" href="#amr-bc"><span>Ghost cells and boundary conditions for AMR</span></a>.</p>
 </li>
 <li><p class="first">After taking <em>R</em> steps on Level 2 grids, values on the Level 1 grid are
 updated to be consistent with the Level 2 grids.  Any cell on Level 1
@@ -165,7 +165,7 @@ periodic boundary conditions are specified (see below).</li>
 </div></blockquote>
 <p>For many standard boundary conditions it is not necessary for the user to do
 anything beyond setting appropriate parameters in <em>setrun.py</em> (see
-<a class="reference internal" href="setrun.html#setrun"><em>Specifying classic run-time parameters in setrun.py</em></a>).  Only if user-specified boundary conditions are
+<a class="reference internal" href="setrun.html#setrun"><span>Specifying classic run-time parameters in setrun.py</span></a>).  Only if user-specified boundary conditions are
 specified is it necessary to modify the library
 routine <em>bcNamr.f</em> (after copying to your application directory so as not to
 damage the library version, and modifying the <em>Makefile</em> to point to the new
@@ -212,7 +212,7 @@ with filling ghost cells and doing the conservation fix-up around edges
 of grids.</li>
 </ul>
 </div></blockquote>
-<p>A parameter <em>cutoff</em> can be specified (see <a class="reference internal" href="setrun_amrclaw.html#setrun-amrclaw"><em>Specifying AMRClaw run-time parameters in setrun.py</em></a>) to control
+<p>A parameter <em>cutoff</em> can be specified (see <a class="reference internal" href="setrun_amrclaw.html#setrun-amrclaw"><span>Specifying AMRClaw run-time parameters in setrun.py</span></a>) to control
 clustering.  The algorithm will choose the grids in such a way that at least
 this fraction of all the grid points in all the new grids will be in cells
 that were flagged as needing refinement.  Usually <em>cutoff = 0.7</em> is used, so
@@ -231,7 +231,7 @@ interpolation is performed based on the Level k grids.</li>
 <div class="section" id="flagging-cells-for-refinement">
 <span id="amr-flag"></span><h2>Flagging cells for refinement<a class="headerlink" href="#flagging-cells-for-refinement" title="Permalink to this headline">¶</a></h2>
 <p>The user can control the criteria used for flagging cells for refinement.</p>
-<p>See <a class="reference internal" href="refinement.html#refinement"><em>AMR refinement criteria</em></a> for details.</p>
+<p>See <a class="reference internal" href="refinement.html#refinement"><span>AMR refinement criteria</span></a> for details.</p>
 </div>
 </div>
 
@@ -239,12 +239,12 @@ interpolation is performed based on the Level k grids.</li>
           </div>
         </div>
       </div>
-      <div class="sphinxsidebar">
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
 <p><a href="http://clawpack.org/">
     <img class="logo" src= "_static/clawlogo.jpg" alt="Logo"/>
 </a>
-<h2>Version 5.3.0</h2>
+<h2>Version 5.3.1</h2>
 </p>
   <h3><a href="contents.html">Table Of Contents</a></h3>
   <ul>
@@ -262,12 +262,14 @@ interpolation is performed based on the Level k grids.</li>
       <li>Next: <a href="refinement.html" title="next chapter">AMR refinement criteria</a></li>
   </ul></li>
 </ul>
-  <h3>This Page</h3>
-  <ul class="this-page-menu">
-    <li><a href="_sources/amr_algorithm.txt"
-           rel="nofollow">Show Source</a></li>
-  </ul>
-<div id="searchbox" style="display: none">
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/amr_algorithm.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
     <form class="search" action="search.html" method="get">
       <input type="text" name="q" />
