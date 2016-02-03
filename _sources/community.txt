@@ -59,7 +59,14 @@ Upcoming
 
 Please join us at one of the upcoming sessions, or help plan one elsewhere...
 
-- Claw-Dev workshop in September (?), 2015 (Date and location TBD).
+- GeoClaw Tutorial May 19, 2016 at the `CSDMS Annual Meeting
+  <http://csdms.colorado.edu/wiki/Form:CSDMS_annual_meeting>`_, Boulder, CO.
+
+- Many developers will be at the `SIAM Annual meeting
+  <http://www.siam.org/meetings/an16/>`_ July 11-15, 2016 in Boston.  
+  There may be a coding spring planned.
+
+- Claw-Dev workshop August 25-27, 2016 at the University of Washington.
 
 Previous
 ^^^^^^^^

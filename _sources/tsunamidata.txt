@@ -41,10 +41,10 @@ This data must then be converted into seafloor deformation to create the
 is often done using the Okada model as described at
 :ref:`okada`.
 
-* `USGS archive <http://earthquake.usgs.gov/earthquakes/eqinthenews/2012/>`_
+* `USGS archive <http://earthquake.usgs.gov/earthquakes/eqinthenews>`_
 * `Chen Ji's archive, UCSB
   <http://www.geol.ucsb.edu/faculty/ji/big_earthquakes/home.html>`_
-
+* `Caltech Tectonics Observatory <http://tectonics.caltech.edu/slip_history/index.html>`_
 
 DART buoy data
 --------------
