@@ -111,8 +111,8 @@ involving the collision of two shock waves.</p>
 </ul>
 </div></blockquote>
 </div>
-<div class="highlight-python"><div class="highlight"><pre><span class="c">#!/usr/bin/env python</span>
-<span class="c"># encoding: utf-8</span>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1"># encoding: utf-8</span>
 <span class="sd">r&quot;&quot;&quot;</span>
 <span class="sd">Woodward-Colella blast wave problem</span>
 <span class="sd">===================================</span>
@@ -138,43 +138,43 @@ involving the collision of two shock waves.</p>
 <span class="kn">from</span> <span class="nn">clawpack</span> <span class="kn">import</span> <span class="n">riemann</span>
 <span class="kn">from</span> <span class="nn">clawpack.riemann.euler_with_efix_1D_constants</span> <span class="kn">import</span> <span class="o">*</span>
 
-<span class="c"># Compile Fortran code if not already compiled</span>
+<span class="c1"># Compile Fortran code if not already compiled</span>
 <span class="k">try</span><span class="p">:</span>
     <span class="kn">import</span> <span class="nn">sharpclaw1</span>
 <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
     <span class="kn">import</span> <span class="nn">os</span>
     <span class="kn">from</span> <span class="nn">clawpack.pyclaw.util</span> <span class="kn">import</span> <span class="n">inplace_build</span>
     <span class="n">this_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">__file__</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">this_dir</span> <span class="o">==</span> <span class="s">&#39;&#39;</span><span class="p">:</span>
-        <span class="n">this_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="s">&#39;.&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">this_dir</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span><span class="p">:</span>
+        <span class="n">this_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)</span>
     <span class="n">inplace_build</span><span class="p">(</span><span class="n">this_dir</span><span class="p">)</span>
     <span class="k">try</span><span class="p">:</span>
-        <span class="c"># Now try to import again</span>
+        <span class="c1"># Now try to import again</span>
         <span class="kn">import</span> <span class="nn">sharpclaw1</span>
     <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
         <span class="kn">import</span> <span class="nn">logging</span>
         <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">()</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s">&#39;unable to compile Fortran modules; some SharpClaw options will not be available for this example&#39;</span><span class="p">)</span>
-        <span class="k">print</span> <span class="s">&#39;unable to compile Fortran modules; some SharpClaw options will not be available for this example&#39;</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s1">&#39;unable to compile Fortran modules; some SharpClaw options will not be available for this example&#39;</span><span class="p">)</span>
+        <span class="k">print</span> <span class="s1">&#39;unable to compile Fortran modules; some SharpClaw options will not be available for this example&#39;</span>
         <span class="k">raise</span>
 
-<span class="n">gamma</span> <span class="o">=</span> <span class="mf">1.4</span> <span class="c"># Ratio of specific heats</span>
+<span class="n">gamma</span> <span class="o">=</span> <span class="mf">1.4</span> <span class="c1"># Ratio of specific heats</span>
 
-<span class="k">def</span> <span class="nf">setup</span><span class="p">(</span><span class="n">use_petsc</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span><span class="n">outdir</span><span class="o">=</span><span class="s">&#39;./_output&#39;</span><span class="p">,</span><span class="n">solver_type</span><span class="o">=</span><span class="s">&#39;sharpclaw&#39;</span><span class="p">,</span><span class="n">kernel_language</span><span class="o">=</span><span class="s">&#39;Fortran&#39;</span><span class="p">,</span><span class="n">tfluct_solver</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">setup</span><span class="p">(</span><span class="n">use_petsc</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span><span class="n">outdir</span><span class="o">=</span><span class="s1">&#39;./_output&#39;</span><span class="p">,</span><span class="n">solver_type</span><span class="o">=</span><span class="s1">&#39;sharpclaw&#39;</span><span class="p">,</span><span class="n">kernel_language</span><span class="o">=</span><span class="s1">&#39;Fortran&#39;</span><span class="p">,</span><span class="n">tfluct_solver</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
 
     <span class="k">if</span> <span class="n">use_petsc</span><span class="p">:</span>
         <span class="kn">import</span> <span class="nn">clawpack.petclaw</span> <span class="kn">as</span> <span class="nn">pyclaw</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="kn">from</span> <span class="nn">clawpack</span> <span class="kn">import</span> <span class="n">pyclaw</span>
 
-    <span class="k">if</span> <span class="n">kernel_language</span> <span class="o">==</span><span class="s">&#39;Python&#39;</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">kernel_language</span> <span class="o">==</span><span class="s1">&#39;Python&#39;</span><span class="p">:</span>
         <span class="n">rs</span> <span class="o">=</span> <span class="n">riemann</span><span class="o">.</span><span class="n">euler_1D_py</span><span class="o">.</span><span class="n">euler_roe_1D</span>
-    <span class="k">elif</span> <span class="n">kernel_language</span> <span class="o">==</span><span class="s">&#39;Fortran&#39;</span><span class="p">:</span>
+    <span class="k">elif</span> <span class="n">kernel_language</span> <span class="o">==</span><span class="s1">&#39;Fortran&#39;</span><span class="p">:</span>
         <span class="n">rs</span> <span class="o">=</span> <span class="n">riemann</span><span class="o">.</span><span class="n">euler_with_efix_1D</span>
 
-    <span class="k">if</span> <span class="n">solver_type</span><span class="o">==</span><span class="s">&#39;sharpclaw&#39;</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">solver_type</span><span class="o">==</span><span class="s1">&#39;sharpclaw&#39;</span><span class="p">:</span>
         <span class="n">solver</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">SharpClawSolver1D</span><span class="p">(</span><span class="n">rs</span><span class="p">)</span>
-        <span class="n">solver</span><span class="o">.</span><span class="n">time_integrator</span> <span class="o">=</span> <span class="s">&#39;SSP33&#39;</span>
+        <span class="n">solver</span><span class="o">.</span><span class="n">time_integrator</span> <span class="o">=</span> <span class="s1">&#39;SSP33&#39;</span>
         <span class="n">solver</span><span class="o">.</span><span class="n">cfl_max</span> <span class="o">=</span> <span class="mf">0.65</span>
         <span class="n">solver</span><span class="o">.</span><span class="n">cfl_desired</span> <span class="o">=</span> <span class="mf">0.6</span>
         <span class="n">solver</span><span class="o">.</span><span class="n">tfluct_solver</span> <span class="o">=</span> <span class="n">tfluct_solver</span>
@@ -185,8 +185,8 @@ involving the collision of two shock waves.</p>
             <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
                 <span class="kn">import</span> <span class="nn">logging</span>
                 <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">()</span>
-                <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s">&#39;Unable to load tfluct solver, did you run make?&#39;</span><span class="p">)</span>
-                <span class="k">print</span> <span class="s">&#39;Unable to load tfluct solver, did you run make?&#39;</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;Unable to load tfluct solver, did you run make?&#39;</span><span class="p">)</span>
+                <span class="k">print</span> <span class="s1">&#39;Unable to load tfluct solver, did you run make?&#39;</span>
                 <span class="k">raise</span>
         <span class="n">solver</span><span class="o">.</span><span class="n">lim_type</span> <span class="o">=</span> <span class="mi">1</span>
         <span class="n">solver</span><span class="o">.</span><span class="n">char_decomp</span> <span class="o">=</span> <span class="mi">2</span>
@@ -195,7 +195,7 @@ involving the collision of two shock waves.</p>
             <span class="n">solver</span><span class="o">.</span><span class="n">fmod</span> <span class="o">=</span> <span class="n">sharpclaw1</span>
         <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
             <span class="k">pass</span>
-    <span class="k">elif</span> <span class="n">solver_type</span><span class="o">==</span><span class="s">&#39;classic&#39;</span><span class="p">:</span>
+    <span class="k">elif</span> <span class="n">solver_type</span><span class="o">==</span><span class="s1">&#39;classic&#39;</span><span class="p">:</span>
         <span class="n">solver</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">ClawSolver1D</span><span class="p">(</span><span class="n">rs</span><span class="p">)</span>
         <span class="n">solver</span><span class="o">.</span><span class="n">limiters</span> <span class="o">=</span> <span class="mi">4</span>
 
@@ -205,13 +205,13 @@ involving the collision of two shock waves.</p>
     <span class="n">solver</span><span class="o">.</span><span class="n">bc_upper</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">=</span><span class="n">pyclaw</span><span class="o">.</span><span class="n">BC</span><span class="o">.</span><span class="n">wall</span>
 
     <span class="n">mx</span> <span class="o">=</span> <span class="mi">800</span><span class="p">;</span>
-    <span class="n">x</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">Dimension</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span><span class="mf">1.0</span><span class="p">,</span><span class="n">mx</span><span class="p">,</span><span class="n">name</span><span class="o">=</span><span class="s">&#39;x&#39;</span><span class="p">)</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">Dimension</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span><span class="mf">1.0</span><span class="p">,</span><span class="n">mx</span><span class="p">,</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;x&#39;</span><span class="p">)</span>
     <span class="n">domain</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">Domain</span><span class="p">([</span><span class="n">x</span><span class="p">])</span>
     <span class="n">state</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">State</span><span class="p">(</span><span class="n">domain</span><span class="p">,</span><span class="n">num_eqn</span><span class="p">)</span>
 
-    <span class="n">state</span><span class="o">.</span><span class="n">problem_data</span><span class="p">[</span><span class="s">&#39;gamma&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">gamma</span>
-    <span class="k">if</span> <span class="n">kernel_language</span> <span class="o">==</span><span class="s">&#39;Python&#39;</span><span class="p">:</span>
-        <span class="n">state</span><span class="o">.</span><span class="n">problem_data</span><span class="p">[</span><span class="s">&#39;efix&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">False</span>
+    <span class="n">state</span><span class="o">.</span><span class="n">problem_data</span><span class="p">[</span><span class="s1">&#39;gamma&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">gamma</span>
+    <span class="k">if</span> <span class="n">kernel_language</span> <span class="o">==</span><span class="s1">&#39;Python&#39;</span><span class="p">:</span>
+        <span class="n">state</span><span class="o">.</span><span class="n">problem_data</span><span class="p">[</span><span class="s1">&#39;efix&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">False</span>
 
     <span class="n">x</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">centers</span>
 
@@ -230,37 +230,37 @@ involving the collision of two shock waves.</p>
 
     <span class="k">return</span> <span class="n">claw</span>
 
-<span class="c">#--------------------------</span>
+<span class="c1">#--------------------------</span>
 <span class="k">def</span> <span class="nf">setplot</span><span class="p">(</span><span class="n">plotdata</span><span class="p">):</span>
-<span class="c">#--------------------------</span>
+<span class="c1">#--------------------------</span>
     <span class="sd">&quot;&quot;&quot; </span>
 <span class="sd">    Specify what is to be plotted at each frame.</span>
 <span class="sd">    Input:  plotdata, an instance of visclaw.data.ClawPlotData.</span>
 <span class="sd">    Output: a modified version of plotdata.</span>
 <span class="sd">    &quot;&quot;&quot;</span> 
-    <span class="n">plotdata</span><span class="o">.</span><span class="n">clearfigures</span><span class="p">()</span>  <span class="c"># clear any old figures,axes,items data</span>
+    <span class="n">plotdata</span><span class="o">.</span><span class="n">clearfigures</span><span class="p">()</span>  <span class="c1"># clear any old figures,axes,items data</span>
 
-    <span class="n">plotfigure</span> <span class="o">=</span> <span class="n">plotdata</span><span class="o">.</span><span class="n">new_plotfigure</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">&#39;&#39;</span><span class="p">,</span> <span class="n">figno</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">plotfigure</span> <span class="o">=</span> <span class="n">plotdata</span><span class="o">.</span><span class="n">new_plotfigure</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">figno</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
 
     <span class="n">plotaxes</span> <span class="o">=</span> <span class="n">plotfigure</span><span class="o">.</span><span class="n">new_plotaxes</span><span class="p">()</span>
-    <span class="n">plotaxes</span><span class="o">.</span><span class="n">axescmd</span> <span class="o">=</span> <span class="s">&#39;subplot(211)&#39;</span>
-    <span class="n">plotaxes</span><span class="o">.</span><span class="n">title</span> <span class="o">=</span> <span class="s">&#39;Density&#39;</span>
+    <span class="n">plotaxes</span><span class="o">.</span><span class="n">axescmd</span> <span class="o">=</span> <span class="s1">&#39;subplot(211)&#39;</span>
+    <span class="n">plotaxes</span><span class="o">.</span><span class="n">title</span> <span class="o">=</span> <span class="s1">&#39;Density&#39;</span>
 
-    <span class="n">plotitem</span> <span class="o">=</span> <span class="n">plotaxes</span><span class="o">.</span><span class="n">new_plotitem</span><span class="p">(</span><span class="n">plot_type</span><span class="o">=</span><span class="s">&#39;1d&#39;</span><span class="p">)</span>
+    <span class="n">plotitem</span> <span class="o">=</span> <span class="n">plotaxes</span><span class="o">.</span><span class="n">new_plotitem</span><span class="p">(</span><span class="n">plot_type</span><span class="o">=</span><span class="s1">&#39;1d&#39;</span><span class="p">)</span>
     <span class="n">plotitem</span><span class="o">.</span><span class="n">plot_var</span> <span class="o">=</span> <span class="n">density</span>
-    <span class="n">plotitem</span><span class="o">.</span><span class="n">kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;linewidth&#39;</span><span class="p">:</span><span class="mi">3</span><span class="p">}</span>
+    <span class="n">plotitem</span><span class="o">.</span><span class="n">kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;linewidth&#39;</span><span class="p">:</span><span class="mi">3</span><span class="p">}</span>
     
     <span class="n">plotaxes</span> <span class="o">=</span> <span class="n">plotfigure</span><span class="o">.</span><span class="n">new_plotaxes</span><span class="p">()</span>
-    <span class="n">plotaxes</span><span class="o">.</span><span class="n">axescmd</span> <span class="o">=</span> <span class="s">&#39;subplot(212)&#39;</span>
-    <span class="n">plotaxes</span><span class="o">.</span><span class="n">title</span> <span class="o">=</span> <span class="s">&#39;Energy&#39;</span>
+    <span class="n">plotaxes</span><span class="o">.</span><span class="n">axescmd</span> <span class="o">=</span> <span class="s1">&#39;subplot(212)&#39;</span>
+    <span class="n">plotaxes</span><span class="o">.</span><span class="n">title</span> <span class="o">=</span> <span class="s1">&#39;Energy&#39;</span>
 
-    <span class="n">plotitem</span> <span class="o">=</span> <span class="n">plotaxes</span><span class="o">.</span><span class="n">new_plotitem</span><span class="p">(</span><span class="n">plot_type</span><span class="o">=</span><span class="s">&#39;1d&#39;</span><span class="p">)</span>
+    <span class="n">plotitem</span> <span class="o">=</span> <span class="n">plotaxes</span><span class="o">.</span><span class="n">new_plotitem</span><span class="p">(</span><span class="n">plot_type</span><span class="o">=</span><span class="s1">&#39;1d&#39;</span><span class="p">)</span>
     <span class="n">plotitem</span><span class="o">.</span><span class="n">plot_var</span> <span class="o">=</span> <span class="n">energy</span>
-    <span class="n">plotitem</span><span class="o">.</span><span class="n">kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;linewidth&#39;</span><span class="p">:</span><span class="mi">3</span><span class="p">}</span>
+    <span class="n">plotitem</span><span class="o">.</span><span class="n">kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;linewidth&#39;</span><span class="p">:</span><span class="mi">3</span><span class="p">}</span>
     
     <span class="k">return</span> <span class="n">plotdata</span>
 
-<span class="k">if</span> <span class="n">__name__</span><span class="o">==</span><span class="s">&quot;__main__&quot;</span><span class="p">:</span>
+<span class="k">if</span> <span class="n">__name__</span><span class="o">==</span><span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
     <span class="kn">from</span> <span class="nn">clawpack.pyclaw.util</span> <span class="kn">import</span> <span class="n">run_app_from_main</span>
     <span class="n">output</span> <span class="o">=</span> <span class="n">run_app_from_main</span><span class="p">(</span><span class="n">setup</span><span class="p">,</span><span class="n">setplot</span><span class="p">)</span>
 </pre></div>

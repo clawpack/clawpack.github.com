@@ -102,8 +102,8 @@
 field.  We take a rotational velocity field: <span class="math">\(u = \cos(\theta), v = \sin(\theta)\)</span>.</p>
 <p>This is the simplest example that shows how to use a mapped grid in PyClaw.</p>
 </div>
-<div class="highlight-python"><div class="highlight"><pre><span class="c">#!/usr/bin/env python</span>
-<span class="c"># encoding: utf-8</span>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1"># encoding: utf-8</span>
 <span class="sd">r&quot;&quot;&quot;</span>
 <span class="sd">Advection in an annular domain</span>
 <span class="sd">==============================</span>
@@ -134,7 +134,7 @@ field.  We take a rotational velocity field: <span class="math">\(u = \cos(\thet
 <span class="sd">    &quot;&quot;&quot;</span>  
     <span class="n">p_centers</span> <span class="o">=</span> <span class="p">[]</span>
 
-    <span class="c"># Polar coordinates (first coordinate = radius,  second coordinate = theta)</span>
+    <span class="c1"># Polar coordinates (first coordinate = radius,  second coordinate = theta)</span>
     <span class="n">p_centers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">xc</span><span class="p">[:]</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">yc</span><span class="p">[:]))</span>
     <span class="n">p_centers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">xc</span><span class="p">[:]</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">yc</span><span class="p">[:]))</span>
     
@@ -145,17 +145,17 @@ field.  We take a rotational velocity field: <span class="math">\(u = \cos(\thet
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Initialize with two Gaussian pulses.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="c"># First gaussian pulse</span>
-    <span class="n">A1</span>     <span class="o">=</span> <span class="mf">1.</span>    <span class="c"># Amplitude</span>
-    <span class="n">beta1</span>  <span class="o">=</span> <span class="mf">40.</span>   <span class="c"># Decay factor</span>
-    <span class="n">r1</span>     <span class="o">=</span> <span class="o">-</span><span class="mf">0.5</span>  <span class="c"># r-coordinate of the center</span>
-    <span class="n">theta1</span> <span class="o">=</span> <span class="mf">0.</span>    <span class="c"># theta-coordinate of the center</span>
+    <span class="c1"># First gaussian pulse</span>
+    <span class="n">A1</span>     <span class="o">=</span> <span class="mf">1.</span>    <span class="c1"># Amplitude</span>
+    <span class="n">beta1</span>  <span class="o">=</span> <span class="mf">40.</span>   <span class="c1"># Decay factor</span>
+    <span class="n">r1</span>     <span class="o">=</span> <span class="o">-</span><span class="mf">0.5</span>  <span class="c1"># r-coordinate of the center</span>
+    <span class="n">theta1</span> <span class="o">=</span> <span class="mf">0.</span>    <span class="c1"># theta-coordinate of the center</span>
 
-    <span class="c"># Second gaussian pulse</span>
-    <span class="n">A2</span>     <span class="o">=</span> <span class="o">-</span><span class="mf">1.</span>   <span class="c"># Amplitude</span>
-    <span class="n">beta2</span>  <span class="o">=</span> <span class="mf">40.</span>   <span class="c"># Decay factor</span>
-    <span class="n">r2</span>     <span class="o">=</span> <span class="mf">0.5</span>   <span class="c"># r-coordinate of the centers</span>
-    <span class="n">theta2</span> <span class="o">=</span> <span class="mf">0.</span>    <span class="c"># theta-coordinate of the centers</span>
+    <span class="c1"># Second gaussian pulse</span>
+    <span class="n">A2</span>     <span class="o">=</span> <span class="o">-</span><span class="mf">1.</span>   <span class="c1"># Amplitude</span>
+    <span class="n">beta2</span>  <span class="o">=</span> <span class="mf">40.</span>   <span class="c1"># Decay factor</span>
+    <span class="n">r2</span>     <span class="o">=</span> <span class="mf">0.5</span>   <span class="c1"># r-coordinate of the centers</span>
+    <span class="n">theta2</span> <span class="o">=</span> <span class="mf">0.</span>    <span class="c1"># theta-coordinate of the centers</span>
 
     <span class="n">R</span><span class="p">,</span> <span class="n">Theta</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">p_centers</span>
     <span class="n">state</span><span class="o">.</span><span class="n">q</span><span class="p">[</span><span class="mi">0</span><span class="p">,:,:]</span> <span class="o">=</span> <span class="n">A1</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">beta1</span><span class="o">*</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">square</span><span class="p">(</span><span class="n">R</span><span class="o">-</span><span class="n">r1</span><span class="p">)</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">square</span><span class="p">(</span><span class="n">Theta</span><span class="o">-</span><span class="n">theta1</span><span class="p">)))</span>\
@@ -175,7 +175,7 @@ field.  We take a rotational velocity field: <span class="math">\(u = \cos(\thet
         <span class="n">auxbc</span><span class="p">[:,</span><span class="o">-</span><span class="n">num_ghost</span><span class="p">:,:]</span> <span class="o">=</span> <span class="n">edge_velocities_and_area</span><span class="p">(</span><span class="n">R_edges</span><span class="p">[</span><span class="o">-</span><span class="n">num_ghost</span><span class="o">-</span><span class="mi">1</span><span class="p">:,:],</span><span class="n">Theta_edges</span><span class="p">[</span><span class="o">-</span><span class="n">num_ghost</span><span class="o">-</span><span class="mi">1</span><span class="p">:,:],</span><span class="n">dx</span><span class="p">,</span><span class="n">dy</span><span class="p">)</span>
 
     <span class="k">else</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s">&#39;Custom BC for this boundary is not appropriate!&#39;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;Custom BC for this boundary is not appropriate!&#39;</span><span class="p">)</span>
 
 
 <span class="k">def</span> <span class="nf">ghost_velocities_lower</span><span class="p">(</span><span class="n">state</span><span class="p">,</span><span class="n">dim</span><span class="p">,</span><span class="n">t</span><span class="p">,</span><span class="n">qbc</span><span class="p">,</span><span class="n">auxbc</span><span class="p">,</span><span class="n">num_ghost</span><span class="p">):</span>
@@ -191,7 +191,7 @@ field.  We take a rotational velocity field: <span class="math">\(u = \cos(\thet
         <span class="n">auxbc</span><span class="p">[:,</span><span class="mi">0</span><span class="p">:</span><span class="n">num_ghost</span><span class="p">,:]</span> <span class="o">=</span> <span class="n">edge_velocities_and_area</span><span class="p">(</span><span class="n">R_edges</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="n">num_ghost</span><span class="o">+</span><span class="mi">1</span><span class="p">,:],</span><span class="n">Theta_edges</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="n">num_ghost</span><span class="o">+</span><span class="mi">1</span><span class="p">,:],</span><span class="n">dx</span><span class="p">,</span><span class="n">dy</span><span class="p">)</span>
 
     <span class="k">else</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s">&#39;Custom BC for this boundary is not appropriate!&#39;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;Custom BC for this boundary is not appropriate!&#39;</span><span class="p">)</span>
 
 
 <span class="k">def</span> <span class="nf">edge_velocities_and_area</span><span class="p">(</span><span class="n">R_edges</span><span class="p">,</span><span class="n">Theta_edges</span><span class="p">,</span><span class="n">dx</span><span class="p">,</span><span class="n">dy</span><span class="p">):</span>
@@ -203,35 +203,35 @@ field.  We take a rotational velocity field: <span class="math">\(u = \cos(\thet
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">mx</span> <span class="o">=</span> <span class="n">R_edges</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">-</span><span class="mi">1</span>
     <span class="n">my</span> <span class="o">=</span> <span class="n">R_edges</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">-</span><span class="mi">1</span>
-    <span class="n">aux</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="mi">3</span><span class="p">,</span><span class="n">mx</span><span class="p">,</span><span class="n">my</span><span class="p">),</span> <span class="n">order</span><span class="o">=</span><span class="s">&#39;F&#39;</span><span class="p">)</span>
+    <span class="n">aux</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="mi">3</span><span class="p">,</span><span class="n">mx</span><span class="p">,</span><span class="n">my</span><span class="p">),</span> <span class="n">order</span><span class="o">=</span><span class="s1">&#39;F&#39;</span><span class="p">)</span>
 
-    <span class="c"># Bottom-left corners</span>
+    <span class="c1"># Bottom-left corners</span>
     <span class="n">Xp0</span> <span class="o">=</span> <span class="n">R_edges</span><span class="p">[:</span><span class="n">mx</span><span class="p">,:</span><span class="n">my</span><span class="p">]</span>
     <span class="n">Yp0</span> <span class="o">=</span> <span class="n">Theta_edges</span><span class="p">[:</span><span class="n">mx</span><span class="p">,:</span><span class="n">my</span><span class="p">]</span>
 
-    <span class="c"># Top-left corners</span>
+    <span class="c1"># Top-left corners</span>
     <span class="n">Xp1</span> <span class="o">=</span> <span class="n">R_edges</span><span class="p">[:</span><span class="n">mx</span><span class="p">,</span><span class="mi">1</span><span class="p">:]</span>
     <span class="n">Yp1</span> <span class="o">=</span> <span class="n">Theta_edges</span><span class="p">[:</span><span class="n">mx</span><span class="p">,</span><span class="mi">1</span><span class="p">:]</span>
 
-    <span class="c"># Top-right corners</span>
+    <span class="c1"># Top-right corners</span>
     <span class="n">Xp2</span> <span class="o">=</span> <span class="n">R_edges</span><span class="p">[</span><span class="mi">1</span><span class="p">:,</span><span class="mi">1</span><span class="p">:]</span>
     <span class="n">Yp2</span> <span class="o">=</span> <span class="n">Theta_edges</span><span class="p">[</span><span class="mi">1</span><span class="p">:,</span><span class="mi">1</span><span class="p">:]</span>
 
-    <span class="c"># Top-left corners</span>
+    <span class="c1"># Top-left corners</span>
     <span class="n">Xp3</span> <span class="o">=</span> <span class="n">R_edges</span><span class="p">[</span><span class="mi">1</span><span class="p">:,:</span><span class="n">my</span><span class="p">]</span>
     <span class="n">Yp3</span> <span class="o">=</span> <span class="n">Theta_edges</span><span class="p">[</span><span class="mi">1</span><span class="p">:,:</span><span class="n">my</span><span class="p">]</span>
 
-    <span class="c"># Compute velocity component</span>
+    <span class="c1"># Compute velocity component</span>
     <span class="n">aux</span><span class="p">[</span><span class="mi">0</span><span class="p">,:</span><span class="n">mx</span><span class="p">,:</span><span class="n">my</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">stream</span><span class="p">(</span><span class="n">Xp1</span><span class="p">,</span><span class="n">Yp1</span><span class="p">)</span><span class="o">-</span> <span class="n">stream</span><span class="p">(</span><span class="n">Xp0</span><span class="p">,</span><span class="n">Yp0</span><span class="p">))</span><span class="o">/</span><span class="n">dy</span>
     <span class="n">aux</span><span class="p">[</span><span class="mi">1</span><span class="p">,:</span><span class="n">mx</span><span class="p">,:</span><span class="n">my</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="p">(</span><span class="n">stream</span><span class="p">(</span><span class="n">Xp3</span><span class="p">,</span><span class="n">Yp3</span><span class="p">)</span><span class="o">-</span> <span class="n">stream</span><span class="p">(</span><span class="n">Xp0</span><span class="p">,</span><span class="n">Yp0</span><span class="p">))</span><span class="o">/</span><span class="n">dx</span>
 
-    <span class="c"># Compute area of the physical element</span>
+    <span class="c1"># Compute area of the physical element</span>
     <span class="n">area</span> <span class="o">=</span> <span class="mf">1.</span><span class="o">/</span><span class="mf">2.</span><span class="o">*</span><span class="p">(</span> <span class="p">(</span><span class="n">Yp0</span><span class="o">+</span><span class="n">Yp1</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">Xp1</span><span class="o">-</span><span class="n">Xp0</span><span class="p">)</span> <span class="o">+</span>
                    <span class="p">(</span><span class="n">Yp1</span><span class="o">+</span><span class="n">Yp2</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">Xp2</span><span class="o">-</span><span class="n">Xp1</span><span class="p">)</span> <span class="o">+</span>
                    <span class="p">(</span><span class="n">Yp2</span><span class="o">+</span><span class="n">Yp3</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">Xp3</span><span class="o">-</span><span class="n">Xp2</span><span class="p">)</span> <span class="o">+</span>
                    <span class="p">(</span><span class="n">Yp3</span><span class="o">+</span><span class="n">Yp0</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">Xp0</span><span class="o">-</span><span class="n">Xp3</span><span class="p">)</span> <span class="p">)</span>
     
-    <span class="c"># Compute capa </span>
+    <span class="c1"># Compute capa </span>
     <span class="n">aux</span><span class="p">[</span><span class="mi">2</span><span class="p">,:</span><span class="n">mx</span><span class="p">,:</span><span class="n">my</span><span class="p">]</span> <span class="o">=</span> <span class="n">area</span><span class="o">/</span><span class="p">(</span><span class="n">dx</span><span class="o">*</span><span class="n">dy</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">aux</span>
@@ -245,7 +245,7 @@ field.  We take a rotational velocity field: <span class="math">\(u = \cos(\thet
     <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">*</span><span class="p">(</span><span class="n">Xp</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">Yp</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
 
 
-<span class="k">def</span> <span class="nf">setup</span><span class="p">(</span><span class="n">use_petsc</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span><span class="n">outdir</span><span class="o">=</span><span class="s">&#39;./_output&#39;</span><span class="p">,</span><span class="n">solver_type</span><span class="o">=</span><span class="s">&#39;classic&#39;</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">setup</span><span class="p">(</span><span class="n">use_petsc</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span><span class="n">outdir</span><span class="o">=</span><span class="s1">&#39;./_output&#39;</span><span class="p">,</span><span class="n">solver_type</span><span class="o">=</span><span class="s1">&#39;classic&#39;</span><span class="p">):</span>
     <span class="kn">from</span> <span class="nn">clawpack</span> <span class="kn">import</span> <span class="n">riemann</span>
 
     <span class="k">if</span> <span class="n">use_petsc</span><span class="p">:</span>
@@ -253,12 +253,12 @@ field.  We take a rotational velocity field: <span class="math">\(u = \cos(\thet
     <span class="k">else</span><span class="p">:</span>
         <span class="kn">from</span> <span class="nn">clawpack</span> <span class="kn">import</span> <span class="n">pyclaw</span>
 
-    <span class="k">if</span> <span class="n">solver_type</span> <span class="o">==</span> <span class="s">&#39;classic&#39;</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">solver_type</span> <span class="o">==</span> <span class="s1">&#39;classic&#39;</span><span class="p">:</span>
         <span class="n">solver</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">ClawSolver2D</span><span class="p">(</span><span class="n">riemann</span><span class="o">.</span><span class="n">vc_advection_2D</span><span class="p">)</span>
         <span class="n">solver</span><span class="o">.</span><span class="n">dimensional_split</span> <span class="o">=</span> <span class="bp">False</span>
         <span class="n">solver</span><span class="o">.</span><span class="n">transverse_waves</span> <span class="o">=</span> <span class="mi">2</span>
         <span class="n">solver</span><span class="o">.</span><span class="n">order</span> <span class="o">=</span> <span class="mi">2</span>
-    <span class="k">elif</span> <span class="n">solver_type</span> <span class="o">==</span> <span class="s">&#39;sharpclaw&#39;</span><span class="p">:</span>
+    <span class="k">elif</span> <span class="n">solver_type</span> <span class="o">==</span> <span class="s1">&#39;sharpclaw&#39;</span><span class="p">:</span>
         <span class="n">solver</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">SharpClawSolver2D</span><span class="p">(</span><span class="n">riemann</span><span class="o">.</span><span class="n">vc_advection_2D</span><span class="p">)</span>
 
     <span class="n">solver</span><span class="o">.</span><span class="n">bc_lower</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">BC</span><span class="o">.</span><span class="n">extrap</span>
@@ -287,8 +287,8 @@ field.  We take a rotational velocity field: <span class="math">\(u = \cos(\thet
     <span class="n">theta_upper</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">*</span><span class="mf">2.0</span>
     <span class="n">m_theta</span> <span class="o">=</span> <span class="mi">120</span>
 
-    <span class="n">r</span>     <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">Dimension</span><span class="p">(</span><span class="n">r_lower</span><span class="p">,</span><span class="n">r_upper</span><span class="p">,</span><span class="n">m_r</span><span class="p">,</span><span class="n">name</span><span class="o">=</span><span class="s">&#39;r&#39;</span><span class="p">)</span>
-    <span class="n">theta</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">Dimension</span><span class="p">(</span><span class="n">theta_lower</span><span class="p">,</span><span class="n">theta_upper</span><span class="p">,</span><span class="n">m_theta</span><span class="p">,</span><span class="n">name</span><span class="o">=</span><span class="s">&#39;theta&#39;</span><span class="p">)</span>
+    <span class="n">r</span>     <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">Dimension</span><span class="p">(</span><span class="n">r_lower</span><span class="p">,</span><span class="n">r_upper</span><span class="p">,</span><span class="n">m_r</span><span class="p">,</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;r&#39;</span><span class="p">)</span>
+    <span class="n">theta</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">Dimension</span><span class="p">(</span><span class="n">theta_lower</span><span class="p">,</span><span class="n">theta_upper</span><span class="p">,</span><span class="n">m_theta</span><span class="p">,</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;theta&#39;</span><span class="p">)</span>
     <span class="n">domain</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">Domain</span><span class="p">([</span><span class="n">r</span><span class="p">,</span><span class="n">theta</span><span class="p">])</span>
     <span class="n">domain</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">mapc2p</span> <span class="o">=</span> <span class="n">mapc2p_annulus</span>
     <span class="n">domain</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">num_ghost</span> <span class="o">=</span> <span class="n">solver</span><span class="o">.</span><span class="n">num_ghost</span>
@@ -301,7 +301,7 @@ field.  We take a rotational velocity field: <span class="math">\(u = \cos(\thet
     <span class="n">dx</span><span class="p">,</span> <span class="n">dy</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">delta</span>
     <span class="n">p_corners</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">p_edges</span>
     <span class="n">state</span><span class="o">.</span><span class="n">aux</span> <span class="o">=</span> <span class="n">edge_velocities_and_area</span><span class="p">(</span><span class="n">p_corners</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">p_corners</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span><span class="n">dx</span><span class="p">,</span><span class="n">dy</span><span class="p">)</span>
-    <span class="n">state</span><span class="o">.</span><span class="n">index_capa</span> <span class="o">=</span> <span class="mi">2</span> <span class="c"># aux[2,:,:] holds the capacity function</span>
+    <span class="n">state</span><span class="o">.</span><span class="n">index_capa</span> <span class="o">=</span> <span class="mi">2</span> <span class="c1"># aux[2,:,:] holds the capacity function</span>
 
     <span class="n">claw</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">Controller</span><span class="p">()</span>
     <span class="n">claw</span><span class="o">.</span><span class="n">tfinal</span> <span class="o">=</span> <span class="mf">1.0</span>
@@ -322,39 +322,39 @@ field.  We take a rotational velocity field: <span class="math">\(u = \cos(\thet
     <span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
     <span class="kn">from</span> <span class="nn">clawpack.visclaw</span> <span class="kn">import</span> <span class="n">colormaps</span>
 
-    <span class="n">plotdata</span><span class="o">.</span><span class="n">clearfigures</span><span class="p">()</span>  <span class="c"># clear any old figures,axes,items data</span>
+    <span class="n">plotdata</span><span class="o">.</span><span class="n">clearfigures</span><span class="p">()</span>  <span class="c1"># clear any old figures,axes,items data</span>
     <span class="n">plotdata</span><span class="o">.</span><span class="n">mapc2p</span> <span class="o">=</span> <span class="n">mapc2p</span>
     
-    <span class="c"># Figure for contour plot</span>
-    <span class="n">plotfigure</span> <span class="o">=</span> <span class="n">plotdata</span><span class="o">.</span><span class="n">new_plotfigure</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">&#39;contour&#39;</span><span class="p">,</span> <span class="n">figno</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="c1"># Figure for contour plot</span>
+    <span class="n">plotfigure</span> <span class="o">=</span> <span class="n">plotdata</span><span class="o">.</span><span class="n">new_plotfigure</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;contour&#39;</span><span class="p">,</span> <span class="n">figno</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
 
-    <span class="c"># Set up for axes in this figure:</span>
+    <span class="c1"># Set up for axes in this figure:</span>
     <span class="n">plotaxes</span> <span class="o">=</span> <span class="n">plotfigure</span><span class="o">.</span><span class="n">new_plotaxes</span><span class="p">()</span>
-    <span class="n">plotaxes</span><span class="o">.</span><span class="n">xlimits</span> <span class="o">=</span> <span class="s">&#39;auto&#39;</span>
-    <span class="n">plotaxes</span><span class="o">.</span><span class="n">ylimits</span> <span class="o">=</span> <span class="s">&#39;auto&#39;</span>
-    <span class="n">plotaxes</span><span class="o">.</span><span class="n">title</span> <span class="o">=</span> <span class="s">&#39;q[0]&#39;</span>
+    <span class="n">plotaxes</span><span class="o">.</span><span class="n">xlimits</span> <span class="o">=</span> <span class="s1">&#39;auto&#39;</span>
+    <span class="n">plotaxes</span><span class="o">.</span><span class="n">ylimits</span> <span class="o">=</span> <span class="s1">&#39;auto&#39;</span>
+    <span class="n">plotaxes</span><span class="o">.</span><span class="n">title</span> <span class="o">=</span> <span class="s1">&#39;q[0]&#39;</span>
     <span class="n">plotaxes</span><span class="o">.</span><span class="n">scaled</span> <span class="o">=</span> <span class="bp">True</span>
 
-    <span class="c"># Set up for item on these axes:</span>
-    <span class="n">plotitem</span> <span class="o">=</span> <span class="n">plotaxes</span><span class="o">.</span><span class="n">new_plotitem</span><span class="p">(</span><span class="n">plot_type</span><span class="o">=</span><span class="s">&#39;2d_contour&#39;</span><span class="p">)</span>
+    <span class="c1"># Set up for item on these axes:</span>
+    <span class="n">plotitem</span> <span class="o">=</span> <span class="n">plotaxes</span><span class="o">.</span><span class="n">new_plotitem</span><span class="p">(</span><span class="n">plot_type</span><span class="o">=</span><span class="s1">&#39;2d_contour&#39;</span><span class="p">)</span>
     <span class="n">plotitem</span><span class="o">.</span><span class="n">plot_var</span> <span class="o">=</span> <span class="mi">0</span>
     <span class="n">plotitem</span><span class="o">.</span><span class="n">contour_levels</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mf">0.9</span><span class="p">,</span> <span class="mf">0.9</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
-    <span class="n">plotitem</span><span class="o">.</span><span class="n">contour_colors</span> <span class="o">=</span> <span class="s">&#39;k&#39;</span>
+    <span class="n">plotitem</span><span class="o">.</span><span class="n">contour_colors</span> <span class="o">=</span> <span class="s1">&#39;k&#39;</span>
     <span class="n">plotitem</span><span class="o">.</span><span class="n">patchedges_show</span> <span class="o">=</span> <span class="mi">1</span>
     <span class="n">plotitem</span><span class="o">.</span><span class="n">MappedGrid</span> <span class="o">=</span> <span class="bp">True</span>
 
-    <span class="c"># Figure for pcolor plot</span>
-    <span class="n">plotfigure</span> <span class="o">=</span> <span class="n">plotdata</span><span class="o">.</span><span class="n">new_plotfigure</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">&#39;q[0]&#39;</span><span class="p">,</span> <span class="n">figno</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="c1"># Figure for pcolor plot</span>
+    <span class="n">plotfigure</span> <span class="o">=</span> <span class="n">plotdata</span><span class="o">.</span><span class="n">new_plotfigure</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;q[0]&#39;</span><span class="p">,</span> <span class="n">figno</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 
-    <span class="c"># Set up for axes in this figure:</span>
+    <span class="c1"># Set up for axes in this figure:</span>
     <span class="n">plotaxes</span> <span class="o">=</span> <span class="n">plotfigure</span><span class="o">.</span><span class="n">new_plotaxes</span><span class="p">()</span>
-    <span class="n">plotaxes</span><span class="o">.</span><span class="n">xlimits</span> <span class="o">=</span> <span class="s">&#39;auto&#39;</span>
-    <span class="n">plotaxes</span><span class="o">.</span><span class="n">ylimits</span> <span class="o">=</span> <span class="s">&#39;auto&#39;</span>
-    <span class="n">plotaxes</span><span class="o">.</span><span class="n">title</span> <span class="o">=</span> <span class="s">&#39;q[0]&#39;</span>
+    <span class="n">plotaxes</span><span class="o">.</span><span class="n">xlimits</span> <span class="o">=</span> <span class="s1">&#39;auto&#39;</span>
+    <span class="n">plotaxes</span><span class="o">.</span><span class="n">ylimits</span> <span class="o">=</span> <span class="s1">&#39;auto&#39;</span>
+    <span class="n">plotaxes</span><span class="o">.</span><span class="n">title</span> <span class="o">=</span> <span class="s1">&#39;q[0]&#39;</span>
     <span class="n">plotaxes</span><span class="o">.</span><span class="n">scaled</span> <span class="o">=</span> <span class="bp">True</span>
 
-    <span class="c"># Set up for item on these axes:</span>
-    <span class="n">plotitem</span> <span class="o">=</span> <span class="n">plotaxes</span><span class="o">.</span><span class="n">new_plotitem</span><span class="p">(</span><span class="n">plot_type</span><span class="o">=</span><span class="s">&#39;2d_pcolor&#39;</span><span class="p">)</span>
+    <span class="c1"># Set up for item on these axes:</span>
+    <span class="n">plotitem</span> <span class="o">=</span> <span class="n">plotaxes</span><span class="o">.</span><span class="n">new_plotitem</span><span class="p">(</span><span class="n">plot_type</span><span class="o">=</span><span class="s1">&#39;2d_pcolor&#39;</span><span class="p">)</span>
     <span class="n">plotitem</span><span class="o">.</span><span class="n">plot_var</span> <span class="o">=</span> <span class="mi">0</span>
     <span class="n">plotitem</span><span class="o">.</span><span class="n">pcolor_cmap</span> <span class="o">=</span> <span class="n">colormaps</span><span class="o">.</span><span class="n">red_yellow_blue</span>
     <span class="n">plotitem</span><span class="o">.</span><span class="n">pcolor_cmin</span> <span class="o">=</span> <span class="o">-</span><span class="mf">1.</span>
@@ -366,7 +366,7 @@ field.  We take a rotational velocity field: <span class="math">\(u = \cos(\thet
     <span class="k">return</span> <span class="n">plotdata</span>
 
  
-<span class="k">if</span> <span class="n">__name__</span><span class="o">==</span><span class="s">&quot;__main__&quot;</span><span class="p">:</span>
+<span class="k">if</span> <span class="n">__name__</span><span class="o">==</span><span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
     <span class="kn">from</span> <span class="nn">clawpack.pyclaw.util</span> <span class="kn">import</span> <span class="n">run_app_from_main</span>
     <span class="n">output</span> <span class="o">=</span> <span class="n">run_app_from_main</span><span class="p">(</span><span class="n">setup</span><span class="p">,</span><span class="n">setplot</span><span class="p">)</span>
 </pre></div>

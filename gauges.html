@@ -110,12 +110,12 @@ more clearly differences in accuracy or nonphysical oscillations.</li>
 </div></blockquote>
 <div class="section" id="gauge-parameters-in-setrun">
 <span id="setrun-guages"></span><h2>Gauge parameters in setrun<a class="headerlink" href="#gauge-parameters-in-setrun" title="Permalink to this headline">¶</a></h2>
-<p>See also <a class="reference internal" href="setrun_amrclaw.html#setrun-amrclaw"><span>Specifying AMRClaw run-time parameters in setrun.py</span></a>.</p>
+<p>See also <a class="reference internal" href="amrclaw/setrun_amrclaw.html#setrun-amrclaw"><span>Specifying AMRClaw parameters in setrun.py</span></a>.</p>
 <p>Gauges are specified in <cite>setrun</cite> by adding lists of gauge data for each
 desired gauge to the <cite>ClawRunData</cite>
 object <cite>rundata.gaugedata.gauges</cite>.  This is initialized as an empty list and
 new gauges can be specified by:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">rundata</span><span class="o">.</span><span class="n">gaugedata</span><span class="o">.</span><span class="n">gauges</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">gaugeno</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">t1</span><span class="p">,</span> <span class="n">t2</span><span class="p">])</span>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">rundata</span><span class="o">.</span><span class="n">gaugedata</span><span class="o">.</span><span class="n">gauges</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">gaugeno</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">t1</span><span class="p">,</span> <span class="n">t2</span><span class="p">])</span>
 </pre></div>
 </div>
 <p>with values</p>
@@ -133,7 +133,7 @@ new gauges can be specified by:</p>
 <p>During the computation the value of all components of q at all gauge locations will
 be output to a single file <cite>fort.gauge</cite> in the output directory.  Lines of this
 file have the form:</p>
-<div class="highlight-python"><div class="highlight"><pre>gaugeno  level  t  q[0]  q[1] ...  q[meqn-1]
+<div class="highlight-python"><div class="highlight"><pre><span></span>gaugeno  level  t  q[0]  q[1] ...  q[meqn-1]
 </pre></div>
 </div>
 <p>where level is the AMR level used to determine the q values at this time.
@@ -153,10 +153,10 @@ you are careful to preserve it.  See <a class="reference internal" href="restart
 have to parse the file <cite>fort.gauge</cite> yourself.</p>
 <p>If you want to read in the data for a particular gauge to manipulate it
 yourself, you can do, for example:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">clawpack.visclaw.data</span> <span class="kn">import</span> <span class="n">ClawPlotData</span>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">clawpack.visclaw.data</span> <span class="kn">import</span> <span class="n">ClawPlotData</span>
 <span class="n">plotdata</span> <span class="o">=</span> <span class="n">ClawPlotData</span><span class="p">()</span>
-<span class="n">plotdata</span><span class="o">.</span><span class="n">outdir</span> <span class="o">=</span> <span class="s">&#39;_output&#39;</span>   <span class="c"># set to the proper output directory</span>
-<span class="n">gaugeno</span> <span class="o">=</span> <span class="mi">1</span>                   <span class="c"># gauge number to examine</span>
+<span class="n">plotdata</span><span class="o">.</span><span class="n">outdir</span> <span class="o">=</span> <span class="s1">&#39;_output&#39;</span>   <span class="c1"># set to the proper output directory</span>
+<span class="n">gaugeno</span> <span class="o">=</span> <span class="mi">1</span>                   <span class="c1"># gauge number to examine</span>
 <span class="n">g</span> <span class="o">=</span> <span class="n">plotdata</span><span class="o">.</span><span class="n">getgauge</span><span class="p">(</span><span class="n">gaugeno</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -170,52 +170,52 @@ variable at time `t[n]</cite>)</li>
 can specify plots that are to be done for each gauge, similar to the manner in
 which you can specify plots that are to be done for each time frame.  For example,
 to plot the component q[0] at each gauge, include in <cite>setplot</cite> lines of this form:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">plotfigure</span> <span class="o">=</span> <span class="n">plotdata</span><span class="o">.</span><span class="n">new_plotfigure</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">&#39;q[0] at gauges&#39;</span><span class="p">,</span> <span class="n">figno</span><span class="o">=</span><span class="mi">300</span><span class="p">,</span> \
-                <span class="nb">type</span><span class="o">=</span><span class="s">&#39;each_gauge&#39;</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">plotfigure</span> <span class="o">=</span> <span class="n">plotdata</span><span class="o">.</span><span class="n">new_plotfigure</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;q[0] at gauges&#39;</span><span class="p">,</span> <span class="n">figno</span><span class="o">=</span><span class="mi">300</span><span class="p">,</span> \
+                <span class="nb">type</span><span class="o">=</span><span class="s1">&#39;each_gauge&#39;</span><span class="p">)</span>
 
-<span class="c"># Set up for axes in this figure:</span>
+<span class="c1"># Set up for axes in this figure:</span>
 <span class="n">plotaxes</span> <span class="o">=</span> <span class="n">plotfigure</span><span class="o">.</span><span class="n">new_plotaxes</span><span class="p">()</span>
-<span class="n">plotaxes</span><span class="o">.</span><span class="n">xlimits</span> <span class="o">=</span> <span class="s">&#39;auto&#39;</span>
+<span class="n">plotaxes</span><span class="o">.</span><span class="n">xlimits</span> <span class="o">=</span> <span class="s1">&#39;auto&#39;</span>
 <span class="n">plotaxes</span><span class="o">.</span><span class="n">ylimits</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mf">1.5</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">]</span>
-<span class="n">plotaxes</span><span class="o">.</span><span class="n">title</span> <span class="o">=</span> <span class="s">&#39;q[0]&#39;</span>
+<span class="n">plotaxes</span><span class="o">.</span><span class="n">title</span> <span class="o">=</span> <span class="s1">&#39;q[0]&#39;</span>
 
-<span class="c"># Plot q[0] as blue line:</span>
-<span class="n">plotitem</span> <span class="o">=</span> <span class="n">plotaxes</span><span class="o">.</span><span class="n">new_plotitem</span><span class="p">(</span><span class="n">plot_type</span><span class="o">=</span><span class="s">&#39;1d_plot&#39;</span><span class="p">)</span>
+<span class="c1"># Plot q[0] as blue line:</span>
+<span class="n">plotitem</span> <span class="o">=</span> <span class="n">plotaxes</span><span class="o">.</span><span class="n">new_plotitem</span><span class="p">(</span><span class="n">plot_type</span><span class="o">=</span><span class="s1">&#39;1d_plot&#39;</span><span class="p">)</span>
 <span class="n">plotitem</span><span class="o">.</span><span class="n">plot_var</span> <span class="o">=</span> <span class="mi">0</span>
-<span class="n">plotitem</span><span class="o">.</span><span class="n">plotstyle</span> <span class="o">=</span> <span class="s">&#39;b-&#39;</span>
+<span class="n">plotitem</span><span class="o">.</span><span class="n">plotstyle</span> <span class="o">=</span> <span class="s1">&#39;b-&#39;</span>
 </pre></div>
 </div>
 <p>Note that <cite>plotdata.new_plotfigure</cite> is called with <cite>type=&#8217;each_gauge&#8217;</cite> which
 denotes that this plot is to be produced for each gauge found in <cite>setgauges.data</cite>.
 (When type is not specified, the default is <cite>type=&#8217;each_frame&#8217;</cite> for time frame data).</p>
 <p>If you type:</p>
-<div class="highlight-python"><div class="highlight"><pre>$ make .plots
+<div class="highlight-python"><div class="highlight"><pre><span></span>$ make .plots
 </pre></div>
 </div>
 <p>then html files will be created for the gauge plots along with the time frame plots
 and will all show up in the index (usually in <cite>_plots/_PlotIndex.html</cite>).</p>
 <p>When using Iplotclaw to interactively view plots, try:</p>
-<div class="highlight-python"><div class="highlight"><pre>PLOTCLAW&gt; plotgauge 1
+<div class="highlight-python"><div class="highlight"><pre><span></span>PLOTCLAW&gt; plotgauge 1
 </pre></div>
 </div>
 <p>to produce the plot for gauge 1, or simply:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">PLOTCLAW</span><span class="o">&gt;</span> <span class="n">plotgauge</span>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">PLOTCLAW</span><span class="o">&gt;</span> <span class="n">plotgauge</span>
 </pre></div>
 </div>
 <p>to loop through all gauges.  If you rerun the code without re-executing
 <cite>Iplotclaw</cite>, you can refresh the gauge data via:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">PLOTCLAW</span><span class="o">&gt;</span> <span class="n">cleargauges</span>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">PLOTCLAW</span><span class="o">&gt;</span> <span class="n">cleargauges</span>
 </pre></div>
 </div>
 <p>You can of course specify more than one plotitem on each plotaxes if you want.  For
 example to plot the each gauge from the current run as a blue line and the same
 gauge from some previous run (perhaps with a different grid resolution)
 as a red line, you could add the following lines to the above example:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="c"># Plot q[0] from previous run as red line:</span>
-<span class="n">plotitem</span> <span class="o">=</span> <span class="n">plotaxes</span><span class="o">.</span><span class="n">new_plotitem</span><span class="p">(</span><span class="n">plot_type</span><span class="o">=</span><span class="s">&#39;1d_plot&#39;</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="c1"># Plot q[0] from previous run as red line:</span>
+<span class="n">plotitem</span> <span class="o">=</span> <span class="n">plotaxes</span><span class="o">.</span><span class="n">new_plotitem</span><span class="p">(</span><span class="n">plot_type</span><span class="o">=</span><span class="s1">&#39;1d_plot&#39;</span><span class="p">)</span>
 <span class="n">plotitem</span><span class="o">.</span><span class="n">plot_var</span> <span class="o">=</span> <span class="mi">0</span>
-<span class="n">plotitem</span><span class="o">.</span><span class="n">plotstyle</span> <span class="o">=</span> <span class="s">&#39;r-&#39;</span>
-<span class="n">plotitem</span><span class="o">.</span><span class="n">outdir</span> <span class="o">=</span> <span class="s">&#39;_output_from_previous_run&#39;</span>
+<span class="n">plotitem</span><span class="o">.</span><span class="n">plotstyle</span> <span class="o">=</span> <span class="s1">&#39;r-&#39;</span>
+<span class="n">plotitem</span><span class="o">.</span><span class="n">outdir</span> <span class="o">=</span> <span class="s1">&#39;_output_from_previous_run&#39;</span>
 </pre></div>
 </div>
 </div>
@@ -223,15 +223,15 @@ as a red line, you could add the following lines to the above example:</p>
 <h2>Plotting gauge locations<a class="headerlink" href="#plotting-gauge-locations" title="Permalink to this headline">¶</a></h2>
 <p>It is often convenient to plot the locations of the gauges on pcolor or contour
 plots each time frame.  You can do this as follows, for example:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">plotfigure</span> <span class="o">=</span> <span class="n">plotdata</span><span class="o">.</span><span class="n">new_plotfigure</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">&#39;pcolor&#39;</span><span class="p">,</span> <span class="n">figno</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-<span class="n">plotaxes</span> <span class="o">=</span> <span class="n">plotfigure</span><span class="o">.</span><span class="n">new_plotaxes</span><span class="p">(</span><span class="s">&#39;pcolor&#39;</span><span class="p">)</span>
-<span class="n">plotitem</span> <span class="o">=</span> <span class="n">plotaxes</span><span class="o">.</span><span class="n">new_plotitem</span><span class="p">(</span><span class="n">plot_type</span><span class="o">=</span><span class="s">&#39;2d_pcolor&#39;</span><span class="p">)</span>
-<span class="c"># set other attributes as desired</span>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">plotfigure</span> <span class="o">=</span> <span class="n">plotdata</span><span class="o">.</span><span class="n">new_plotfigure</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;pcolor&#39;</span><span class="p">,</span> <span class="n">figno</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">plotaxes</span> <span class="o">=</span> <span class="n">plotfigure</span><span class="o">.</span><span class="n">new_plotaxes</span><span class="p">(</span><span class="s1">&#39;pcolor&#39;</span><span class="p">)</span>
+<span class="n">plotitem</span> <span class="o">=</span> <span class="n">plotaxes</span><span class="o">.</span><span class="n">new_plotitem</span><span class="p">(</span><span class="n">plot_type</span><span class="o">=</span><span class="s1">&#39;2d_pcolor&#39;</span><span class="p">)</span>
+<span class="c1"># set other attributes as desired</span>
 
 <span class="k">def</span> <span class="nf">addgauges</span><span class="p">(</span><span class="n">current_data</span><span class="p">):</span>
     <span class="kn">from</span> <span class="nn">pyclaw.plotters</span> <span class="kn">import</span> <span class="n">gaugetools</span>
     <span class="n">gaugetools</span><span class="o">.</span><span class="n">plot_gauge_locations</span><span class="p">(</span><span class="n">current_data</span><span class="o">.</span><span class="n">plotdata</span><span class="p">,</span> \
-         <span class="n">gaugenos</span><span class="o">=</span><span class="s">&#39;all&#39;</span><span class="p">,</span> <span class="n">format_string</span><span class="o">=</span><span class="s">&#39;ko&#39;</span><span class="p">,</span> <span class="n">add_labels</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+         <span class="n">gaugenos</span><span class="o">=</span><span class="s1">&#39;all&#39;</span><span class="p">,</span> <span class="n">format_string</span><span class="o">=</span><span class="s1">&#39;ko&#39;</span><span class="p">,</span> <span class="n">add_labels</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
 
 <span class="n">plotaxes</span><span class="o">.</span><span class="n">afteraxes</span> <span class="o">=</span> <span class="n">addgauges</span>
 </pre></div>

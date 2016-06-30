@@ -114,8 +114,8 @@ cylindrical symmetry.</p>
 </ul>
 </div></blockquote>
 </div>
-<div class="highlight-python"><div class="highlight"><pre><span class="c">#!/usr/bin/env python</span>
-<span class="c"># encoding: utf-8</span>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1"># encoding: utf-8</span>
 <span class="sd">r&quot;&quot;&quot;</span>
 <span class="sd">Compressible Euler flow in cylindrical symmetry</span>
 <span class="sd">===============================================</span>
@@ -147,7 +147,7 @@ cylindrical symmetry.</p>
 <span class="kn">from</span> <span class="nn">clawpack.riemann.euler_5wave_2D_constants</span> <span class="kn">import</span> <span class="n">density</span><span class="p">,</span> <span class="n">x_momentum</span><span class="p">,</span> <span class="n">y_momentum</span><span class="p">,</span> \
         <span class="n">energy</span><span class="p">,</span> <span class="n">num_eqn</span>
 
-<span class="n">gamma</span> <span class="o">=</span> <span class="mf">1.4</span> <span class="c"># Ratio of specific heats</span>
+<span class="n">gamma</span> <span class="o">=</span> <span class="mf">1.4</span> <span class="c1"># Ratio of specific heats</span>
 
 <span class="n">x0</span><span class="o">=</span><span class="mf">0.5</span><span class="p">;</span> <span class="n">y0</span><span class="o">=</span><span class="mf">0.</span><span class="p">;</span> <span class="n">r0</span><span class="o">=</span><span class="mf">0.2</span>
 
@@ -178,14 +178,14 @@ cylindrical symmetry.</p>
 
     <span class="n">r</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">((</span><span class="n">X</span><span class="o">-</span><span class="n">x0</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="p">(</span><span class="n">Y</span><span class="o">-</span><span class="n">y0</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
 
-    <span class="c">#First set the values for the cells that don&#39;t intersect the bubble boundary</span>
+    <span class="c1">#First set the values for the cells that don&#39;t intersect the bubble boundary</span>
     <span class="n">state</span><span class="o">.</span><span class="n">q</span><span class="p">[</span><span class="mi">0</span><span class="p">,:,:]</span> <span class="o">=</span> <span class="n">rinf</span><span class="o">*</span><span class="p">(</span><span class="n">X</span><span class="o">&lt;</span><span class="n">xshock</span><span class="p">)</span> <span class="o">+</span> <span class="n">rhoin</span><span class="o">*</span><span class="p">(</span><span class="n">r</span><span class="o">&lt;=</span><span class="n">r0</span><span class="p">)</span> <span class="o">+</span> <span class="n">rhoout</span><span class="o">*</span><span class="p">(</span><span class="n">r</span><span class="o">&gt;</span><span class="n">r0</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">X</span><span class="o">&gt;=</span><span class="n">xshock</span><span class="p">)</span>
     <span class="n">state</span><span class="o">.</span><span class="n">q</span><span class="p">[</span><span class="mi">1</span><span class="p">,:,:]</span> <span class="o">=</span> <span class="n">rinf</span><span class="o">*</span><span class="n">vinf</span><span class="o">*</span><span class="p">(</span><span class="n">X</span><span class="o">&lt;</span><span class="n">xshock</span><span class="p">)</span>
     <span class="n">state</span><span class="o">.</span><span class="n">q</span><span class="p">[</span><span class="mi">2</span><span class="p">,:,:]</span> <span class="o">=</span> <span class="mf">0.</span>
     <span class="n">state</span><span class="o">.</span><span class="n">q</span><span class="p">[</span><span class="mi">3</span><span class="p">,:,:]</span> <span class="o">=</span> <span class="n">einf</span><span class="o">*</span><span class="p">(</span><span class="n">X</span><span class="o">&lt;</span><span class="n">xshock</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="n">pin</span><span class="o">*</span><span class="p">(</span><span class="n">r</span><span class="o">&lt;=</span><span class="n">r0</span><span class="p">)</span> <span class="o">+</span> <span class="n">pout</span><span class="o">*</span><span class="p">(</span><span class="n">r</span><span class="o">&gt;</span><span class="n">r0</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">X</span><span class="o">&gt;=</span><span class="n">xshock</span><span class="p">))</span><span class="o">/</span><span class="n">gamma1</span>
     <span class="n">state</span><span class="o">.</span><span class="n">q</span><span class="p">[</span><span class="mi">4</span><span class="p">,:,:]</span> <span class="o">=</span> <span class="mf">1.</span><span class="o">*</span><span class="p">(</span><span class="n">r</span><span class="o">&lt;=</span><span class="n">r0</span><span class="p">)</span>
 
-    <span class="c">#Now compute average density for the cells on the edge of the bubble</span>
+    <span class="c1">#Now compute average density for the cells on the edge of the bubble</span>
     <span class="n">d2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">state</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">delta</span><span class="p">)</span><span class="o">/</span><span class="mf">2.</span>
     <span class="n">dx</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">delta</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
     <span class="n">dy</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">delta</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
@@ -290,14 +290,14 @@ cylindrical symmetry.</p>
 
     <span class="k">return</span> <span class="n">dq</span>
 
-<span class="k">def</span> <span class="nf">setup</span><span class="p">(</span><span class="n">use_petsc</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span><span class="n">solver_type</span><span class="o">=</span><span class="s">&#39;classic&#39;</span><span class="p">,</span> <span class="n">outdir</span><span class="o">=</span><span class="s">&#39;_output&#39;</span><span class="p">,</span> <span class="n">kernel_language</span><span class="o">=</span><span class="s">&#39;Fortran&#39;</span><span class="p">,</span>
+<span class="k">def</span> <span class="nf">setup</span><span class="p">(</span><span class="n">use_petsc</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span><span class="n">solver_type</span><span class="o">=</span><span class="s1">&#39;classic&#39;</span><span class="p">,</span> <span class="n">outdir</span><span class="o">=</span><span class="s1">&#39;_output&#39;</span><span class="p">,</span> <span class="n">kernel_language</span><span class="o">=</span><span class="s1">&#39;Fortran&#39;</span><span class="p">,</span>
         <span class="n">disable_output</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">mx</span><span class="o">=</span><span class="mi">320</span><span class="p">,</span> <span class="n">my</span><span class="o">=</span><span class="mi">80</span><span class="p">,</span> <span class="n">tfinal</span><span class="o">=</span><span class="mf">0.6</span><span class="p">,</span> <span class="n">num_output_times</span> <span class="o">=</span> <span class="mi">10</span><span class="p">):</span>
     <span class="k">if</span> <span class="n">use_petsc</span><span class="p">:</span>
         <span class="kn">import</span> <span class="nn">clawpack.petclaw</span> <span class="kn">as</span> <span class="nn">pyclaw</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="kn">from</span> <span class="nn">clawpack</span> <span class="kn">import</span> <span class="n">pyclaw</span>
 
-    <span class="k">if</span> <span class="n">solver_type</span><span class="o">==</span><span class="s">&#39;sharpclaw&#39;</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">solver_type</span><span class="o">==</span><span class="s1">&#39;sharpclaw&#39;</span><span class="p">:</span>
         <span class="n">solver</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">SharpClawSolver2D</span><span class="p">(</span><span class="n">riemann</span><span class="o">.</span><span class="n">euler_5wave_2D</span><span class="p">)</span>
         <span class="n">solver</span><span class="o">.</span><span class="n">dq_src</span> <span class="o">=</span> <span class="n">dq_Euler_radial</span>
         <span class="n">solver</span><span class="o">.</span><span class="n">weno_order</span> <span class="o">=</span> <span class="mi">5</span>
@@ -310,13 +310,13 @@ cylindrical symmetry.</p>
         <span class="n">solver</span><span class="o">.</span><span class="n">cfl_max</span> <span class="o">=</span> <span class="mf">0.5</span>
         <span class="n">solver</span><span class="o">.</span><span class="n">cfl_desired</span> <span class="o">=</span> <span class="mf">0.45</span>
 
-    <span class="n">x</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">Dimension</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span><span class="mf">2.0</span><span class="p">,</span><span class="n">mx</span><span class="p">,</span><span class="n">name</span><span class="o">=</span><span class="s">&#39;x&#39;</span><span class="p">)</span>
-    <span class="n">y</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">Dimension</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span><span class="mf">0.5</span><span class="p">,</span><span class="n">my</span><span class="p">,</span><span class="n">name</span><span class="o">=</span><span class="s">&#39;y&#39;</span><span class="p">)</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">Dimension</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span><span class="mf">2.0</span><span class="p">,</span><span class="n">mx</span><span class="p">,</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;x&#39;</span><span class="p">)</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">Dimension</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span><span class="mf">0.5</span><span class="p">,</span><span class="n">my</span><span class="p">,</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;y&#39;</span><span class="p">)</span>
     <span class="n">domain</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">Domain</span><span class="p">([</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">])</span>
 
     <span class="n">num_aux</span><span class="o">=</span><span class="mi">1</span>
     <span class="n">state</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">State</span><span class="p">(</span><span class="n">domain</span><span class="p">,</span><span class="n">num_eqn</span><span class="p">,</span><span class="n">num_aux</span><span class="p">)</span>
-    <span class="n">state</span><span class="o">.</span><span class="n">problem_data</span><span class="p">[</span><span class="s">&#39;gamma&#39;</span><span class="p">]</span><span class="o">=</span> <span class="n">gamma</span>
+    <span class="n">state</span><span class="o">.</span><span class="n">problem_data</span><span class="p">[</span><span class="s1">&#39;gamma&#39;</span><span class="p">]</span><span class="o">=</span> <span class="n">gamma</span>
 
     <span class="n">qinit</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
     <span class="n">auxinit</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
@@ -327,7 +327,7 @@ cylindrical symmetry.</p>
     <span class="n">solver</span><span class="o">.</span><span class="n">bc_upper</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">=</span><span class="n">pyclaw</span><span class="o">.</span><span class="n">BC</span><span class="o">.</span><span class="n">extrap</span>
     <span class="n">solver</span><span class="o">.</span><span class="n">bc_lower</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">=</span><span class="n">pyclaw</span><span class="o">.</span><span class="n">BC</span><span class="o">.</span><span class="n">wall</span>
     <span class="n">solver</span><span class="o">.</span><span class="n">bc_upper</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">=</span><span class="n">pyclaw</span><span class="o">.</span><span class="n">BC</span><span class="o">.</span><span class="n">extrap</span>
-    <span class="c">#Aux variable in ghost cells doesn&#39;t matter</span>
+    <span class="c1">#Aux variable in ghost cells doesn&#39;t matter</span>
     <span class="n">solver</span><span class="o">.</span><span class="n">aux_bc_lower</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">=</span><span class="n">pyclaw</span><span class="o">.</span><span class="n">BC</span><span class="o">.</span><span class="n">extrap</span>
     <span class="n">solver</span><span class="o">.</span><span class="n">aux_bc_upper</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">=</span><span class="n">pyclaw</span><span class="o">.</span><span class="n">BC</span><span class="o">.</span><span class="n">extrap</span>
     <span class="n">solver</span><span class="o">.</span><span class="n">aux_bc_lower</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">=</span><span class="n">pyclaw</span><span class="o">.</span><span class="n">BC</span><span class="o">.</span><span class="n">extrap</span>
@@ -354,30 +354,30 @@ cylindrical symmetry.</p>
 <span class="sd">    &quot;&quot;&quot;</span> 
     <span class="kn">from</span> <span class="nn">clawpack.visclaw</span> <span class="kn">import</span> <span class="n">colormaps</span>
 
-    <span class="n">plotdata</span><span class="o">.</span><span class="n">clearfigures</span><span class="p">()</span>  <span class="c"># clear any old figures,axes,items data</span>
+    <span class="n">plotdata</span><span class="o">.</span><span class="n">clearfigures</span><span class="p">()</span>  <span class="c1"># clear any old figures,axes,items data</span>
     
-    <span class="c"># Pressure plot</span>
-    <span class="n">plotfigure</span> <span class="o">=</span> <span class="n">plotdata</span><span class="o">.</span><span class="n">new_plotfigure</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">&#39;Density&#39;</span><span class="p">,</span> <span class="n">figno</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="c1"># Pressure plot</span>
+    <span class="n">plotfigure</span> <span class="o">=</span> <span class="n">plotdata</span><span class="o">.</span><span class="n">new_plotfigure</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;Density&#39;</span><span class="p">,</span> <span class="n">figno</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
 
     <span class="n">plotaxes</span> <span class="o">=</span> <span class="n">plotfigure</span><span class="o">.</span><span class="n">new_plotaxes</span><span class="p">()</span>
-    <span class="n">plotaxes</span><span class="o">.</span><span class="n">title</span> <span class="o">=</span> <span class="s">&#39;Density&#39;</span>
-    <span class="n">plotaxes</span><span class="o">.</span><span class="n">scaled</span> <span class="o">=</span> <span class="bp">True</span>      <span class="c"># so aspect ratio is 1</span>
+    <span class="n">plotaxes</span><span class="o">.</span><span class="n">title</span> <span class="o">=</span> <span class="s1">&#39;Density&#39;</span>
+    <span class="n">plotaxes</span><span class="o">.</span><span class="n">scaled</span> <span class="o">=</span> <span class="bp">True</span>      <span class="c1"># so aspect ratio is 1</span>
     <span class="n">plotaxes</span><span class="o">.</span><span class="n">afteraxes</span> <span class="o">=</span> <span class="n">label_axes</span>
 
-    <span class="n">plotitem</span> <span class="o">=</span> <span class="n">plotaxes</span><span class="o">.</span><span class="n">new_plotitem</span><span class="p">(</span><span class="n">plot_type</span><span class="o">=</span><span class="s">&#39;2d_schlieren&#39;</span><span class="p">)</span>
+    <span class="n">plotitem</span> <span class="o">=</span> <span class="n">plotaxes</span><span class="o">.</span><span class="n">new_plotitem</span><span class="p">(</span><span class="n">plot_type</span><span class="o">=</span><span class="s1">&#39;2d_schlieren&#39;</span><span class="p">)</span>
     <span class="n">plotitem</span><span class="o">.</span><span class="n">plot_var</span> <span class="o">=</span> <span class="mi">0</span>
     <span class="n">plotitem</span><span class="o">.</span><span class="n">add_colorbar</span> <span class="o">=</span> <span class="bp">False</span>
     
 
-    <span class="c"># Tracer plot</span>
-    <span class="n">plotfigure</span> <span class="o">=</span> <span class="n">plotdata</span><span class="o">.</span><span class="n">new_plotfigure</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">&#39;Tracer&#39;</span><span class="p">,</span> <span class="n">figno</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="c1"># Tracer plot</span>
+    <span class="n">plotfigure</span> <span class="o">=</span> <span class="n">plotdata</span><span class="o">.</span><span class="n">new_plotfigure</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;Tracer&#39;</span><span class="p">,</span> <span class="n">figno</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 
     <span class="n">plotaxes</span> <span class="o">=</span> <span class="n">plotfigure</span><span class="o">.</span><span class="n">new_plotaxes</span><span class="p">()</span>
-    <span class="n">plotaxes</span><span class="o">.</span><span class="n">title</span> <span class="o">=</span> <span class="s">&#39;Tracer&#39;</span>
-    <span class="n">plotaxes</span><span class="o">.</span><span class="n">scaled</span> <span class="o">=</span> <span class="bp">True</span>      <span class="c"># so aspect ratio is 1</span>
+    <span class="n">plotaxes</span><span class="o">.</span><span class="n">title</span> <span class="o">=</span> <span class="s1">&#39;Tracer&#39;</span>
+    <span class="n">plotaxes</span><span class="o">.</span><span class="n">scaled</span> <span class="o">=</span> <span class="bp">True</span>      <span class="c1"># so aspect ratio is 1</span>
     <span class="n">plotaxes</span><span class="o">.</span><span class="n">afteraxes</span> <span class="o">=</span> <span class="n">label_axes</span>
 
-    <span class="n">plotitem</span> <span class="o">=</span> <span class="n">plotaxes</span><span class="o">.</span><span class="n">new_plotitem</span><span class="p">(</span><span class="n">plot_type</span><span class="o">=</span><span class="s">&#39;2d_pcolor&#39;</span><span class="p">)</span>
+    <span class="n">plotitem</span> <span class="o">=</span> <span class="n">plotaxes</span><span class="o">.</span><span class="n">new_plotitem</span><span class="p">(</span><span class="n">plot_type</span><span class="o">=</span><span class="s1">&#39;2d_pcolor&#39;</span><span class="p">)</span>
     <span class="n">plotitem</span><span class="o">.</span><span class="n">pcolor_cmin</span> <span class="o">=</span> <span class="mf">0.</span>
     <span class="n">plotitem</span><span class="o">.</span><span class="n">pcolor_cmax</span><span class="o">=</span><span class="mf">1.0</span>
     <span class="n">plotitem</span><span class="o">.</span><span class="n">plot_var</span> <span class="o">=</span> <span class="mi">4</span>
@@ -385,15 +385,15 @@ cylindrical symmetry.</p>
     <span class="n">plotitem</span><span class="o">.</span><span class="n">add_colorbar</span> <span class="o">=</span> <span class="bp">False</span>
     
 
-    <span class="c"># Energy plot</span>
-    <span class="n">plotfigure</span> <span class="o">=</span> <span class="n">plotdata</span><span class="o">.</span><span class="n">new_plotfigure</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">&#39;Energy&#39;</span><span class="p">,</span> <span class="n">figno</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+    <span class="c1"># Energy plot</span>
+    <span class="n">plotfigure</span> <span class="o">=</span> <span class="n">plotdata</span><span class="o">.</span><span class="n">new_plotfigure</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;Energy&#39;</span><span class="p">,</span> <span class="n">figno</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
 
     <span class="n">plotaxes</span> <span class="o">=</span> <span class="n">plotfigure</span><span class="o">.</span><span class="n">new_plotaxes</span><span class="p">()</span>
-    <span class="n">plotaxes</span><span class="o">.</span><span class="n">title</span> <span class="o">=</span> <span class="s">&#39;Energy&#39;</span>
-    <span class="n">plotaxes</span><span class="o">.</span><span class="n">scaled</span> <span class="o">=</span> <span class="bp">True</span>      <span class="c"># so aspect ratio is 1</span>
+    <span class="n">plotaxes</span><span class="o">.</span><span class="n">title</span> <span class="o">=</span> <span class="s1">&#39;Energy&#39;</span>
+    <span class="n">plotaxes</span><span class="o">.</span><span class="n">scaled</span> <span class="o">=</span> <span class="bp">True</span>      <span class="c1"># so aspect ratio is 1</span>
     <span class="n">plotaxes</span><span class="o">.</span><span class="n">afteraxes</span> <span class="o">=</span> <span class="n">label_axes</span>
 
-    <span class="n">plotitem</span> <span class="o">=</span> <span class="n">plotaxes</span><span class="o">.</span><span class="n">new_plotitem</span><span class="p">(</span><span class="n">plot_type</span><span class="o">=</span><span class="s">&#39;2d_pcolor&#39;</span><span class="p">)</span>
+    <span class="n">plotitem</span> <span class="o">=</span> <span class="n">plotaxes</span><span class="o">.</span><span class="n">new_plotitem</span><span class="p">(</span><span class="n">plot_type</span><span class="o">=</span><span class="s1">&#39;2d_pcolor&#39;</span><span class="p">)</span>
     <span class="n">plotitem</span><span class="o">.</span><span class="n">pcolor_cmin</span> <span class="o">=</span> <span class="mf">2.</span>
     <span class="n">plotitem</span><span class="o">.</span><span class="n">pcolor_cmax</span><span class="o">=</span><span class="mf">18.0</span>
     <span class="n">plotitem</span><span class="o">.</span><span class="n">plot_var</span> <span class="o">=</span> <span class="mi">3</span>
@@ -404,11 +404,11 @@ cylindrical symmetry.</p>
 
 <span class="k">def</span> <span class="nf">label_axes</span><span class="p">(</span><span class="n">current_data</span><span class="p">):</span>
     <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">as</span> <span class="nn">plt</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s">&#39;z&#39;</span><span class="p">)</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s">&#39;r&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;z&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;r&#39;</span><span class="p">)</span>
     
 
-<span class="k">if</span> <span class="n">__name__</span><span class="o">==</span><span class="s">&quot;__main__&quot;</span><span class="p">:</span>
+<span class="k">if</span> <span class="n">__name__</span><span class="o">==</span><span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
     <span class="kn">from</span> <span class="nn">clawpack.pyclaw.util</span> <span class="kn">import</span> <span class="n">run_app_from_main</span>
     <span class="n">output</span> <span class="o">=</span> <span class="n">run_app_from_main</span><span class="p">(</span><span class="n">setup</span><span class="p">,</span><span class="n">setplot</span><span class="p">)</span>
 </pre></div>

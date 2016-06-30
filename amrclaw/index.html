@@ -1,0 +1,239 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>AMRClaw &mdash; Clawpack 5.3.1 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/flasky.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/base.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/layout.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '5.3.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="shortcut icon" href="../_static/clawicon.ico"/>
+    <link rel="author" title="About these documents" href="../about.html" />
+    <link rel="top" title="Clawpack 5.3.1 documentation" href="../contents.html" /> 
+  </head>
+  <body role="document">
+<div id="main-wrapper" class="sphinx">
+<div id="header-wrapper">
+  <section id="header">
+    <!-- <h1><a href="http://clawpack.org/">Clawpack</a></h1> -->
+    <h1><a href="http://clawpack.org/">Clawpack-5</a></h1> 
+    <nav>
+      <ul>
+        <li>
+          <a href="../contents.html">Docs</a>
+        </li>
+        <li>
+          <a href="../installing.html">Install</a>
+        </li>
+        <li>
+          <a class="" href="../galleries.html">Gallery</a>
+        </li>
+        <li>
+          <a class="" href="../community.html">Community</a>
+        </li>
+        <li>
+          <a class="active" href="http://github.com/clawpack">Source</a>
+        </li>
+        <li>
+          <a class="" href="../developers.html">Develop</a>
+        </li>
+      </ul>
+    </nav>
+  </section>
+<div class="decoration"></div>
+</div>
+
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../contents.html">Clawpack 5.3.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="amrclaw">
+<span id="id1"></span><h1>AMRClaw<a class="headerlink" href="#amrclaw" title="Permalink to this headline">¶</a></h1>
+<p>The $CLAW/amrclaw directory contains a version of Clawpack that uses
+adaptive mesh refinement (AMR).</p>
+<p>See <a class="reference internal" href="setrun_amrclaw.html#setrun-amrclaw"><span>Specifying AMRClaw parameters in setrun.py</span></a> for a description of the run-time parameters
+needed by AMRClaw and how to set them.</p>
+<p>The refinement strategy and criteria are described in <a class="reference internal" href="amr_strategy.html#amr-strategy"><span>AMR refinement strategy</span></a>.</p>
+<p>Several examples can be found from <a class="reference internal" href="../apps.html#apps"><span>Clawpack Applications repository</span></a>, look for ones with an <em>amr</em>
+subdirectory.</p>
+<p>The sections below detail many components of the library $CLAW/amrclaw/2d.</p>
+<div class="section" id="global-parameters-and-descriptors">
+<h2>Global parameters and descriptors<a class="headerlink" href="#global-parameters-and-descriptors" title="Permalink to this headline">¶</a></h2>
+<p>This describes most of the entries in the common block, call.i.</p>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="global-desc.html">Global descriptors</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="global-desc.html#parameters">Parameters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="global-desc.html#variables">Variables</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="level-desc.html">Level descriptors</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="level-desc.html#integer-level-descriptors">Integer level descriptors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="level-desc.html#real-level-descriptors">Real level descriptors</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="node-desc.html">Node descriptors</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="node-desc.html#integer-node-descriptors">Integer node descriptors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="node-desc.html#real-node-descriptors">Real node descriptors</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="main-program">
+<h2>Main program<a class="headerlink" href="#main-program" title="Permalink to this headline">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="amr2ez.html"><code class="docutils literal"><span class="pre">amr2ez</span></code></a></li>
+</ul>
+</div>
+</div>
+<div class="section" id="functions">
+<h2>Functions<a class="headerlink" href="#functions" title="Permalink to this headline">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="igetsp.html"><code class="docutils literal"><span class="pre">igetsp</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="nestck.html"><code class="docutils literal"><span class="pre">nestck</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="nodget.html"><code class="docutils literal"><span class="pre">nodget</span></code></a></li>
+</ul>
+</div>
+</div>
+<div class="section" id="selected-subroutines">
+<h2>Selected subroutines<a class="headerlink" href="#selected-subroutines" title="Permalink to this headline">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="basic.html"><code class="docutils literal"><span class="pre">basic</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="bc2amr.html"><code class="docutils literal"><span class="pre">bc2amr</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="bound.html"><code class="docutils literal"><span class="pre">bound</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="check.html"><code class="docutils literal"><span class="pre">check</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="cleanup.html"><code class="docutils literal"><span class="pre">cleanup</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="conck.html"><code class="docutils literal"><span class="pre">conck</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="cstore.html"><code class="docutils literal"><span class="pre">cstore</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="icall.html"><code class="docutils literal"><span class="pre">icall</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="intcopy.html"><code class="docutils literal"><span class="pre">intcopy</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="intfil.html"><code class="docutils literal"><span class="pre">intfil</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="filrecur.html"><code class="docutils literal"><span class="pre">filrecur</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="filval.html"><code class="docutils literal"><span class="pre">filval</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="fixcapaq.html"><code class="docutils literal"><span class="pre">fixcapaq</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="flglvl.html"><code class="docutils literal"><span class="pre">flglvl</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="outmsh.html"><code class="docutils literal"><span class="pre">outmsh</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="outtre.html"><code class="docutils literal"><span class="pre">outtre</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="outval.html"><code class="docutils literal"><span class="pre">outval</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="outvar.html"><code class="docutils literal"><span class="pre">outvar</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="prepc.html"><code class="docutils literal"><span class="pre">prepc</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="putnod.html"><code class="docutils literal"><span class="pre">putnod</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="putsp.html"><code class="docutils literal"><span class="pre">putsp</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="reclam.html"><code class="docutils literal"><span class="pre">reclam</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="saveqc.html"><code class="docutils literal"><span class="pre">saveqc</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="setaux.html"><code class="docutils literal"><span class="pre">setaux</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="setuse.html"><code class="docutils literal"><span class="pre">setuse</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="stepgrid.html"><code class="docutils literal"><span class="pre">stepgrid</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="trimbd.html"><code class="docutils literal"><span class="pre">trimbd</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="upbnd.html"><code class="docutils literal"><span class="pre">upbnd</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="update.html"><code class="docutils literal"><span class="pre">update</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="valout.html"><code class="docutils literal"><span class="pre">valout</span></code></a></li>
+</ul>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<p><a href="http://clawpack.org/">
+    <img class="logo" src= "_static/clawlogo.jpg" alt="Logo"/>
+</a>
+<h2>Version 5.3.1</h2>
+</p>
+  <h3><a href="../contents.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">AMRClaw</a><ul>
+<li><a class="reference internal" href="#global-parameters-and-descriptors">Global parameters and descriptors</a></li>
+<li><a class="reference internal" href="#main-program">Main program</a></li>
+<li><a class="reference internal" href="#functions">Functions</a></li>
+<li><a class="reference internal" href="#selected-subroutines">Selected subroutines</a></li>
+</ul>
+</li>
+</ul>
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../contents.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/amrclaw/index.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+  <div class="footer">
+    &copy; Copyright 2015, The Clawpack Development Team.
+    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
+  </div>
+  <script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-44811544-1', 'auto');
+  ga('send', 'pageview');
+
+  </script>
+  
+  </body>
+</html>

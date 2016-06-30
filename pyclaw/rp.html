@@ -95,7 +95,7 @@
 <p>This package contains all of the Python-based Riemann solvers.  Each
 module solves the Riemann solver for a particular system of hyperbolic
 equations.  The solvers all have a common function signature:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">rp_</span><span class="o">&lt;</span><span class="n">name</span><span class="o">&gt;</span><span class="n">_</span><span class="o">&lt;</span><span class="n">dim</span><span class="o">&gt;</span><span class="n">d</span><span class="p">(</span><span class="n">q_l</span><span class="p">,</span><span class="n">q_r</span><span class="p">,</span><span class="n">aux_l</span><span class="p">,</span><span class="n">aux_r</span><span class="p">,</span><span class="n">problem_data</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">rp_</span><span class="o">&lt;</span><span class="n">name</span><span class="o">&gt;</span><span class="n">_</span><span class="o">&lt;</span><span class="n">dim</span><span class="o">&gt;</span><span class="n">d</span><span class="p">(</span><span class="n">q_l</span><span class="p">,</span><span class="n">q_r</span><span class="p">,</span><span class="n">aux_l</span><span class="p">,</span><span class="n">aux_r</span><span class="p">,</span><span class="n">problem_data</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>with <code class="docutils literal"><span class="pre">&lt;name&gt;</span></code> replaced with the appropriate solver name and <code class="docutils literal"><span class="pre">&lt;dim&gt;</span></code> with
@@ -142,7 +142,7 @@ the appropriate dimension.</p>
 </table>
 <p>Except for <em>problem_data</em>, all of the input and output values are arrays whose
 elements represent grid values with locations indicated by the following scheme</p>
-<div class="highlight-python"><div class="highlight"><pre>Indexing works like this:  here num_ghost=2 as an example
+<div class="highlight-python"><div class="highlight"><pre><span></span>Indexing works like this:  here num_ghost=2 as an example
  0     1     2     3     4     mx+num_ghost-2     mx+num_ghost      mx+num_ghost+2
              |                        mx+num_ghost-1 |  mx+num_ghost+1
  |     |     |     |     |   ...   |     |     |     |     |
@@ -345,7 +345,7 @@ Kyle T. Mandli (2011-03-28): Interleaved version</td>
 <dt id="clawpack.riemann.euler_1D_py.euler_hll_1D">
 <code class="descclassname">clawpack.riemann.euler_1D_py.</code><code class="descname">euler_hll_1D</code><span class="sig-paren">(</span><em>q_l</em>, <em>q_r</em>, <em>aux_l</em>, <em>aux_r</em>, <em>problem_data</em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.riemann.euler_1D_py.euler_hll_1D" title="Permalink to this definition">¶</a></dt>
 <dd><p>HLL euler solver</p>
-<div class="highlight-python"><div class="highlight"><pre>W_1 = Q_hat - Q_l    s_1 = min(u_l-c_l,u_l+c_l,lambda_roe_1,lambda_roe_2)
+<div class="highlight-python"><div class="highlight"><pre><span></span>W_1 = Q_hat - Q_l    s_1 = min(u_l-c_l,u_l+c_l,lambda_roe_1,lambda_roe_2)
 W_2 = Q_r - Q_hat    s_2 = max(u_r-c_r,u_r+c_r,lambda_roe_1,lambda_roe_2)
 
 Q_hat = ( f(q_r) - f(q_l) - s_2 * q_r + s_1 * q_l ) / (s_1 - s_2)
@@ -367,6 +367,52 @@ Q_hat = ( f(q_r) - f(q_l) - s_2 * q_r + s_1 * q_l ) / (s_1 - s_2)
 </tr>
 </tbody>
 </table>
+</dd></dl>
+
+<dl class="function">
+<dt id="clawpack.riemann.euler_1D_py.euler_hllc_1D">
+<code class="descclassname">clawpack.riemann.euler_1D_py.</code><code class="descname">euler_hllc_1D</code><span class="sig-paren">(</span><em>q_l</em>, <em>q_r</em>, <em>aux_l</em>, <em>aux_r</em>, <em>problem_data</em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.riemann.euler_1D_py.euler_hllc_1D" title="Permalink to this definition">¶</a></dt>
+<dd><p>HLLC Euler solver</p>
+<div class="system-message">
+<p class="system-message-title">System Message: WARNING/2 (<tt class="docutils">/Users/rjl/git/clawpack/clawpack/riemann/euler_1D_py.py:docstring of clawpack.riemann.euler_1D_py.euler_hllc_1D</tt>, line 3)</p>
+Literal block expected; none found.</div>
+<p>W_1 = q_hat_l - q_l      s_1 = min(u_l-c_l,u_l+c_l,lambda_roe_1,lambda_roe_2)
+W_2 = q_hat_r - q_hat_l  s_2 = s_m
+W_3 = q_r - q_hat_r      s_3 = max(u_r-c_r,u_r+c_r,lambda_roe_1,lambda_roe_2)</p>
+<dl class="docutils">
+<dt>s_m = (p_r - p_l + rho_l*u_l*(s_l - u_l) - rho_r*u_r*(s_r - u_r))</dt>
+<dd>/ (rho_l*(s_l-u_l) - rho_r*(s_r - u_r))</dd>
+</dl>
+<p># left middle state
+q_hat_l[0,:] = rho_l*(s_l - u_l)/(s_l - s_m)
+q_hat_l[1,:] = rho_l*(s_l - u_l)/(s_l - s_m)*s_m
+q_hat_l[2,:] = rho_l*(s_l - u_l)/(s_l - s_m)</p>
+<div class="system-message">
+<p class="system-message-title">System Message: ERROR/3 (<tt class="docutils">/Users/rjl/git/clawpack/clawpack/riemann/euler_1D_py.py:docstring of clawpack.riemann.euler_1D_py.euler_hllc_1D</tt>, line 14)</p>
+Unexpected indentation.</div>
+<blockquote>
+<div><p><a href="#id6"><span class="problematic" id="id7">*</span></a>(E_l/rho_l + (s_m - u_l)*(s_m + p_l/(rho_l*(s_l - u_l))))</p>
+<div class="system-message" id="id6">
+<p class="system-message-title">System Message: WARNING/2 (<tt class="docutils">/Users/rjl/git/clawpack/clawpack/riemann/euler_1D_py.py:docstring of clawpack.riemann.euler_1D_py.euler_hllc_1D</tt>, line 14); <em><a href="#id7">backlink</a></em></p>
+Inline emphasis start-string without end-string.</div>
+</div></blockquote>
+<p># right middle state
+q_hat_r[0,:] = rho_r*(s_r - u_r)/(s_r - s_m)
+q_hat_r[1,:] = rho_r*(s_r - u_r)/(s_r - s_m)*s_m
+q_hat_r[2,:] = rho_r*(s_r - u_r)/(s_r - s_m)</p>
+<div class="system-message">
+<p class="system-message-title">System Message: ERROR/3 (<tt class="docutils">/Users/rjl/git/clawpack/clawpack/riemann/euler_1D_py.py:docstring of clawpack.riemann.euler_1D_py.euler_hllc_1D</tt>, line 20)</p>
+Unexpected indentation.</div>
+<blockquote>
+<div><p><a href="#id8"><span class="problematic" id="id9">*</span></a>(E_r/rho_r + (s_m - u_r)*(s_m + p_r/(rho_r*(s_r - u_r))))</p>
+<div class="system-message" id="id8">
+<p class="system-message-title">System Message: WARNING/2 (<tt class="docutils">/Users/rjl/git/clawpack/clawpack/riemann/euler_1D_py.py:docstring of clawpack.riemann.euler_1D_py.euler_hllc_1D</tt>, line 20); <em><a href="#id9">backlink</a></em></p>
+Inline emphasis start-string without end-string.</div>
+</div></blockquote>
+<p><em>problem_data</em> should contain:
+- <em>gamma</em> - (float) Ratio of specific heat capacities
+- <em>gamma1</em> - (float) <span class="math">\(\gamma - 1\)</span></p>
+<p>:Version 1.0 (2015-11-18)</p>
 </dd></dl>
 
 <dl class="function">
@@ -395,7 +441,7 @@ Q_hat = ( f(q_r) - f(q_l) - s_2 * q_r + s_1 * q_l ) / (s_1 - s_2)
 
 </div>
 <div class="section" id="shallow-water-equations">
-<span id="id6"></span><h2><code class="xref py py-mod docutils literal"><span class="pre">Shallow</span> <span class="pre">Water</span> <span class="pre">Equations</span></code><a class="headerlink" href="#shallow-water-equations" title="Permalink to this headline">¶</a></h2>
+<span id="id10"></span><h2><code class="xref py py-mod docutils literal"><span class="pre">Shallow</span> <span class="pre">Water</span> <span class="pre">Equations</span></code><a class="headerlink" href="#shallow-water-equations" title="Permalink to this headline">¶</a></h2>
 <span class="target" id="module-clawpack.riemann.shallow_1D_py"></span><p>Riemann solvers for the shallow water equations.</p>
 <dl class="docutils">
 <dt>The available solvers are:</dt>
@@ -469,7 +515,7 @@ dry states as this has not been tested.</p>
 <dt id="clawpack.riemann.shallow_1D_py.shallow_hll_1D">
 <code class="descclassname">clawpack.riemann.shallow_1D_py.</code><code class="descname">shallow_hll_1D</code><span class="sig-paren">(</span><em>q_l</em>, <em>q_r</em>, <em>aux_l</em>, <em>aux_r</em>, <em>problem_data</em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.riemann.shallow_1D_py.shallow_hll_1D" title="Permalink to this definition">¶</a></dt>
 <dd><p>HLL shallow water solver</p>
-<div class="highlight-python"><div class="highlight"><pre>W_1 = Q_hat - Q_l    s_1 = min(u_l-c_l,u_l+c_l,lambda_roe_1,lambda_roe_2)
+<div class="highlight-python"><div class="highlight"><pre><span></span>W_1 = Q_hat - Q_l    s_1 = min(u_l-c_l,u_l+c_l,lambda_roe_1,lambda_roe_2)
 W_2 = Q_r - Q_hat    s_2 = max(u_r-c_r,u_r+c_r,lambda_roe_1,lambda_roe_2)
 
 Q_hat = ( f(q_r) - f(q_l) - s_2 * q_r + s_1 * q_l ) / (s_1 - s_2)
@@ -496,7 +542,7 @@ Q_hat = ( f(q_r) - f(q_l) - s_2 * q_r + s_1 * q_l ) / (s_1 - s_2)
 <dt id="clawpack.riemann.shallow_1D_py.shallow_roe_1D">
 <code class="descclassname">clawpack.riemann.shallow_1D_py.</code><code class="descname">shallow_roe_1D</code><span class="sig-paren">(</span><em>q_l</em>, <em>q_r</em>, <em>aux_l</em>, <em>aux_r</em>, <em>problem_data</em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.riemann.shallow_1D_py.shallow_roe_1D" title="Permalink to this definition">¶</a></dt>
 <dd><p>Roe shallow water solver in 1d:</p>
-<div class="highlight-python"><div class="highlight"><pre>ubar = (sqrt(u_l) + sqrt(u_r)) / (sqrt(h_l) + sqrt(h_r))
+<div class="highlight-python"><div class="highlight"><pre><span></span>ubar = (sqrt(u_l) + sqrt(u_r)) / (sqrt(h_l) + sqrt(h_r))
 cbar = sqrt( 0.5 * g * (h_l + h_r))
  
 W_1 = |      1      |  s_1 = ubar - cbar

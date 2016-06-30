@@ -125,7 +125,7 @@ variables</li>
 <p>The first step to succesfully interface the Fortran functions with PyClaw
 is to automate the extension module generation of these routines through f2py.
 You can use <cite>clawpack/pyclaw/examples/shallow_sphere/Makefile</cite> as a template:</p>
-<div class="highlight-python"><div class="highlight"><pre># Problem&#39;s source Fortran files
+<div class="highlight-python"><div class="highlight"><pre><span></span># Problem&#39;s source Fortran files
 INITIALIZE_SOURCE = mapc2p.f setaux.f qinit.f src2.f
 problem.so: $(INITIALIZE_SOURCE)
     $(F2PY) -m problem -c $^
@@ -142,7 +142,7 @@ see <a class="reference external" href="http://www.scipy.org/F2py">http://www.sc
 function contained in <code class="docutils literal"><span class="pre">problem.so</span></code>, which may be different than
 that of the original Fortran function, since f2py eliminates dummy variables.
 One can easily achieve that by using the following commands:</p>
-<div class="highlight-python"><div class="highlight"><pre>$ ipython
+<div class="highlight-python"><div class="highlight"><pre><span></span>$ ipython
 &gt;&gt;&gt; import problem
 &gt;&gt;&gt; problem?
 </pre></div>
@@ -151,9 +151,9 @@ One can easily achieve that by using the following commands:</p>
 signature that must be used in the initialization script to correctly call the
 fortran functions. In the shallow water equations on a sphere example, we get
 the following output:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">Type</span><span class="p">:</span>           <span class="n">module</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">Base</span> <span class="n">Class</span><span class="p">:</span>     <span class="o">&lt;</span><span class="nb">type</span> <span class="s">&#39;module&#39;</span><span class="o">&gt;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">String</span> <span class="n">Form</span><span class="p">:</span>    <span class="o">&lt;</span><span class="n">module</span> <span class="s">&#39;problem&#39;</span> <span class="kn">from</span> <span class="s">&#39;problem.so&#39;</span><span class="o">&gt;</span>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">Type</span><span class="p">:</span>           <span class="n">module</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Base</span> <span class="n">Class</span><span class="p">:</span>     <span class="o">&lt;</span><span class="nb">type</span> <span class="s1">&#39;module&#39;</span><span class="o">&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">String</span> <span class="n">Form</span><span class="p">:</span>    <span class="o">&lt;</span><span class="n">module</span> <span class="s1">&#39;problem&#39;</span> <span class="kn">from</span> <span class="s1">&#39;problem.so&#39;</span><span class="o">&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">Namespace</span><span class="p">:</span>      <span class="n">Interactive</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">File</span><span class="p">:</span>           <span class="o">/</span><span class="n">Users</span><span class="o">/../../../</span><span class="n">clawpack</span><span class="o">/</span><span class="n">pyclaw</span><span class="o">/</span><span class="n">examples</span><span class="o">/</span><span class="n">shallow</span><span class="o">-</span><span class="n">sphere</span><span class="o">/</span><span class="n">problem</span><span class="o">.</span><span class="n">so</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">Docstring</span><span class="p">:</span>
@@ -167,7 +167,7 @@ the following output:</p>
 </div>
 <p>For instance, the function <code class="docutils literal"><span class="pre">src2</span></code>, which computes the contribution of the
 (non-hyperbolic) source term, has the following intent variables:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">cf2py</span> <span class="n">integer</span> <span class="n">intent</span><span class="p">(</span><span class="ow">in</span><span class="p">)</span> <span class="n">maxmx</span>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cf2py</span> <span class="n">integer</span> <span class="n">intent</span><span class="p">(</span><span class="ow">in</span><span class="p">)</span> <span class="n">maxmx</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">cf2py</span> <span class="n">integer</span> <span class="n">intent</span><span class="p">(</span><span class="ow">in</span><span class="p">)</span> <span class="n">maxmy</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">cf2py</span> <span class="n">integer</span> <span class="n">optional</span><span class="p">,</span> <span class="n">intent</span><span class="p">(</span><span class="ow">in</span><span class="p">)</span> <span class="n">num_eqn</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">cf2py</span> <span class="n">integer</span> <span class="n">intent</span><span class="p">(</span><span class="ow">in</span><span class="p">)</span> <span class="n">num_ghost</span>
@@ -191,7 +191,7 @@ other multidimensional arrays, i.e. <code class="docutils literal"><span class="
 <p>We are now ready to call and use the Fortran functions in the initialization
 script. For instance, the <code class="docutils literal"><span class="pre">src2</span></code> function is called in the
 <a class="reference external" href="http://numerics.kaust.edu.sa/pyclaw/examples/shallow-sphere/shallow_4_Rossby_Haurwitz_wave.py">script</a> by using a fortran_src_wrapper function whose main part reads:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="c"># Call src2 function</span>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Call src2 function</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">problem</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">state</span><span class="o">.</span><span class="n">q</span> <span class="o">=</span> <span class="n">problem</span><span class="o">.</span><span class="n">src2</span><span class="p">(</span><span class="n">mx</span><span class="p">,</span><span class="n">my</span><span class="p">,</span><span class="n">num_ghost</span><span class="p">,</span><span class="n">xlowerg</span><span class="p">,</span><span class="n">ylowerg</span><span class="p">,</span><span class="n">dx</span><span class="p">,</span><span class="n">dy</span><span class="p">,</span><span class="n">q</span><span class="p">,</span><span class="n">aux</span><span class="p">,</span><span class="n">t</span><span class="p">,</span><span class="n">dt</span><span class="p">,</span><span class="n">Rsphere</span><span class="p">)</span>
 </pre></div>
@@ -207,7 +207,7 @@ typical example that uses this nice feature. Indeed, to run correctly the proble
 ad-hoc <code class="docutils literal"><span class="pre">step2</span></code> function (i.e. the <code class="docutils literal"><span class="pre">step2qcor</span></code>) is required. For that problem
 the interesting part of the <a class="reference external" href="http://numerics.kaust.edu.sa/pyclaw/examples/shallow-sphere/shallow_4_Rossby_Haurwitz_wave.py">Makefile</a>
 reads:</p>
-<div class="highlight-python"><div class="highlight"><pre># Override step2.f with a new function that contains a call to an additional
+<div class="highlight-python"><div class="highlight"><pre><span></span># Override step2.f with a new function that contains a call to an additional
 # function, i.e. qcor.f
 # ==========================================================================
 override TWO_D_CLASSIC_SOURCES = step2qcor.f qcor.o flux2.o limiter.o philim.o
@@ -218,7 +218,7 @@ qcor.o: qcor.f
 </div>
 <p>The user has just to override <code class="docutils literal"><span class="pre">step2.f</span></code> with the new function <code class="docutils literal"><span class="pre">step2qcor.f</span></code>
 and provide new:</p>
-<div class="highlight-python"><div class="highlight"><pre>output_filenames : input_filenames
+<div class="highlight-python"><div class="highlight"><pre><span></span>output_filenames : input_filenames
     actions
 </pre></div>
 </div>

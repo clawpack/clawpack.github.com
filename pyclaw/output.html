@@ -129,7 +129,7 @@ timestep, which might be very slow.</p>
 in the vector q.  To do so, just add a function <cite>p_function</cite> to
 the controller that accepts the state and sets the derived quantities
 in state.p</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">stress</span><span class="p">(</span><span class="n">state</span><span class="p">):</span>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">stress</span><span class="p">(</span><span class="n">state</span><span class="p">):</span>
 <span class="gp">... </span>   <span class="n">state</span><span class="o">.</span><span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">,:,:]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">state</span><span class="o">.</span><span class="n">q</span><span class="p">[</span><span class="mi">0</span><span class="p">,:,:]</span><span class="o">*</span><span class="n">state</span><span class="o">.</span><span class="n">aux</span><span class="p">[</span><span class="mi">1</span><span class="p">,:,:])</span> <span class="o">-</span> <span class="mf">1.</span>
 
 <span class="gp">&gt;&gt;&gt; </span><span class="n">state</span><span class="o">.</span><span class="n">mp</span> <span class="o">=</span> <span class="mi">1</span>
@@ -149,7 +149,7 @@ to file at each output time.  For now, only functionals of the form</p>
 integral of some function of <span class="math">\(q\)</span>.  To enable writing functionals, simply
 set state.mf to the number of functionals and point the controller to a
 function that computes <span class="math">\(f(q)\)</span></p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">compute_f</span><span class="p">(</span><span class="n">state</span><span class="p">):</span>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">compute_f</span><span class="p">(</span><span class="n">state</span><span class="p">):</span>
 <span class="gp">... </span>   <span class="n">state</span><span class="o">.</span><span class="n">F</span><span class="p">[</span><span class="mi">0</span><span class="p">,:,:]</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">q</span><span class="p">[</span><span class="mi">0</span><span class="p">,:,:]</span><span class="o">*</span><span class="n">state</span><span class="o">.</span><span class="n">q</span><span class="p">[</span><span class="mi">1</span><span class="p">,:,:]</span>
 
 <span class="gp">&gt;&gt;&gt; </span><span class="n">state</span><span class="o">.</span><span class="n">mf</span> <span class="o">=</span> <span class="mi">1</span>
@@ -164,13 +164,13 @@ with data from tidal gauges (from whence the name is derived) in tsunami modelin
 The gauges are managed by the grid object, and a grid at location <span class="math">\((x,y)\)</span>
 may be added simply by calling <cite>grid.add_gauges((x,y))</cite>.  Multiple gauges
 can be set at once by providing a list of coordinate tuples</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">state</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">add_gauges</span><span class="p">([(</span><span class="n">x1</span><span class="p">,</span><span class="n">y1</span><span class="p">),(</span><span class="n">x2</span><span class="p">,</span><span class="n">y2</span><span class="p">),(</span><span class="n">x3</span><span class="p">,</span><span class="n">y3</span><span class="p">)])</span>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">state</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">add_gauges</span><span class="p">([(</span><span class="n">x1</span><span class="p">,</span><span class="n">y1</span><span class="p">),(</span><span class="n">x2</span><span class="p">,</span><span class="n">y2</span><span class="p">),(</span><span class="n">x3</span><span class="p">,</span><span class="n">y3</span><span class="p">)])</span>
 </pre></div>
 </div>
 <p>By default, the solution values are written out at each gauge location.
 To write some other quantity, simply provide a function
 <span class="math">\(f(q,aux)\)</span> and point the solver to it</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">f</span><span class="p">(</span><span class="n">q</span><span class="p">,</span><span class="n">aux</span><span class="p">):</span>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">f</span><span class="p">(</span><span class="n">q</span><span class="p">,</span><span class="n">aux</span><span class="p">):</span>
 <span class="gp">... </span>   <span class="k">return</span> <span class="n">q</span><span class="p">[</span><span class="mi">1</span><span class="p">,:,:]</span><span class="o">/</span><span class="n">q</span><span class="p">[</span><span class="mi">0</span><span class="p">,:,:]</span>
 
 <span class="gp">&gt;&gt;&gt; </span><span class="n">solver</span><span class="o">.</span><span class="n">compute_gauge_values</span> <span class="o">=</span> <span class="n">f</span>
@@ -193,7 +193,7 @@ values for <code class="xref py py-attr docutils literal"><span class="pre">verb
 <p class="system-message-title">System Message: ERROR/3 (<tt class="docutils">/Users/rjl/git/clawpack/doc/doc/pyclaw/output.rst</tt>, line 133)</p>
 <p>Malformed table.
 Column span alignment problem in table line 5.</p>
-<div class="highlight-python"><div class="highlight"><pre>===========  ================
+<div class="highlight-python"><div class="highlight"><pre><span></span>===========  ================
 Verbosity     Message Level
 -----------  ----------------
 0             Critical - This effectively silences the logger, since there are
@@ -217,8 +217,8 @@ Verbosity     Message Level
 the associated I/O can slow down the entire computation (this is true on
 Shaheen). To turn off all logging (both to screen and to file), you need to
 change the level of the root logger:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">logging</span>
-<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s">&#39;pyclaw&#39;</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">logging</span>
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s1">&#39;pyclaw&#39;</span><span class="p">)</span>
 <span class="n">logger</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">CRITICAL</span><span class="p">)</span>
 </pre></div>
 </div>

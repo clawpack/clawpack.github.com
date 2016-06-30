@@ -106,7 +106,7 @@ modify it to do what you want.  We&#8217;ll start with the example in
 Tsunami of 11 March 2011, and will assume an environment variable has been
 set so that <cite>$TOHOKU</cite> points to the directory.  This is easily done by going
 into this directory and typing (at the Unix prompt <cite>$</cite>):</p>
-<div class="highlight-python"><div class="highlight"><pre>$ export TOHOKU=`pwd`
+<div class="highlight-python"><div class="highlight"><pre><span></span>$ export TOHOKU=`pwd`
 </pre></div>
 </div>
 <div class="section" id="get-bathymetry-and-topography">
@@ -153,14 +153,14 @@ need to check any of the boxes on this page.</p>
 <p>This should save a gzipped tar-file called <cite>npacific-1257.tgz</cite> (the number
 may be different).</p>
 <p>Move that file into your $TOHOKU directory and then unpack it:</p>
-<div class="highlight-python"><div class="highlight"><pre>$ cd $TOHOKU
+<div class="highlight-python"><div class="highlight"><pre><span></span>$ cd $TOHOKU
 $ mv ~/Downloads/npacific-1257.tgz .  # or from whereever it is
 $ tar -zxvf npacific-1257.tgz
 </pre></div>
 </div>
 <p>This uncompresses and untars in verbose mode so it prints out all the files
 created, something like:</p>
-<div class="highlight-python"><div class="highlight"><pre>x npacific-1257_data/
+<div class="highlight-python"><div class="highlight"><pre><span></span>x npacific-1257_data/
 x npacific-1257_data/npacific-1257.log
 x npacific-1257_data/npacific-1257/
 x npacific-1257_data/npacific-1257/npacific-1257.asc
@@ -179,11 +179,11 @@ x npacific-1257_data/gd_ship.gif
 </div>
 <p>Most of the files contain metadata.  The actual grid is the <cite>.asc</cite> file, the
 one with the longest name, so move that one to this directory:</p>
-<div class="highlight-python"><div class="highlight"><pre>$ mv npacific-1257_data/npacific-1257/npacific-1257.asc .
+<div class="highlight-python"><div class="highlight"><pre><span></span>$ mv npacific-1257_data/npacific-1257/npacific-1257.asc .
 </pre></div>
 </div>
 <p>The first 6 lines of the <cite>.asc</cite> file are the header:</p>
-<div class="highlight-python"><div class="highlight"><pre>$ head -6 npacific-1257.asc
+<div class="highlight-python"><div class="highlight"><pre><span></span>$ head -6 npacific-1257.asc
 NCOLS   571
 NROWS   211
 XLLCENTER  115.00000
@@ -206,7 +206,7 @@ numbers to appear first on the header lines, so you can delete the words
 before the numbers (which aren&#8217;t needed), or move them to the end of the
 line for future reference.  There&#8217;s a Python script available if you have
 Clawpack installed:</p>
-<div class="highlight-python"><div class="highlight"><pre>$ python
+<div class="highlight-python"><div class="highlight"><pre><span></span>$ python
 &gt;&gt;&gt; from clawpack.geoclaw import topotools
 &gt;&gt;&gt; topotools.swapheader(&#39;npacific-1257.asc&#39;,&#39;npacific.asc&#39;)
 &gt;&gt;&gt; quit()
@@ -216,7 +216,7 @@ Clawpack installed:</p>
 <cite>npacific.asc</cite>.</p>
 <p>You can now delete all the files and directory starting with <cite>npacific-1257</cite>
 unless you want to inspect the metadata:</p>
-<div class="highlight-python"><div class="highlight"><pre>$ rm -rf npacific-1257*
+<div class="highlight-python"><div class="highlight"><pre><span></span>$ rm -rf npacific-1257*
 </pre></div>
 </div>
 <p>You may also need to retreive other topo files for particular regions of
@@ -230,25 +230,25 @@ study inundation much finer bathymetry would be required.</p>
 <p>Go through the same process as above to retrieve this grid and create a file
 <cite>hawaii.asc</cite>.</p>
 <p>There is one additional change that needs to be made in this file.  The line</p>
-<div class="highlight-python"><div class="highlight"><pre>-161.0 xll
+<div class="highlight-python"><div class="highlight"><pre><span></span>-161.0 xll
 </pre></div>
 </div>
 <p>containing x at the lower-left corner must be incremented by 360 and changed to</p>
-<div class="highlight-python"><div class="highlight"><pre>199.0 xll
+<div class="highlight-python"><div class="highlight"><pre><span></span>199.0 xll
 </pre></div>
 </div>
 <p>Since we are using coordiates from 115E to 210E we need to specify the left
 longitude value in eastern hemisphere coordinates rather than western.</p>
 <p>If you want to examine the grids you have obtained, you can use the
 following in Python:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">clawpack.visclaw</span> <span class="kn">import</span> <span class="n">geoplot</span>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">clawpack.visclaw</span> <span class="kn">import</span> <span class="n">geoplot</span>
 
-<span class="n">T</span> <span class="o">=</span> <span class="n">geoplot</span><span class="o">.</span><span class="n">TopoPlotData</span><span class="p">(</span><span class="s">&#39;npacific.asc&#39;</span><span class="p">)</span>
+<span class="n">T</span> <span class="o">=</span> <span class="n">geoplot</span><span class="o">.</span><span class="n">TopoPlotData</span><span class="p">(</span><span class="s1">&#39;npacific.asc&#39;</span><span class="p">)</span>
 <span class="n">T</span><span class="o">.</span><span class="n">cmin</span> <span class="o">=</span> <span class="o">-</span><span class="mf">5000.</span>
 <span class="n">T</span><span class="o">.</span><span class="n">cmax</span> <span class="o">=</span> <span class="mf">500.</span>
 <span class="n">T</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
 
-<span class="n">T</span><span class="o">.</span><span class="n">fname</span> <span class="o">=</span> <span class="s">&#39;hawaii.asc&#39;</span>
+<span class="n">T</span><span class="o">.</span><span class="n">fname</span> <span class="o">=</span> <span class="s1">&#39;hawaii.asc&#39;</span>
 <span class="n">T</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
 
 <span class="n">xlim</span><span class="p">(</span><span class="mi">115</span><span class="p">,</span><span class="mi">210</span><span class="p">)</span>
@@ -262,8 +262,8 @@ following in Python:</p>
 <a class="reference internal image-reference" href="_images/hawaii.png"><img alt="_images/hawaii.png" src="_images/hawaii.png" style="width: 20cm;" /></a>
 <p>Various other attributes of a <cite>TopoPlotData</cite> object
 can also be set. Here are the default values:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">topotype</span> <span class="o">=</span> <span class="mi">3</span>
-<span class="n">cmap</span> <span class="o">=</span> <span class="bp">None</span>   <span class="c"># set automatically</span>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">topotype</span> <span class="o">=</span> <span class="mi">3</span>
+<span class="n">cmap</span> <span class="o">=</span> <span class="bp">None</span>   <span class="c1"># set automatically</span>
 <span class="n">cmax</span> <span class="o">=</span> <span class="mf">100.</span>
 <span class="n">cmin</span> <span class="o">=</span> <span class="o">-</span><span class="mf">4000.</span>
 <span class="n">climits</span> <span class="o">=</span> <span class="bp">None</span>
@@ -287,22 +287,22 @@ used instead, which takes longer to plot but may look nicer.</p>
 <h2>Specifying topo in <cite>setrun.py</cite><a class="headerlink" href="#specifying-topo-in-setrun-py" title="Permalink to this headline">¶</a></h2>
 <p>The file <cite>setrun.py</cite> we copied from the <cite>chilie2010</cite> directory contains the
 lines:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="c"># == settopo.data values ==</span>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="c1"># == settopo.data values ==</span>
 <span class="n">geodata</span><span class="o">.</span><span class="n">topofiles</span> <span class="o">=</span> <span class="p">[]</span>
-<span class="c"># for topography, append lines of the form</span>
-<span class="c">#   [topotype, minlevel, maxlevel, t1, t2, fname]</span>
+<span class="c1"># for topography, append lines of the form</span>
+<span class="c1">#   [topotype, minlevel, maxlevel, t1, t2, fname]</span>
 <span class="n">geodata</span><span class="o">.</span><span class="n">topofiles</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">1.e10</span><span class="p">,</span> \
-                          <span class="s">&#39;etopo10min120W60W60S0S.asc&#39;</span><span class="p">])</span>
+                          <span class="s1">&#39;etopo10min120W60W60S0S.asc&#39;</span><span class="p">])</span>
 </pre></div>
 </div>
 <p>We wish to change this to use the two topo files we have created.  After
 changing the file, these lines should be:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="c"># == settopo.data values ==</span>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="c1"># == settopo.data values ==</span>
 <span class="n">geodata</span><span class="o">.</span><span class="n">topofiles</span> <span class="o">=</span> <span class="p">[]</span>
-<span class="c"># for topography, append lines of the form</span>
-<span class="c">#   [topotype, minlevel, maxlevel, t1, t2, fname]</span>
-<span class="n">geodata</span><span class="o">.</span><span class="n">topofiles</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">1.e10</span><span class="p">,</span> <span class="s">&#39;npacific.asc&#39;</span><span class="p">])</span>
-<span class="n">geodata</span><span class="o">.</span><span class="n">topofiles</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">1.e10</span><span class="p">,</span> <span class="s">&#39;hawaii.asc&#39;</span><span class="p">])</span>
+<span class="c1"># for topography, append lines of the form</span>
+<span class="c1">#   [topotype, minlevel, maxlevel, t1, t2, fname]</span>
+<span class="n">geodata</span><span class="o">.</span><span class="n">topofiles</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">1.e10</span><span class="p">,</span> <span class="s1">&#39;npacific.asc&#39;</span><span class="p">])</span>
+<span class="n">geodata</span><span class="o">.</span><span class="n">topofiles</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">1.e10</span><span class="p">,</span> <span class="s1">&#39;hawaii.asc&#39;</span><span class="p">])</span>
 </pre></div>
 </div>
 <p>We have specified two topo files.  Each file has topotype 3 and we are
@@ -345,7 +345,7 @@ creating <cite>dtopo</cite> files from given source parameters.</p>
 <p>The <cite>chile2010</cite> example that we are starting with has a very simple fault
 model for the source, consisting of a single fault plane with one set of
 parameters specified in the file <cite>usgs100227.cfg</cite>:</p>
-<div class="highlight-python"><div class="highlight"><pre>Fault_Width 100.e3
+<div class="highlight-python"><div class="highlight"><pre><span></span>Fault_Width 100.e3
 Fault_Length 450.e3
 Slip_Angle 104.0
 Dip_Angle 14.0
@@ -387,20 +387,20 @@ predicted by each.</p>
 <h2>Specifying dtopo in <cite>setrun.py</cite><a class="headerlink" href="#specifying-dtopo-in-setrun-py" title="Permalink to this headline">¶</a></h2>
 <p>The file <cite>setrun.py</cite> we copied from the <cite>chilie2010</cite> directory contains the
 lines:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="c"># == setdtopo.data values ==</span>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="c1"># == setdtopo.data values ==</span>
 <span class="n">geodata</span><span class="o">.</span><span class="n">dtopofiles</span> <span class="o">=</span> <span class="p">[]</span>
-<span class="c"># for moving topography, append lines of the form:</span>
-<span class="c">#   [topotype, minlevel,maxlevel,fname]</span>
-<span class="n">geodata</span><span class="o">.</span><span class="n">dtopofiles</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="s">&#39;usgs100227.tt1&#39;</span><span class="p">])</span>
+<span class="c1"># for moving topography, append lines of the form:</span>
+<span class="c1">#   [topotype, minlevel,maxlevel,fname]</span>
+<span class="n">geodata</span><span class="o">.</span><span class="n">dtopofiles</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="s1">&#39;usgs100227.tt1&#39;</span><span class="p">])</span>
 </pre></div>
 </div>
 <p>We wish to change this to use the dtopo file we created above, so these
 lines should be changed to:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="c"># == setdtopo.data values ==</span>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="c1"># == setdtopo.data values ==</span>
 <span class="n">geodata</span><span class="o">.</span><span class="n">dtopofiles</span> <span class="o">=</span> <span class="p">[]</span>
-<span class="c"># for moving topography, append lines of the form:</span>
-<span class="c">#   [topotype, minlevel,maxlevel,fname]</span>
-<span class="n">geodata</span><span class="o">.</span><span class="n">dtopofiles</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="s">&#39;honshu-ucsb3.tt1&#39;</span><span class="p">])</span>
+<span class="c1"># for moving topography, append lines of the form:</span>
+<span class="c1">#   [topotype, minlevel,maxlevel,fname]</span>
+<span class="n">geodata</span><span class="o">.</span><span class="n">dtopofiles</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="s1">&#39;honshu-ucsb3.tt1&#39;</span><span class="p">])</span>
 </pre></div>
 </div>
 <p>Note that we are forcing 3 levels of refinement in the region covered by the
@@ -420,7 +420,7 @@ description of additional GeoClaw parameters.</p>
 <p><strong>The domain size</strong></p>
 <p>We choose a domain that extends from the source region to Hawaii, and that
 is covered by the topo files:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="c"># Lower and upper edge of computational domain:</span>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="c1"># Lower and upper edge of computational domain:</span>
 <span class="n">clawdata</span><span class="o">.</span><span class="n">xlower</span> <span class="o">=</span> <span class="mf">140.</span>
 <span class="n">clawdata</span><span class="o">.</span><span class="n">xupper</span> <span class="o">=</span> <span class="mf">210.</span>
 
@@ -430,17 +430,17 @@ is covered by the topo files:</p>
 </div>
 <p><strong>The coarse grid</strong></p>
 <p>The coarse grid will have a 2-degree resolution:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="c"># Number of grid cells:</span>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="c1"># Number of grid cells:</span>
 <span class="n">clawdata</span><span class="o">.</span><span class="n">mx</span> <span class="o">=</span> <span class="mi">35</span>
 <span class="n">clawdata</span><span class="o">.</span><span class="n">my</span> <span class="o">=</span> <span class="mi">15</span>
 </pre></div>
 </div>
 <p><strong>The output times</strong></p>
 <p>For a first test, let&#8217;s plot the solution every half hour for 12 hours:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">clawdata</span><span class="o">.</span><span class="n">outstyle</span> <span class="o">=</span> <span class="mi">1</span>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">clawdata</span><span class="o">.</span><span class="n">outstyle</span> <span class="o">=</span> <span class="mi">1</span>
 
 <span class="k">if</span> <span class="n">clawdata</span><span class="o">.</span><span class="n">outstyle</span><span class="o">==</span><span class="mi">1</span><span class="p">:</span>
-    <span class="c"># Output nout frames at equally spaced times up to tfinal:</span>
+    <span class="c1"># Output nout frames at equally spaced times up to tfinal:</span>
     <span class="n">clawdata</span><span class="o">.</span><span class="n">nout</span> <span class="o">=</span> <span class="mi">24</span>
     <span class="n">clawdata</span><span class="o">.</span><span class="n">tfinal</span> <span class="o">=</span> <span class="mf">3600.</span><span class="o">*</span><span class="mi">12</span>
 </pre></div>
@@ -448,10 +448,10 @@ is covered by the topo files:</p>
 <p><strong>AMR parameters</strong></p>
 <p>We will first do a fairly coarse run to get an idea of what time interval we
 care about near Hawaii:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="c"># max number of refinement levels:</span>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="c1"># max number of refinement levels:</span>
 <span class="n">mxnest</span> <span class="o">=</span> <span class="mi">2</span>
 
-<span class="c"># List of refinement ratios at each level (length at least mxnest-1)</span>
+<span class="c1"># List of refinement ratios at each level (length at least mxnest-1)</span>
 <span class="n">clawdata</span><span class="o">.</span><span class="n">inratx</span> <span class="o">=</span> <span class="p">[</span><span class="mi">4</span><span class="p">]</span>
 <span class="n">clawdata</span><span class="o">.</span><span class="n">inraty</span> <span class="o">=</span> <span class="p">[</span><span class="mi">4</span><span class="p">]</span>
 <span class="n">clawdata</span><span class="o">.</span><span class="n">inratt</span> <span class="o">=</span> <span class="p">[</span><span class="mi">4</span><span class="p">]</span>
@@ -463,14 +463,14 @@ each step on Level 1).</p>
 <p><strong>Regions and Gauges</strong></p>
 <p>For the first attempt, we will not specify any refinement regions or gauges
 for output, so give an empty list for each of these parameters:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="c"># == setregions.data values ==</span>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="c1"># == setregions.data values ==</span>
 <span class="n">geodata</span><span class="o">.</span><span class="n">regions</span> <span class="o">=</span> <span class="p">[]</span>
-<span class="c"># to specify regions of refinement append lines of the form</span>
-<span class="c">#  [minlevel,maxlevel,t1,t2,x1,x2,y1,y2]</span>
+<span class="c1"># to specify regions of refinement append lines of the form</span>
+<span class="c1">#  [minlevel,maxlevel,t1,t2,x1,x2,y1,y2]</span>
 
-<span class="c"># == setgauges.data values ==</span>
+<span class="c1"># == setgauges.data values ==</span>
 <span class="n">geodata</span><span class="o">.</span><span class="n">gauges</span> <span class="o">=</span> <span class="p">[]</span>
-<span class="c"># for gauges append lines of the form  [gaugeno, x, y, t1, t2]</span>
+<span class="c1"># for gauges append lines of the form  [gaugeno, x, y, t1, t2]</span>
 </pre></div>
 </div>
 </div>
@@ -479,9 +479,9 @@ for output, so give an empty list for each of these parameters:</p>
 <p>Gauges can be specified where the solution is recorded at every time step.
 This is specified in the <cite>setrun.py</cite> file.  The file copied from the
 <cite>chile2010</cite> example contains the lines</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="c"># == setgauges.data values ==</span>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="c1"># == setgauges.data values ==</span>
 <span class="n">geodata</span><span class="o">.</span><span class="n">gauges</span> <span class="o">=</span> <span class="p">[]</span>
-<span class="c"># for gauges append lines of the form  [gaugeno, x, y, t1, t2]</span>
+<span class="c1"># for gauges append lines of the form  [gaugeno, x, y, t1, t2]</span>
 <span class="n">geodata</span><span class="o">.</span><span class="n">gauges</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="mi">32412</span><span class="p">,</span> <span class="o">-</span><span class="mf">86.392</span><span class="p">,</span> <span class="o">-</span><span class="mf">17.975</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">1.e10</span><span class="p">])</span>
 </pre></div>
 </div>
@@ -498,7 +498,7 @@ we are using to resolve the flow near a tide gauge.</p>
 <p>Let&#8217;s add a line for
 <a class="reference external" href="http://www.ndbc.noaa.gov/station_page.php?station=51407">DART buoy 51407</a>, which is near
 the island of Hawaii:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">geodata</span><span class="o">.</span><span class="n">gauges</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="mi">51407</span><span class="p">,</span> <span class="mf">203.484</span><span class="p">,</span> <span class="mf">19.642</span><span class="p">,</span> <span class="mi">3600</span><span class="o">*</span><span class="mf">7.</span><span class="p">,</span> <span class="mf">1.e10</span><span class="p">])</span>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">geodata</span><span class="o">.</span><span class="n">gauges</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="mi">51407</span><span class="p">,</span> <span class="mf">203.484</span><span class="p">,</span> <span class="mf">19.642</span><span class="p">,</span> <span class="mi">3600</span><span class="o">*</span><span class="mf">7.</span><span class="p">,</span> <span class="mf">1.e10</span><span class="p">])</span>
 </pre></div>
 </div>
 <p>Note that gauge output is only requested after time
