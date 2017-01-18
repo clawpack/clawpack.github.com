@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>AMR refinement criteria &mdash; Clawpack 5.3.1 documentation</title>
+    <title>AMR refinement criteria &#8212; Clawpack 5.4.0 documentation</title>
     
     <link rel="stylesheet" href="_static/flasky.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -16,7 +16,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '5.3.1',
+        VERSION:     '5.4.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -28,7 +28,9 @@
     <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="shortcut icon" href="_static/clawicon.ico"/>
     <link rel="author" title="About these documents" href="about.html" />
-    <link rel="top" title="Clawpack 5.3.1 documentation" href="contents.html" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="top" title="Clawpack 5.4.0 documentation" href="contents.html" />
     <link rel="next" title="Gauges" href="gauges.html" />
     <link rel="prev" title="Adaptive mesh refinement (AMR) algorithms" href="amr_algorithm.html" /> 
   </head>
@@ -79,7 +81,7 @@
         <li class="right" >
           <a href="amr_algorithm.html" title="Adaptive mesh refinement (AMR) algorithms"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="contents.html">Clawpack 5.3.1 documentation</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="contents.html">Clawpack 5.4.0 documentation</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -91,7 +93,7 @@
   <div class="section" id="amr-refinement-criteria">
 <span id="refinement"></span><h1>AMR refinement criteria<a class="headerlink" href="#amr-refinement-criteria" title="Permalink to this headline">¶</a></h1>
 <p>Several parameters controlling refinement can be set in the <cite>setrun</cite>
-function.  See <a class="reference internal" href="amrclaw/setrun_amrclaw.html#setrun-amrclaw"><span>Specifying AMRClaw parameters in setrun.py</span></a> for further description of these.
+function.  See <a class="reference internal" href="setrun_amrclaw.html#setrun-amrclaw"><span class="std std-ref">Specifying AMRClaw run-time parameters in setrun.py</span></a> for further description of these.
 Many of the parameters discussed below are attributes of <cite>rundata.amrdata</cite>
 in <cite>setrun.py</cite>.</p>
 <p>Every <cite>regrid_interval</cite> time steps on each level, the error is
@@ -108,7 +110,7 @@ number is close to 1) and taken to be some small integer such as 2 or 3.</p>
 <p>In addition to flagging individual cells based on the behavior of the
 solution, it is also possible to specify that certain regions of the domain
 should always be refined to a certain level (and/or never refined above
-some level).  This is described further in <a class="reference internal" href="#refinement-regions"><span>Specifying AMR regions</span></a>.
+some level).  This is described further in <a class="reference internal" href="#refinement-regions"><span class="std std-ref">Specifying AMR regions</span></a>.
 These regions are used in conjunction with the methods
 described below to determine whether or not a given cell should be flagged
 for refinement.</p>
@@ -127,7 +129,7 @@ clustering_cutoff = 0.7 is usually reasonable.</p>
 <p>Two possible approaches to flagging individual
 cells for refinement (based on the behavior of the solution) are built into
 AMRClaw.  (A different default approach is used in GeoClaw, see
-<a class="reference internal" href="#refinement-geoclaw"><span>Flagging criteria in GeoClaw</span></a>).</p>
+<a class="reference internal" href="#refinement-geoclaw"><span class="std std-ref">Flagging criteria in GeoClaw</span></a>).</p>
 <div class="section" id="flag2refine">
 <span id="refinement-flag2refine"></span><h3>flag2refine<a class="headerlink" href="#flag2refine" title="Permalink to this headline">¶</a></h3>
 <p>One approach to flagging cells for refinement (the default used in
@@ -178,7 +180,7 @@ These are specified through the parameter <cite>rundata.regiondata.regions</cite
 <cite>setrun.py</cite>.
 This is a list of lists, each of which specifies a region.  A new region can
 be added via:</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">rundata</span><span class="o">.</span><span class="n">regiondata</span><span class="o">.</span><span class="n">regions</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">minlevel</span><span class="p">,</span><span class="n">maxlevel</span><span class="p">,</span><span class="n">t1</span><span class="p">,</span><span class="n">t2</span><span class="p">,</span><span class="n">x1</span><span class="p">,</span><span class="n">x2</span><span class="p">,</span><span class="n">y1</span><span class="p">,</span><span class="n">y2</span><span class="p">])</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">rundata</span><span class="o">.</span><span class="n">regiondata</span><span class="o">.</span><span class="n">regions</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">minlevel</span><span class="p">,</span><span class="n">maxlevel</span><span class="p">,</span><span class="n">t1</span><span class="p">,</span><span class="n">t2</span><span class="p">,</span><span class="n">x1</span><span class="p">,</span><span class="n">x2</span><span class="p">,</span><span class="n">y1</span><span class="p">,</span><span class="n">y2</span><span class="p">])</span>
 </pre></div>
 </div>
 <p>This indicates that over the time period from <cite>t1</cite> to <cite>t2</cite>, cells in the
@@ -202,7 +204,7 @@ flagging some adjacent cells, a cell may still end up flagged for refinement
 even if the above tests say it should not be.)</p>
 <p>For example, suppose that <cite>amr_levels_max = 6</cite> has been specified along
 with these two regions:</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">rundata</span><span class="o">.</span><span class="n">regiondata</span><span class="o">.</span><span class="n">regions</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mf">10.0</span><span class="p">,</span> <span class="mf">30.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">])</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">rundata</span><span class="o">.</span><span class="n">regiondata</span><span class="o">.</span><span class="n">regions</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mf">10.0</span><span class="p">,</span> <span class="mf">30.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">])</span>
 <span class="n">rundata</span><span class="o">.</span><span class="n">regiondata</span><span class="o">.</span><span class="n">regions</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mf">20.0</span><span class="p">,</span> <span class="mf">40.0</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">])</span>
 </pre></div>
 </div>
@@ -219,8 +221,8 @@ there will be at least 3 levels and at most 5 levels in the region of
 overlap, <cite>0.2 &lt; x &lt; 0.5</cite> and <cite>0.2 &lt; y &lt; 0.5</cite>.</p>
 <p>Within these regions, how many levels are chosen at each point will be
 determined by the <em>error flagging criteria</em>, i.e.  by the default
-or user-supplied routine <a class="reference internal" href="#refinement-flag2refine"><span>flag2refine</span></a>,  or as
-determined by <a class="reference internal" href="#refinement-richardson"><span>Richardson extrapolation</span></a>, as described above.</p>
+or user-supplied routine <a class="reference internal" href="#refinement-flag2refine"><span class="std std-ref">flag2refine</span></a>,  or as
+determined by <a class="reference internal" href="#refinement-richardson"><span class="std std-ref">Richardson extrapolation</span></a>, as described above.</p>
 <p>Points that are not covered by either region are not constrained by the
 regions at all.   With <cite>amr_levels_max = 6</cite> then they might
 be refined to any level from 1 to 6 depending on the error flagging criteria.</p>
@@ -261,7 +263,7 @@ go on to the next grid cell.</li>
 <p><a href="http://clawpack.org/">
     <img class="logo" src= "_static/clawlogo.jpg" alt="Logo"/>
 </a>
-<h2>Version 5.3.1</h2>
+<h2>Version 5.4.0</h2>
 </p>
   <h3><a href="contents.html">Table Of Contents</a></h3>
   <ul>
@@ -293,14 +295,11 @@ go on to the next grid cell.</li>
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
     <form class="search" action="search.html" method="get">
-      <input type="text" name="q" />
-      <input type="submit" value="Go" />
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
-    <p class="searchtip" style="font-size: 90%">
-    Enter search terms or a module, class or function name.
-    </p>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
@@ -308,7 +307,7 @@ go on to the next grid cell.</li>
       <div class="clearer"></div>
     </div>
   <div class="footer">
-    &copy; Copyright 2015, The Clawpack Development Team.
+    &copy; Copyright 2017, The Clawpack Development Team.
     Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
   </div>
   <script>

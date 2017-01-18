@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Developers’ Guide &mdash; Clawpack 5.3.1 documentation</title>
+    <title>Developers’ Guide &#8212; Clawpack 5.4.0 documentation</title>
     
     <link rel="stylesheet" href="_static/flasky.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -16,7 +16,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '5.3.1',
+        VERSION:     '5.4.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -28,9 +28,12 @@
     <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="shortcut icon" href="_static/clawicon.ico"/>
     <link rel="author" title="About these documents" href="about.html" />
-    <link rel="top" title="Clawpack 5.3.1 documentation" href="contents.html" />
-    <link rel="next" title="Guide for updating this documentation" href="howto_doc.html" />
-    <link rel="prev" title="Clawpack Community" href="community.html" /> 
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="top" title="Clawpack 5.4.0 documentation" href="contents.html" />
+    <link rel="up" title="Pyclaw" href="pyclaw/index.html" />
+    <link rel="next" title="Troubleshooting" href="pyclaw/troubleshooting.html" />
+    <link rel="prev" title="Understanding Pyclaw Classes" href="pyclaw/classes.html" /> 
   </head>
   <body role="document">
 <div id="main-wrapper" class="sphinx">
@@ -74,12 +77,13 @@
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="howto_doc.html" title="Guide for updating this documentation"
+          <a href="pyclaw/troubleshooting.html" title="Troubleshooting"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="community.html" title="Clawpack Community"
+          <a href="pyclaw/classes.html" title="Understanding Pyclaw Classes"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="contents.html">Clawpack 5.3.1 documentation</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="contents.html">Clawpack 5.4.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="pyclaw/index.html" accesskey="U">Pyclaw</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -101,20 +105,22 @@
 </li>
 <li><a class="reference internal" href="#installation-instructions-for-developers" id="id5">Installation instructions for developers</a><ul>
 <li><a class="reference internal" href="#cloning-the-most-recent-code-from-github" id="id6">Cloning the most recent code from Github</a></li>
-<li><a class="reference internal" href="#updating-to-the-latest-development-version" id="id7">Updating to the latest development version</a></li>
-<li><a class="reference internal" href="#adding-your-fork-as-a-remote" id="id8">Adding your fork as a remote</a></li>
+<li><a class="reference internal" href="#checking-out-the-master-branch-on-each-repository" id="id7">Checking out the master branch on each repository</a></li>
+<li><a class="reference internal" href="#updating-to-the-latest-master-branch" id="id8">Updating to the latest master branch</a></li>
+<li><a class="reference internal" href="#never-commit-to-master" id="id9">Never commit to <cite>master</cite></a></li>
+<li><a class="reference internal" href="#adding-your-fork-as-a-remote" id="id10">Adding your fork as a remote</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#modifying-code" id="id9">Modifying code</a><ul>
-<li><a class="reference internal" href="#issuing-a-pull-request" id="id10">Issuing a pull request</a></li>
-<li><a class="reference internal" href="#testing-a-pull-request" id="id11">Testing a pull request</a></li>
-<li><a class="reference internal" href="#top-level-pull-requests" id="id12">Top-level pull requests</a></li>
-<li><a class="reference internal" href="#git-workflow" id="id13">Git workflow</a></li>
+<li><a class="reference internal" href="#modifying-code" id="id11">Modifying code</a><ul>
+<li><a class="reference internal" href="#issuing-a-pull-request" id="id12">Issuing a pull request</a></li>
+<li><a class="reference internal" href="#testing-a-pull-request" id="id13">Testing a pull request</a></li>
+<li><a class="reference internal" href="#top-level-pull-requests" id="id14">Top-level pull requests</a></li>
+<li><a class="reference internal" href="#git-workflow" id="id15">Git workflow</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#catching-errors-with-pyflakes-and-pylint" id="id14">Catching errors with Pyflakes and Pylint</a></li>
-<li><a class="reference internal" href="#checking-test-coverage" id="id15">Checking test coverage</a></li>
-<li><a class="reference internal" href="#trouble-shooting-tips" id="id16">Trouble-Shooting Tips</a></li>
+<li><a class="reference internal" href="#catching-errors-with-pyflakes-and-pylint" id="id16">Catching errors with Pyflakes and Pylint</a></li>
+<li><a class="reference internal" href="#checking-test-coverage" id="id17">Checking test coverage</a></li>
+<li><a class="reference internal" href="#trouble-shooting-tips" id="id18">Trouble-Shooting Tips</a></li>
 </ul>
 </li>
 </ul>
@@ -156,9 +162,9 @@ trackers on Github.</p>
 <div class="section" id="cloning-the-most-recent-code-from-github">
 <h3><a class="toc-backref" href="#id6">Cloning the most recent code from Github</a><a class="headerlink" href="#cloning-the-most-recent-code-from-github" title="Permalink to this headline">¶</a></h3>
 <p>You can create a read-only development version of Clawpack via:</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span>git clone git://github.com/clawpack/clawpack.git
-cd clawpack
-python setup.py git-dev
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">git</span> <span class="n">clone</span> <span class="n">git</span><span class="p">:</span><span class="o">//</span><span class="n">github</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">clawpack</span><span class="o">/</span><span class="n">clawpack</span><span class="o">.</span><span class="n">git</span>
+<span class="n">cd</span> <span class="n">clawpack</span>
+<span class="n">python</span> <span class="n">setup</span><span class="o">.</span><span class="n">py</span> <span class="n">git</span><span class="o">-</span><span class="n">dev</span>
 </pre></div>
 </div>
 <p>This downloads the following clawpack modules as subrepositories checked out at
@@ -179,48 +185,59 @@ visualization tools)</li>
 (Note that there are many inter-dependencies between code in the
 repositories and checking out a different commit in one repository may break
 things in a different repository.)</p>
-<p>If you want to also install the PyClaw Python components, you can then do:</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span>python setup.py install
+<p>Now install this version of Clawpack using:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="o">-</span><span class="n">e</span> <span class="o">.</span>
 </pre></div>
 </div>
-<p>If you plan to work on the Python parts of Clawpack as a developer, you may instead
-wish to do:</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span>pip install -e .
-</pre></div>
-</div>
-<p>The advantage of this is that when you edit Python code in your clawpack directly,
-it will immediately take effect, without the need to install again.  However,
-the (potential) danger of this approach is that the path to your clawpack
-directory will be stored in the file site-packages/easy-install.pth and
-prepended to your PYTHONPATH whenever you run Python.  This path will
-take precedence over any manually added paths, unless you delete the .pth
-file.</p>
+<p>The <cite>-e</cite> flag means that this is an editabl version of the Clawpack code
+(rather than installing the original version in the <cite>site-packages</cite>
+directory).</p>
 <p>If you want to use the Fortran versions in <cite>classic</cite>, <cite>amrclaw</cite>, <cite>geoclaw</cite>,
 etc., you need to set environment variables and proceed as described at
-<a class="reference internal" href="installing.html#setenv"><span>Set environment variables</span></a>.</p>
+<a class="reference internal" href="setenv.html#setenv"><span class="std std-ref">Set environment variables</span></a>.</p>
 </div>
-<div class="section" id="updating-to-the-latest-development-version">
-<h3><a class="toc-backref" href="#id7">Updating to the latest development version</a><a class="headerlink" href="#updating-to-the-latest-development-version" title="Permalink to this headline">¶</a></h3>
-<p>The repositories will each be checked out to a specific commit and
-will probably be in a detached-head state.  You will need to checkout
-<cite>master</cite> in each repository to see the current head of the master branch.</p>
+<div class="section" id="checking-out-the-master-branch-on-each-repository">
+<h3><a class="toc-backref" href="#id7">Checking out the master branch on each repository</a><a class="headerlink" href="#checking-out-the-master-branch-on-each-repository" title="Permalink to this headline">¶</a></h3>
+<p>Following the instructions above gives you a top level <cite>$CLAW</cite> directory
+that is checked out to the tip of the master branch, and each subrepository
+will be checked out to a particular commit as specified by this master
+branch.  For development work, You probably want to check out each
+subrepository to the master branch as well.  The shell script
+<cite>$CLAW/pull_all.sh</cite> can be used to do this for all subrepositories (or look
+at this file to see how to do it more selectively).  At a shell prompt,
+type:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">source</span> <span class="n">pull_all</span><span class="o">.</span><span class="n">sh</span>
+</pre></div>
+</div>
+<p>which will check out master on each repository and then do a <cite>git pull</cite> to
+make sure it is up to date.  If you do this shortly after cloning all the
+repositories, they should all have been up to date already.</p>
+</div>
+<div class="section" id="updating-to-the-latest-master-branch">
+<h3><a class="toc-backref" href="#id8">Updating to the latest master branch</a><a class="headerlink" href="#updating-to-the-latest-master-branch" title="Permalink to this headline">¶</a></h3>
+<p>The script <cite>pull_all.sh</cite> can be used at any time to check out all
+subrepositories to master and do a <cite>git pull</cite>.  This is handy if you want to
+make sure your version of <cite>master</cite> is up to date in every repository.</p>
+<p>You should first make sure that you do not have uncommitted changes in any
+repository that might conflict with the <cite>git checkout master</cite> or
+<cite>git pull</cite> commands.  You can do this easily with the command:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>python $CLAW/clawutil/src/python/clawutil/claw_git_status.py
+</pre></div>
+</div>
+<p>and then check the files <cite>claw_git_status.txt</cite> and <cite>claw_git_diffs.txt</cite>,
+which summarize the status of each subrepository.</p>
+</div>
+<div class="section" id="never-commit-to-master">
+<h3><a class="toc-backref" href="#id9">Never commit to <cite>master</cite></a><a class="headerlink" href="#never-commit-to-master" title="Permalink to this headline">¶</a></h3>
 <p>You should never commit to <cite>master</cite>, only to a feature branch, so
-the <cite>master</cite> branch should always reflect what&#8217;s in the main
-<em>clawpack</em> repository.  You can update it to reflect any changes via:</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span>git checkout master
-git fetch origin
-git merge origin/master
-</pre></div>
-</div>
-<p>or simply:</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span>git pull origin master:master
-</pre></div>
-</div>
-<p>Remember that you need to do this in each repository before running anything
-to make sure everything is up to date with <em>master</em>.</p>
+the <cite>master</cite> branch should always reflect what&#8217;s in the <cite>master</cite> branch on
+the primary Github repositories.</p>
+<p>You can update <cite>master</cite> to reflect any changes via the above approach (for
+all subrepositories at once), or do <cite>git checkout master</cite> and then <cite>git
+pull</cite> within any of the subrepositories separately.</p>
 </div>
 <div class="section" id="adding-your-fork-as-a-remote">
-<span id="dev-remote"></span><h3><a class="toc-backref" href="#id8">Adding your fork as a remote</a><a class="headerlink" href="#adding-your-fork-as-a-remote" title="Permalink to this headline">¶</a></h3>
+<span id="dev-remote"></span><h3><a class="toc-backref" href="#id10">Adding your fork as a remote</a><a class="headerlink" href="#adding-your-fork-as-a-remote" title="Permalink to this headline">¶</a></h3>
 <p>If you plan to make changes and issue pull requests to one or more
 repositories, you will need to do the following steps for each such
 repository:</p>
@@ -231,12 +248,17 @@ at the top of the screen.)</p>
 </li>
 <li><p class="first">Add a <em>remote</em> pointing to your repository.  For example, if you have
 forked the <cite>amrclaw</cite> repository to account <cite>username</cite>, you would do:</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span>cd amrclaw
-git remote add username git@github.com:username/amrclaw.git
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">cd</span> <span class="n">amrclaw</span>
+<span class="n">git</span> <span class="n">remote</span> <span class="n">add</span> <span class="n">username</span> <span class="n">git</span><span class="nd">@github</span><span class="o">.</span><span class="n">com</span><span class="p">:</span><span class="n">username</span><span class="o">/</span><span class="n">amrclaw</span><span class="o">.</span><span class="n">git</span>
 </pre></div>
 </div>
+<p>provided you have ssh keys set up, or else:</p>
+<blockquote>
+<div><p>git remote add username htpps://github.com/username/amrclaw.git</p>
+</div></blockquote>
+<p>if you don&#8217;t mind having to type your password whenever you push or pull.</p>
 <p>You should push only to this remote, not to <cite>origin</cite>, e.g.:</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span>git push username
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">git</span> <span class="n">push</span> <span class="n">username</span>
 </pre></div>
 </div>
 </li>
@@ -250,31 +272,37 @@ git remote add username git@github.com:username/amrclaw.git
 </ul>
 <p>These are not brought over by cloning the top <cite>clawpack</cite> super-repository.
 You can get one of these in read-only mode by doing, e.g.:</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span>git clone git://github.com/clawpack/doc.git
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">git</span> <span class="n">clone</span> <span class="n">git</span><span class="p">:</span><span class="o">//</span><span class="n">github</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">clawpack</span><span class="o">/</span><span class="n">doc</span><span class="o">.</span><span class="n">git</span>
 </pre></div>
 </div>
 <p>Then go through the above steps to add your own fork as a remote
 if you plan to modify code and issue pull requests.</p>
+<p><strong>Note:</strong> The <cite>git://github.com...</cite> form of specifying a remote
+clones the repository in a form
+that does not allow pushing to it (unlike the <cite>git&#64;github.com:...</cite> or
+<cite>https://github.com...</cite> forms).  This is good practic so you do not
+accidently try to push to the main clawpack repository rather than to your
+own fork.</p>
 </div>
 </div>
 <div class="section" id="modifying-code">
-<h2><a class="toc-backref" href="#id9">Modifying code</a><a class="headerlink" href="#modifying-code" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id11">Modifying code</a><a class="headerlink" href="#modifying-code" title="Permalink to this headline">¶</a></h2>
 <p>Before making changes, make sure <em>master</em> is up to date:</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span>git checkout master
-git pull
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">git</span> <span class="n">checkout</span> <span class="n">master</span>
+<span class="n">git</span> <span class="n">pull</span>
 </pre></div>
 </div>
 <p>Then create a new branch based on <cite>master</cite> for any new commits:</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span>git checkout -b new_feature master
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">git</span> <span class="n">checkout</span> <span class="o">-</span><span class="n">b</span> <span class="n">new_feature</span> <span class="n">master</span>
 </pre></div>
 </div>
 <p>Now make changes, add and commit them,
 and then push to your own fork:</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span># make some changes
-# git add the modified files
-git commit -m &quot;describe the changes&quot;
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="c1"># make some changes</span>
+<span class="c1"># git add the modified files</span>
+<span class="n">git</span> <span class="n">commit</span> <span class="o">-</span><span class="n">m</span> <span class="s2">&quot;describe the changes&quot;</span>
 
-git push username new_feature
+<span class="n">git</span> <span class="n">push</span> <span class="n">username</span> <span class="n">new_feature</span>
 </pre></div>
 </div>
 <p>If you want these changes pulled into <em>master</em>,
@@ -282,7 +310,7 @@ you can issue a pull request from the github page for your fork of this
 repository (make sure to select the correct branch of your repository).</p>
 <p><strong>Note:</strong> If you accidentally commit to <cite>master</cite> rather than creating a
 feature branch first, you can easily recover:</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span>git checkout -b new_feature
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">git</span> <span class="n">checkout</span> <span class="o">-</span><span class="n">b</span> <span class="n">new_feature</span>
 </pre></div>
 </div>
 <p>will create a new branch based on the current state and history (including
@@ -292,36 +320,36 @@ commits.</p>
 on Github and you want to throw away the commits you made to <cite>master</cite>.  The
 easiest way to do this is just to make sure you&#8217;re on a different branch,
 e.g.,</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span>git checkout new_feature
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">git</span> <span class="n">checkout</span> <span class="n">new_feature</span>
 </pre></div>
 </div>
 <p>and then:</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span>git branch -D master
-git checkout -b master origin/master
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">git</span> <span class="n">branch</span> <span class="o">-</span><span class="n">D</span> <span class="n">master</span>
+<span class="n">git</span> <span class="n">checkout</span> <span class="o">-</span><span class="n">b</span> <span class="n">master</span> <span class="n">origin</span><span class="o">/</span><span class="n">master</span>
 </pre></div>
 </div>
 <p>This deletes your local branch named <cite>master</cite> and recreates a branch with
 the same name based on <cite>origin/master</cite>, which is what you want.</p>
 <div class="section" id="issuing-a-pull-request">
-<span id="developers-pr"></span><h3><a class="toc-backref" href="#id10">Issuing a pull request</a><a class="headerlink" href="#issuing-a-pull-request" title="Permalink to this headline">¶</a></h3>
+<span id="developers-pr"></span><h3><a class="toc-backref" href="#id12">Issuing a pull request</a><a class="headerlink" href="#issuing-a-pull-request" title="Permalink to this headline">¶</a></h3>
 <p>Before issuing a pull request, you should make sure you have not broken
 anything:</p>
 <ol class="arabic">
 <li><p class="first">Make sure you are up to date with <em>master</em>:</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span>git checkout master
-git pull
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">git</span> <span class="n">checkout</span> <span class="n">master</span>
+<span class="n">git</span> <span class="n">pull</span>
 </pre></div>
 </div>
 <p>If this does not say &#8220;Already up-to-date&#8221; then you might want to rebase
 your modified code onto the updated master.  With your feature branch
 checked out, you can see what newer commits have been added to <em>master</em>
 via:</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span>git checkout new_feature
-git log HEAD..master
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">git</span> <span class="n">checkout</span> <span class="n">new_feature</span>
+<span class="n">git</span> <span class="n">log</span> <span class="n">HEAD</span><span class="o">..</span><span class="n">master</span>
 </pre></div>
 </div>
 <p>If your new feature can be added on to the updated master, you can rebase:</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span>git rebase master
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">git</span> <span class="n">rebase</span> <span class="n">master</span>
 </pre></div>
 </div>
 <p>which gives a cleaner history than merging the branches.</p>
@@ -329,13 +357,13 @@ git log HEAD..master
 <li><p class="first">Run the appropriate regression tests.  If you have modified code
 in pyclaw or riemann, then you should run the pyclaw tests.  First,
 if you have modified any Fortran code, you need to recompile:</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span>cd clawpack/
-pip install -e .
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">cd</span> <span class="n">clawpack</span><span class="o">/</span>
+<span class="n">pip</span> <span class="n">install</span> <span class="o">-</span><span class="n">e</span> <span class="o">.</span>
 </pre></div>
 </div>
 <p>Then run the tests:</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span>cd pyclaw
-nosetests
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">cd</span> <span class="n">pyclaw</span>
+<span class="n">nosetests</span>
 </pre></div>
 </div>
 <p>If any tests fail, you should fix them before issuing a pull request.</p>
@@ -346,13 +374,13 @@ repository in question, select the branch from which you want the pull
 request to originate, and then click the <em>Pull Request</em> button.</p>
 </div>
 <div class="section" id="testing-a-pull-request">
-<span id="test-pr"></span><h3><a class="toc-backref" href="#id11">Testing a pull request</a><a class="headerlink" href="#testing-a-pull-request" title="Permalink to this headline">¶</a></h3>
+<span id="test-pr"></span><h3><a class="toc-backref" href="#id13">Testing a pull request</a><a class="headerlink" href="#testing-a-pull-request" title="Permalink to this headline">¶</a></h3>
 <p>To test out someone else&#8217;s pull request, follow these  instructions:
 For
 example, if you want to try out a pull request coming from a branch named
 <em>bug-fix</em> from user <em>rjleveque</em> to the <em>master</em> branch of
 the <em>amrclaw</em> repository, you would do:</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span>cd $CLAW/amrclaw   # (and make sure you don&#39;t have uncommitted changes)
+<div class="highlight-default"><div class="highlight"><pre><span></span>cd $CLAW/amrclaw   # (and make sure you don&#39;t have uncommitted changes)
 git checkout master
 git pull  # to make sure you are up to date
 
@@ -363,19 +391,19 @@ git pull https://github.com/rjleveque/amrclaw.git bug-fix
 <p>This puts you on a new branch of your own repository named
 <em>rjleveque-bug-fix</em> that has the proposed changes pulled into it.</p>
 <p>Once you are done testing, you can get rid of this branch via:</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span>git checkout master
-git branch -D rjleveque-bug-fix
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">git</span> <span class="n">checkout</span> <span class="n">master</span>
+<span class="n">git</span> <span class="n">branch</span> <span class="o">-</span><span class="n">D</span> <span class="n">rjleveque</span><span class="o">-</span><span class="n">bug</span><span class="o">-</span><span class="n">fix</span>
 </pre></div>
 </div>
 </div>
 <div class="section" id="top-level-pull-requests">
-<span id="toplevel-pr"></span><h3><a class="toc-backref" href="#id12">Top-level pull requests</a><a class="headerlink" href="#top-level-pull-requests" title="Permalink to this headline">¶</a></h3>
+<span id="toplevel-pr"></span><h3><a class="toc-backref" href="#id14">Top-level pull requests</a><a class="headerlink" href="#top-level-pull-requests" title="Permalink to this headline">¶</a></h3>
 <p>The top level <em>clawpack</em> repository keeps track of what versions of the
 subrepositories work well together.</p>
 <p>If you make pull requests in two different repositories that are linked, say
 to both <em>pyclaw</em> and <em>riemann</em>, then you should also push these changes to
 the top-level <em>clawpack</em> repository and issue a PR for this change:</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span>cd $CLAW   # top-level clawpack repository
+<div class="highlight-default"><div class="highlight"><pre><span></span>cd $CLAW   # top-level clawpack repository
 git checkout master
 git pull
 git checkout -b pyclaw-riemann-changes
@@ -386,27 +414,27 @@ git push username pyclaw-riemann-changes
 </div>
 </div>
 <div class="section" id="git-workflow">
-<h3><a class="toc-backref" href="#id13">Git workflow</a><a class="headerlink" href="#git-workflow" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id15">Git workflow</a><a class="headerlink" href="#git-workflow" title="Permalink to this headline">¶</a></h3>
 <p>See <span class="xref std std-ref">git-resources</span> for useful links.</p>
 </div>
 </div>
 <div class="section" id="catching-errors-with-pyflakes-and-pylint">
-<h2><a class="toc-backref" href="#id14">Catching errors with Pyflakes and Pylint</a><a class="headerlink" href="#catching-errors-with-pyflakes-and-pylint" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id16">Catching errors with Pyflakes and Pylint</a><a class="headerlink" href="#catching-errors-with-pyflakes-and-pylint" title="Permalink to this headline">¶</a></h2>
 <p>Pyflakes and Pylint are Python packages designed to help you catch errors or
 poor coding practices.  To run pylint on the whole PyClaw package, do:</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span>cd $PYCLAW
+<div class="highlight-default"><div class="highlight"><pre><span></span>cd $PYCLAW
 pylint -d C pyclaw
 </pre></div>
 </div>
 <p>The <cite>-d</cite> option suppresses a lot of style warnings, since PyClaw doesn&#8217;t
 generally conform to PEP8.  To run pylint on just one module, use something
 like:</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span>pylint -d C pyclaw.state
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">pylint</span> <span class="o">-</span><span class="n">d</span> <span class="n">C</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">state</span>
 </pre></div>
 </div>
 <p>Since pylint output can be long, it&#8217;s helpful to write it to an html file
 and open that in a web browser:</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span>pylint -d C pyclaw.state -f html &gt; pylint.html
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">pylint</span> <span class="o">-</span><span class="n">d</span> <span class="n">C</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">state</span> <span class="o">-</span><span class="n">f</span> <span class="n">html</span> <span class="o">&gt;</span> <span class="n">pylint</span><span class="o">.</span><span class="n">html</span>
 </pre></div>
 </div>
 <p>Pyflakes is similar to pylint but aims only to catch errors.  If you
@@ -415,17 +443,17 @@ use Vim, there is a nice extension package
 that will catch errors as you code and underline them in red.</p>
 </div>
 <div class="section" id="checking-test-coverage">
-<h2><a class="toc-backref" href="#id15">Checking test coverage</a><a class="headerlink" href="#checking-test-coverage" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id17">Checking test coverage</a><a class="headerlink" href="#checking-test-coverage" title="Permalink to this headline">¶</a></h2>
 <p>You can use nose to see how much of the code is covered by the current
 suite of tests and track progress if you add more tests</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span>nosetests --with-coverage --cover-package=pyclaw --cover-html
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">nosetests</span> <span class="o">--</span><span class="k">with</span><span class="o">-</span><span class="n">coverage</span> <span class="o">--</span><span class="n">cover</span><span class="o">-</span><span class="n">package</span><span class="o">=</span><span class="n">pyclaw</span> <span class="o">--</span><span class="n">cover</span><span class="o">-</span><span class="n">html</span>
 </pre></div>
 </div>
 <p>This creates a set of html files in <cite>./cover</cite>, showing exactly which lines
 of code have been tested.</p>
 </div>
 <div class="section" id="trouble-shooting-tips">
-<h2><a class="toc-backref" href="#id16">Trouble-Shooting Tips</a><a class="headerlink" href="#trouble-shooting-tips" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id18">Trouble-Shooting Tips</a><a class="headerlink" href="#trouble-shooting-tips" title="Permalink to this headline">¶</a></h2>
 <p>If you are having trouble installing or building Clawpack try out some of the
 following tips:</p>
 <blockquote>
@@ -448,7 +476,7 @@ for the Python bindings and will override the defaults.</li>
 <p><a href="http://clawpack.org/">
     <img class="logo" src= "_static/clawlogo.jpg" alt="Logo"/>
 </a>
-<h2>Version 5.3.1</h2>
+<h2>Version 5.4.0</h2>
 </p>
   <h3><a href="contents.html">Table Of Contents</a></h3>
   <ul>
@@ -460,7 +488,9 @@ for the Python bindings and will override the defaults.</li>
 </li>
 <li><a class="reference internal" href="#installation-instructions-for-developers">Installation instructions for developers</a><ul>
 <li><a class="reference internal" href="#cloning-the-most-recent-code-from-github">Cloning the most recent code from Github</a></li>
-<li><a class="reference internal" href="#updating-to-the-latest-development-version">Updating to the latest development version</a></li>
+<li><a class="reference internal" href="#checking-out-the-master-branch-on-each-repository">Checking out the master branch on each repository</a></li>
+<li><a class="reference internal" href="#updating-to-the-latest-master-branch">Updating to the latest master branch</a></li>
+<li><a class="reference internal" href="#never-commit-to-master">Never commit to <cite>master</cite></a></li>
 <li><a class="reference internal" href="#adding-your-fork-as-a-remote">Adding your fork as a remote</a></li>
 </ul>
 </li>
@@ -480,8 +510,10 @@ for the Python bindings and will override the defaults.</li>
 <h3>Related Topics</h3>
 <ul>
   <li><a href="contents.html">Documentation overview</a><ul>
-      <li>Previous: <a href="community.html" title="previous chapter">Clawpack Community</a></li>
-      <li>Next: <a href="howto_doc.html" title="next chapter">Guide for updating this documentation</a></li>
+  <li><a href="pyclaw/index.html">Pyclaw</a><ul>
+      <li>Previous: <a href="pyclaw/classes.html" title="previous chapter">Understanding Pyclaw Classes</a></li>
+      <li>Next: <a href="pyclaw/troubleshooting.html" title="next chapter">Troubleshooting</a></li>
+  </ul></li>
   </ul></li>
 </ul>
   <div role="note" aria-label="source link">
@@ -494,14 +526,11 @@ for the Python bindings and will override the defaults.</li>
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
     <form class="search" action="search.html" method="get">
-      <input type="text" name="q" />
-      <input type="submit" value="Go" />
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
-    <p class="searchtip" style="font-size: 90%">
-    Enter search terms or a module, class or function name.
-    </p>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
@@ -509,7 +538,7 @@ for the Python bindings and will override the defaults.</li>
       <div class="clearer"></div>
     </div>
   <div class="footer">
-    &copy; Copyright 2015, The Clawpack Development Team.
+    &copy; Copyright 2017, The Clawpack Development Team.
     Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
   </div>
   <script>

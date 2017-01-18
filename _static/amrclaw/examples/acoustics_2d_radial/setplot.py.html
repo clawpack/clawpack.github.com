@@ -15,7 +15,7 @@
            <font FACE="HELVETICA,ARIAL">
            
 <!-- Created from the file /Users/rjl/git/clawpack/amrclaw/examples/acoustics_2d_radial/setplot.py -->
-<!-- Date: Sun May 17 2015 at 20:26:16 -->
+<!-- Date: Wed Dec 28 2016 at 22:33:57 -->
 
 <table bgcolor="#FFEE99"> <tr> <td>
 &nbsp;<font size=6> setplot.py.html </font> </td>
@@ -27,7 +27,7 @@
 </td></tr><tr><td>
 &nbsp;Directory:  &nbsp; /Users/rjl/git/clawpack/amrclaw/examples/acoustics_2d_radial 
 </td></tr><tr><td>
-&nbsp;Converted:  &nbsp; Sun May 17 2015 at 20:26:16 
+&nbsp;Converted:  &nbsp; Wed Dec 28 2016 at 22:33:57 
 &nbsp; using <a href="http://clawpack.github.io//doc/application_documentation.html#clawcode2html">clawcode2html</a>
 </td></tr><tr><td>
 <font color="#BB3300"> &nbsp;This documentation file will 
@@ -44,16 +44,18 @@ function setplot is called to set the plot parameters.
     
 """ 
 
+from __future__ import absolute_import
+from __future__ import print_function
 import os
 if os.path.exists('./1drad/_output'):
     qref_dir = os.path.abspath('./1drad/_output')
 else:
     qref_dir = None
-    print "Directory ./1drad/_output not found"
+    print("Directory ./1drad/_output not found")
 
 
 <font color="blue">#--------------------------</font>
-def setplot(plotdata):
+def setplot(plotdata=None):
 <font color="blue">#--------------------------</font>
     
     """ 
@@ -65,6 +67,11 @@ def setplot(plotdata):
 
 
     from clawpack.visclaw import colormaps
+
+    if plotdata is None:
+        from clawpack.visclaw.data import ClawPlotData
+        plotdata = ClawPlotData()
+
 
     plotdata.clearfigures()  <font color="blue"># clear any old figures,axes,items data</font>
     
@@ -167,6 +174,7 @@ def setplot(plotdata):
     plotdata.latex_figsperline = 2           <font color="blue"># layout of plots</font>
     plotdata.latex_framesperline = 1         <font color="blue"># layout of plots</font>
     plotdata.latex_makepdf = False           <font color="blue"># also run pdflatex?</font>
+    plotdata.parallel = True                 <font color="blue"># make multiple frame png's at once</font>
 
     return plotdata
 

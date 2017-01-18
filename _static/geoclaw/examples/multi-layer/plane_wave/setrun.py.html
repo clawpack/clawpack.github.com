@@ -15,7 +15,7 @@
            <font FACE="HELVETICA,ARIAL">
            
 <!-- Created from the file /Users/rjl/git/clawpack/geoclaw/examples/multi-layer/plane_wave/setrun.py -->
-<!-- Date: Mon Sep  1 2014 at 16:36:19 -->
+<!-- Date: Wed Dec 28 2016 at 23:12:17 -->
 
 <table bgcolor="#FFEE99"> <tr> <td>
 &nbsp;<font size=6> setrun.py.html </font> </td>
@@ -27,7 +27,7 @@
 </td></tr><tr><td>
 &nbsp;Directory:  &nbsp; /Users/rjl/git/clawpack/geoclaw/examples/multi-layer/plane_wave 
 </td></tr><tr><td>
-&nbsp;Converted:  &nbsp; Mon Sep  1 2014 at 16:36:19 
+&nbsp;Converted:  &nbsp; Wed Dec 28 2016 at 23:12:17 
 &nbsp; using <a href="http://clawpack.github.io//doc/application_documentation.html#clawcode2html">clawcode2html</a>
 </td></tr><tr><td>
 <font color="#BB3300"> &nbsp;This documentation file will 
@@ -43,11 +43,13 @@ that will be read in by the Fortran code.
 
 """
 
+from __future__ import absolute_import
+from __future__ import print_function
 import numpy as numpy
 
-import clawpack.geoclaw.multilayer.data as multilayer
-import clawpack.geoclaw.surge.data as surge
+import clawpack.geoclaw.data
 import clawpack.geoclaw.topotools as tt
+
 
 <font color="blue"># Rotation transformations</font>
 def transform_c2p(x,y,x0,y0,theta):
@@ -57,6 +59,54 @@ def transform_c2p(x,y,x0,y0,theta):
 def transform_p2c(x,y,x0,y0,theta):
     return ( x*numpy.cos(theta) + y*numpy.sin(theta) - x0,
             -x*numpy.sin(theta) + y*numpy.cos(theta) - y0)
+
+
+<font color="blue"># Class containing some setup for the qinit especially for multilayer tests </font>
+class QinitMultilayerData(clawpack.geoclaw.data.QinitData):
+    r"""
+    Modified Qinit data object for multiple layers
+
+    """
+
+    def __init__(self):
+        super(QinitMultilayerData, self).__init__()
+
+        <font color="blue"># Test qinit data > 4</font>
+        self.add_attribute("init_location", [0.0, 0.0])
+        self.add_attribute("wave_family", 1)
+        self.add_attribute("epsilon", 0.02)
+        self.add_attribute("angle", 0.0)
+        self.add_attribute("sigma", 0.02)
+
+    def write(self, data_source='setrun.py'):
+
+        <font color="blue"># Initial perturbation</font>
+        self.open_data_file('qinit.data',data_source)
+        self.data_write('qinit_type')
+
+        <font color="blue"># Perturbation requested</font>
+        if self.qinit_type == 0:
+            pass
+        elif 0 < self.qinit_type < 5:
+            <font color="blue"># Check to see if each qinit file is present and then write the data</font>
+            for tfile in self.qinitfiles:
+                try:
+                    fname = "'%s'" % os.path.abspath(tfile[-1])
+                except:
+                    raise Warning("File %s was not found." % fname)
+                    <font color="blue"># raise MissingFile("file not found")</font>
+                self._out_file.write("\n%s  \n" % fname)
+                self._out_file.write("%3i %3i \n" % tuple(tfile[:-1]))
+        elif self.qinit_type >= 5 and self.qinit_type <= 9:
+            self.data_write('epsilon')
+            self.data_write("init_location")
+            self.data_write("wave_family")
+            self.data_write("angle")
+            self.data_write("sigma")
+        else:
+            raise ValueError("Invalid qinit_type parameter %s." % self.qinit_type)
+        self.close_data_file()
+
 
 
 <font color="blue">#------------------------------</font>
@@ -85,13 +135,7 @@ def setrun(claw_pkg='geoclaw'):
     <font color="blue"># GeoClaw specific parameters:</font>
     <font color="blue">#------------------------------------------------------------------</font>
     rundata = setgeo(rundata)
-
-    rundata.add_data(multilayer.MultilayerData(), 'multilayer_data')
-    set_multilayer(rundata)
-    rundata.add_data(surge.FrictionData(),'frictiondata')
-    set_friction(rundata)
-    rundata.add_data(surge.SurgeData(),'stormdata')
-    set_storm(rundata)
+    rundata = set_multilayer(rundata)
 
     <font color="blue">#------------------------------------------------------------------</font>
     <font color="blue"># Standard Clawpack parameters to be written to claw.data:</font>
@@ -133,8 +177,6 @@ def setrun(claw_pkg='geoclaw'):
 
     <font color="blue"># Number of auxiliary variables in the aux array (initialized in setaux)</font>
     clawdata.num_aux = 4 + rundata.multilayer_data.num_layers
-    if rundata.stormdata.storm_type > 0:
-        clawdata.num_aux += 3
 
     <font color="blue"># Index of aux array corresponding to capacity function, if there is one:</font>
     clawdata.capa_index = 0
@@ -149,8 +191,6 @@ def setrun(claw_pkg='geoclaw'):
 
 
     <font color="blue"># Restart from checkpoint file of a previous run?</font>
-    <font color="blue"># Note: If restarting, you must also change the Makefile to set:</font>
-    <font color="blue">#    RESTART = True</font>
     <font color="blue"># If restarting, t0 above should be from original run, and the</font>
     <font color="blue"># restart_file 'fort.chkNNNNN' specified below should be in </font>
     <font color="blue"># the OUTDIR indicated in Makefile.</font>
@@ -418,7 +458,7 @@ def setgeo(rundata):
     try:
         geo_data = rundata.geo_data
     except:
-        print "*** Error, this rundata has no geo_data attribute"
+        print("*** Error, this rundata has no geo_data attribute")
         raise AttributeError("Missing geo_data attribute")
        
     <font color="blue"># == Physics ==</font>
@@ -454,21 +494,10 @@ def setgeo(rundata):
     <font color="blue"># for moving topography, append lines of the form :   (<= 1 allowed for now!)</font>
     <font color="blue">#   [topotype, minlevel,maxlevel,fname]</font>
 
-    <font color="blue"># == setqinit.data values ==</font>
-    <font color="blue"># Use multilayer qinit data object</font>
-
-
 
     return rundata
     <font color="blue"># end of function setgeo</font>
     <font color="blue"># ----------------------</font>
-
-def set_friction(rundata):
-
-    data = rundata.frictiondata
-
-    <font color="blue"># Variable friction</font>
-    data.variable_friction = False
 
 
 def set_multilayer(rundata):
@@ -487,8 +516,7 @@ def set_multilayer(rundata):
     <font color="blue"># data.wave_tolerance = [0.1,0.1]</font>
     <font color="blue"># data.dry_limit = True</font>
 
-    <font color="blue"># Set special initial conditions for qinit</font>
-    rundata.replace_data('qinit_data', multilayer.QinitMultilayerData())
+    rundata.replace_data('qinit_data', QinitMultilayerData())
     rundata.qinit_data.qinit_type = 6
     rundata.qinit_data.epsilon = 0.02
     rundata.qinit_data.angle = 0.0
@@ -496,10 +524,7 @@ def set_multilayer(rundata):
     rundata.qinit_data.wave_family = 4
     rundata.qinit_data.init_location = [-0.1,0.0]
 
-def set_storm(rundata):
-
-    <font color="blue"># No storm</font>
-    rundata.stormdata.storm_type = 0
+    return rundata
 
 
 def bathy_step(x, y, location=0.15, angle=0.0, left=-1.0, right=-0.2):
@@ -509,7 +534,6 @@ def bathy_step(x, y, location=0.15, angle=0.0, left=-1.0, right=-0.2):
 
 
 def write_topo_file(run_data, out_file, **kwargs):
-
 
     <font color="blue"># Make topography</font>
     topo_func = lambda x, y: bathy_step(x, y, **kwargs)
@@ -524,11 +548,11 @@ def write_topo_file(run_data, out_file, **kwargs):
 
     <font color="blue"># Write out simple bathy geometry file for communication to the plotting</font>
     with open("./bathy_geometry.data", 'w') as bathy_geometry_file:
-        if kwargs.has_key("location"):
+        if "location" in kwargs:
             location = kwargs['location']
         else:
             location = 0.15
-        if kwargs.has_key("angle"):
+        if "angle" in kwargs:
             angle = kwargs['angle']
         else:
             angle = 0.0
@@ -545,4 +569,5 @@ if __name__ == '__main__':
 
     rundata.write()
 
-    write_topo_file(rundata, 'topo.tt2')</pre></html>
+    write_topo_file(rundata, 'topo.tt2')
+</pre></html>

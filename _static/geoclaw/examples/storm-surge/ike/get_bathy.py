@@ -2,9 +2,10 @@
 
 """Simple implementation of a file fetcher"""
 
+from __future__ import absolute_import
 import sys
 import os
-import clawpack.geoclaw.util as util
+import clawpack.clawutil.data
 
 if __name__ == "__main__":
     # Default URLs
@@ -17,4 +18,4 @@ if __name__ == "__main__":
     urls = [os.path.join(base_url, 'gulf_caribbean.tt3.tar.bz2')]
 
     for url in urls:
-        util.get_remote_file(url)
+        clawpack.clawutil.data.get_remote_file(url)

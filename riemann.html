@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Riemann solvers &mdash; Clawpack 5.3.1 documentation</title>
+    <title>Riemann solvers &#8212; Clawpack 5.4.0 documentation</title>
     
     <link rel="stylesheet" href="_static/flasky.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -16,7 +16,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '5.3.1',
+        VERSION:     '5.4.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -28,7 +28,9 @@
     <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="shortcut icon" href="_static/clawicon.ico"/>
     <link rel="author" title="About these documents" href="about.html" />
-    <link rel="top" title="Clawpack 5.3.1 documentation" href="contents.html" /> 
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="top" title="Clawpack 5.4.0 documentation" href="contents.html" /> 
   </head>
   <body role="document">
 <div id="main-wrapper" class="sphinx">
@@ -71,7 +73,7 @@
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="contents.html">Clawpack 5.3.1 documentation</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="contents.html">Clawpack 5.4.0 documentation</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -95,11 +97,11 @@ equations, traffic flow, Burgers&#8217; equation, etc.</p>
 or 3 dimensions the bulk of the work is done by a &#8220;normal solver&#8221; that
 solves a 1-dimensional Riemann problem normal to each cell edge.  (These are
 then augmented by transverse solvers as described below.)</p>
-<p>See <a class="reference internal" href="wp_algorithms.html#wp-algorithms"><span>Wave-propagation algorithms</span></a> and <a class="reference internal" href="biblio.html#leveque-fvmhp" id="id1">[LeVeque-FVMHP]</a> for more details about how the
+<p>See <a class="reference internal" href="wp_algorithms.html#wp-algorithms"><span class="std std-ref">Wave-propagation algorithms</span></a> and <a class="reference internal" href="biblio.html#leveque-fvmhp" id="id1">[LeVeque-FVMHP]</a> for more details about how the
 algorithms in Clawpack use the Riemann solution.</p>
 <p>The calling sequence for the 1-dimensional Riemann solver subroutine <cite>rp1</cite>
 is:</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span>subroutine rp1(maxm,meqn,mwaves,maux,mbc,mx,ql,qr,auxl,auxr,wave,s,amdq,apdq)
+<div class="highlight-default"><div class="highlight"><pre><span></span>subroutine rp1(maxm,meqn,mwaves,maux,mbc,mx,ql,qr,auxl,auxr,wave,s,amdq,apdq)
 
 ! Input arguments
 integer, intent(in) :: maxmx,meqn,mwaves,mbc,mx,maux
@@ -125,7 +127,7 @@ is:</p>
 ql(:,i) is the value <span class="math">\(Q_i^L\)</span> at the left edge of the i’th
 cell, while qr(:,i) is the value <span class="math">\(Q_i^R\)</span> at the right edge
 of the i’th cell, as indicated in this figure:</p>
-<a class="reference internal image-reference" href="_images/qlqr.png"><img alt="_images/qlqr.png" src="_images/qlqr.png" style="width: 10cm;" /></a>
+<a class="reference internal image-reference" href="images/qlqr.png"><img alt="images/qlqr.png" src="images/qlqr.png" style="width: 10cm;" /></a>
 <p>Normally <cite>ql = qr</cite> and both values agree with <span class="math">\(Q_i^n\)</span> , the cell
 average at time <span class="math">\(t_n\)</span>.
 More flexibility is allowed because in some applications, or in
@@ -145,7 +147,7 @@ to denote the left state and <span class="math">\(q_r\)</span>  to denote the ri
 in specifying Riemann data.</p>
 <p>The Riemann solver <cite>rp1</cite> also has input parameters <cite>auxl</cite> and <cite>auxr</cite>
 that contain values of the auxiliary variables if these are being used (see
-<a class="reference internal" href="user_routines.html#user-setaux"><span>Specifying spatially-varying data using setaux</span></a>).
+<a class="reference internal" href="user_routines.html#user-setaux"><span class="std std-ref">Specifying spatially-varying data using setaux</span></a>).
 Normally <cite>auxl = auxr = aux</cite> when the Riemann solver is called from the
 standard Clawpack routines.</p>
 <p>The routine <cite>rp1</cite> must solve the Riemann problem for each value of <cite>i</cite>,
@@ -156,11 +158,11 @@ and return the following (for <cite>i=1-mbc</cite> to <cite>mx+mbc</cite>):</p>
 <li><cite>wave(1:meqn,i,p)</cite>  = the vector <span class="math">\({\cal W}^p_{i-1/2}\)</span>,</li>
 <li><cite>s(i,p)</cite>  = the wave speed <span class="math">\(s^p_{i-1/2}\)</span> for each wave.</li>
 </ul>
-<p>This uses the notation of <a class="reference internal" href="wp_algorithms.html#wp-algorithms"><span>Wave-propagation algorithms</span></a> and <a class="reference internal" href="biblio.html#leveque-fvmhp" id="id3">[LeVeque-FVMHP]</a>.</p>
+<p>This uses the notation of <a class="reference internal" href="wp_algorithms.html#wp-algorithms"><span class="std std-ref">Wave-propagation algorithms</span></a> and <a class="reference internal" href="biblio.html#leveque-fvmhp" id="id3">[LeVeque-FVMHP]</a>.</p>
 </div>
 <div class="section" id="f-wave-riemann-solvers">
 <span id="riemann-fwave"></span><h2>f-wave Riemann solvers<a class="headerlink" href="#f-wave-riemann-solvers" title="Permalink to this headline">¶</a></h2>
-<p>As described in <a class="reference internal" href="wp_algorithms.html#wp-fwave"><span>f-wave formulation</span></a>, for spatially-varying flux functions it is
+<p>As described in <a class="reference internal" href="wp_algorithms.html#wp-fwave"><span class="std std-ref">f-wave formulation</span></a>, for spatially-varying flux functions it is
 often best to use the f-wave formulation of the wave-propagation algorithms.
 This can be implemented in Clawpack by providing a
 suitable Riemann solver that returns f-waves instead of ordinary waves,
@@ -172,7 +174,7 @@ sequence as described above, the only difference is that the output
 argument <cite>wave</cite> should return an array of f-waves.  while <cite>amdq</cite>
 and <cite>apdq</cite> have the same meaning as before.</p>
 <p>In order to indicate that the Riemann solver returns f-waves, the parameter
-<cite>runclaw.use_fwaves</cite> in <cite>setrun</cite> should be set to <cite>True</cite>, see <a class="reference internal" href="setrun.html#setrun"><span>Specifying classic run-time parameters in setrun.py</span></a>.</p>
+<cite>runclaw.use_fwaves</cite> in <cite>setrun</cite> should be set to <cite>True</cite>, see <a class="reference internal" href="setrun.html#setrun"><span class="std std-ref">Specifying classic run-time parameters in setrun.py</span></a>.</p>
 <p>TODO: Continue description &#8211; 2d and 3d, transverse solvers.</p>
 </div>
 </div>
@@ -186,7 +188,7 @@ and <cite>apdq</cite> have the same meaning as before.</p>
 <p><a href="http://clawpack.org/">
     <img class="logo" src= "_static/clawlogo.jpg" alt="Logo"/>
 </a>
-<h2>Version 5.3.1</h2>
+<h2>Version 5.4.0</h2>
 </p>
   <h3><a href="contents.html">Table Of Contents</a></h3>
   <ul>
@@ -211,14 +213,11 @@ and <cite>apdq</cite> have the same meaning as before.</p>
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
     <form class="search" action="search.html" method="get">
-      <input type="text" name="q" />
-      <input type="submit" value="Go" />
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
-    <p class="searchtip" style="font-size: 90%">
-    Enter search terms or a module, class or function name.
-    </p>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
@@ -226,7 +225,7 @@ and <cite>apdq</cite> have the same meaning as before.</p>
       <div class="clearer"></div>
     </div>
   <div class="footer">
-    &copy; Copyright 2015, The Clawpack Development Team.
+    &copy; Copyright 2017, The Clawpack Development Team.
     Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
   </div>
   <script>

@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Troubleshooting &mdash; Clawpack 5.3.1 documentation</title>
+    <title>Troubleshooting &#8212; Clawpack 5.4.0 documentation</title>
     
     <link rel="stylesheet" href="_static/flasky.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -16,7 +16,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '5.3.1',
+        VERSION:     '5.4.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -28,9 +28,11 @@
     <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="shortcut icon" href="_static/clawicon.ico"/>
     <link rel="author" title="About these documents" href="about.html" />
-    <link rel="top" title="Clawpack 5.3.1 documentation" href="contents.html" />
-    <link rel="next" title="Which Clawpack solver should I use?" href="packages.html" />
-    <link rel="prev" title="License" href="license.html" /> 
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="top" title="Clawpack 5.4.0 documentation" href="contents.html" />
+    <link rel="next" title="Clawpack Virtual Machine" href="vm.html" />
+    <link rel="prev" title="Clawpack components" href="clawpack_components.html" /> 
   </head>
   <body role="document">
 <div id="main-wrapper" class="sphinx">
@@ -74,12 +76,12 @@
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="packages.html" title="Which Clawpack solver should I use?"
+          <a href="vm.html" title="Clawpack Virtual Machine"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="license.html" title="License"
+          <a href="clawpack_components.html" title="Clawpack components"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="contents.html">Clawpack 5.3.1 documentation</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="contents.html">Clawpack 5.4.0 documentation</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -91,12 +93,18 @@
   <div class="section" id="troubleshooting">
 <span id="trouble"></span><h1>Troubleshooting<a class="headerlink" href="#troubleshooting" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="troubleshooting-installation">
-<span id="trouble-installation"></span><h2>Troubleshooting: Installation<a class="headerlink" href="#troubleshooting-installation" title="Permalink to this headline">¶</a></h2>
+<span id="trouble-installation"></span><h2>Troubleshooting Installation<a class="headerlink" href="#troubleshooting-installation" title="Permalink to this headline">¶</a></h2>
+<p>Don&#8217;t forget to <a class="reference internal" href="setenv.html#setenv"><span class="std std-ref">Set environment variables</span></a>.</p>
+<p>See <a class="reference internal" href="python_path.html#python-path"><span class="std std-ref">Python path</span></a> for problems with your Python path.</p>
+<p>The utility function <a class="reference internal" href="python_path.html#whichclaw"><span class="std std-ref">whichclaw.py</span></a> may be useful for sorting out path issues.</p>
+</div>
+<div class="section" id="troubleshooting-fortran">
+<h2>Troubleshooting Fortran:<a class="headerlink" href="#troubleshooting-fortran" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="setting-the-fortran-compiler-to-be-used-by-f2py-pip">
-<h3>Setting the Fortran compiler to be used by f2py (pip)<a class="headerlink" href="#setting-the-fortran-compiler-to-be-used-by-f2py-pip" title="Permalink to this headline">¶</a></h3>
-<p>When executing <code class="docutils literal"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">clawpack</span></code> or <code class="docutils literal"><span class="pre">python</span> <span class="pre">setup.py</span> <span class="pre">install</span></code>,
-if you get an error like:</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span>error: f90 not supported by GnuFCompiler
+<span id="trouble-f2py"></span><h3>Setting the Fortran compiler to be used by f2py (pip)<a class="headerlink" href="#setting-the-fortran-compiler-to-be-used-by-f2py-pip" title="Permalink to this headline">¶</a></h3>
+<p>When trying to install with <cite>pip</cite> (see <a class="reference internal" href="installing_pip.html#installing-pip"><span class="std std-ref">Installation instructions (pip)</span></a>)
+or <cite>python setup.py install</cite>, if you get an error like:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">error</span><span class="p">:</span> <span class="n">f90</span> <span class="ow">not</span> <span class="n">supported</span> <span class="n">by</span> <span class="n">GnuFCompiler</span>
 </pre></div>
 </div>
 <p>then f2py is trying to use your f77 compiler.  This may happen even if
@@ -104,11 +112,11 @@ you also have an f90 compiler like gfortran installed.  In this case,
 <code class="docutils literal"><span class="pre">pip</span> <span class="pre">install</span></code> will not work; you should download a tarball or clone
 the code from Github.  Then, in order to see the compilers detected by f2py,
 run:</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span>python setup.py config_fc --help-fcompiler
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">python</span> <span class="n">setup</span><span class="o">.</span><span class="n">py</span> <span class="n">config_fc</span> <span class="o">--</span><span class="n">help</span><span class="o">-</span><span class="n">fcompiler</span>
 </pre></div>
 </div>
 <p>Then to install using a different compiler, do e.g.:</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span>python setup.py config_fc --fcompiler=gfortran install
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">python</span> <span class="n">setup</span><span class="o">.</span><span class="n">py</span> <span class="n">config_fc</span> <span class="o">--</span><span class="n">fcompiler</span><span class="o">=</span><span class="n">gfortran</span> <span class="n">install</span>
 </pre></div>
 </div>
 <p>You may replace <code class="docutils literal"><span class="pre">gfortran</span></code> with the compiler you wish to use.</p>
@@ -120,14 +128,14 @@ run:</p>
 <blockquote>
 <div><ul>
 <li><p class="first">Make sure your environment variable <cite>CLAW</cite> is set properly:</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span>$ printenv CLAW
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ printenv CLAW
 </pre></div>
 </div>
 <p>to print the value.
 The Makefiles use this variable to find the common Makefile and
 library routines.</p>
 <p>If you get the error message:</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span>Makefile:154: /clawutil/src/Makefile.common: No such file or directory
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">Makefile</span><span class="p">:</span><span class="mi">154</span><span class="p">:</span> <span class="o">/</span><span class="n">clawutil</span><span class="o">/</span><span class="n">src</span><span class="o">/</span><span class="n">Makefile</span><span class="o">.</span><span class="n">common</span><span class="p">:</span> <span class="n">No</span> <span class="n">such</span> <span class="n">file</span> <span class="ow">or</span> <span class="n">directory</span>
 </pre></div>
 </div>
 <p>then <cite>CLAW</cite> is not set properly.  It is looking for the file
@@ -138,7 +146,7 @@ will be missing.</p>
 should be set to
 the command used to invoke the Fortran compiler, e.g. <em>gfortran</em>.</p>
 <p>If you get an error like:</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span>make[1]: gfortran: No such file or directory
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">make</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span> <span class="n">gfortran</span><span class="p">:</span> <span class="n">No</span> <span class="n">such</span> <span class="n">file</span> <span class="ow">or</span> <span class="n">directory</span>
 </pre></div>
 </div>
 <p>then the gfortran compiler is not being found.</p>
@@ -151,17 +159,17 @@ the command used to invoke the Fortran compiler, e.g. <em>gfortran</em>.</p>
 <p>If there are errors in the <cite>setrun</cite> function (usually defined in
 <cite>setrun.py</cite>) then the these may show up when you try to &#8220;make .data&#8221;
 since this function must be executed.</p>
-<p>See <a class="reference internal" href="setrun.html#setrun"><span>Specifying classic run-time parameters in setrun.py</span></a> for information about the setrun function.</p>
+<p>See <a class="reference internal" href="setrun.html#setrun"><span class="std std-ref">Specifying classic run-time parameters in setrun.py</span></a> for information about the setrun function.</p>
 </div>
 <div class="section" id="trouble-running-make-output">
 <span id="trouble-makeoutput"></span><h2>Trouble running &#8220;make .output&#8221;<a class="headerlink" href="#trouble-running-make-output" title="Permalink to this headline">¶</a></h2>
 <p>If you want to re-run the code and you get:</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span>$ make .output
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ make .output
 make: `.output&#39; is up to date.
 </pre></div>
 </div>
 <p>then you can force it to run again by removing the file <cite>.output</cite>:</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span>$ rm -f .output
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ rm -f .output
 $ make .output
 </pre></div>
 </div>
@@ -172,15 +180,15 @@ dependencies.</p>
 <blockquote>
 <div>$ make output</div></blockquote>
 <p>(with no dot before <code class="docutils literal"><span class="pre">output</span></code>) to run the code without checking dependencies.
-See <a class="reference internal" href="makefiles.html#makefiles"><span>Clawpack Makefiles</span></a> for more details and warnings.</p>
+See <a class="reference internal" href="makefiles.html#makefiles"><span class="std std-ref">Clawpack Makefiles</span></a> for more details and warnings.</p>
 </div>
 <div class="section" id="trouble-running-make-plots">
 <span id="trouble-makeplots"></span><h2>Trouble running &#8220;make .plots&#8221;<a class="headerlink" href="#trouble-running-make-plots" title="Permalink to this headline">¶</a></h2>
 <p>The Python plotting routines require <cite>NumPy</cite> and <cite>matplotlib</cite>.  See
-<a class="reference internal" href="python.html#python"><span>Python Hints</span></a> for information on installing these.</p>
+<a class="reference internal" href="python.html#python"><span class="std std-ref">Python Hints</span></a> for information on installing these.</p>
 <p>If there are errors in the <cite>setplot</cite> function (usually defined in
 <cite>setplot.py</cite>) then the these may show up when you try to &#8220;make .plots&#8221;
-since this function must be executed.  See <a class="reference internal" href="setplot.html#setplot"><span>Using setplot.py to specify the desired plots</span></a>.</p>
+since this function must be executed.  See <a class="reference internal" href="setplot.html#setplot"><span class="std std-ref">Using setplot.py to specify the desired plots</span></a>.</p>
 <p>You can also do</p>
 <blockquote>
 <div>$ make plots</div></blockquote>
@@ -188,7 +196,7 @@ since this function must be executed.  See <a class="reference internal" href="s
 This will never run the code, it will only attempt to plot the output files
 found in <cite>_output</cite> directory (or wherever the <cite>OUTDIR</cite> variable in the
 <cite>Makefile</cite> points).</p>
-<p>See <a class="reference internal" href="makefiles.html#makefiles"><span>Clawpack Makefiles</span></a> for more details and warnings.</p>
+<p>See <a class="reference internal" href="makefiles.html#makefiles"><span class="std std-ref">Clawpack Makefiles</span></a> for more details and warnings.</p>
 </div>
 </div>
 
@@ -201,12 +209,13 @@ found in <cite>_output</cite> directory (or wherever the <cite>OUTDIR</cite> var
 <p><a href="http://clawpack.org/">
     <img class="logo" src= "_static/clawlogo.jpg" alt="Logo"/>
 </a>
-<h2>Version 5.3.1</h2>
+<h2>Version 5.4.0</h2>
 </p>
   <h3><a href="contents.html">Table Of Contents</a></h3>
   <ul>
 <li><a class="reference internal" href="#">Troubleshooting</a><ul>
-<li><a class="reference internal" href="#troubleshooting-installation">Troubleshooting: Installation</a><ul>
+<li><a class="reference internal" href="#troubleshooting-installation">Troubleshooting Installation</a></li>
+<li><a class="reference internal" href="#troubleshooting-fortran">Troubleshooting Fortran:</a><ul>
 <li><a class="reference internal" href="#setting-the-fortran-compiler-to-be-used-by-f2py-pip">Setting the Fortran compiler to be used by f2py (pip)</a></li>
 </ul>
 </li>
@@ -220,8 +229,8 @@ found in <cite>_output</cite> directory (or wherever the <cite>OUTDIR</cite> var
 <h3>Related Topics</h3>
 <ul>
   <li><a href="contents.html">Documentation overview</a><ul>
-      <li>Previous: <a href="license.html" title="previous chapter">License</a></li>
-      <li>Next: <a href="packages.html" title="next chapter">Which Clawpack solver should I use?</a></li>
+      <li>Previous: <a href="clawpack_components.html" title="previous chapter">Clawpack components</a></li>
+      <li>Next: <a href="vm.html" title="next chapter">Clawpack Virtual Machine</a></li>
   </ul></li>
 </ul>
   <div role="note" aria-label="source link">
@@ -234,14 +243,11 @@ found in <cite>_output</cite> directory (or wherever the <cite>OUTDIR</cite> var
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
     <form class="search" action="search.html" method="get">
-      <input type="text" name="q" />
-      <input type="submit" value="Go" />
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
-    <p class="searchtip" style="font-size: 90%">
-    Enter search terms or a module, class or function name.
-    </p>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
@@ -249,7 +255,7 @@ found in <cite>_output</cite> directory (or wherever the <cite>OUTDIR</cite> var
       <div class="clearer"></div>
     </div>
   <div class="footer">
-    &copy; Copyright 2015, The Clawpack Development Team.
+    &copy; Copyright 2017, The Clawpack Development Team.
     Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
   </div>
   <script>

@@ -7,16 +7,18 @@ function setplot is called to set the plot parameters.
     
 """ 
 
+from __future__ import absolute_import
+from __future__ import print_function
 import os
 if os.path.exists('./1drad/_output'):
     qref_dir = os.path.abspath('./1drad/_output')
 else:
     qref_dir = None
-    print "Directory ./1drad/_output not found"
+    print("Directory ./1drad/_output not found")
 
 
 #--------------------------
-def setplot(plotdata):
+def setplot(plotdata=None):
 #--------------------------
     
     """ 
@@ -25,6 +27,10 @@ def setplot(plotdata):
     Output: a modified version of plotdata.
     
     """ 
+
+    if plotdata is None:
+        from clawpack.visclaw.data import ClawPlotData
+        plotdata = ClawPlotData()
 
 
     from clawpack.visclaw import colormaps

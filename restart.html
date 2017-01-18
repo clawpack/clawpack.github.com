@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Checkpointing and restarting &mdash; Clawpack 5.3.1 documentation</title>
+    <title>Checkpointing and restarting &#8212; Clawpack 5.4.0 documentation</title>
     
     <link rel="stylesheet" href="_static/flasky.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -16,7 +16,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '5.3.1',
+        VERSION:     '5.4.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -28,7 +28,9 @@
     <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="shortcut icon" href="_static/clawicon.ico"/>
     <link rel="author" title="About these documents" href="about.html" />
-    <link rel="top" title="Clawpack 5.3.1 documentation" href="contents.html" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="top" title="Clawpack 5.4.0 documentation" href="contents.html" />
     <link rel="next" title="AMRClaw" href="amrclaw.html" />
     <link rel="prev" title="The mapc2p function" href="mapc2p.html" /> 
   </head>
@@ -79,7 +81,7 @@
         <li class="right" >
           <a href="mapc2p.html" title="The mapc2p function"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="contents.html">Clawpack 5.3.1 documentation</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="contents.html">Clawpack 5.4.0 documentation</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -101,8 +103,8 @@
 of an object of class <cite>ClawRunData</cite>, as is generally set at the top
 of a <cite>setrun.py</cite> file.</p>
 <p>The <cite>rundata.clawdata.checkpt_style</cite> parameter specified in <cite>setrun.py</cite> (see
-<a class="reference internal" href="setrun.html#setrun"><span>Specifying classic run-time parameters in setrun.py</span></a>) determines how often checkpointing is done, if at all.</p>
-<p>See the comments in <a class="reference internal" href="setrun_sample.html#setrun-sample"><span>Sample setrun.py module for classic Clawpack</span></a> for examples.</p>
+<a class="reference internal" href="setrun.html#setrun"><span class="std std-ref">Specifying classic run-time parameters in setrun.py</span></a>) determines how often checkpointing is done, if at all.</p>
+<p>See the comments in <a class="reference internal" href="setrun_sample.html#setrun-sample"><span class="std std-ref">Sample setrun.py module for classic Clawpack</span></a> for examples.</p>
 <p>The checkpoint files are saved in the same output directory as the solution
 output, with file names of the form <cite>fort.tchkNNNNN</cite> (a small ASCII file) and
 <cite>fort.chkNNNNN</cite> (a large binary file)  where <cite>NNNNN</cite> is the
@@ -113,7 +115,7 @@ needed to restart the computation at this point.</p>
 <span id="restart-restart"></span><h2>Restarting a computation<a class="headerlink" href="#restarting-a-computation" title="Permalink to this headline">¶</a></h2>
 <p>To restart a computation from any point where checkpoint files have been saved,
 modify <cite>setrun.py</cite> to set:</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">clawdata</span><span class="o">.</span><span class="n">restart</span> <span class="o">=</span> <span class="bp">True</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">clawdata</span><span class="o">.</span><span class="n">restart</span> <span class="o">=</span> <span class="kc">True</span>
 <span class="n">clawdata</span><span class="o">.</span><span class="n">restart_file</span> <span class="o">=</span> <span class="s1">&#39;fort.chkNNNNN&#39;</span>
 </pre></div>
 </div>
@@ -144,15 +146,11 @@ the restart time will be used as output times.</p>
 </div>
 <div class="section" id="modifying-the-makefile-for-a-restart">
 <span id="restart-makefile"></span><h2>Modifying the Makefile for a restart<a class="headerlink" href="#modifying-the-makefile-for-a-restart" title="Permalink to this headline">¶</a></h2>
-<p>To restart a computation, it is necessary to modify the <cite>Makefile</cite> as well
-as <cite>setrun.py</cite>.  In the <cite>Makefile</cite>, set:</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">RESTART</span> <span class="o">=</span> <span class="bp">True</span>
-</pre></div>
-</div>
-<p>This will ensure that the original set of output files (for times up to the
-restart time) and the checkpoint
-file will not be deleted.  They will still be available in the output directory
-along with the newly created output files.</p>
+<p><strong>New in 5.4.0.</strong> It is no longer necessary to set the <cite>Makefile</cite> variable
+<cite>RESTART</cite> to <cite>True</cite> or <cite>False</cite>.  Instead you can set it to <cite>None</cite> (or omit
+setting it at all, since this is the default), in which case the <cite>setrun.py</cite>
+file will be used to determine if this is a restart run (in which case
+the previous output directory should be added to, rather than replaced).</p>
 </div>
 <div class="section" id="output-files-after-a-restart">
 <span id="restart-output"></span><h2>Output files after a restart<a class="headerlink" href="#output-files-after-a-restart" title="Permalink to this headline">¶</a></h2>
@@ -160,18 +158,13 @@ along with the newly created output files.</p>
 the original set of output files should still be in the output directory
 along with a new set from the second run.  Note that one output time may
 be repeated in two frames if <cite>clawdata.output_t0 == True</cite> in the restarted run.</p>
-<p>Note that any gauge output from the first run will be overwritten by the
-second run.  If you wish to preserve the gauge output from the first run,
-currently you must copy the output file <cite>fort.gauge</cite> to another location,
-say <cite>fort.gauge1</cite>, before doing the restart run.  Then you could catenate the
-two to get gauge output for the entire run, e.g.:</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span>cd _output
-mv fort.gauge fort.gauge2
-cat fort.gauge1 fort.gauge2 &gt; fort.gauge
-</pre></div>
-</div>
-<p>This creates a file <cite>fort.gauge</cite> that contains the entire gauge history.</p>
-<p>TODO: This should be simplified.</p>
+<p><strong>New in 5.4.0.</strong>
+Gauge output from the original run
+is no longer overwritten by the second run. Instead gauge
+output from the restart run will be appended to the end of each
+<cite>gaugeXXXXX.txt</cite> file.  (If multiple restarts are performed from the same
+checkpoint file then these will accumulate in an undesirable fashion, but
+for for most purposes this does the right thing.)</p>
 </div>
 </div>
 
@@ -184,7 +177,7 @@ cat fort.gauge1 fort.gauge2 &gt; fort.gauge
 <p><a href="http://clawpack.org/">
     <img class="logo" src= "_static/clawlogo.jpg" alt="Logo"/>
 </a>
-<h2>Version 5.3.1</h2>
+<h2>Version 5.4.0</h2>
 </p>
   <h3><a href="contents.html">Table Of Contents</a></h3>
   <ul>
@@ -213,14 +206,11 @@ cat fort.gauge1 fort.gauge2 &gt; fort.gauge
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
     <form class="search" action="search.html" method="get">
-      <input type="text" name="q" />
-      <input type="submit" value="Go" />
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
-    <p class="searchtip" style="font-size: 90%">
-    Enter search terms or a module, class or function name.
-    </p>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
@@ -228,7 +218,7 @@ cat fort.gauge1 fort.gauge2 &gt; fort.gauge
       <div class="clearer"></div>
     </div>
   <div class="footer">
-    &copy; Copyright 2015, The Clawpack Development Team.
+    &copy; Copyright 2017, The Clawpack Development Team.
     Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
   </div>
   <script>

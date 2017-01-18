@@ -15,7 +15,7 @@
            <font FACE="HELVETICA,ARIAL">
            
 <!-- Created from the file /Users/rjl/git/clawpack/geoclaw/examples/tsunami/bowl-slosh/maketopo.py -->
-<!-- Date: Sat Apr 12 2014 at 13:33:50 -->
+<!-- Date: Wed Dec 28 2016 at 23:13:25 -->
 
 <table bgcolor="#FFEE99"> <tr> <td>
 &nbsp;<font size=6> maketopo.py.html </font> </td>
@@ -27,7 +27,7 @@
 </td></tr><tr><td>
 &nbsp;Directory:  &nbsp; /Users/rjl/git/clawpack/geoclaw/examples/tsunami/bowl-slosh 
 </td></tr><tr><td>
-&nbsp;Converted:  &nbsp; Sat Apr 12 2014 at 13:33:50 
+&nbsp;Converted:  &nbsp; Wed Dec 28 2016 at 23:13:25 
 &nbsp; using <a href="http://clawpack.github.io//doc/application_documentation.html#clawcode2html">clawcode2html</a>
 </td></tr><tr><td>
 <font color="#BB3300"> &nbsp;This documentation file will 
@@ -40,7 +40,8 @@ not reflect any later changes in the source file. </font>
 Module to create topo and qinit data files for this example.
 """
 
-from clawpack.geoclaw.topotools import topo1writer, topo2writer
+from __future__ import absolute_import
+from clawpack.geoclaw.topotools import Topography
 from numpy import *
 
 <font color="blue">#from pyclaw.data import Data</font>
@@ -63,7 +64,12 @@ def maketopo():
     xlower = -2.e0
     ylower = -2.e0
     outfile= "bowl.topotype2"
-    topo2writer(outfile,topo,xlower,xupper,ylower,yupper,nxpoints,nypoints)
+
+    topography = Topography(topo_func=topo)
+    topography.x = linspace(xlower,xupper,nxpoints)
+    topography.y = linspace(ylower,yupper,nypoints)
+    topography.write(outfile, topo_type=2, Z_format="%22.15e")
+
 
 def topo(x,y):
     """

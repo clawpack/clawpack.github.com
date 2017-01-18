@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>kmltools module of utility functions &mdash; Clawpack 5.3.1 documentation</title>
+    <title>kmltools module of utility functions &#8212; Clawpack 5.4.0 documentation</title>
     
     <link rel="stylesheet" href="_static/flasky.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -16,7 +16,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '5.3.1',
+        VERSION:     '5.4.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -28,7 +28,9 @@
     <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="shortcut icon" href="_static/clawicon.ico"/>
     <link rel="author" title="About these documents" href="about.html" />
-    <link rel="top" title="Clawpack 5.3.1 documentation" href="contents.html" /> 
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="top" title="Clawpack 5.4.0 documentation" href="contents.html" /> 
   </head>
   <body role="document">
 <div id="main-wrapper" class="sphinx">
@@ -71,7 +73,7 @@
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="contents.html">Clawpack 5.3.1 documentation</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="contents.html">Clawpack 5.4.0 documentation</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -102,6 +104,8 @@ the full 8 digits if you want it transparent).</p>
 <li>regions2kml - create a kml outline for each regions specified in setrun</li>
 <li>box2kml - create a kml outline from a rectangular box</li>
 <li>quad2kml - create a kml outline for an arbitrary quadrilateral</li>
+<li>poly2kml - create a kml outline for an arbitrary polygon</li>
+<li>line2kml - create a kml line connecting 2 points</li>
 <li>gauges2kml - create a kml marker for each gauge specified in setrun</li>
 <li>kml_header - used internally</li>
 <li>kml_footer - used internally</li>
@@ -115,18 +119,29 @@ the full 8 digits if you want it transparent).</p>
 </table>
 <dl class="function">
 <dt id="clawpack.geoclaw.kmltools.box2kml">
-<code class="descclassname">clawpack.geoclaw.kmltools.</code><code class="descname">box2kml</code><span class="sig-paren">(</span><em>xy</em>, <em>fname='box.kml'</em>, <em>name='box'</em>, <em>color='FF0000'</em>, <em>verbose=True</em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.geoclaw.kmltools.box2kml" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">clawpack.geoclaw.kmltools.</code><code class="descname">box2kml</code><span class="sig-paren">(</span><em>xy</em>, <em>fname=None</em>, <em>name='box'</em>, <em>color='FF0000'</em>, <em>width=3</em>, <em>verbose=True</em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.geoclaw.kmltools.box2kml" title="Permalink to this definition">¶</a></dt>
 <dd><p>Make a KML box with default color blue.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Inputs:</th><td class="field-body"><ul class="first last simple">
-<li><em>xy</em> a tuple (x1,x2,y1,y2)</li>
-<li><em>fname</em> (str) name of resulting kml file</li>
-<li><em>name</em> (str) name to appear in box on Google Earth</li>
-<li><em>color</em> (str) Color in format aaggbbrr</li>
-<li><em>verbose</em> (bool) - If <em>True</em>, print out info</li>
+<tr class="field-odd field"><th class="field-name">Inputs:</th><td class="field-body"><ul class="first last">
+<li><dl class="first docutils">
+<dt><em>xy</em> a tuple ((x1,x2),(y1,y2)) (preferred) </dt>
+<dd><p class="first last">or (x1,x2,y1,y2) (for backward compatibility)</p>
+</dd>
+</dl>
+</li>
+<li><p class="first"><em>fname</em> (str) name of resulting kml file</p>
+</li>
+<li><p class="first"><em>name</em> (str) name to appear in box on Google Earth</p>
+</li>
+<li><p class="first"><em>color</em> (str) Color in format aabbggrr</p>
+</li>
+<li><p class="first"><em>width</em> (str) line width</p>
+</li>
+<li><p class="first"><em>verbose</em> (bool) - If <em>True</em>, print out info</p>
+</li>
 </ul>
 </td>
 </tr>
@@ -167,7 +182,7 @@ from the <cite>setrun.py</cite> file in the current directory.</p>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Example:</th><td class="field-body"><div class="first last highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">clawpack.geoclaw</span> <span class="kn">import</span> <span class="n">kmltools</span>
+<tr class="field-even field"><th class="field-name">Example:</th><td class="field-body"><div class="first last highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">clawpack.geoclaw</span> <span class="k">import</span> <span class="n">kmltools</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">kmltools</span><span class="o">.</span><span class="n">gauges2kml</span><span class="p">()</span>
 </pre></div>
 </div>
@@ -176,8 +191,8 @@ from the <cite>setrun.py</cite> file in the current directory.</p>
 </tbody>
 </table>
 <p>is equivalent to:</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">clawpack.geoclaw</span> <span class="kn">import</span> <span class="n">kmltools</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">setrun</span> <span class="kn">import</span> <span class="n">setrun</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">clawpack.geoclaw</span> <span class="k">import</span> <span class="n">kmltools</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">setrun</span> <span class="k">import</span> <span class="n">setrun</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">rundata</span> <span class="o">=</span> <span class="n">setrun</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">kmltools</span><span class="o">.</span><span class="n">gauges2kml</span><span class="p">(</span><span class="n">rundata</span><span class="p">)</span>
 </pre></div>
@@ -203,7 +218,7 @@ tz         : time zone offset to UTC.  e.g. +3 for Chile; -9 for Japan.</p>
 &lt;end&gt;2010-02-27T07:04:00+03:00&lt;/end&gt;</dd>
 </dl>
 <div class="system-message">
-<p class="system-message-title">System Message: WARNING/2 (<tt class="docutils">/Users/rjl/git/clawpack/clawpack/geoclaw/kmltools.py:docstring of clawpack.geoclaw.kmltools.kml_timespan</tt>, line 15)</p>
+<p class="system-message-title">System Message: WARNING/2 (<tt class="docutils">/Users/rjl/clawpack_src/clawpack-v5.4.0rc-alpha/clawpack/geoclaw/kmltools.py:docstring of clawpack.geoclaw.kmltools.kml_timespan</tt>, line 15)</p>
 Definition list ends without a blank line; unexpected unindent.</div>
 <p>&lt;/TimeSpan&gt;</p>
 </div></blockquote>
@@ -214,6 +229,38 @@ during part of the year. DST rules are magic (determined by local law) and can
 change from year to year. The C library has a table containing the local rules
 (often it is read from a system file for flexibility) and is the only source of
 True Wisdom in this respect.&#8221;</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="clawpack.geoclaw.kmltools.line2kml">
+<code class="descclassname">clawpack.geoclaw.kmltools.</code><code class="descname">line2kml</code><span class="sig-paren">(</span><em>xy</em>, <em>fname='line.kml'</em>, <em>name='line'</em>, <em>color='00FFFF'</em>, <em>width=3</em>, <em>verbose=True</em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.geoclaw.kmltools.line2kml" title="Permalink to this definition">¶</a></dt>
+<dd><p>Make a KML line with default color yellow.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Inputs:</th><td class="field-body"><ul class="first last">
+<li><dl class="first docutils">
+<dt><em>xy</em> a tuple ((x1,x2),(y1,y2)) (preferred) </dt>
+<dd><p class="first last">or (x1,x2,y1,y2) (for backward compatibility)</p>
+</dd>
+</dl>
+</li>
+<li><p class="first"><em>fname</em> (str) name of resulting kml file</p>
+</li>
+<li><p class="first"><em>name</em> (str) name to appear on line on Google Earth</p>
+</li>
+<li><p class="first"><em>color</em> (str) Color in format aabbggrr</p>
+</li>
+<li><p class="first"><em>width</em> (str) line width</p>
+</li>
+<li><p class="first"><em>verbose</em> (bool) - If <em>True</em>, print out info</p>
+</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="function">
@@ -230,19 +277,52 @@ kml files in addition to the <cite>*.data</cite> files.</p>
 </dd></dl>
 
 <dl class="function">
-<dt id="clawpack.geoclaw.kmltools.quad2kml">
-<code class="descclassname">clawpack.geoclaw.kmltools.</code><code class="descname">quad2kml</code><span class="sig-paren">(</span><em>xy</em>, <em>fname='quad.kml'</em>, <em>name='quad'</em>, <em>color='FF0000'</em>, <em>verbose=True</em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.geoclaw.kmltools.quad2kml" title="Permalink to this definition">¶</a></dt>
-<dd><p>Make a KML quadrilateral with default color blue.</p>
+<dt id="clawpack.geoclaw.kmltools.poly2kml">
+<code class="descclassname">clawpack.geoclaw.kmltools.</code><code class="descname">poly2kml</code><span class="sig-paren">(</span><em>xy</em>, <em>fname=None</em>, <em>name='poly'</em>, <em>color='00FF00'</em>, <em>width=3</em>, <em>verbose=True</em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.geoclaw.kmltools.poly2kml" title="Permalink to this definition">¶</a></dt>
+<dd><p>Make a KML polygon with default color blue.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Inputs:</th><td class="field-body"><ul class="first last simple">
-<li><em>xy</em> a tuple (x1,y1,x2,y2,x3,y3,x4,y4).</li>
+<li><em>xy</em> a tuple (x,y) where x and y are lists of vertices</li>
 <li><em>fname</em> (str) name of resulting kml file</li>
 <li><em>name</em> (str) name to appear in box on Google Earth</li>
-<li><em>color</em> (str) Color in format aaggbbrr</li>
+<li><em>color</em> (str) Color in format aabbggrr</li>
+<li><em>width</em> (str) line width</li>
 <li><em>verbose</em> (bool) - If <em>True</em>, print out info</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="clawpack.geoclaw.kmltools.quad2kml">
+<code class="descclassname">clawpack.geoclaw.kmltools.</code><code class="descname">quad2kml</code><span class="sig-paren">(</span><em>xy</em>, <em>fname=None</em>, <em>name='quad'</em>, <em>color='FF0000'</em>, <em>width=3</em>, <em>verbose=True</em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.geoclaw.kmltools.quad2kml" title="Permalink to this definition">¶</a></dt>
+<dd><p>Make a KML quadrilateral with default color blue.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Inputs:</th><td class="field-body"><ul class="first last">
+<li><dl class="first docutils">
+<dt><em>xy</em> a tuple ((x1,x2,x3,x4),(y1,y2,y3,y4)) (preferred) </dt>
+<dd><p class="first last">or (x1,x2,y1,y2,x3,y3,x4,y4) (for backward compatibility)</p>
+</dd>
+</dl>
+</li>
+<li><p class="first"><em>fname</em> (str) name of resulting kml file</p>
+</li>
+<li><p class="first"><em>name</em> (str) name to appear in box on Google Earth</p>
+</li>
+<li><p class="first"><em>color</em> (str) Color in format aabbggrr</p>
+</li>
+<li><p class="first"><em>width</em> (str) line width</p>
+</li>
+<li><p class="first"><em>verbose</em> (bool) - If <em>True</em>, print out info</p>
+</li>
 </ul>
 </td>
 </tr>
@@ -285,7 +365,7 @@ for each region (in white).</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Example:</th><td class="field-body"><div class="first last highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">clawpack.geoclaw</span> <span class="kn">import</span> <span class="n">kmltools</span>
+<tr class="field-odd field"><th class="field-name">Example:</th><td class="field-body"><div class="first last highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">clawpack.geoclaw</span> <span class="k">import</span> <span class="n">kmltools</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">kmltools</span><span class="o">.</span><span class="n">regions2kml</span><span class="p">()</span>
 </pre></div>
 </div>
@@ -294,8 +374,8 @@ for each region (in white).</p>
 </tbody>
 </table>
 <p>is equivalent to:</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">clawpack.geoclaw</span> <span class="kn">import</span> <span class="n">kmltools</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">setrun</span> <span class="kn">import</span> <span class="n">setrun</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">clawpack.geoclaw</span> <span class="k">import</span> <span class="n">kmltools</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">setrun</span> <span class="k">import</span> <span class="n">setrun</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">rundata</span> <span class="o">=</span> <span class="n">setrun</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">kmltools</span><span class="o">.</span><span class="n">regions2kml</span><span class="p">(</span><span class="n">rundata</span><span class="p">)</span>
 </pre></div>
@@ -323,7 +403,7 @@ Color is green by default.</p>
 <p><a href="http://clawpack.org/">
     <img class="logo" src= "_static/clawlogo.jpg" alt="Logo"/>
 </a>
-<h2>Version 5.3.1</h2>
+<h2>Version 5.4.0</h2>
 </p>
   <h3><a href="contents.html">Table Of Contents</a></h3>
   <ul>
@@ -347,14 +427,11 @@ Color is green by default.</p>
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
     <form class="search" action="search.html" method="get">
-      <input type="text" name="q" />
-      <input type="submit" value="Go" />
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
-    <p class="searchtip" style="font-size: 90%">
-    Enter search terms or a module, class or function name.
-    </p>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
@@ -362,7 +439,7 @@ Color is green by default.</p>
       <div class="clearer"></div>
     </div>
   <div class="footer">
-    &copy; Copyright 2015, The Clawpack Development Team.
+    &copy; Copyright 2017, The Clawpack Development Team.
     Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
   </div>
   <script>

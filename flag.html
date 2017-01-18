@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Flagging cells for adaptive refinement &mdash; Clawpack 5.3.1 documentation</title>
+    <title>Flagging cells for adaptive refinement &#8212; Clawpack 5.4.0 documentation</title>
     
     <link rel="stylesheet" href="_static/flasky.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -16,7 +16,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '5.3.1',
+        VERSION:     '5.4.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -28,7 +28,9 @@
     <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="shortcut icon" href="_static/clawicon.ico"/>
     <link rel="author" title="About these documents" href="about.html" />
-    <link rel="top" title="Clawpack 5.3.1 documentation" href="contents.html" /> 
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="top" title="Clawpack 5.4.0 documentation" href="contents.html" /> 
   </head>
   <body role="document">
 <div id="main-wrapper" class="sphinx">
@@ -71,7 +73,7 @@
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="contents.html">Clawpack 5.3.1 documentation</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="contents.html">Clawpack 5.4.0 documentation</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -83,7 +85,7 @@
   <div class="section" id="flagging-cells-for-adaptive-refinement">
 <span id="flag"></span><h1>Flagging cells for adaptive refinement<a class="headerlink" href="#flagging-cells-for-adaptive-refinement" title="Permalink to this headline">¶</a></h1>
 <p><strong>Describe flagging  and clustering algorithms in more detail.</strong></p>
-<p>See <a class="reference internal" href="amrclaw/setrun_amrclaw.html#setrun-amrclaw"><span>Specifying AMRClaw parameters in setrun.py</span></a> for a description of the input parameters that define how
+<p>See <a class="reference internal" href="setrun_amrclaw.html#setrun-amrclaw"><span class="std std-ref">Specifying AMRClaw run-time parameters in setrun.py</span></a> for a description of the input parameters that define how
 Richardson extrapolation and/or the <cite>flag2refine</cite> subroutine work.</p>
 <div class="section" id="refinement-regions">
 <span id="flag-regions"></span><h2>Refinement regions<a class="headerlink" href="#refinement-regions" title="Permalink to this headline">¶</a></h2>
@@ -95,7 +97,7 @@ This is a list of lists, each of which specifies a region in the form
 <cite>[minlevel,maxlevel,t1,t2,x1,x2,y1,y2]</cite>.</p>
 <p>For example, suppose that <cite>amr_levels_max = 6</cite> has been specified along
 with these two regions:</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">rundata</span><span class="o">.</span><span class="n">regiondata</span><span class="o">.</span><span class="n">regions</span> <span class="o">=</span> <span class="p">[]</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">rundata</span><span class="o">.</span><span class="n">regiondata</span><span class="o">.</span><span class="n">regions</span> <span class="o">=</span> <span class="p">[]</span>
 <span class="n">rundata</span><span class="o">.</span><span class="n">regiondata</span><span class="o">.</span><span class="n">regions</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mf">10.0</span><span class="p">,</span> <span class="mf">30.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">])</span>
 <span class="n">rundata</span><span class="o">.</span><span class="n">regiondata</span><span class="o">.</span><span class="n">regions</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mf">20.0</span><span class="p">,</span> <span class="mf">40.0</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">])</span>
 </pre></div>
@@ -115,7 +117,7 @@ overlap, <cite>0.2 &lt; x &lt; 0.5</cite> and <cite>0.2 &lt; y &lt; 0.5</cite>.<
 determined by the <em>error flagging criteria</em>, i.e. as
 specified by Richardson extrapolation and/or the default or user-supplied
 routine <cite>flag2refine</cite>.  The parameters for these are described in
-<a class="reference internal" href="setrun.html#setrun"><span>Specifying classic run-time parameters in setrun.py</span></a>.</p>
+<a class="reference internal" href="setrun.html#setrun"><span class="std std-ref">Specifying classic run-time parameters in setrun.py</span></a>.</p>
 <p>Points that are not covered by either region are not constrained by the
 regions.  They might
 be refined to any level from 1 to 6 depending on the error flagging criteria.</p>
@@ -148,7 +150,7 @@ go on to the next grid cell.</li>
 <p><a href="http://clawpack.org/">
     <img class="logo" src= "_static/clawlogo.jpg" alt="Logo"/>
 </a>
-<h2>Version 5.3.1</h2>
+<h2>Version 5.4.0</h2>
 </p>
   <h3><a href="contents.html">Table Of Contents</a></h3>
   <ul>
@@ -172,14 +174,11 @@ go on to the next grid cell.</li>
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
     <form class="search" action="search.html" method="get">
-      <input type="text" name="q" />
-      <input type="submit" value="Go" />
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
-    <p class="searchtip" style="font-size: 90%">
-    Enter search terms or a module, class or function name.
-    </p>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
@@ -187,7 +186,7 @@ go on to the next grid cell.</li>
       <div class="clearer"></div>
     </div>
   <div class="footer">
-    &copy; Copyright 2015, The Clawpack Development Team.
+    &copy; Copyright 2017, The Clawpack Development Team.
     Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
   </div>
   <script>

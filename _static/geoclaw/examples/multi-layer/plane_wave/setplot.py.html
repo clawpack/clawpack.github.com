@@ -15,7 +15,7 @@
            <font FACE="HELVETICA,ARIAL">
            
 <!-- Created from the file /Users/rjl/git/clawpack/geoclaw/examples/multi-layer/plane_wave/setplot.py -->
-<!-- Date: Mon Sep  1 2014 at 16:36:19 -->
+<!-- Date: Wed Dec 28 2016 at 23:12:17 -->
 
 <table bgcolor="#FFEE99"> <tr> <td>
 &nbsp;<font size=6> setplot.py.html </font> </td>
@@ -27,7 +27,7 @@
 </td></tr><tr><td>
 &nbsp;Directory:  &nbsp; /Users/rjl/git/clawpack/geoclaw/examples/multi-layer/plane_wave 
 </td></tr><tr><td>
-&nbsp;Converted:  &nbsp; Mon Sep  1 2014 at 16:36:19 
+&nbsp;Converted:  &nbsp; Wed Dec 28 2016 at 23:12:17 
 &nbsp; using <a href="http://clawpack.github.io//doc/application_documentation.html#clawcode2html">clawcode2html</a>
 </td></tr><tr><td>
 <font color="#BB3300"> &nbsp;This documentation file will 
@@ -44,7 +44,9 @@ function setplot is called to set the plot parameters.
     
 """ 
     
-def setplot(plotdata,  bathy_location=0.15,  bathy_angle=0.0,  
+from __future__ import absolute_import
+
+def setplot(plotdata=None,  bathy_location=0.15,  bathy_angle=0.0,  
                        bathy_left=-1.0,      bathy_right=-0.2):
     """Setup the plotting data objects.
 
@@ -64,21 +66,23 @@ def setplot(plotdata,  bathy_location=0.15,  bathy_angle=0.0,
 
     import clawpack.clawutil.data as clawutil
     import clawpack.amrclaw.data as amrclaw
-    import clawpack.geoclaw.data as geodata
+    import clawpack.geoclaw.data
 
-    import clawpack.geoclaw.multilayer.data as ml_data
     import clawpack.geoclaw.multilayer.plot as ml_plot
+
+    if plotdata is None:
+        from clawpack.visclaw.data import ClawPlotData
+        plotdata = ClawPlotData()
+
 
     <font color="blue"># Load data from output</font>
     clawdata = clawutil.ClawInputData(2)
     clawdata.read(os.path.join(plotdata.outdir,'claw.data'))
     amrdata = amrclaw.AmrclawInputData(clawdata)
     amrdata.read(os.path.join(plotdata.outdir,'amr.data'))
-    geodata = geodata.GeoClawData()
+    geodata = clawpack.geoclaw.data.GeoClawData()
     geodata.read(os.path.join(plotdata.outdir,'geoclaw.data'))
-    <font color="blue"># surge_data = surge.data.SurgeData()</font>
-    <font color="blue"># surge_data.read(os.path.join(plotdata.outdir,'surge.data'))</font>
-    multilayer_data = ml_data.MultilayerData()
+    multilayer_data = clawpack.geoclaw.data.MultilayerData()
     multilayer_data.read(os.path.join(plotdata.outdir,'multilayer.data'))
 
     def transform_c2p(x,y,x0,y0,theta):
@@ -598,7 +602,7 @@ def setplot(plotdata,  bathy_location=0.15,  bathy_angle=0.0,
 
     <font color="blue"># Set up for axes in this figure:</font>
     plotaxes = plotfigure.new_plotaxes()
-    plotaxes.xlimits = [0.0,1.0]
+    plotaxes.xlimits = [0.0, 1.0]
     plotaxes.ylimits = top_surface_limits
     plotaxes.title = 'Top Surface'
 
@@ -616,7 +620,7 @@ def setplot(plotdata,  bathy_location=0.15,  bathy_angle=0.0,
     <font color="blue"># Set up for axes in this figure:</font>
     plotaxes = plotfigure.new_plotaxes()
     plotaxes.xlimits = [0.0,1.0]
-    plotaxes.ylimits = internal_surface_limits
+    <font color="blue"># plotaxes.ylimits = internal_surface_limits</font>
     plotaxes.title = 'Bottom Surface'
 
     <font color="blue"># Plot surface as blue curve:</font>
@@ -643,6 +647,7 @@ def setplot(plotdata,  bathy_location=0.15,  bathy_angle=0.0,
     plotdata.latex_figsperline = 2           <font color="blue"># layout of plots</font>
     plotdata.latex_framesperline = 1         <font color="blue"># layout of plots</font>
     plotdata.latex_makepdf = False           <font color="blue"># also run pdflatex?</font>
+    plotdata.parallel = True                 <font color="blue"># make multiple frame png's at once</font>
 
     return plotdata
 

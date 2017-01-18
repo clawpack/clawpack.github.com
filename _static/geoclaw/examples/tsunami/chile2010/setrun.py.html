@@ -15,7 +15,7 @@
            <font FACE="HELVETICA,ARIAL">
            
 <!-- Created from the file /Users/rjl/git/clawpack/geoclaw/examples/tsunami/chile2010/setrun.py -->
-<!-- Date: Sun May 17 2015 at 21:15:52 -->
+<!-- Date: Wed Dec 28 2016 at 23:13:56 -->
 
 <table bgcolor="#FFEE99"> <tr> <td>
 &nbsp;<font size=6> setrun.py.html </font> </td>
@@ -27,7 +27,7 @@
 </td></tr><tr><td>
 &nbsp;Directory:  &nbsp; /Users/rjl/git/clawpack/geoclaw/examples/tsunami/chile2010 
 </td></tr><tr><td>
-&nbsp;Converted:  &nbsp; Sun May 17 2015 at 21:15:52 
+&nbsp;Converted:  &nbsp; Wed Dec 28 2016 at 23:13:56 
 &nbsp; using <a href="http://clawpack.github.io//doc/application_documentation.html#clawcode2html">clawcode2html</a>
 </td></tr><tr><td>
 <font color="#BB3300"> &nbsp;This documentation file will 
@@ -43,6 +43,8 @@ that will be read in by the Fortran code.
 
 """
 
+from __future__ import absolute_import
+from __future__ import print_function
 import os
 import numpy as np
 
@@ -144,14 +146,12 @@ def setrun(claw_pkg='geoclaw'):
 
 
     <font color="blue"># Restart from checkpoint file of a previous run?</font>
-    <font color="blue"># Note: If restarting, you must also change the Makefile to set:</font>
-    <font color="blue">#    RESTART = True</font>
     <font color="blue"># If restarting, t0 above should be from original run, and the</font>
     <font color="blue"># restart_file 'fort.chkNNNNN' specified below should be in </font>
     <font color="blue"># the OUTDIR indicated in Makefile.</font>
 
-    clawdata.restart = False               <font color="blue"># True to restart from prior results</font>
-    clawdata.restart_file = 'fort.chk00036'  <font color="blue"># File to use for restart data</font>
+    clawdata.restart = False              <font color="blue"># True to restart from prior results</font>
+    clawdata.restart_file = 'fort.chk00096'  <font color="blue"># File to use for restart data</font>
 
     <font color="blue"># -------------</font>
     <font color="blue"># Output times:</font>
@@ -166,7 +166,7 @@ def setrun(claw_pkg='geoclaw'):
     if clawdata.output_style==1:
         <font color="blue"># Output nout frames at equally spaced times up to tfinal:</font>
         clawdata.num_output_times = 18
-        clawdata.tfinal = 32400.0
+        clawdata.tfinal = 9*3600.
         clawdata.output_t0 = True  <font color="blue"># output at initial (or restart) time?</font>
 
     elif clawdata.output_style == 2:
@@ -398,7 +398,7 @@ def setgeo(rundata):
     try:
         geo_data = rundata.geo_data
     except:
-        print "*** Error, this rundata has no geo_data attribute"
+        print("*** Error, this rundata has no geo_data attribute")
         raise AttributeError("Missing geo_data attribute")
        
     <font color="blue"># == Physics ==</font>

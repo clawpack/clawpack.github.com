@@ -15,7 +15,7 @@
            <font FACE="HELVETICA,ARIAL">
            
 <!-- Created from the file /Users/rjl/git/clawpack/classic/examples/advection_2d_annulus/Makefile -->
-<!-- Date: Fri Jul 18 2014 at 09:52:57 -->
+<!-- Date: Wed Dec 28 2016 at 22:29:32 -->
 
 <table bgcolor="#FFEE99"> <tr> <td>
 &nbsp;<font size=6> Makefile.html </font> </td>
@@ -27,7 +27,7 @@
 </td></tr><tr><td>
 &nbsp;Directory:  &nbsp; /Users/rjl/git/clawpack/classic/examples/advection_2d_annulus 
 </td></tr><tr><td>
-&nbsp;Converted:  &nbsp; Fri Jul 18 2014 at 09:52:57 
+&nbsp;Converted:  &nbsp; Wed Dec 28 2016 at 22:29:32 
 &nbsp; using <a href="http://clawpack.github.io//doc/application_documentation.html#clawcode2html">clawcode2html</a>
 </td></tr><tr><td>
 <font color="#BB3300"> &nbsp;This documentation file will 
@@ -57,7 +57,6 @@ SETPLOT_FILE = setplot.py           <font color="blue"># File containing functio
 PLOTDIR = _plots                    <font color="blue"># Directory for plots</font>
 
 OVERWRITE ?= True                   <font color="blue"># False ==> make a copy of OUTDIR first</font>
-RESTART ?= False                    <font color="blue"># Should = clawdata.restart in setrun</font>
 
 <font color="blue"># Environment variable FC should be set to fortran compiler, e.g. gfortran</font>
 
@@ -65,7 +64,24 @@ RESTART ?= False                    <font color="blue"># Should = clawdata.resta
 FFLAGS ?=  
 
 <font color="blue"># ---------------------------------</font>
-<font color="blue"># List of sources for this program:</font>
+<font color="blue"># package sources for this program:</font>
+<font color="blue"># ---------------------------------</font>
+
+include $(CLAW)/classic/src/2d/Makefile.classic_2d
+
+<font color="blue"># ---------------------------------------</font>
+<font color="blue"># package sources specifically to exclude</font>
+<font color="blue"># (i.e. if a custom replacement source </font>
+<font color="blue">#  under a different name is provided)</font>
+<font color="blue"># ---------------------------------------</font>
+
+EXCLUDE_MODULES = \
+
+EXCLUDE_SOURCES = \
+
+
+<font color="blue"># ---------------------------------</font>
+<font color="blue"># List of custom sources for this program:</font>
 <font color="blue"># ---------------------------------</font>
 
 MODULES = \
@@ -77,22 +93,7 @@ SOURCES = \
   $(CLAW)/riemann/src/rpt2_vc_advection.f90 \
   setaux.f \
   setprob.f \
-  stream.f \
-  $(CLAW)/classic/src/2d/driver.f90 \
-  $(CLAW)/classic/src/2d/claw2ez.f \
-  $(CLAW)/classic/src/2d/claw2.f \
-  $(CLAW)/classic/src/2d/bc2.f \
-  $(CLAW)/classic/src/2d/b4step2.f90 \
-  $(CLAW)/classic/src/2d/step2.f90 \
-  $(CLAW)/classic/src/2d/step2ds.f90 \
-  $(CLAW)/classic/src/2d/dimsp2.f \
-  $(CLAW)/classic/src/2d/flux2.f90 \
-  $(CLAW)/classic/src/2d/copyq2.f \
-  $(CLAW)/classic/src/2d/inlinelimiter.f90 \
-  $(CLAW)/classic/src/2d/src2.f90 \
-  $(CLAW)/classic/src/2d/out2.f \
-  $(CLAW)/classic/src/2d/restart2.f \
-  $(CLAW)/classic/src/2d/opendatafile.f
+  stream.f
 
 <font color="blue">#-------------------------------------------------------------------</font>
 <font color="blue"># Include Makefile containing standard definitions and make options:</font>

@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Clawpack Makefiles &mdash; Clawpack 5.3.1 documentation</title>
+    <title>Clawpack Makefiles &#8212; Clawpack 5.4.0 documentation</title>
     
     <link rel="stylesheet" href="_static/flasky.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -16,7 +16,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '5.3.1',
+        VERSION:     '5.4.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -28,9 +28,11 @@
     <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="shortcut icon" href="_static/clawicon.ico"/>
     <link rel="author" title="About these documents" href="about.html" />
-    <link rel="top" title="Clawpack 5.3.1 documentation" href="contents.html" />
-    <link rel="next" title="Application documentation" href="application_documentation.html" />
-    <link rel="prev" title="IPython notebook examples" href="notebooks.html" /> 
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="top" title="Clawpack 5.4.0 documentation" href="contents.html" />
+    <link rel="next" title="Library routines in Makefiles" href="makefiles_library.html" />
+    <link rel="prev" title="Jupyter notebook examples" href="notebooks.html" /> 
   </head>
   <body role="document">
 <div id="main-wrapper" class="sphinx">
@@ -74,12 +76,12 @@
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="application_documentation.html" title="Application documentation"
+          <a href="makefiles_library.html" title="Library routines in Makefiles"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="notebooks.html" title="IPython notebook examples"
+          <a href="notebooks.html" title="Jupyter notebook examples"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="contents.html">Clawpack 5.3.1 documentation</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="contents.html">Clawpack 5.4.0 documentation</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -93,8 +95,13 @@
 <p>Makefiles for the Fortran code in many repositories
 use the common Makefile found in <cite>$CLAW/clawutil/src/Makefile.common</cite>,
 so you must have the <cite>clawutil</cite> repository.</p>
+<p><strong>New in 5.4.0.</strong> The <cite>Makefile</cite> also typically refers to a common list of
+library routines needed for this particular example or application code,
+rather than listing all the files individually in every <cite>Makefile</cite>.  See
+<a class="reference internal" href="makefiles_library.html#makefiles-library"><span class="std std-ref">Library routines in Makefiles</span></a> for more details on how to specify local files in
+place of library files if you need to replace a default file.</p>
 <p>In most directories with a <cite>Makefile</cite> you can type:</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span>$ make help
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ make help
 </pre></div>
 </div>
 <p>to find out what options are available.</p>
@@ -104,7 +111,7 @@ so you must have the <cite>clawutil</cite> repository.</p>
 <span id="makefiles-output"></span><h3>output<a class="headerlink" href="#output" title="Permalink to this headline">¶</a></h3>
 <p>In applications directories, compiling and running the code can usually be
 accomplished via:</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span>$ make .output
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ make .output
 </pre></div>
 </div>
 <p>This checks dependencies using the data of the hidden file <cite>.output</cite> that is
@@ -113,12 +120,12 @@ modified since this date, the code is first recompiled.  If the <cite>setrun.py<
 script has been changed more recently, then the data files are first
 recreated.</p>
 <p>If you want to re-run the code and you get:</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span>$ make .output
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ make .output
 make: `.output&#39; is up to date.
 </pre></div>
 </div>
 <p>then you can force it to run again by removing the file <cite>.output</cite>:</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span>$ rm -f .output
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ rm -f .output
 $ make .output
 </pre></div>
 </div>
@@ -128,9 +135,9 @@ dependencies, or if the code bombed or was aborted before completion.</p>
 <p>The hidden file <code class="docutils literal"><span class="pre">.output</span></code> contains a single line, which is the path to the
 directory where the output resides (as specified by the <code class="docutils literal"><span class="pre">CLAW_outdir</span></code> variable
 in the <code class="docutils literal"><span class="pre">Makefile</span></code>).  This file is used by the interactive plotting routines, as
-described in <a class="reference internal" href="plotting.html#plotting"><span>Visclaw Plotting options</span></a>.</p>
+described in <a class="reference internal" href="plotting.html#plotting"><span class="std std-ref">Visclaw Plotting options</span></a>.</p>
 <p>You can also do:</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span>$ make output
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ make output
 </pre></div>
 </div>
 <p>(with no dot before <code class="docutils literal"><span class="pre">output</span></code>) to run the code without checking dependencies.
@@ -145,12 +152,12 @@ dependency.</p>
 <span id="makefiles-plots"></span><h3>plots<a class="headerlink" href="#plots" title="Permalink to this headline">¶</a></h3>
 <p>In applications directories, plotting results computed by Clawpack can generally
 be accomplished via:</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span>$ make .plots
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ make .plots
 </pre></div>
 </div>
 <p>This checks dependencies using the date of the hidden file <cite>.plots</cite>.</p>
 <p>This creates a set of webpages that show the plots, as described further in
-<a class="reference internal" href="plotting.html#plotting"><span>Visclaw Plotting options</span></a>.  There are other interactive plotting options also described
+<a class="reference internal" href="plotting.html#plotting"><span class="std std-ref">Visclaw Plotting options</span></a>.  There are other interactive plotting options also described
 there.</p>
 <p>Starting in 4.5.1, you can also do</p>
 <blockquote>
@@ -167,7 +174,7 @@ directories.  For example, output is directed to the subdirectory specified
 by the variable <cite>OUTDIR</cite>.  To change this, simply modify the Makefile before
 typing &#8220;make .output&#8221;.  Alternatively, you can modify the variable from the
 command line, e.g.:</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span>$ make .output OUTDIR=run1
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ make .output OUTDIR=run1
 </pre></div>
 </div>
 <p>to direct output to a subdirectory named <cite>run1</cite>.</p>
@@ -179,10 +186,25 @@ Makefile.  If you change compiler flags you will generally need to recompile
 all the Fortran files and the Makefile dependencies will not detect this.
 To force recompilation of all files, use the &#8220;make new&#8221; option, e.g. to
 recompile with the <cite>-g</cite> flag for debugging:</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span>$ make new FFLAGS=-g
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ make new FFLAGS=-g
 </pre></div>
 </div>
-<p>See <a class="reference internal" href="fortran_compilers.html#fortran-compilers"><span>Fortran Compilers</span></a> for more about compiler flags.</p>
+<p>See <a class="reference internal" href="fortran_compilers.html#fortran-compilers"><span class="std std-ref">Fortran Compilers</span></a> for more about compiler flags.</p>
+</div>
+<div class="section" id="duplicate-base-source-name">
+<h3>Duplicate Base Source Name<a class="headerlink" href="#duplicate-base-source-name" title="Permalink to this headline">¶</a></h3>
+<p>Fortran source files with the same base name but different suffixes can cause
+unexpected source files to be compiled.  This occurs as the Makefiles are
+structured to use the free-format Fortran source files <strong>.f90* before the
+fixed-format source files with *.f*.  For example, if someone specified
+*qinit.f* in the Makefile but there was a *qinit.f90* file that existed in the
+same directory then the compiler would compile the **f90</strong> file instead of the
+<strong>f</strong> file.</p>
+<p>The best way to avoid this problem is to check periodically whether you may
+have conlicting source via the <strong>make debug</strong> command which should list
+possible conflicts.  Note that this command will also list sources that may
+not be in conflict.  If you do have conflicting source either remove the
+<strong>f90</strong> file, rename it, or convert the <strong>f</strong> file into a <strong>f90</strong> file.</p>
 </div>
 </div>
 </div>
@@ -196,7 +218,7 @@ recompile with the <cite>-g</cite> flag for debugging:</p>
 <p><a href="http://clawpack.org/">
     <img class="logo" src= "_static/clawlogo.jpg" alt="Logo"/>
 </a>
-<h2>Version 5.3.1</h2>
+<h2>Version 5.4.0</h2>
 </p>
   <h3><a href="contents.html">Table Of Contents</a></h3>
   <ul>
@@ -206,6 +228,7 @@ recompile with the <cite>-g</cite> flag for debugging:</p>
 <li><a class="reference internal" href="#plots">plots</a></li>
 <li><a class="reference internal" href="#variables">Variables</a></li>
 <li><a class="reference internal" href="#compiler-flags">Compiler flags</a></li>
+<li><a class="reference internal" href="#duplicate-base-source-name">Duplicate Base Source Name</a></li>
 </ul>
 </li>
 </ul>
@@ -214,8 +237,8 @@ recompile with the <cite>-g</cite> flag for debugging:</p>
 <h3>Related Topics</h3>
 <ul>
   <li><a href="contents.html">Documentation overview</a><ul>
-      <li>Previous: <a href="notebooks.html" title="previous chapter">IPython notebook examples</a></li>
-      <li>Next: <a href="application_documentation.html" title="next chapter">Application documentation</a></li>
+      <li>Previous: <a href="notebooks.html" title="previous chapter">Jupyter notebook examples</a></li>
+      <li>Next: <a href="makefiles_library.html" title="next chapter">Library routines in Makefiles</a></li>
   </ul></li>
 </ul>
   <div role="note" aria-label="source link">
@@ -228,14 +251,11 @@ recompile with the <cite>-g</cite> flag for debugging:</p>
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
     <form class="search" action="search.html" method="get">
-      <input type="text" name="q" />
-      <input type="submit" value="Go" />
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
-    <p class="searchtip" style="font-size: 90%">
-    Enter search terms or a module, class or function name.
-    </p>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
@@ -243,7 +263,7 @@ recompile with the <cite>-g</cite> flag for debugging:</p>
       <div class="clearer"></div>
     </div>
   <div class="footer">
-    &copy; Copyright 2015, The Clawpack Development Team.
+    &copy; Copyright 2017, The Clawpack Development Team.
     Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
   </div>
   <script>
