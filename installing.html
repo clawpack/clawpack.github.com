@@ -99,15 +99,6 @@ who support this work.</p>
 <p>Instead of installing Clawpack and all its dependencies, another alternative
 is <a class="reference internal" href="docker_image.html#docker-image"><span class="std std-ref">Docker for Clawpack</span></a>.</p>
 <p><strong>Prerequisites:</strong> Before installing, check that you have the <a class="reference internal" href="prereqs.html#prereqs"><span class="std std-ref">Installation Prerequisites</span></a>.</p>
-<div class="section" id="install-using-conda">
-<h2>Install using conda<a class="headerlink" href="#install-using-conda" title="Permalink to this headline">¶</a></h2>
-<p>This was recently added and not yet extensively tested, but if you use the
-conda package manager then you might want to try this:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">conda</span> <span class="n">install</span> <span class="o">-</span><span class="n">c</span> <span class="n">clawpack</span> <span class="o">-</span><span class="n">c</span> <span class="n">conda</span><span class="o">-</span><span class="n">forge</span> <span class="n">clawpack</span><span class="o">=</span><span class="mf">5.4</span><span class="o">.</span><span class="mi">0</span>
-</pre></div>
-</div>
-<p>If you are only using PyClaw, this avoids the need for a Fortran compiler.</p>
-</div>
 <div class="section" id="install-using-pip">
 <h2>Install using pip<a class="headerlink" href="#install-using-pip" title="Permalink to this headline">¶</a></h2>
 <p>This is the simplest approach, particularly if you already
@@ -115,7 +106,7 @@ use <cite>pip</cite> for other purposes; see <a class="reference internal" href=
 <p>Unfortunately if this doesn&#8217;t work it may be hard to debug what went wrong.</p>
 </div>
 <div class="section" id="install-from-a-tarfile">
-<h2>Install from a tarfile<a class="headerlink" href="#install-from-a-tarfile" title="Permalink to this headline">¶</a></h2>
+<span id="installing-tarfile"></span><h2>Install from a tarfile<a class="headerlink" href="#install-from-a-tarfile" title="Permalink to this headline">¶</a></h2>
 <p>Download a tar file of the latest release:</p>
 <ul class="simple">
 <li><a class="reference external" href="https://github.com/clawpack/clawpack/releases/download/v5.4.0/clawpack-v5.4.0.tar.gz">https://github.com/clawpack/clawpack/releases/download/v5.4.0/clawpack-v5.4.0.tar.gz</a></li>
@@ -132,19 +123,19 @@ clawpack tree to reside.  Then untar using the command:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">cd</span> <span class="n">clawpack</span><span class="o">-</span><span class="n">v5</span><span class="o">.</span><span class="mf">4.0</span>
 </pre></div>
 </div>
-<p>Next install the Python components of Clawpack:</p>
+<p>Next install the Python components of Clawpack (but read the next two
+paragraphs first):</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">python</span> <span class="n">setup</span><span class="o">.</span><span class="n">py</span> <span class="n">install</span>
 </pre></div>
 </div>
-<p>This will compile a lot of Fortran code using <cite>f2py</cite> and will produce a lot of
-output, so you might want to redirect the output, e.g.</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">python</span> <span class="n">setup</span><span class="o">.</span><span class="n">py</span> <span class="n">install</span> <span class="o">&gt;</span> <span class="n">install_output</span><span class="o">.</span><span class="n">txt</span>
-</pre></div>
-</div>
-<p>If you get compilation errors in this step, you can still use the
-Classic, AMRClaw, and GeoClaw; see <a class="reference internal" href="#install-no-pyclaw"><span class="std std-ref">Install other packages without compiling PyClaw</span></a>.</p>
+<p>This will compile a lot of Fortran code using <cite>f2py</cite> for PyClaw and may
+produce a lot of output.</p>
+<p>If you get compilation errors in this step, or if you do not plan to use
+PyClaw, you can still use the
+Classic, AMRClaw, and GeoClaw version; see <a class="reference internal" href="#install-no-pyclaw"><span class="std std-ref">Install other packages without compiling PyClaw</span></a> below.</p>
 <p>If you only plan to use PyClaw, jump to <a class="reference internal" href="first_run.html#first-run"><span class="std std-ref">Running an example</span></a>.  If you
-plan to use Classic, AMRClaw, or GeoClaw continue with <a class="reference internal" href="setenv.html#setenv"><span class="std std-ref">Set environment variables</span></a>.</p>
+plan to use Classic, AMRClaw, or GeoClaw continue with <a class="reference internal" href="setenv.html#setenv"><span class="std std-ref">Set environment variables</span></a> to
+set the environment variables <cite>CLAW</cite> and <cite>FC</cite>.</p>
 </div>
 <div class="section" id="install-other-packages-without-compiling-pyclaw">
 <span id="install-no-pyclaw"></span><h2>Install other packages without compiling PyClaw<a class="headerlink" href="#install-other-packages-without-compiling-pyclaw" title="Permalink to this headline">¶</a></h2>
@@ -154,12 +145,9 @@ If your problem is not addressed there, please <a class="reference external" hre
 or <a class="reference external" href="https://github.com/clawpack/clawpack/issues">raise an issue</a>.
 You can still use the Fortran codes (AMRClaw, GeoClaw, and Classic) by doing
 the following.</p>
-<p>First, download a tarfile of the latest release as described in
-<span class="xref std std-ref">install_clawpack</span>.</p>
-<p>Next <a class="reference internal" href="setenv.html#setenv"><span class="std std-ref">Set environment variables</span></a>.  You must then also set your PYTHONPATH manually:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span>export PYTHONPATH=$CLAW:$PYTHONPATH
-</pre></div>
-</div>
+<p>First, download a tarfile of the latest release as described above in
+the section <a class="reference internal" href="#installing-tarfile"><span class="std std-ref">Install from a tarfile</span></a>.</p>
+<p>Next <a class="reference internal" href="setenv.html#setenv"><span class="std std-ref">Set environment variables</span></a>, including <cite>CLAW</cite>, <cite>FC</cite>, and  <cite>PYTHONPATH</cite>.</p>
 <p>Then you should be able to do:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span>cd $CLAW   # assuming this environment variable was properly set
 python setup.py symlink-only
@@ -196,21 +184,16 @@ to install everything:</p>
 develop Clawpack or to have the most recent bleeding edge version.
 See <a class="reference internal" href="developers.html#setup-dev"><span class="std std-ref">Installation instructions for developers</span></a> for instructions.</p>
 </div>
-<div class="section" id="running-clawpack-on-a-vm-or-in-the-cloud">
-<span id="install-alternatives"></span><h2>Running Clawpack on a VM or in the Cloud<a class="headerlink" href="#running-clawpack-on-a-vm-or-in-the-cloud" title="Permalink to this headline">¶</a></h2>
-<div class="admonition warning">
-<p class="first admonition-title">Warning</p>
-<p class="last">The information on the pages listed below is out of date.</p>
+<div class="section" id="install-using-conda">
+<h2>Install using conda<a class="headerlink" href="#install-using-conda" title="Permalink to this headline">¶</a></h2>
+<p>This was recently added and not yet extensively tested, see
+<a class="reference internal" href="installing_conda.html#installing-conda"><span class="std std-ref">Installing using conda</span></a>.</p>
 </div>
-<p><strong>Virtual Machine.</strong>
-An alternative to installing the <span class="xref std std-ref">install_prerequisites</span>
-and Clawpack itself is to use the <a class="reference internal" href="vm.html#vm"><span class="std std-ref">Clawpack Virtual Machine</span></a>.</p>
-<p><strong>Cloud Computing.</strong></p>
-<ul class="simple">
-<li><a class="reference internal" href="pyclaw/index.html#pyclaw"><span class="std std-ref">Pyclaw</span></a> can be installed and run in the cloud for free on
-<a class="reference external" href="http://wakari.io">http://wakari.io</a> or <a class="reference external" href="http://cloud.sagemath.com">http://cloud.sagemath.com</a>; see <a class="reference internal" href="pyclaw/cloud.html#cloud"><span class="std std-ref">Running PyClaw in the cloud</span></a>.</li>
-<li>All of Clawpack can be run on AWS using the <a class="reference internal" href="aws.html#aws"><span class="std std-ref">Amazon Web Services EC2 Clawpack AMI</span></a>.</li>
-</ul>
+<div class="section" id="running-clawpack-on-a-vm">
+<span id="install-alternatives"></span><h2>Running Clawpack on a VM<a class="headerlink" href="#running-clawpack-on-a-vm" title="Permalink to this headline">¶</a></h2>
+<p>See <a class="reference internal" href="docker_image.html#docker-image"><span class="std std-ref">Docker for Clawpack</span></a> to use Docker.</p>
+<p>Other VM versions are currently out of date. Check back for updates to
+this page.</p>
 </div>
 <div class="section" id="next-steps">
 <h2>Next steps:<a class="headerlink" href="#next-steps" title="Permalink to this headline">¶</a></h2>
@@ -237,13 +220,13 @@ started:</p>
   <h3><a href="contents.html">Table Of Contents</a></h3>
   <ul>
 <li><a class="reference internal" href="#">Installation options</a><ul>
-<li><a class="reference internal" href="#install-using-conda">Install using conda</a></li>
 <li><a class="reference internal" href="#install-using-pip">Install using pip</a></li>
 <li><a class="reference internal" href="#install-from-a-tarfile">Install from a tarfile</a></li>
 <li><a class="reference internal" href="#install-other-packages-without-compiling-pyclaw">Install other packages without compiling PyClaw</a></li>
 <li><a class="reference internal" href="#install-only-pyclaw-for-running-in-parallel">Install only PyClaw (for running in parallel)</a></li>
 <li><a class="reference internal" href="#install-the-latest-development-version">Install the latest development version</a></li>
-<li><a class="reference internal" href="#running-clawpack-on-a-vm-or-in-the-cloud">Running Clawpack on a VM or in the Cloud</a></li>
+<li><a class="reference internal" href="#install-using-conda">Install using conda</a></li>
+<li><a class="reference internal" href="#running-clawpack-on-a-vm">Running Clawpack on a VM</a></li>
 <li><a class="reference internal" href="#next-steps">Next steps:</a></li>
 </ul>
 </li>
