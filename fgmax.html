@@ -254,21 +254,23 @@ and can be set by specifying the value of
 been improved in 5.2.0 to fix some bugs.  This routine does bilinear
 interpolation the finite volume grid centers to the fixed grid in
 order to update the maximum of values such as depth or velocity.</p>
-<p>An alternative version of this routine has been added in 5.2.0
+<p>An alternative version of this routine was added in 5.2.0
 that does piecewise constant interpolation instead. This simply uses the
 value in the finite volume grid cell that contains the fixed grid
 point (0 order extrapolation) and avoids problems sometimes seen when
-doing linear interpolation near the margins of the flow.</p>
-<p>This routine is in <cite>fgmax_interpolate0.f90</cite> and is now recommended.
-To use this routine, modify the <cite>Makefile</cite> in an application directory to
-replace the line</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span>$(GEOLIB)/fgmax_interpolate.f90 \
-</pre></div>
-</div>
-<p>by</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span>$(GEOLIB)/fgmax_interpolate0.f90 \
-</pre></div>
-</div>
+doing linear interpolation near the margins of the flow.
+(The surface elevation <span class="math">\(\eta = B + h\)</span> may be very large in a
+neighboring dry cell and interpolating this sometimes gives non-physical large
+values for the surface elevation in wet cells.)</p>
+<p>This routine is in <cite>fgmax_interpolate0.f90</cite> and is now recommended.</p>
+<p>Starting in Version 5.4.0 this is the default that is specified in the
+library <cite>Makefile</cite> found in <cite>$CLAW/geoclaw/src/2d/shallow/Makefile.geoclaw</cite>
+(see <a class="reference internal" href="makefiles_library.html#makefiles-library"><span class="std std-ref">Library routines in Makefiles</span></a>).</p>
+<p>To switch back to the bilinear interpolation version, you can modify
+your application <cite>Makefile</cite> to exclude the default routine and
+include the desired routine, e.g.  you can use
+<a class="reference external" href="_static/Makefile_geoclaw_bilinear_interp">this Makefile</a>
+(modified if necessary for any other application-specific changes).</p>
 </div>
 <div class="section" id="processing-and-plotting-fgmax-output">
 <span id="fgmax-processing"></span><h2>Processing and plotting fgmax output<a class="headerlink" href="#processing-and-plotting-fgmax-output" title="Permalink to this headline">¶</a></h2>
