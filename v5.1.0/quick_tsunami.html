@@ -1,0 +1,592 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Quick start guide for tsunami modeling &#8212; Clawpack 5.1.0 documentation</title>
+    
+    <link rel="stylesheet" href="_static/flasky.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/base.css" type="text/css" />
+    <link rel="stylesheet" href="_static/layout.css" type="text/css" />
+    <link rel="stylesheet" href="_static/banner.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '5.1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="shortcut icon" href="_static/clawicon.ico"/>
+    <link rel="author" title="About these documents" href="about.html" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Earthquake sources: Fault slip and the Okada model" href="okada.html" />
+    <link rel="prev" title="Plotting routines for GeoClaw" href="plotting_geoclaw.html" /> 
+  </head>
+  <body role="document">
+<div id="main-wrapper" class="sphinx">
+<div id="header-wrapper">
+  <section id="header">
+    <!-- <h1><a href="http://clawpack.org/">Clawpack</a></h1> -->
+    <h1><a href="http://clawpack.org/">Clawpack-5</a></h1> 
+    <nav>
+      <ul>
+        <li>
+          <a href="toc_condensed.html">Docs</a>
+        </li>
+        <li>
+          <a href="installing.html">Install</a>
+        </li>
+        <li>
+          <a class="" href="galleries.html">Gallery</a>
+        </li>
+        <li>
+          <a class="active" href="https://groups.google.com/forum/#!forum/claw-users">Support</a>
+        </li>
+        <li>
+          <a class="active" href="http://github.com/organizations/clawpack">Source</a>
+        </li>
+        <li>
+          <a class="" href="developers.html">Develop</a>
+        </li>
+      </ul>
+    </nav>
+  </section>
+<div class="decoration"></div>
+</div>
+
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="okada.html" title="Earthquake sources: Fault slip and the Okada model"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="plotting_geoclaw.html" title="Plotting routines for GeoClaw"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="contents.html">Clawpack 5.1.0 documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="quick-start-guide-for-tsunami-modeling">
+<span id="quick-tsunami"></span><h1>Quick start guide for tsunami modeling<a class="headerlink" href="#quick-start-guide-for-tsunami-modeling" title="Permalink to this headline">¶</a></h1>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">As with all of Clawpack, this code is provided as a research
+and teaching tool with no guarantee of suitability for any particular
+purpose, and no liability on the part of the authors.  See the
+<a class="reference internal" href="license.html#license"><span class="std std-ref">License</span></a> for more details.</p>
+</div>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">This section is out of date and should be cleaned up and
+improved when 5.1 is released.  Some tools are now found in the directory
+<cite>$CLAW/geoclaw/src/python/geoclaw/</cite>.</p>
+</div>
+<p>TODO: Need to change all <cite>setrun</cite> parameters to new 5.0 names in this section!</p>
+<p>This is a brief outline of how to set up and run GeoClaw to model a real
+event, with pointers to various useful data sources.</p>
+<p>As always, the best way to get started is to copy a working example and
+modify it to do what you want.  We&#8217;ll start with the example in
+<cite>$CLAW/geoclaw/examples/tsunami/chile2010</cite>.</p>
+<p>Copy this directory somewhere new with an appropriate name.</p>
+<p>As an example we will convert this to a code modeling the Great Tohoku
+Tsunami of 11 March 2011, and will assume an environment variable has been
+set so that <cite>$TOHOKU</cite> points to the directory.  This is easily done by going
+into this directory and typing (at the Unix prompt <cite>$</cite>):</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ export TOHOKU=`pwd`
+</pre></div>
+</div>
+<div class="section" id="get-bathymetry-and-topography">
+<span id="get-bathy"></span><h2>Get bathymetry and topography<a class="headerlink" href="#get-bathymetry-and-topography" title="Permalink to this headline">¶</a></h2>
+<p>You need one or more files that contain both bathymetry and topography on
+a single rectangular grid of points (generally in lat-long coordinates).
+Bathymetry is underwater topography. Here (and in the code) we refer to
+both as <em>topo</em>.  In general these files have negative values of z to
+indicate distance below sea level for bathymetry, and positive values of z
+to indicate height above sea level on shore.  But some files have these
+switched.  See <a class="reference internal" href="topo.html#topo"><span class="std std-ref">Topography data</span></a> for more details on the formats GeoClaw can
+handle.</p>
+<p>You probably need two types of topo files:  fairly coarse resolution
+over a large area of an ocean, and finer scale over one or more small
+regions: those where you want to model inundation and perhaps also
+for the source region where the tsunami was generated.</p>
+<p>Coarse-scale topo can be obtained from various on-line databases.  The
+easiest is the NGDC GEODAS <a class="reference external" href="http://www.ngdc.noaa.gov/mgg/gdas/gd_designagrid.html">Design-a-grid</a>
+website.  Simply type in the latitude and longitude of the edges of the
+region you need.</p>
+<p>Choose the ETOPO 1-minute Global Relief database and then select the grid
+resolution you want.</p>
+<p>Typically 4 arc-minute  or even 10-minute
+resolution is sufficient for tsunami propagation
+across the ocean.  Recall that 1 degree of latitude is 111 km and 1 degree
+of longitude is about the same at the equator, so 4 minutes is roughly 7.5 km.
+You can also select 1- or 2-minute data.</p>
+<p>Finer-scale topo for much of the US coast is also available from this
+website; select the &#8220;US Coastal Relief Model Grids&#8221; database.</p>
+<p>To get an idea of what region you need to get topo, it&#8217;s often easiest to
+use Google Earth, which shows latitude and longitude.</p>
+<p>For the Tohoku event, we&#8217;ll use 10-minute topo over the region
+from 115E to 30W and from 15N to 50N, covering part of the north Pacific.
+Type these coordinates into Design-a-grid and choose the 10-minute grid and
+the ASCII Raster format.  It should tell you this will create a grid with
+211 latitude cells and 571 longitude cells.  (Points would be more accurate
+than cells, since these are equally spaced
+grid points including the end points in each direction.)</p>
+<p>Select <cite>ASCII Raster Format</cite> (with header).</p>
+<p>Give your grid the name <cite>npacific</cite> and then click &#8220;Submit&#8221;.</p>
+<p>On the next page click on &#8220;Compress and Retrieve Your Grid&#8221;.  You do not
+need to check any of the boxes on this page.</p>
+<p>On the next page click on &#8220;Retrieve Compressed File&#8221;.</p>
+<p>This should save a gzipped tar-file called <cite>npacific-1257.tgz</cite> (the number
+may be different).</p>
+<p>Move that file into your $TOHOKU directory and then unpack it:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ cd $TOHOKU
+$ mv ~/Downloads/npacific-1257.tgz .  # or from whereever it is
+$ tar -zxvf npacific-1257.tgz
+</pre></div>
+</div>
+<p>This uncompresses and untars in verbose mode so it prints out all the files
+created, something like:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">x</span> <span class="n">npacific</span><span class="o">-</span><span class="mi">1257</span><span class="n">_data</span><span class="o">/</span>
+<span class="n">x</span> <span class="n">npacific</span><span class="o">-</span><span class="mi">1257</span><span class="n">_data</span><span class="o">/</span><span class="n">npacific</span><span class="o">-</span><span class="mf">1257.</span><span class="n">log</span>
+<span class="n">x</span> <span class="n">npacific</span><span class="o">-</span><span class="mi">1257</span><span class="n">_data</span><span class="o">/</span><span class="n">npacific</span><span class="o">-</span><span class="mi">1257</span><span class="o">/</span>
+<span class="n">x</span> <span class="n">npacific</span><span class="o">-</span><span class="mi">1257</span><span class="n">_data</span><span class="o">/</span><span class="n">npacific</span><span class="o">-</span><span class="mi">1257</span><span class="o">/</span><span class="n">npacific</span><span class="o">-</span><span class="mf">1257.</span><span class="n">asc</span>
+<span class="n">x</span> <span class="n">npacific</span><span class="o">-</span><span class="mi">1257</span><span class="n">_data</span><span class="o">/</span><span class="n">cdrdas</span><span class="o">.</span><span class="n">vol</span>
+<span class="n">x</span> <span class="n">npacific</span><span class="o">-</span><span class="mi">1257</span><span class="n">_data</span><span class="o">/</span><span class="n">readme</span><span class="o">.</span><span class="n">txt</span>
+<span class="n">x</span> <span class="n">npacific</span><span class="o">-</span><span class="mi">1257</span><span class="n">_data</span><span class="o">/</span><span class="n">mgd2000</span><span class="o">.</span><span class="n">pdf</span>
+<span class="n">x</span> <span class="n">npacific</span><span class="o">-</span><span class="mi">1257</span><span class="n">_data</span><span class="o">/</span><span class="n">mgd77</span><span class="o">.</span><span class="n">pdf</span>
+<span class="n">x</span> <span class="n">npacific</span><span class="o">-</span><span class="mi">1257</span><span class="n">_data</span><span class="o">/</span><span class="n">hyd93</span><span class="o">.</span><span class="n">pdf</span>
+<span class="n">x</span> <span class="n">npacific</span><span class="o">-</span><span class="mi">1257</span><span class="n">_data</span><span class="o">/</span><span class="n">aro88</span><span class="o">.</span><span class="n">pdf</span>
+<span class="n">x</span> <span class="n">npacific</span><span class="o">-</span><span class="mi">1257</span><span class="n">_data</span><span class="o">/</span><span class="n">grd98</span><span class="o">.</span><span class="n">pdf</span>
+<span class="n">x</span> <span class="n">npacific</span><span class="o">-</span><span class="mi">1257</span><span class="n">_data</span><span class="o">/</span><span class="n">vct00</span><span class="o">.</span><span class="n">pdf</span>
+<span class="n">x</span> <span class="n">npacific</span><span class="o">-</span><span class="mi">1257</span><span class="n">_data</span><span class="o">/</span><span class="n">xyz03</span><span class="o">.</span><span class="n">pdf</span>
+<span class="n">x</span> <span class="n">npacific</span><span class="o">-</span><span class="mi">1257</span><span class="n">_data</span><span class="o">/</span><span class="n">help</span><span class="o">.</span><span class="n">htm</span>
+<span class="n">x</span> <span class="n">npacific</span><span class="o">-</span><span class="mi">1257</span><span class="n">_data</span><span class="o">/</span><span class="n">gd_ship</span><span class="o">.</span><span class="n">gif</span>
+</pre></div>
+</div>
+<p>Most of the files contain metadata.  The actual grid is the <cite>.asc</cite> file, the
+one with the longest name, so move that one to this directory:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ mv npacific-1257_data/npacific-1257/npacific-1257.asc .
+</pre></div>
+</div>
+<p>The first 6 lines of the <cite>.asc</cite> file are the header:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ head -6 npacific-1257.asc
+NCOLS   571
+NROWS   211
+XLLCENTER  115.00000
+YLLCENTER  15.00000
+CELLSIZE 0.16666667
+NODATA_VALUE  -32768
+</pre></div>
+</div>
+<p>The next 211 lines each consist of 571 values, the topo value going along
+one particular latitude.  The first line is at northernmost latitude
+<span class="math">\(50 = 15 + 210\times 0.166666667\)</span>.  The last line is at the
+southernmost latitude 15.  On each lines the values correspond to z at
+points going from west to east, from longitude 115 to <span class="math">\(210 = 115 +
+570\times 0.16666667\)</span>.
+Note that 210E is the same as 150W.  In GeoClaw the computational domain
+will go from <cite>xlower = 115</cite> to <cite>xupper = 210</cite>.</p>
+<p>This file is almost in the form required by GeoClaw (with <cite>topotype = 3</cite>
+as described at <a class="reference internal" href="topo.html#topo"><span class="std std-ref">Topography data</span></a>).  The only problem is that GeoClaw wants the
+numbers to appear first on the header lines, so you can delete the words
+before the numbers (which aren&#8217;t needed), or move them to the end of the
+line for future reference.  There&#8217;s a Python script available if you have
+Clawpack installed:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ python
+&gt;&gt;&gt; from clawpack.geoclaw import topotools
+&gt;&gt;&gt; topotools.swapheader(&#39;npacific-1257.asc&#39;,&#39;npacific.asc&#39;)
+&gt;&gt;&gt; quit()
+</pre></div>
+</div>
+<p>We&#8217;ve simplified the file name too in the process, so it is now called
+<cite>npacific.asc</cite>.</p>
+<p>You can now delete all the files and directory starting with <cite>npacific-1257</cite>
+unless you want to inspect the metadata:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ rm -rf npacific-1257*
+</pre></div>
+</div>
+<p>You may also need to retreive other topo files for particular regions of
+interest.  As an example, suppose we want to look at the tsunami behavior
+near Hawaii.</p>
+<p>To keep the file sizes
+manageable we&#8217;ll just get a 1-minute data from the ETOPO1 database.  To
+study inundation much finer bathymetry would be required.</p>
+<p>Use design-a-grid to obtain a 1-minute grid of the area from
+161W  to 153W and from 18N to 23N.  This gives a 481 by 301 grid.</p>
+<p>Go through the same process as above to retrieve this grid and create a file
+<cite>hawaii.asc</cite>.</p>
+<p>There is one additional change that needs to be made in this file.  The line</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">-</span><span class="mf">161.0</span> <span class="n">xll</span>
+</pre></div>
+</div>
+<p>containing x at the lower-left corner must be incremented by 360 and changed to</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="mf">199.0</span> <span class="n">xll</span>
+</pre></div>
+</div>
+<p>Since we are using coordiates from 115E to 210E we need to specify the left
+longitude value in eastern hemisphere coordinates rather than western.</p>
+<p>If you want to examine the grids you have obtained, you can use the
+following in Python:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">clawpack.visclaw</span> <span class="k">import</span> <span class="n">geoplot</span>
+
+<span class="n">T</span> <span class="o">=</span> <span class="n">geoplot</span><span class="o">.</span><span class="n">TopoPlotData</span><span class="p">(</span><span class="s1">&#39;npacific.asc&#39;</span><span class="p">)</span>
+<span class="n">T</span><span class="o">.</span><span class="n">cmin</span> <span class="o">=</span> <span class="o">-</span><span class="mf">5000.</span>
+<span class="n">T</span><span class="o">.</span><span class="n">cmax</span> <span class="o">=</span> <span class="mf">500.</span>
+<span class="n">T</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+
+<span class="n">T</span><span class="o">.</span><span class="n">fname</span> <span class="o">=</span> <span class="s1">&#39;hawaii.asc&#39;</span>
+<span class="n">T</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+
+<span class="n">xlim</span><span class="p">(</span><span class="mi">115</span><span class="p">,</span><span class="mi">210</span><span class="p">)</span>
+<span class="n">ylim</span><span class="p">(</span><span class="mi">15</span><span class="p">,</span><span class="mi">50</span><span class="p">)</span>
+<span class="n">colorbar</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>This should give a plot similar to</p>
+<a class="reference internal image-reference" href="_images/npacific.png"><img alt="_images/npacific.png" src="_images/npacific.png" style="width: 20cm;" /></a>
+<p>Zooming in near Hawaii shows</p>
+<a class="reference internal image-reference" href="_images/hawaii.png"><img alt="_images/hawaii.png" src="_images/hawaii.png" style="width: 20cm;" /></a>
+<p>Various other attributes of a <cite>TopoPlotData</cite> object
+can also be set. Here are the default values:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">topotype</span> <span class="o">=</span> <span class="mi">3</span>
+<span class="n">cmap</span> <span class="o">=</span> <span class="kc">None</span>   <span class="c1"># set automatically</span>
+<span class="n">cmax</span> <span class="o">=</span> <span class="mf">100.</span>
+<span class="n">cmin</span> <span class="o">=</span> <span class="o">-</span><span class="mf">4000.</span>
+<span class="n">climits</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="n">figno</span> <span class="o">=</span> <span class="mi">200</span>
+<span class="n">addcolorbar</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="n">addcontour</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="n">contour_levels</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+<span class="n">xlimits</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="n">ylimits</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="n">coarsen</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="n">imshow</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="n">gridedges_show</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="n">print_fname</span> <span class="o">=</span> <span class="kc">True</span>
+</pre></div>
+</div>
+<p>Setting <cite>coarsen</cite> to an integer greater than 1 coarsens the grid by that
+factor in each direction.  Setting <cite>imshow = False</cite> causes <cite>pcolor</cite> to be
+used instead, which takes longer to plot but may look nicer.</p>
+</div>
+<div class="section" id="specifying-topo-in-setrun-py">
+<h2>Specifying topo in <cite>setrun.py</cite><a class="headerlink" href="#specifying-topo-in-setrun-py" title="Permalink to this headline">¶</a></h2>
+<p>The file <cite>setrun.py</cite> we copied from the <cite>chilie2010</cite> directory contains the
+lines:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="c1"># == settopo.data values ==</span>
+<span class="n">geodata</span><span class="o">.</span><span class="n">topofiles</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="c1"># for topography, append lines of the form</span>
+<span class="c1">#   [topotype, minlevel, maxlevel, t1, t2, fname]</span>
+<span class="n">geodata</span><span class="o">.</span><span class="n">topofiles</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">1.e10</span><span class="p">,</span> \
+                          <span class="s1">&#39;etopo10min120W60W60S0S.asc&#39;</span><span class="p">])</span>
+</pre></div>
+</div>
+<p>We wish to change this to use the two topo files we have created.  After
+changing the file, these lines should be:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="c1"># == settopo.data values ==</span>
+<span class="n">geodata</span><span class="o">.</span><span class="n">topofiles</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="c1"># for topography, append lines of the form</span>
+<span class="c1">#   [topotype, minlevel, maxlevel, t1, t2, fname]</span>
+<span class="n">geodata</span><span class="o">.</span><span class="n">topofiles</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">1.e10</span><span class="p">,</span> <span class="s1">&#39;npacific.asc&#39;</span><span class="p">])</span>
+<span class="n">geodata</span><span class="o">.</span><span class="n">topofiles</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">1.e10</span><span class="p">,</span> <span class="s1">&#39;hawaii.asc&#39;</span><span class="p">])</span>
+</pre></div>
+</div>
+<p>We have specified two topo files.  Each file has topotype 3 and we are
+allowing at most 3 levels of AMR in the regions covered by each file.  Later
+we will see how to allow more levels in specific regions.</p>
+<div class="section" id="the-tsunami-source-seafloor-motion-from-an-earthquake">
+<h3>The tsunami source &#8211; seafloor motion from an earthquake<a class="headerlink" href="#the-tsunami-source-seafloor-motion-from-an-earthquake" title="Permalink to this headline">¶</a></h3>
+<p>We also need to specify how the seafloor moves, which generates the tsunami.
+This is specified to GeoClaw by providing a <cite>dtopo</cite> file as described
+further in the section <a class="reference internal" href="topo.html#topo"><span class="std std-ref">Topography data</span></a>.  This is a file with a similar structure
+to a topo file but gives the displacement of the topo over some rectangular
+grid, possibly at a sequence of different times.</p>
+<p>Often earthquake data is specified in the form of a set of <em>fault
+parameters</em> that describe the slip along a fault plane of some finite size
+at some depth below the seafloor.  A single earthquake may be described by a
+collection of such fault planes. All of this subsurface slip must be
+combined to generate the resulting seafloor motion.  Ideally this would be
+done by solving elastic wave equations in the three-dimensional earth,
+taking into acount the spatially-varying elastic parameters and the
+irregularity of the seafloor.</p>
+</div>
+</div>
+<div class="section" id="the-okada-model">
+<h2>The Okada model<a class="headerlink" href="#the-okada-model" title="Permalink to this headline">¶</a></h2>
+<p>In practice, the <em>Okada model</em> is often used to translate slip along one
+small fault plane into motion of the seafloor.  This is essentially a Greens
+function solution to the problem of a point dislocation in an elastic half
+space, so it assumes the region of slip is small, the elastic parameters in
+the earth are constant, and the seafloor is flat.  This may not be a great
+approximation, but given the uncertainty in the true elastic constants and
+the actual slip in an earthquake, it is generally considered to be accurate
+enough.</p>
+<p>In GeoClaw there are some Python tools in
+$CLAW/geoclaw/src/python/geoclaw/okada.py` for applying the Okada model and
+creating <cite>dtopo</cite> files from given source parameters.</p>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference internal" href="okada.html#okada"><span class="std std-ref">Earthquake sources: Fault slip and the Okada model</span></a> contains a better description.</p>
+</div>
+<p>The <cite>chile2010</cite> example that we are starting with has a very simple fault
+model for the source, consisting of a single fault plane with one set of
+parameters specified in the file <cite>usgs100227.cfg</cite>:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">Fault_Width</span> <span class="mf">100.e3</span>
+<span class="n">Fault_Length</span> <span class="mf">450.e3</span>
+<span class="n">Slip_Angle</span> <span class="mf">104.0</span>
+<span class="n">Dip_Angle</span> <span class="mf">14.0</span>
+<span class="n">Strike_Direction</span> <span class="mf">16.</span>
+<span class="n">Dislocation</span> <span class="mf">15.0</span>
+<span class="n">Epicenter_Latitude</span> <span class="o">-</span><span class="mf">35.826</span>
+<span class="n">Epicenter_Longitude</span> <span class="o">-</span><span class="mf">72.668</span>
+<span class="n">Focal_Depth</span> <span class="mf">35.e3</span>
+<span class="n">mx</span> <span class="mi">100</span>
+<span class="n">my</span> <span class="mi">100</span>
+<span class="n">ylower</span> <span class="o">-</span><span class="mf">40.0</span>
+<span class="n">yupper</span> <span class="o">-</span><span class="mf">30.0</span>
+<span class="n">xlower</span> <span class="o">-</span><span class="mf">77.0</span>
+<span class="n">xupper</span> <span class="o">-</span><span class="mf">67.0</span>
+</pre></div>
+</div>
+<p>This is a 450 km by 100 km fault plane with the length oriented at 16
+degrees from north (the <cite>Strike_Direction</cite>).  The fault plane is not
+horizontal but instead dips at 14 degrees from horizontal along the axis
+oriented with the length.  The slip along this plane has a magnitude of 15 m
+(the <cite>Dislocation</cite>) and the slip is in the direction 104 degrees from the
+strike direction (the <cite>Slip_Angle</cite>, usually called the <em>rake</em>).</p>
+<p>The fault plane is 35 km below the surface.</p>
+<p>The last 6 lines specify the grid where the seafloor displacement should be
+specified in the resulting <cite>dtopo</cite> file.  In this a 100 by 100 grid covering
+the region specified by the last four values.</p>
+<p>Currently a good source for the Tohoku event is  Preliminary Model III of
+the UCSB group, which can be found at
+<a class="reference external" href="http://www.geol.ucsb.edu/faculty/ji/big_earthquakes/2011/03/0311_v3/Honshu.html">http://www.geol.ucsb.edu/faculty/ji/big_earthquakes/2011/03/0311_v3/Honshu.html</a>.
+Scroll to the bottom of that page and click on &#8220;SUBFAULT FORMAT&#8221;.</p>
+<p>Other source models for the same event can be found elsewhere, often in the
+same format, e.g. the USGS model at
+<a class="reference external" href="http://earthquake.usgs.gov/earthquakes/eqinthenews/2011/usc0001xgp/finite_fault.php">http://earthquake.usgs.gov/earthquakes/eqinthenews/2011/usc0001xgp/finite_fault.php</a>.</p>
+<p>The subfault model must be converted to sea floor deformation by applying
+the Okada model to each fault segment and adding together the deformation
+predicted by each.</p>
+</div>
+<div class="section" id="specifying-dtopo-in-setrun-py">
+<h2>Specifying dtopo in <cite>setrun.py</cite><a class="headerlink" href="#specifying-dtopo-in-setrun-py" title="Permalink to this headline">¶</a></h2>
+<p>The file <cite>setrun.py</cite> we copied from the <cite>chilie2010</cite> directory contains the
+lines:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="c1"># == setdtopo.data values ==</span>
+<span class="n">geodata</span><span class="o">.</span><span class="n">dtopofiles</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="c1"># for moving topography, append lines of the form:</span>
+<span class="c1">#   [topotype, minlevel,maxlevel,fname]</span>
+<span class="n">geodata</span><span class="o">.</span><span class="n">dtopofiles</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="s1">&#39;usgs100227.tt1&#39;</span><span class="p">])</span>
+</pre></div>
+</div>
+<p>We wish to change this to use the dtopo file we created above, so these
+lines should be changed to:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="c1"># == setdtopo.data values ==</span>
+<span class="n">geodata</span><span class="o">.</span><span class="n">dtopofiles</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="c1"># for moving topography, append lines of the form:</span>
+<span class="c1">#   [topotype, minlevel,maxlevel,fname]</span>
+<span class="n">geodata</span><span class="o">.</span><span class="n">dtopofiles</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="s1">&#39;honshu-ucsb3.tt1&#39;</span><span class="p">])</span>
+</pre></div>
+</div>
+<p>Note that we are forcing 3 levels of refinement in the region covered by the
+fault at the initial time. This value should be chosen to
+insure that the fault region has reasonable resolution.  (If fewer than 3
+levels of refinement are used, i.e. <cite>mxnext &lt; 3</cite>, then this will insure that
+as many levels as available are used in this region.)</p>
+<p>Note: Dynamic fault motion, in which the <cite>dtopo</cite> file contains
+time-dependent displacements <cite>dz</cite>, is also supported. <strong>Need to document</strong>.</p>
+</div>
+<div class="section" id="setting-other-parameters-in-setrun-py">
+<h2>Setting other parameters in setrun.py<a class="headerlink" href="#setting-other-parameters-in-setrun-py" title="Permalink to this headline">¶</a></h2>
+<p>Several parameters can be adjusted, see <a class="reference internal" href="setrun.html#setrun"><span class="std std-ref">Specifying classic run-time parameters in setrun.py</span></a> for a description of
+general Clawpack parameters and <a class="reference internal" href="setrun_geoclaw.html#setrun-geoclaw"><span class="std std-ref">Specifying GeoClaw parameters in setrun.py</span></a> for a
+description of additional GeoClaw parameters.</p>
+<p>For our test problem we will change the following:</p>
+<p><strong>The domain size</strong></p>
+<p>We choose a domain that extends from the source region to Hawaii, and that
+is covered by the topo files:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="c1"># Lower and upper edge of computational domain:</span>
+<span class="n">clawdata</span><span class="o">.</span><span class="n">xlower</span> <span class="o">=</span> <span class="mf">140.</span>
+<span class="n">clawdata</span><span class="o">.</span><span class="n">xupper</span> <span class="o">=</span> <span class="mf">210.</span>
+
+<span class="n">clawdata</span><span class="o">.</span><span class="n">ylower</span> <span class="o">=</span> <span class="mf">15.</span>
+<span class="n">clawdata</span><span class="o">.</span><span class="n">yupper</span> <span class="o">=</span> <span class="mf">50.</span>
+</pre></div>
+</div>
+<p><strong>The coarse grid</strong></p>
+<p>The coarse grid will have a 2-degree resolution:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="c1"># Number of grid cells:</span>
+<span class="n">clawdata</span><span class="o">.</span><span class="n">mx</span> <span class="o">=</span> <span class="mi">35</span>
+<span class="n">clawdata</span><span class="o">.</span><span class="n">my</span> <span class="o">=</span> <span class="mi">15</span>
+</pre></div>
+</div>
+<p><strong>The output times</strong></p>
+<p>For a first test, let&#8217;s plot the solution every half hour for 12 hours:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">clawdata</span><span class="o">.</span><span class="n">outstyle</span> <span class="o">=</span> <span class="mi">1</span>
+
+<span class="k">if</span> <span class="n">clawdata</span><span class="o">.</span><span class="n">outstyle</span><span class="o">==</span><span class="mi">1</span><span class="p">:</span>
+    <span class="c1"># Output nout frames at equally spaced times up to tfinal:</span>
+    <span class="n">clawdata</span><span class="o">.</span><span class="n">nout</span> <span class="o">=</span> <span class="mi">24</span>
+    <span class="n">clawdata</span><span class="o">.</span><span class="n">tfinal</span> <span class="o">=</span> <span class="mf">3600.</span><span class="o">*</span><span class="mi">12</span>
+</pre></div>
+</div>
+<p><strong>AMR parameters</strong></p>
+<p>We will first do a fairly coarse run to get an idea of what time interval we
+care about near Hawaii:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="c1"># max number of refinement levels:</span>
+<span class="n">mxnest</span> <span class="o">=</span> <span class="mi">2</span>
+
+<span class="c1"># List of refinement ratios at each level (length at least mxnest-1)</span>
+<span class="n">clawdata</span><span class="o">.</span><span class="n">inratx</span> <span class="o">=</span> <span class="p">[</span><span class="mi">4</span><span class="p">]</span>
+<span class="n">clawdata</span><span class="o">.</span><span class="n">inraty</span> <span class="o">=</span> <span class="p">[</span><span class="mi">4</span><span class="p">]</span>
+<span class="n">clawdata</span><span class="o">.</span><span class="n">inratt</span> <span class="o">=</span> <span class="p">[</span><span class="mi">4</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>This causes refinement by a factor of 4 in both <cite>x</cite> and <cite>y</cite> (down to 0.5
+degree) and also in time (so 4 steps will be taken on the Level 2 grids for
+each step on Level 1).</p>
+<p><strong>Regions and Gauges</strong></p>
+<p>For the first attempt, we will not specify any refinement regions or gauges
+for output, so give an empty list for each of these parameters:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="c1"># == setregions.data values ==</span>
+<span class="n">geodata</span><span class="o">.</span><span class="n">regions</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="c1"># to specify regions of refinement append lines of the form</span>
+<span class="c1">#  [minlevel,maxlevel,t1,t2,x1,x2,y1,y2]</span>
+
+<span class="c1"># == setgauges.data values ==</span>
+<span class="n">geodata</span><span class="o">.</span><span class="n">gauges</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="c1"># for gauges append lines of the form  [gaugeno, x, y, t1, t2]</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="setting-gauges">
+<h2>Setting gauges<a class="headerlink" href="#setting-gauges" title="Permalink to this headline">¶</a></h2>
+<p>Gauges can be specified where the solution is recorded at every time step.
+This is specified in the <cite>setrun.py</cite> file.  The file copied from the
+<cite>chile2010</cite> example contains the lines</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="c1"># == setgauges.data values ==</span>
+<span class="n">geodata</span><span class="o">.</span><span class="n">gauges</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="c1"># for gauges append lines of the form  [gaugeno, x, y, t1, t2]</span>
+<span class="n">geodata</span><span class="o">.</span><span class="n">gauges</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="mi">32412</span><span class="p">,</span> <span class="o">-</span><span class="mf">86.392</span><span class="p">,</span> <span class="o">-</span><span class="mf">17.975</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">1.e10</span><span class="p">])</span>
+</pre></div>
+</div>
+<p>Note that <cite>geodaa.gauges</cite> is initialized to an empty list and then a list
+has been appended that specifies a gauge numbered 32412 at longitude -86.392
+and latitude -17.975.  This is the location of <a class="reference external" href="http://www.ndbc.noaa.gov/station_page.php?station=32412">DART buoy 32412</a> off the coast
+of Chile.  The values of <cite>t1</cite> and <cite>t2</cite> specified means that this gauge data
+will be output for all times.</p>
+<p>This location is not in our new computational domain, so this line can be
+deleted.  We might want to add one or more lines corresponding to the
+locations of DART buoys or tide gauges for the new computation.  Tide gauges
+are generally in shallow water and we would need much finer bathymetry than
+we are using to resolve the flow near a tide gauge.</p>
+<p>Let&#8217;s add a line for
+<a class="reference external" href="http://www.ndbc.noaa.gov/station_page.php?station=51407">DART buoy 51407</a>, which is near
+the island of Hawaii:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">geodata</span><span class="o">.</span><span class="n">gauges</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="mi">51407</span><span class="p">,</span> <span class="mf">203.484</span><span class="p">,</span> <span class="mf">19.642</span><span class="p">,</span> <span class="mi">3600</span><span class="o">*</span><span class="mf">7.</span><span class="p">,</span> <span class="mf">1.e10</span><span class="p">])</span>
+</pre></div>
+</div>
+<p>Note that gauge output is only requested after time
+<cite>t1 = 3600*7</cite> seconds since the tsunami doesn&#8217;t reach this
+gauge until more than 7 hours after the earthquake (which could be
+determined by first doing a coarse grid simulation).</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<p><a href="http://clawpack.org/">
+    <img class="logo" src= "_static/clawlogo.jpg" alt="Logo"/>
+</a>
+<h2>Version 5.1.0</h2>
+</p>
+  <h3><a href="contents.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Quick start guide for tsunami modeling</a><ul>
+<li><a class="reference internal" href="#get-bathymetry-and-topography">Get bathymetry and topography</a></li>
+<li><a class="reference internal" href="#specifying-topo-in-setrun-py">Specifying topo in <cite>setrun.py</cite></a><ul>
+<li><a class="reference internal" href="#the-tsunami-source-seafloor-motion-from-an-earthquake">The tsunami source &#8211; seafloor motion from an earthquake</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#the-okada-model">The Okada model</a></li>
+<li><a class="reference internal" href="#specifying-dtopo-in-setrun-py">Specifying dtopo in <cite>setrun.py</cite></a></li>
+<li><a class="reference internal" href="#setting-other-parameters-in-setrun-py">Setting other parameters in setrun.py</a></li>
+<li><a class="reference internal" href="#setting-gauges">Setting gauges</a></li>
+</ul>
+</li>
+</ul>
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="contents.html">Documentation overview</a><ul>
+      <li>Previous: <a href="plotting_geoclaw.html" title="previous chapter">Plotting routines for GeoClaw</a></li>
+      <li>Next: <a href="okada.html" title="next chapter">Earthquake sources: Fault slip and the Okada model</a></li>
+  </ul></li>
+</ul>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/quick_tsunami.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+<h3>Versions</h3>
+<ul>
+    <li><a href="../v5.3.1/quick_tsunami.html">v5.3.1</a></li>
+    <li><a href="../v5.3.0/quick_tsunami.html">v5.3.0</a></li>
+    <li><a href="../v5.2.1/quick_tsunami.html">v5.2.1</a></li>
+    <li><a href="../v5.2.0/quick_tsunami.html">v5.2.0</a></li>
+    <li><a href="quick_tsunami.html">v5.1.0</a></li>
+    <li><a href="../sphinx-versioning/quick_tsunami.html">sphinx-versioning</a></li>
+    <li><a href="../master/quick_tsunami.html">master</a></li>
+</ul>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+  <div class="footer">
+    &copy; Copyright 2013, The Clawpack Development Team.
+    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
+  </div>
+  
+  </body>
+</html>

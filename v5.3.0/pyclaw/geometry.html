@@ -1,0 +1,284 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>PyClaw Geometry &#8212; Clawpack 5.3.0 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/flasky.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/base.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/layout.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/banner.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '5.3.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="shortcut icon" href="../_static/clawicon.ico"/>
+    <link rel="author" title="About these documents" href="../about.html" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Pyclaw Utility Module" href="util.html" />
+    <link rel="prev" title="PyClaw State" href="state.html" /> 
+  </head>
+  <body role="document">
+<div id="main-wrapper" class="sphinx">
+<div id="header-wrapper">
+  <section id="header">
+    <!-- <h1><a href="http://clawpack.org/">Clawpack</a></h1> -->
+    <h1><a href="http://clawpack.org/">Clawpack-5</a></h1> 
+    <nav>
+      <ul>
+        <li>
+          <a href="../contents.html">Docs</a>
+        </li>
+        <li>
+          <a href="../installing.html">Install</a>
+        </li>
+        <li>
+          <a class="" href="../galleries.html">Gallery</a>
+        </li>
+        <li>
+          <a class="" href="../community.html">Community</a>
+        </li>
+        <li>
+          <a class="active" href="http://github.com/clawpack">Source</a>
+        </li>
+        <li>
+          <a class="" href="../developers.html">Develop</a>
+        </li>
+      </ul>
+    </nav>
+  </section>
+<div class="decoration"></div>
+</div>
+
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="util.html" title="Pyclaw Utility Module"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="state.html" title="PyClaw State"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../contents.html">Clawpack 5.3.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">Pyclaw</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="pyclaw-geometry">
+<span id="id1"></span><h1>PyClaw Geometry<a class="headerlink" href="#pyclaw-geometry" title="Permalink to this headline">¶</a></h1>
+<p>The PyClaw geometry package contains the classes used to define the
+geometry of a <code class="xref py py-class docutils literal"><span class="pre">Solution</span></code> object.  The base container
+for all other geometry is the <code class="xref py py-class docutils literal"><span class="pre">Domain</span></code> object.  It
+contains a list of <code class="xref py py-class docutils literal"><span class="pre">Patch</span></code> objects that reside inside
+of the <code class="xref py py-class docutils literal"><span class="pre">Domain</span></code>.</p>
+<img alt="../_images/domain_structure_1.png" src="../_images/domain_structure_1.png" />
+<p><code class="xref py py-class docutils literal"><span class="pre">Patch</span></code>
+represents a piece of the domain that could be a different resolution than
+the others, have a different coordinate mapping, or be used to construct
+complex domain shapes.</p>
+<img alt="../_images/domain_structure_2.png" src="../_images/domain_structure_2.png" />
+<p>It contains <code class="xref py py-class docutils literal"><span class="pre">Dimension</span></code>
+objects that define the extent of the <code class="xref py py-class docutils literal"><span class="pre">Patch</span></code> and the
+number of grid cells in each dimension.  <code class="xref py py-class docutils literal"><span class="pre">Patch</span></code> also
+contains a reference to a nearly identical <code class="xref py py-class docutils literal"><span class="pre">Grid</span></code>
+object.  The <code class="xref py py-class docutils literal"><span class="pre">Grid</span></code> object also contains a set of
+<code class="xref py py-class docutils literal"><span class="pre">Dimension</span></code> objects describing its extent and number
+of grid cells.  The <code class="xref py py-class docutils literal"><span class="pre">Grid</span></code> is meant to represent the
+geometry of the data local to the process in the case of a parallel run.  In
+a serial simulation the <code class="xref py py-class docutils literal"><span class="pre">Patch</span></code> and
+<code class="xref py py-class docutils literal"><span class="pre">Grid</span></code> share the same dimensions.</p>
+<p>In the case where only one <code class="xref py py-class docutils literal"><span class="pre">Patch</span></code> object exists in
+a <code class="xref py py-class docutils literal"><span class="pre">Domain</span></code> but it is run with four processes in
+parallel, the <code class="xref py py-class docutils literal"><span class="pre">Domain</span></code> hierarchy could look like:</p>
+<img alt="../_images/domain_structure_3.png" src="../_images/domain_structure_3.png" />
+<p>In the most complex case with multiple patches and a parallel run we may
+have the following:</p>
+<img alt="../_images/domain_structure_5.png" src="../_images/domain_structure_5.png" />
+<div class="section" id="serial-geometry-objects">
+<span id="pyclaw-serial-geometry"></span><h2>Serial Geometry Objects<a class="headerlink" href="#serial-geometry-objects" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="pyclaw-geometry-domain">
+<h3><code class="xref py py-class docutils literal"><span class="pre">pyclaw.geometry.Domain</span></code><a class="headerlink" href="#pyclaw-geometry-domain" title="Permalink to this headline">¶</a></h3>
+<div class="system-message">
+<p class="system-message-title">System Message: WARNING/2 (<tt class="docutils">/var/folders/_s/dx0xgftn3_x04rdx0_w5nq7w0000gn/T/tmpLKPdOPsphinxcontrib_versioning/8ead17868f18cc8ee8df9726447f8b2fb9a2e536/doc/pyclaw/geometry.rst</tt>, line 55)</p>
+autodoc: failed to import class u&#8217;Domain&#8217; from module u&#8217;pyclaw.geometry&#8217;; the following exception was raised:
+Traceback (most recent call last):
+  File &#8220;/usr/local/lib/python2.7/site-packages/sphinx/ext/autodoc.py&#8221;, line 551, in import_object
+    __import__(self.modname)
+ImportError: No module named pyclaw.geometry
+</div>
+</div>
+<div class="section" id="pyclaw-geometry-patch">
+<h3><code class="xref py py-class docutils literal"><span class="pre">pyclaw.geometry.Patch</span></code><a class="headerlink" href="#pyclaw-geometry-patch" title="Permalink to this headline">¶</a></h3>
+<div class="system-message">
+<p class="system-message-title">System Message: WARNING/2 (<tt class="docutils">/var/folders/_s/dx0xgftn3_x04rdx0_w5nq7w0000gn/T/tmpLKPdOPsphinxcontrib_versioning/8ead17868f18cc8ee8df9726447f8b2fb9a2e536/doc/pyclaw/geometry.rst</tt>, line 63)</p>
+autodoc: failed to import class u&#8217;Patch&#8217; from module u&#8217;pyclaw.geometry&#8217;; the following exception was raised:
+Traceback (most recent call last):
+  File &#8220;/usr/local/lib/python2.7/site-packages/sphinx/ext/autodoc.py&#8221;, line 551, in import_object
+    __import__(self.modname)
+ImportError: No module named pyclaw.geometry
+</div>
+</div>
+<div class="section" id="pyclaw-geometry-grid">
+<h3><code class="xref py py-class docutils literal"><span class="pre">pyclaw.geometry.Grid</span></code><a class="headerlink" href="#pyclaw-geometry-grid" title="Permalink to this headline">¶</a></h3>
+<div class="system-message">
+<p class="system-message-title">System Message: WARNING/2 (<tt class="docutils">/var/folders/_s/dx0xgftn3_x04rdx0_w5nq7w0000gn/T/tmpLKPdOPsphinxcontrib_versioning/8ead17868f18cc8ee8df9726447f8b2fb9a2e536/doc/pyclaw/geometry.rst</tt>, line 72)</p>
+autodoc: failed to import class u&#8217;Grid&#8217; from module u&#8217;pyclaw.geometry&#8217;; the following exception was raised:
+Traceback (most recent call last):
+  File &#8220;/usr/local/lib/python2.7/site-packages/sphinx/ext/autodoc.py&#8221;, line 551, in import_object
+    __import__(self.modname)
+ImportError: No module named pyclaw.geometry
+</div>
+</div>
+<div class="section" id="pyclaw-geometry-dimension">
+<h3><code class="xref py py-class docutils literal"><span class="pre">pyclaw.geometry.Dimension</span></code><a class="headerlink" href="#pyclaw-geometry-dimension" title="Permalink to this headline">¶</a></h3>
+<div class="system-message">
+<p class="system-message-title">System Message: WARNING/2 (<tt class="docutils">/var/folders/_s/dx0xgftn3_x04rdx0_w5nq7w0000gn/T/tmpLKPdOPsphinxcontrib_versioning/8ead17868f18cc8ee8df9726447f8b2fb9a2e536/doc/pyclaw/geometry.rst</tt>, line 80)</p>
+autodoc: failed to import class u&#8217;Dimension&#8217; from module u&#8217;pyclaw.geometry&#8217;; the following exception was raised:
+Traceback (most recent call last):
+  File &#8220;/usr/local/lib/python2.7/site-packages/sphinx/ext/autodoc.py&#8221;, line 551, in import_object
+    __import__(self.modname)
+ImportError: No module named pyclaw.geometry
+</div>
+</div>
+</div>
+<div class="section" id="parallel-geometry-objects">
+<span id="pyclaw-parallel-geometry"></span><h2>Parallel Geometry Objects<a class="headerlink" href="#parallel-geometry-objects" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="petclaw-geometry-domain">
+<h3><code class="xref py py-class docutils literal"><span class="pre">petclaw.geometry.Domain</span></code><a class="headerlink" href="#petclaw-geometry-domain" title="Permalink to this headline">¶</a></h3>
+<div class="system-message">
+<p class="system-message-title">System Message: WARNING/2 (<tt class="docutils">/var/folders/_s/dx0xgftn3_x04rdx0_w5nq7w0000gn/T/tmpLKPdOPsphinxcontrib_versioning/8ead17868f18cc8ee8df9726447f8b2fb9a2e536/doc/pyclaw/geometry.rst</tt>, line 92)</p>
+autodoc: failed to import class u&#8217;Domain&#8217; from module u&#8217;petclaw.geometry&#8217;; the following exception was raised:
+Traceback (most recent call last):
+  File &#8220;/usr/local/lib/python2.7/site-packages/sphinx/ext/autodoc.py&#8221;, line 551, in import_object
+    __import__(self.modname)
+ImportError: No module named petclaw.geometry
+</div>
+</div>
+<div class="section" id="petclaw-geometry-patch">
+<h3><code class="xref py py-class docutils literal"><span class="pre">petclaw.geometry.Patch</span></code><a class="headerlink" href="#petclaw-geometry-patch" title="Permalink to this headline">¶</a></h3>
+<div class="system-message">
+<p class="system-message-title">System Message: WARNING/2 (<tt class="docutils">/var/folders/_s/dx0xgftn3_x04rdx0_w5nq7w0000gn/T/tmpLKPdOPsphinxcontrib_versioning/8ead17868f18cc8ee8df9726447f8b2fb9a2e536/doc/pyclaw/geometry.rst</tt>, line 100)</p>
+autodoc: failed to import class u&#8217;Patch&#8217; from module u&#8217;petclaw.geometry&#8217;; the following exception was raised:
+Traceback (most recent call last):
+  File &#8220;/usr/local/lib/python2.7/site-packages/sphinx/ext/autodoc.py&#8221;, line 551, in import_object
+    __import__(self.modname)
+ImportError: No module named petclaw.geometry
+</div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<p><a href="http://clawpack.org/">
+    <img class="logo" src= "_static/clawlogo.jpg" alt="Logo"/>
+</a>
+<h2>Version 5.3.0</h2>
+</p>
+  <h3><a href="../contents.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">PyClaw Geometry</a><ul>
+<li><a class="reference internal" href="#serial-geometry-objects">Serial Geometry Objects</a><ul>
+<li><a class="reference internal" href="#pyclaw-geometry-domain"><code class="docutils literal"><span class="pre">pyclaw.geometry.Domain</span></code></a></li>
+<li><a class="reference internal" href="#pyclaw-geometry-patch"><code class="docutils literal"><span class="pre">pyclaw.geometry.Patch</span></code></a></li>
+<li><a class="reference internal" href="#pyclaw-geometry-grid"><code class="docutils literal"><span class="pre">pyclaw.geometry.Grid</span></code></a></li>
+<li><a class="reference internal" href="#pyclaw-geometry-dimension"><code class="docutils literal"><span class="pre">pyclaw.geometry.Dimension</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#parallel-geometry-objects">Parallel Geometry Objects</a><ul>
+<li><a class="reference internal" href="#petclaw-geometry-domain"><code class="docutils literal"><span class="pre">petclaw.geometry.Domain</span></code></a></li>
+<li><a class="reference internal" href="#petclaw-geometry-patch"><code class="docutils literal"><span class="pre">petclaw.geometry.Patch</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../contents.html">Documentation overview</a><ul>
+  <li><a href="index.html">Pyclaw</a><ul>
+      <li>Previous: <a href="state.html" title="previous chapter">PyClaw State</a></li>
+      <li>Next: <a href="util.html" title="next chapter">Pyclaw Utility Module</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/pyclaw/geometry.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+<h3>Versions</h3>
+<ul>
+    <li><a href="../../v5.3.1/pyclaw/geometry.html">v5.3.1</a></li>
+    <li><a href="geometry.html">v5.3.0</a></li>
+    <li><a href="../../v5.2.1/pyclaw/geometry.html">v5.2.1</a></li>
+    <li><a href="../../v5.2.0/pyclaw/geometry.html">v5.2.0</a></li>
+    <li><a href="../../v5.1.0/pyclaw/geometry.html">v5.1.0</a></li>
+    <li><a href="../../sphinx-versioning/pyclaw/geometry.html">sphinx-versioning</a></li>
+    <li><a href="../../master/pyclaw/geometry.html">master</a></li>
+</ul>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+  <div class="footer">
+    &copy; Copyright 2015, The Clawpack Development Team.
+    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
+  </div>
+  <script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-44811544-1', 'auto');
+  ga('send', 'pageview');
+
+  </script>
+  
+  </body>
+</html>

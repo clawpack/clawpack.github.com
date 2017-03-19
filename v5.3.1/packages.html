@@ -1,0 +1,226 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Which Clawpack solver should I use? &#8212; Clawpack 5.3.1 documentation</title>
+    
+    <link rel="stylesheet" href="_static/flasky.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/base.css" type="text/css" />
+    <link rel="stylesheet" href="_static/layout.css" type="text/css" />
+    <link rel="stylesheet" href="_static/banner.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '5.3.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="shortcut icon" href="_static/clawicon.ico"/>
+    <link rel="author" title="About these documents" href="about.html" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Clawpack components" href="clawpack_components.html" />
+    <link rel="prev" title="Troubleshooting" href="trouble.html" /> 
+  </head>
+  <body role="document">
+<div id="main-wrapper" class="sphinx">
+<div id="header-wrapper">
+  <section id="header">
+    <!-- <h1><a href="http://clawpack.org/">Clawpack</a></h1> -->
+    <h1><a href="http://clawpack.org/">Clawpack-5</a></h1> 
+    <nav>
+      <ul>
+        <li>
+          <a href="contents.html">Docs</a>
+        </li>
+        <li>
+          <a href="installing.html">Install</a>
+        </li>
+        <li>
+          <a class="" href="galleries.html">Gallery</a>
+        </li>
+        <li>
+          <a class="" href="community.html">Community</a>
+        </li>
+        <li>
+          <a class="active" href="http://github.com/clawpack">Source</a>
+        </li>
+        <li>
+          <a class="" href="developers.html">Develop</a>
+        </li>
+      </ul>
+    </nav>
+  </section>
+<div class="decoration"></div>
+</div>
+
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="clawpack_components.html" title="Clawpack components"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="trouble.html" title="Troubleshooting"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="contents.html">Clawpack 5.3.1 documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="which-clawpack-solver-should-i-use">
+<span id="clawpack-packages"></span><h1>Which Clawpack solver should I use?<a class="headerlink" href="#which-clawpack-solver-should-i-use" title="Permalink to this headline">¶</a></h1>
+<p>Clawpack includes a number of related hyperbolic PDE solvers:</p>
+<blockquote>
+<div><ul class="simple">
+<li>Classic</li>
+<li><a class="reference internal" href="amrclaw.html#amrclaw"><span class="std std-ref">AMRClaw</span></a></li>
+<li><a class="reference internal" href="geoclaw.html#geoclaw"><span class="std std-ref">GeoClaw</span></a></li>
+<li><a class="reference internal" href="pyclaw/index.html#pyclaw"><span class="std std-ref">Pyclaw</span></a></li>
+</ul>
+</div></blockquote>
+<p>All of them are built on common algorithmic
+ideas, make use of the same set of Riemann solvers, and can be used with VisClaw
+for visualization.  If you&#8217;re not sure which solver to use, here you will find
+the main differences between them.</p>
+<div class="section" id="installation-and-user-interface">
+<h2>Installation and user interface<a class="headerlink" href="#installation-and-user-interface" title="Permalink to this headline">¶</a></h2>
+<p>The AMRClaw, GeoClaw, and Classic solvers are Fortran-based
+packages and rely on Makefiles and environment variables.  Problems are
+specified partially through Python scripts at run time (<cite>setrun.py</cite>) and partially
+through custom Fortran code at compile time (to set initial conditions, for instance).</p>
+<p>With PyClaw, problems are specified entirely at run time through Python script files, or
+interactively (e.g., in IPython).  Typically, the user does not need to
+write any Fortran code (though custom routines can be written in Fortran
+when necessary for performance reasons).
+PyClaw uses much of the same library of Fortran code, but that code is
+compiled during installation so that it can be imported dynamically within
+Python programs.</p>
+</div>
+<div class="section" id="algorithmic-differences">
+<h2>Algorithmic differences<a class="headerlink" href="#algorithmic-differences" title="Permalink to this headline">¶</a></h2>
+<p>All of the Clawpack solvers include the <em>classic</em> algorithms described in
+<a class="reference internal" href="biblio.html#leveque-fvmhp" id="id1">[LeVeque-FVMHP]</a>; if you only require those, it&#8217;s easiest to use Classic or
+<a class="reference internal" href="pyclaw/index.html#pyclaw"><span class="std std-ref">Pyclaw</span></a>.  Most of the packages contain additional algorithms:</p>
+<blockquote>
+<div><ul class="simple">
+<li><strong>AMRClaw</strong> includes block-structured adaptive mesh refinement that allows one
+to use a non-uniform grid that changes in time and uses smaller grid cells
+in regions with fine structure or where high accuracy is required.</li>
+<li><strong>GeoClaw</strong> Includes the AMR capabilities of AMRClaw and also has a number
+of special routines and algorithms for handling geophysical problems, including
+special well-balanced, positivity-preserving shallow water solvers.</li>
+<li><strong>PyClaw</strong> includes the <a class="reference internal" href="pyclaw/solvers.html#sharpclaw-solvers"><span class="std std-ref">high-order WENO-RK algorithms of SharpClaw</span></a>, described in
+<a class="reference internal" href="biblio.html#ketparlev13" id="id2">[KetParLev13]</a>.</li>
+</ul>
+</div></blockquote>
+</div>
+<div class="section" id="parallel-computing">
+<h2>Parallel computing<a class="headerlink" href="#parallel-computing" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><strong>AMRClaw</strong>, <strong>GeoClaw</strong>, and <strong>Classic</strong> can be run in parallel using shared memory
+via OpenMP.</li>
+<li><strong>PyClaw</strong> can be run in parallel on distributed-memory machines using MPI (through
+PETSc) and has been shown to scale to tens of thousands of cores.</li>
+</ul>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<p><a href="http://clawpack.org/">
+    <img class="logo" src= "_static/clawlogo.jpg" alt="Logo"/>
+</a>
+<h2>Version 5.3.1</h2>
+</p>
+  <h3><a href="contents.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Which Clawpack solver should I use?</a><ul>
+<li><a class="reference internal" href="#installation-and-user-interface">Installation and user interface</a></li>
+<li><a class="reference internal" href="#algorithmic-differences">Algorithmic differences</a></li>
+<li><a class="reference internal" href="#parallel-computing">Parallel computing</a></li>
+</ul>
+</li>
+</ul>
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="contents.html">Documentation overview</a><ul>
+      <li>Previous: <a href="trouble.html" title="previous chapter">Troubleshooting</a></li>
+      <li>Next: <a href="clawpack_components.html" title="next chapter">Clawpack components</a></li>
+  </ul></li>
+</ul>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/packages.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+<h3>Versions</h3>
+<ul>
+    <li><a href="packages.html">v5.3.1</a></li>
+    <li><a href="../v5.3.0/packages.html">v5.3.0</a></li>
+    <li><a href="../v5.2.1/packages.html">v5.2.1</a></li>
+    <li><a href="../v5.2.0/packages.html">v5.2.0</a></li>
+    <li><a href="../v5.1.0/packages.html">v5.1.0</a></li>
+    <li><a href="../sphinx-versioning/packages.html">sphinx-versioning</a></li>
+    <li><a href="../master/packages.html">master</a></li>
+</ul>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+  <div class="footer">
+    &copy; Copyright 2015, The Clawpack Development Team.
+    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
+  </div>
+  <script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-44811544-1', 'auto');
+  ga('send', 'pageview');
+
+  </script>
+  
+  </body>
+</html>

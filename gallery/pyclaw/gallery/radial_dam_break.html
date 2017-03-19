@@ -1,0 +1,345 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>2-dimensional shallow water equations &#8212; Clawpack 5.4.0 documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/flasky.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/base.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/layout.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '5.4.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: ''
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="shortcut icon" href="../../_static/clawicon.ico"/>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+  </head>
+  <body role="document">
+<div id="main-wrapper" class="sphinx">
+<div id="header-wrapper">
+  <section id="header">
+    <!-- <h1><a href="http://clawpack.org/">Clawpack</a></h1> -->
+    <h1><a href="http://clawpack.org/">Clawpack-5</a></h1> 
+    <nav>
+      <ul>
+        <li>
+          <a href="../../../contents.html">Docs</a>
+        </li>
+        <li>
+          <a href="../../../installing.html">Install</a>
+        </li>
+        <li>
+          <a class="" href="/index.html">Gallery</a>
+        </li>
+        <li>
+          <a class="" href="../../../community.html">Community</a>
+        </li>
+        <li>
+          <a class="active" href="http://github.com/clawpack">Source</a>
+        </li>
+        <li>
+          <a class="" href="../../../developers.html">Develop</a>
+        </li>
+      </ul>
+    </nav>
+  </section>
+<div class="decoration"></div>
+</div>
+
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">Clawpack 5.4.0 documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="module-pyclaw.examples.shallow_2d.radial_dam_break">
+<span id="dimensional-shallow-water-equations"></span><span id="radial-dam-break"></span><h1>2-dimensional shallow water equations<a class="headerlink" href="#module-pyclaw.examples.shallow_2d.radial_dam_break" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="d-shallow-water-radial-dam-break">
+<h2>2D shallow water: radial dam break<a class="headerlink" href="#d-shallow-water-radial-dam-break" title="Permalink to this headline">¶</a></h2>
+<p>Solve the 2D shallow water equations:</p>
+<p>The initial condition is a circular area with high depth surrounded by lower-depth water.
+The top and right boundary conditions reflect, while the bottom and left boundaries
+are outflow.</p>
+</div>
+<div class="section" id="output">
+<h2>Output:<a class="headerlink" href="#output" title="Permalink to this headline">¶</a></h2>
+<a class="reference external image-reference" href="../../_static/pyclaw/examples/shallow_2d/_plots_radial_dam_break/frame0000fig0.html"><img alt="../../_images/pyclaw_examples_shallow_2d__plots_radial_dam_break_frame0000fig0.png" src="../../_images/pyclaw_examples_shallow_2d__plots_radial_dam_break_frame0000fig0.png" style="width: 5cm;" /></a>
+<a class="reference external image-reference" href="../../_static/pyclaw/examples/shallow_2d/_plots_radial_dam_break/frame0004fig0.html"><img alt="../../_images/pyclaw_examples_shallow_2d__plots_radial_dam_break_frame0004fig0.png" src="../../_images/pyclaw_examples_shallow_2d__plots_radial_dam_break_frame0004fig0.png" style="width: 5cm;" /></a>
+<a class="reference external image-reference" href="../../_static/pyclaw/examples/shallow_2d/_plots_radial_dam_break/frame0010fig0.html"><img alt="../../_images/pyclaw_examples_shallow_2d__plots_radial_dam_break_frame0010fig0.png" src="../../_images/pyclaw_examples_shallow_2d__plots_radial_dam_break_frame0010fig0.png" style="width: 5cm;" /></a>
+</div>
+<div class="section" id="source">
+<h2>Source:<a class="headerlink" href="#source" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1"># encoding: utf-8</span>
+<span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">2D shallow water: radial dam break</span>
+<span class="sd">==================================</span>
+
+<span class="sd">Solve the 2D shallow water equations:</span>
+
+<span class="sd">.. :math:</span>
+<span class="sd">    h_t + (hu)_x + (hv)_y &amp; = 0 \\</span>
+<span class="sd">    (hu)_t + (hu^2 + \frac{1}{2}gh^2)_x + (huv)_y &amp; = 0 \\</span>
+<span class="sd">    (hv)_t + (huv)_x + (hv^2 + \frac{1}{2}gh^2)_y &amp; = 0.</span>
+
+<span class="sd">The initial condition is a circular area with high depth surrounded by lower-depth water.</span>
+<span class="sd">The top and right boundary conditions reflect, while the bottom and left boundaries</span>
+<span class="sd">are outflow.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">absolute_import</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">clawpack</span> <span class="k">import</span> <span class="n">riemann</span>
+<span class="kn">from</span> <span class="nn">clawpack.riemann.shallow_roe_with_efix_2D_constants</span> <span class="k">import</span> <span class="n">depth</span><span class="p">,</span> <span class="n">x_momentum</span><span class="p">,</span> <span class="n">y_momentum</span><span class="p">,</span> <span class="n">num_eqn</span>
+
+<span class="k">def</span> <span class="nf">qinit</span><span class="p">(</span><span class="n">state</span><span class="p">,</span><span class="n">h_in</span><span class="o">=</span><span class="mf">2.</span><span class="p">,</span><span class="n">h_out</span><span class="o">=</span><span class="mf">1.</span><span class="p">,</span><span class="n">dam_radius</span><span class="o">=</span><span class="mf">0.5</span><span class="p">):</span>
+    <span class="n">x0</span><span class="o">=</span><span class="mf">0.</span>
+    <span class="n">y0</span><span class="o">=</span><span class="mf">0.</span>
+    <span class="n">X</span><span class="p">,</span> <span class="n">Y</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">p_centers</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">((</span><span class="n">X</span><span class="o">-</span><span class="n">x0</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="p">(</span><span class="n">Y</span><span class="o">-</span><span class="n">y0</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+
+    <span class="n">state</span><span class="o">.</span><span class="n">q</span><span class="p">[</span><span class="n">depth</span>     <span class="p">,:,:]</span> <span class="o">=</span> <span class="n">h_in</span><span class="o">*</span><span class="p">(</span><span class="n">r</span><span class="o">&lt;=</span><span class="n">dam_radius</span><span class="p">)</span> <span class="o">+</span> <span class="n">h_out</span><span class="o">*</span><span class="p">(</span><span class="n">r</span><span class="o">&gt;</span><span class="n">dam_radius</span><span class="p">)</span>
+    <span class="n">state</span><span class="o">.</span><span class="n">q</span><span class="p">[</span><span class="n">x_momentum</span><span class="p">,:,:]</span> <span class="o">=</span> <span class="mf">0.</span>
+    <span class="n">state</span><span class="o">.</span><span class="n">q</span><span class="p">[</span><span class="n">y_momentum</span><span class="p">,:,:]</span> <span class="o">=</span> <span class="mf">0.</span>
+
+    
+<span class="k">def</span> <span class="nf">setup</span><span class="p">(</span><span class="n">use_petsc</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">outdir</span><span class="o">=</span><span class="s1">&#39;./_output&#39;</span><span class="p">,</span><span class="n">solver_type</span><span class="o">=</span><span class="s1">&#39;classic&#39;</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">use_petsc</span><span class="p">:</span>
+        <span class="kn">import</span> <span class="nn">clawpack.petclaw</span> <span class="k">as</span> <span class="nn">pyclaw</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="kn">from</span> <span class="nn">clawpack</span> <span class="k">import</span> <span class="n">pyclaw</span>
+
+    <span class="k">if</span> <span class="n">solver_type</span> <span class="o">==</span> <span class="s1">&#39;classic&#39;</span><span class="p">:</span>
+        <span class="n">solver</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">ClawSolver2D</span><span class="p">(</span><span class="n">riemann</span><span class="o">.</span><span class="n">shallow_roe_with_efix_2D</span><span class="p">)</span>
+        <span class="n">solver</span><span class="o">.</span><span class="n">limiters</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">limiters</span><span class="o">.</span><span class="n">tvd</span><span class="o">.</span><span class="n">MC</span>
+        <span class="n">solver</span><span class="o">.</span><span class="n">dimensional_split</span><span class="o">=</span><span class="mi">1</span>
+    <span class="k">elif</span> <span class="n">solver_type</span> <span class="o">==</span> <span class="s1">&#39;sharpclaw&#39;</span><span class="p">:</span>
+        <span class="n">solver</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">SharpClawSolver2D</span><span class="p">(</span><span class="n">riemann</span><span class="o">.</span><span class="n">shallow_roe_with_efix_2D</span><span class="p">)</span>
+
+    <span class="n">solver</span><span class="o">.</span><span class="n">bc_lower</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">BC</span><span class="o">.</span><span class="n">extrap</span>
+    <span class="n">solver</span><span class="o">.</span><span class="n">bc_upper</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">BC</span><span class="o">.</span><span class="n">wall</span>
+    <span class="n">solver</span><span class="o">.</span><span class="n">bc_lower</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">BC</span><span class="o">.</span><span class="n">extrap</span>
+    <span class="n">solver</span><span class="o">.</span><span class="n">bc_upper</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">BC</span><span class="o">.</span><span class="n">wall</span>
+
+    <span class="c1"># Domain:</span>
+    <span class="n">xlower</span> <span class="o">=</span> <span class="o">-</span><span class="mf">2.5</span>
+    <span class="n">xupper</span> <span class="o">=</span> <span class="mf">2.5</span>
+    <span class="n">mx</span> <span class="o">=</span> <span class="mi">150</span>
+    <span class="n">ylower</span> <span class="o">=</span> <span class="o">-</span><span class="mf">2.5</span>
+    <span class="n">yupper</span> <span class="o">=</span> <span class="mf">2.5</span>
+    <span class="n">my</span> <span class="o">=</span> <span class="mi">150</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">Dimension</span><span class="p">(</span><span class="n">xlower</span><span class="p">,</span><span class="n">xupper</span><span class="p">,</span><span class="n">mx</span><span class="p">,</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;x&#39;</span><span class="p">)</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">Dimension</span><span class="p">(</span><span class="n">ylower</span><span class="p">,</span><span class="n">yupper</span><span class="p">,</span><span class="n">my</span><span class="p">,</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;y&#39;</span><span class="p">)</span>
+    <span class="n">domain</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">Domain</span><span class="p">([</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">])</span>
+
+    <span class="n">state</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">State</span><span class="p">(</span><span class="n">domain</span><span class="p">,</span><span class="n">num_eqn</span><span class="p">)</span>
+
+    <span class="c1"># Gravitational constant</span>
+    <span class="n">state</span><span class="o">.</span><span class="n">problem_data</span><span class="p">[</span><span class="s1">&#39;grav&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.0</span>
+
+    <span class="n">qinit</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
+
+    <span class="n">claw</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">Controller</span><span class="p">()</span>
+    <span class="n">claw</span><span class="o">.</span><span class="n">tfinal</span> <span class="o">=</span> <span class="mf">2.5</span>
+    <span class="n">claw</span><span class="o">.</span><span class="n">solution</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">Solution</span><span class="p">(</span><span class="n">state</span><span class="p">,</span><span class="n">domain</span><span class="p">)</span>
+    <span class="n">claw</span><span class="o">.</span><span class="n">solver</span> <span class="o">=</span> <span class="n">solver</span>
+    <span class="n">claw</span><span class="o">.</span><span class="n">outdir</span> <span class="o">=</span> <span class="n">outdir</span>
+    <span class="n">claw</span><span class="o">.</span><span class="n">num_output_times</span> <span class="o">=</span> <span class="mi">10</span>
+    <span class="n">claw</span><span class="o">.</span><span class="n">setplot</span> <span class="o">=</span> <span class="n">setplot</span>
+    <span class="n">claw</span><span class="o">.</span><span class="n">keep_copy</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="k">return</span> <span class="n">claw</span>
+
+<span class="c1">#--------------------------</span>
+<span class="k">def</span> <span class="nf">setplot</span><span class="p">(</span><span class="n">plotdata</span><span class="p">):</span>
+<span class="c1">#--------------------------</span>
+    <span class="sd">&quot;&quot;&quot; </span>
+<span class="sd">    Specify what is to be plotted at each frame.</span>
+<span class="sd">    Input:  plotdata, an instance of visclaw.data.ClawPlotData.</span>
+<span class="sd">    Output: a modified version of plotdata.</span>
+<span class="sd">    &quot;&quot;&quot;</span> 
+    <span class="kn">from</span> <span class="nn">clawpack.visclaw</span> <span class="k">import</span> <span class="n">colormaps</span>
+
+    <span class="n">plotdata</span><span class="o">.</span><span class="n">clearfigures</span><span class="p">()</span>  <span class="c1"># clear any old figures,axes,items data</span>
+
+    <span class="c1"># Figure for depth</span>
+    <span class="n">plotfigure</span> <span class="o">=</span> <span class="n">plotdata</span><span class="o">.</span><span class="n">new_plotfigure</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;Water height&#39;</span><span class="p">,</span> <span class="n">figno</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+    <span class="c1"># Set up for axes in this figure:</span>
+    <span class="n">plotaxes</span> <span class="o">=</span> <span class="n">plotfigure</span><span class="o">.</span><span class="n">new_plotaxes</span><span class="p">()</span>
+    <span class="n">plotaxes</span><span class="o">.</span><span class="n">xlimits</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mf">2.5</span><span class="p">,</span> <span class="mf">2.5</span><span class="p">]</span>
+    <span class="n">plotaxes</span><span class="o">.</span><span class="n">ylimits</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mf">2.5</span><span class="p">,</span> <span class="mf">2.5</span><span class="p">]</span>
+    <span class="n">plotaxes</span><span class="o">.</span><span class="n">title</span> <span class="o">=</span> <span class="s1">&#39;Water height&#39;</span>
+    <span class="n">plotaxes</span><span class="o">.</span><span class="n">scaled</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="c1"># Set up for item on these axes:</span>
+    <span class="n">plotitem</span> <span class="o">=</span> <span class="n">plotaxes</span><span class="o">.</span><span class="n">new_plotitem</span><span class="p">(</span><span class="n">plot_type</span><span class="o">=</span><span class="s1">&#39;2d_pcolor&#39;</span><span class="p">)</span>
+    <span class="n">plotitem</span><span class="o">.</span><span class="n">plot_var</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">plotitem</span><span class="o">.</span><span class="n">pcolor_cmap</span> <span class="o">=</span> <span class="n">colormaps</span><span class="o">.</span><span class="n">red_yellow_blue</span>
+    <span class="n">plotitem</span><span class="o">.</span><span class="n">pcolor_cmin</span> <span class="o">=</span> <span class="mf">0.5</span>
+    <span class="n">plotitem</span><span class="o">.</span><span class="n">pcolor_cmax</span> <span class="o">=</span> <span class="mf">1.5</span>
+    <span class="n">plotitem</span><span class="o">.</span><span class="n">add_colorbar</span> <span class="o">=</span> <span class="kc">True</span>
+    
+    <span class="c1"># Scatter plot of depth</span>
+    <span class="n">plotfigure</span> <span class="o">=</span> <span class="n">plotdata</span><span class="o">.</span><span class="n">new_plotfigure</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;Scatter plot of h&#39;</span><span class="p">,</span> <span class="n">figno</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="c1"># Set up for axes in this figure:</span>
+    <span class="n">plotaxes</span> <span class="o">=</span> <span class="n">plotfigure</span><span class="o">.</span><span class="n">new_plotaxes</span><span class="p">()</span>
+    <span class="n">plotaxes</span><span class="o">.</span><span class="n">xlimits</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">2.5</span><span class="p">]</span>
+    <span class="n">plotaxes</span><span class="o">.</span><span class="n">ylimits</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">2.1</span><span class="p">]</span>
+    <span class="n">plotaxes</span><span class="o">.</span><span class="n">title</span> <span class="o">=</span> <span class="s1">&#39;Scatter plot of h&#39;</span>
+
+    <span class="c1"># Set up for item on these axes:</span>
+    <span class="n">plotitem</span> <span class="o">=</span> <span class="n">plotaxes</span><span class="o">.</span><span class="n">new_plotitem</span><span class="p">(</span><span class="n">plot_type</span><span class="o">=</span><span class="s1">&#39;1d_from_2d_data&#39;</span><span class="p">)</span>
+    <span class="n">plotitem</span><span class="o">.</span><span class="n">plot_var</span> <span class="o">=</span> <span class="n">depth</span>
+    <span class="k">def</span> <span class="nf">q_vs_radius</span><span class="p">(</span><span class="n">current_data</span><span class="p">):</span>
+        <span class="kn">from</span> <span class="nn">numpy</span> <span class="k">import</span> <span class="n">sqrt</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">current_data</span><span class="o">.</span><span class="n">x</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="n">current_data</span><span class="o">.</span><span class="n">y</span>
+        <span class="n">r</span> <span class="o">=</span> <span class="n">sqrt</span><span class="p">(</span><span class="n">x</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">y</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+        <span class="n">q</span> <span class="o">=</span> <span class="n">current_data</span><span class="o">.</span><span class="n">q</span><span class="p">[</span><span class="n">depth</span><span class="p">,:,:]</span>
+        <span class="k">return</span> <span class="n">r</span><span class="p">,</span><span class="n">q</span>
+    <span class="n">plotitem</span><span class="o">.</span><span class="n">map_2d_to_1d</span> <span class="o">=</span> <span class="n">q_vs_radius</span>
+    <span class="n">plotitem</span><span class="o">.</span><span class="n">plotstyle</span> <span class="o">=</span> <span class="s1">&#39;o&#39;</span>
+
+
+    <span class="c1"># Figure for x-momentum</span>
+    <span class="n">plotfigure</span> <span class="o">=</span> <span class="n">plotdata</span><span class="o">.</span><span class="n">new_plotfigure</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;Momentum in x direction&#39;</span><span class="p">,</span> <span class="n">figno</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+
+    <span class="c1"># Set up for axes in this figure:</span>
+    <span class="n">plotaxes</span> <span class="o">=</span> <span class="n">plotfigure</span><span class="o">.</span><span class="n">new_plotaxes</span><span class="p">()</span>
+    <span class="n">plotaxes</span><span class="o">.</span><span class="n">xlimits</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mf">2.5</span><span class="p">,</span> <span class="mf">2.5</span><span class="p">]</span>
+    <span class="n">plotaxes</span><span class="o">.</span><span class="n">ylimits</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mf">2.5</span><span class="p">,</span> <span class="mf">2.5</span><span class="p">]</span>
+    <span class="n">plotaxes</span><span class="o">.</span><span class="n">title</span> <span class="o">=</span> <span class="s1">&#39;Momentum in x direction&#39;</span>
+    <span class="n">plotaxes</span><span class="o">.</span><span class="n">scaled</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="c1"># Set up for item on these axes:</span>
+    <span class="n">plotitem</span> <span class="o">=</span> <span class="n">plotaxes</span><span class="o">.</span><span class="n">new_plotitem</span><span class="p">(</span><span class="n">plot_type</span><span class="o">=</span><span class="s1">&#39;2d_pcolor&#39;</span><span class="p">)</span>
+    <span class="n">plotitem</span><span class="o">.</span><span class="n">plot_var</span> <span class="o">=</span> <span class="n">x_momentum</span>
+    <span class="n">plotitem</span><span class="o">.</span><span class="n">pcolor_cmap</span> <span class="o">=</span> <span class="n">colormaps</span><span class="o">.</span><span class="n">yellow_red_blue</span>
+    <span class="n">plotitem</span><span class="o">.</span><span class="n">add_colorbar</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">plotitem</span><span class="o">.</span><span class="n">show</span> <span class="o">=</span> <span class="kc">False</span>       <span class="c1"># show on plot?</span>
+    
+
+    <span class="c1"># Figure for y-momentum</span>
+    <span class="n">plotfigure</span> <span class="o">=</span> <span class="n">plotdata</span><span class="o">.</span><span class="n">new_plotfigure</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;Momentum in y direction&#39;</span><span class="p">,</span> <span class="n">figno</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+
+    <span class="c1"># Set up for axes in this figure:</span>
+    <span class="n">plotaxes</span> <span class="o">=</span> <span class="n">plotfigure</span><span class="o">.</span><span class="n">new_plotaxes</span><span class="p">()</span>
+    <span class="n">plotaxes</span><span class="o">.</span><span class="n">xlimits</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mf">2.5</span><span class="p">,</span> <span class="mf">2.5</span><span class="p">]</span>
+    <span class="n">plotaxes</span><span class="o">.</span><span class="n">ylimits</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mf">2.5</span><span class="p">,</span> <span class="mf">2.5</span><span class="p">]</span>
+    <span class="n">plotaxes</span><span class="o">.</span><span class="n">title</span> <span class="o">=</span> <span class="s1">&#39;Momentum in y direction&#39;</span>
+    <span class="n">plotaxes</span><span class="o">.</span><span class="n">scaled</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="c1"># Set up for item on these axes:</span>
+    <span class="n">plotitem</span> <span class="o">=</span> <span class="n">plotaxes</span><span class="o">.</span><span class="n">new_plotitem</span><span class="p">(</span><span class="n">plot_type</span><span class="o">=</span><span class="s1">&#39;2d_pcolor&#39;</span><span class="p">)</span>
+    <span class="n">plotitem</span><span class="o">.</span><span class="n">plot_var</span> <span class="o">=</span> <span class="n">y_momentum</span>
+    <span class="n">plotitem</span><span class="o">.</span><span class="n">pcolor_cmap</span> <span class="o">=</span> <span class="n">colormaps</span><span class="o">.</span><span class="n">yellow_red_blue</span>
+    <span class="n">plotitem</span><span class="o">.</span><span class="n">add_colorbar</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">plotitem</span><span class="o">.</span><span class="n">show</span> <span class="o">=</span> <span class="kc">False</span>       <span class="c1"># show on plot?</span>
+    
+    <span class="k">return</span> <span class="n">plotdata</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span><span class="o">==</span><span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">clawpack.pyclaw.util</span> <span class="k">import</span> <span class="n">run_app_from_main</span>
+    <span class="n">output</span> <span class="o">=</span> <span class="n">run_app_from_main</span><span class="p">(</span><span class="n">setup</span><span class="p">,</span><span class="n">setplot</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<p><a href="http://clawpack.org/">
+    <img class="logo" src= "../../_static/clawlogo.jpg" alt="Logo"/>
+</a>
+<h2>Version 5.4.0</h2>
+</p>
+  <h3><a href="../../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">2-dimensional shallow water equations</a><ul>
+<li><a class="reference internal" href="#d-shallow-water-radial-dam-break">2D shallow water: radial dam break</a></li>
+<li><a class="reference internal" href="#output">Output:</a></li>
+<li><a class="reference internal" href="#source">Source:</a></li>
+</ul>
+</li>
+</ul>
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../../_sources/pyclaw/gallery/radial_dam_break.rst"
+           rel="nofollow">Show Source</a></li>
+    <li><a href="https://github.com/clawpack/doc/blob/master/doc/pyclaw/gallery/radial_dam_break.rst"
+           rel="nofollow">Show on GitHub</a></li>
+    <li><a href="https://github.com/clawpack/doc/edit/master/doc/pyclaw/gallery/radial_dam_break.rst"
+           rel="nofollow">Edit on GitHub</a></li>
+  </ul>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+  <div class="footer">
+    &copy; Copyright 2017, The Clawpack Development Team.
+    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
+  </div>
+  <script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-44811544-1', 'auto');
+  ga('send', 'pageview');
+
+  </script>
+  
+  </body>
+</html>

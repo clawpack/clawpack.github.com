@@ -1,0 +1,361 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Running in parallel &#8212; Clawpack 5.3.0 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/flasky.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/base.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/layout.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/banner.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '5.3.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="shortcut icon" href="../_static/clawicon.ico"/>
+    <link rel="author" title="About these documents" href="../about.html" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="PyClaw output" href="output.html" />
+    <link rel="prev" title="Using PyClaw’s solvers: Classic and SharpClaw" href="solvers.html" /> 
+  </head>
+  <body role="document">
+<div id="main-wrapper" class="sphinx">
+<div id="header-wrapper">
+  <section id="header">
+    <!-- <h1><a href="http://clawpack.org/">Clawpack</a></h1> -->
+    <h1><a href="http://clawpack.org/">Clawpack-5</a></h1> 
+    <nav>
+      <ul>
+        <li>
+          <a href="../contents.html">Docs</a>
+        </li>
+        <li>
+          <a href="../installing.html">Install</a>
+        </li>
+        <li>
+          <a class="" href="../galleries.html">Gallery</a>
+        </li>
+        <li>
+          <a class="" href="../community.html">Community</a>
+        </li>
+        <li>
+          <a class="active" href="http://github.com/clawpack">Source</a>
+        </li>
+        <li>
+          <a class="" href="../developers.html">Develop</a>
+        </li>
+      </ul>
+    </nav>
+  </section>
+<div class="decoration"></div>
+</div>
+
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="output.html" title="PyClaw output"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="solvers.html" title="Using PyClaw’s solvers: Classic and SharpClaw"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../contents.html">Clawpack 5.3.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" >Pyclaw</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="going_further.html" accesskey="U">Going Further</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="running-in-parallel">
+<span id="parallel"></span><h1>Running in parallel<a class="headerlink" href="#running-in-parallel" title="Permalink to this headline">¶</a></h1>
+<p>PyClaw can be run in parallel on your desktop or on large supercomputers using the
+PETSc library.
+Running your PyClaw script in parallel is usually very easy; it mainly consists of
+replacing:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">clawpack</span> <span class="k">import</span> <span class="n">pyclaw</span>
+</pre></div>
+</div>
+<p>with:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">clawpack.petclaw</span> <span class="k">as</span> <span class="nn">pyclaw</span>
+</pre></div>
+</div>
+<p>Also, most of the provided scripts in <cite>pyclaw/examples</cite> are set up to run in parallel
+simply by passing the command-line option <cite>use_petsc=True</cite> (of course, you will need
+to launch them with <cite>mpirun</cite>.</p>
+<div class="section" id="installing-petsc">
+<h2>Installing PETSc<a class="headerlink" href="#installing-petsc" title="Permalink to this headline">¶</a></h2>
+<p>First make sure you have a working install of PyClaw.
+For PyClaw installation instructions, see <span class="xref std std-ref">installation</span>.</p>
+<p>To run in parallel you&#8217;ll need:</p>
+<blockquote>
+<div><ul class="simple">
+<li><a class="reference external" href="http://www.mcs.anl.gov/petsc/petsc-as/">PETSc</a>  a toolkit for
+parallel scientific computing. The current recommended version is 3.3 with latest patch.</li>
+<li><a class="reference external" href="http://code.google.com/p/petsc4py/">petsc4py</a>: Python bindings for PETSc.
+The current recommended version is 3.3.</li>
+</ul>
+</div></blockquote>
+<p><strong>Obtaining PETSc:</strong></p>
+<p>PETSc 3.3 can be obtained using three approaches. Here we use <a class="reference external" href="http://mercurial.selenic.com/">Mercurial</a> to get it. Look at <a class="reference external" href="http://www.mcs.anl.gov/petsc/petsc-as/download/index.html">http://www.mcs.anl.gov/petsc/petsc-as/download/index.html</a> for more information.</p>
+<p>Do:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ cd path/to/the/dir/where/you/want/download/Petsc-3.3
+$ hg clone https://bitbucket.org/petsc/petsc-3.3 petsc-3.3
+$ hg clone https://bitbucket.org/petsc/buildsystem-3.3 petsc-3.3/config/BuildSystem
+</pre></div>
+</div>
+<p>For sh, bash, or zsh shells add the following lines to your shell start-up file:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ export PETSC_DIR=path/to/the/dir/where/you/downloaded/Petsc-3.3/petsc-3.3
+$ export PETSC_ARCH=your/architecture
+</pre></div>
+</div>
+<p>whereas for csh/tcsh shells add the following lines to your shell start-up file:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ setenv PETSC_DIR path/to/the/dir/where/you/downloaded/Petsc-3.3/petsc-3.3
+$ setenv PETSC_ARCH your/architecture
+</pre></div>
+</div>
+<p>For more information about PETSC_DIR and PETSC_ARCH, i.e. the variables that
+control the configuration and build process of PETSc, please look at
+<a class="reference external" href="http://www.mcs.anl.gov/petsc/petsc-as/documentation/installation.html">http://www.mcs.anl.gov/petsc/petsc-as/documentation/installation.html</a>.</p>
+<p>Then, if you want PETSc-3.3 configure for 32-bit use the following command:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ ./config/configure.py --with-cc=gcc --with-cxx=g++ --with-python=1 --download-mpich=1 --with-shared-libraries=1
+</pre></div>
+</div>
+<p>whereas, if you want PETSc-3.3 64-bit do:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ ./config/configure.py --with-cc=gcc --with-cxx=g++ --with-python=1 --download-mpich=1 --with-shared-libraries=1 --with-64-bit-indices=1
+</pre></div>
+</div>
+<p>Note that one of the option is &#8211;download-mpich=1. This means that mpich is downloaded. If you do not need/want mpich, remove this option. Note that you need MPI when using PETSc. Therefore, if the option –download-mpich=1 is removed you should have MPI installed on your system or in your user account.</p>
+<p>Once the configuration phase is completed, build PETSc libraries with</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ make PETSC_DIR=path/to/the/dir/where/you/have/Petsc-3.3/petsc-3.3 PETSC_ARCH=your/architecture all
+</pre></div>
+</div>
+<p>Check if the libraries are working by running</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ make PETSC_DIR=path/to/the/dir/where/you/have/Petsc-3.3/petsc-3.3 PETSC_ARCH=your/architecture test
+</pre></div>
+</div>
+<p><strong>Obtaining petsc4py:</strong></p>
+<p>petsc4py is a python binding for PETSc. We recommend installing petsc4py 3.3 because it is compatible with PETSc 3.3 and 3.2. To install this binding correctly make sure that the PETSC_DIR and PETSC_ARCH are part of your shell start-up file.</p>
+<p>Obtain petsc4py-3.3 with mercurial:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ cd path/to/the/dir/where/you/want/download/petsc4py
+$ hg clone https://petsc4py.googlecode.com/hg/petsc4py-3.3 -r 3.3
+</pre></div>
+</div>
+<p>The prefered method for the petsc4py iinstallation is <a class="reference external" href="http://pypi.python.org/pypi/pip">pip</a></p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ cd petsc4py-3.3
+$ pip install . --user
+</pre></div>
+</div>
+<p>Indeed, pip removes the old petsc4py installation, downloads the new version of
+<a class="reference external" href="http://cython.org/">cython</a> (if needed) and installs petsc4py.</p>
+<p>To check petsc4py-3.3 installation do:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ cd petsc4py-3.3/test
+$ python runtests.py
+</pre></div>
+</div>
+<p>All the tests cases should pass, i.e. OK should be printed at the screen.</p>
+<p><strong>NOTE:</strong> To run a python code that uses petsc4py in parallel you will need to use mpiexec or mpirun commands. It is important to remember to use the mpiexec or mpirun executables that come with the MPI installation that was used for configuring PETSc installation. If you have used the option &#8211;download-mpich=1 while installing PETSc, then the correct mpiexec to use is the one in ${PETSC_DIR}/${PETSC_ARCH}/bin. You can set this mpiexec to be your default by adding this line to your sh, bash, or zsh shell start-up file:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ export PATH=&quot;${PETSC_DIR}/${PETSC_ARCH}/bin:${PATH}&quot;
+</pre></div>
+</div>
+<p>or this line in case you are using csh or tcsh shells:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ setenv PATH &quot;${PETSC_DIR}/${PETSC_ARCH}/bin:${PATH}&quot;
+</pre></div>
+</div>
+<p>You can test that you are using the right mpiexec by running a demonstration script that can be found in $PYCLAW/demo as follows:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ cd $PYCLAW
+$ mpiexec -n 4 python demo/petsc_hello_world.py
+</pre></div>
+</div>
+<p>and you should get an output that looks like follows:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>Hello World! From process 3 out of 4 process(es).
+Hello World! From process 1 out of 4 process(es).
+Hello World! From process 0 out of 4 process(es).
+Hello World! From process 2 out of 4 process(es).
+</pre></div>
+</div>
+<p><strong>NOTE:</strong> An alternative way to install petsc4py is simply using the python
+script setup.py inside petsc4py, i.e.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ cd petsc4py-dev
+$ python setup.py build
+$ python setup.py install --user
+</pre></div>
+</div>
+</div>
+<div class="section" id="testing-your-installation">
+<h2>Testing your installation<a class="headerlink" href="#testing-your-installation" title="Permalink to this headline">¶</a></h2>
+<p>If you don&#8217;t have it already, install nose</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ easy_install nose
+</pre></div>
+</div>
+<p>Now simply execute</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ cd $PYCLAW
+$ nosetests
+</pre></div>
+</div>
+<p>If everything is set up correctly, this will run all the regression tests
+(which include pure python code and python/Fortran code) and inform you that
+the tests passed.  If any fail, please post the output and details of your
+platform on the <a class="reference external" href="http://http://groups.google.com/group/claw-users">claw-users Google group</a>.</p>
+</div>
+<div class="section" id="running-and-plotting-an-example">
+<h2>Running and plotting an example<a class="headerlink" href="#running-and-plotting-an-example" title="Permalink to this headline">¶</a></h2>
+<p>Next</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ cd $PYCLAW/examples/advection/1d/constant
+$ python advection.py use_PETSc=True iplot=1
+</pre></div>
+</div>
+<p>This will run the code and then place you in an interactive plotting shell.
+To view the simulation output frames in sequence, simply press &#8216;enter&#8217;
+repeatedly.  To exit the shell, type &#8216;q&#8217;.  For help, type &#8216;?&#8217; or see
+this <a class="reference external" href="http://kingkong.amath.washington.edu/clawpack/users/plotting.html#interactive-plotting-with-iplotclaw">Clawpack interactive python plotting help page</a>.</p>
+</div>
+<div class="section" id="tips-for-making-your-application-run-correctly-in-parallel">
+<h2>Tips for making your application run correctly in parallel<a class="headerlink" href="#tips-for-making-your-application-run-correctly-in-parallel" title="Permalink to this headline">¶</a></h2>
+<p>Generally serial PyClaw code should &#8220;just work&#8221; in parallel, but if you are not
+reasonably careful it is certainly possible to write serial code that will fail
+in parallel.</p>
+<p>Most importantly, use the appropriate grid attributes.  In serial, both <cite>grid.n</cite> and
+<cite>grid.ng</cite> give you the dimensions of the grid (i.e., the number of cells in
+each dimension).  In parallel, <cite>grid.n</cite> contains the size
+of the whole grid, while <cite>grid.ng</cite> contains just the size of the part that a given
+process deals with.  You should typically use only <cite>grid.ng</cite> (you can also use <cite>q.shape[1:]</cite>,
+which is equal to <cite>grid.ng</cite>).</p>
+<p>Similarly, <cite>grid.lower</cite> contains the lower bounds of the problem domain in the
+computational coordinates, whereas <cite>grid.lowerg</cite> contains the lower bounds of the
+part of the grid belonging to the current process.  Typically you should use
+<cite>grid.lowerg</cite>.</p>
+<p>Additionally, be aware that when a Grid object is instantiated in a parallel run,
+it is not instantiated as a parallel object.  A typical code excerpt looks like</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">clawpack.petclaw</span> <span class="k">as</span> <span class="nn">pyclaw</span> 
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">clawpack</span> <span class="k">import</span> <span class="n">pyclaw</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mx</span> <span class="o">=</span> <span class="mi">320</span><span class="p">;</span> <span class="n">my</span> <span class="o">=</span> <span class="mi">80</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">Dimension</span><span class="p">(</span><span class="s1">&#39;x&#39;</span><span class="p">,</span><span class="mf">0.0</span><span class="p">,</span><span class="mf">2.0</span><span class="p">,</span><span class="n">mx</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">y</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">Dimension</span><span class="p">(</span><span class="s1">&#39;y&#39;</span><span class="p">,</span><span class="mf">0.0</span><span class="p">,</span><span class="mf">0.5</span><span class="p">,</span><span class="n">my</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">grid</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">Domain</span><span class="p">([</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">])</span>
+</pre></div>
+</div>
+<p>At this point, <cite>grid.ng</cite> is identically equal to <cite>grid.n</cite>, rather than containing
+the size of the grid partition on the current process.  Before using it, you
+should instantiate a State object</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">num_eqn</span> <span class="o">=</span> <span class="mi">5</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">num_aux</span><span class="o">=</span><span class="mi">1</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">state</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">State</span><span class="p">(</span><span class="n">grid</span><span class="p">,</span><span class="n">num_eqn</span><span class="p">,</span><span class="n">num_aux</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Now <cite>state.grid.ng</cite> contains appropriate information.</p>
+</div>
+<div class="section" id="passing-options-to-petsc">
+<h2>Passing options to PETSc<a class="headerlink" href="#passing-options-to-petsc" title="Permalink to this headline">¶</a></h2>
+<p>The built-in applications (see <a class="reference internal" href="examples.html#examples"><span class="std std-ref">Working with PyClaw&#8217;s built-in examples</span></a>) are set up to automatically pass
+command-line options starting with a dash (&#8220;-&#8221;) to PETSc.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<p><a href="http://clawpack.org/">
+    <img class="logo" src= "_static/clawlogo.jpg" alt="Logo"/>
+</a>
+<h2>Version 5.3.0</h2>
+</p>
+  <h3><a href="../contents.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Running in parallel</a><ul>
+<li><a class="reference internal" href="#installing-petsc">Installing PETSc</a></li>
+<li><a class="reference internal" href="#testing-your-installation">Testing your installation</a></li>
+<li><a class="reference internal" href="#running-and-plotting-an-example">Running and plotting an example</a></li>
+<li><a class="reference internal" href="#tips-for-making-your-application-run-correctly-in-parallel">Tips for making your application run correctly in parallel</a></li>
+<li><a class="reference internal" href="#passing-options-to-petsc">Passing options to PETSc</a></li>
+</ul>
+</li>
+</ul>
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../contents.html">Documentation overview</a><ul>
+  <li><a href="index.html">Pyclaw</a><ul>
+  <li><a href="going_further.html">Going Further</a><ul>
+      <li>Previous: <a href="solvers.html" title="previous chapter">Using PyClaw&#8217;s solvers: Classic and SharpClaw</a></li>
+      <li>Next: <a href="output.html" title="next chapter">PyClaw output</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/pyclaw/parallel.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+<h3>Versions</h3>
+<ul>
+    <li><a href="../../v5.3.1/pyclaw/parallel.html">v5.3.1</a></li>
+    <li><a href="parallel.html">v5.3.0</a></li>
+    <li><a href="../../v5.2.1/pyclaw/parallel.html">v5.2.1</a></li>
+    <li><a href="../../v5.2.0/pyclaw/parallel.html">v5.2.0</a></li>
+    <li><a href="../../v5.1.0/pyclaw/parallel.html">v5.1.0</a></li>
+    <li><a href="../../sphinx-versioning/pyclaw/parallel.html">sphinx-versioning</a></li>
+    <li><a href="../../master/pyclaw/parallel.html">master</a></li>
+</ul>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+  <div class="footer">
+    &copy; Copyright 2015, The Clawpack Development Team.
+    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
+  </div>
+  <script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-44811544-1', 'auto');
+  ga('send', 'pageview');
+
+  </script>
+  
+  </body>
+</html>

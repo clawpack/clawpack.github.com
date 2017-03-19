@@ -1,0 +1,408 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Conventions for coding and documenting PyClaw &#8212; Clawpack 5.1.0 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/flasky.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/base.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/layout.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/banner.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '5.1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="shortcut icon" href="../_static/clawicon.ico"/>
+    <link rel="author" title="About these documents" href="../about.html" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="git resources" href="devel/gitwash/git_resources.html" />
+    <link rel="prev" title="Maintainer workflow" href="devel/gitwash/maintainer_workflow.html" /> 
+  </head>
+  <body role="document">
+<div id="main-wrapper" class="sphinx">
+<div id="header-wrapper">
+  <section id="header">
+    <!-- <h1><a href="http://clawpack.org/">Clawpack</a></h1> -->
+    <h1><a href="http://clawpack.org/">Clawpack-5</a></h1> 
+    <nav>
+      <ul>
+        <li>
+          <a href="../toc_condensed.html">Docs</a>
+        </li>
+        <li>
+          <a href="../installing.html">Install</a>
+        </li>
+        <li>
+          <a class="" href="../galleries.html">Gallery</a>
+        </li>
+        <li>
+          <a class="active" href="https://groups.google.com/forum/#!forum/claw-users">Support</a>
+        </li>
+        <li>
+          <a class="active" href="http://github.com/organizations/clawpack">Source</a>
+        </li>
+        <li>
+          <a class="" href="../developers.html">Develop</a>
+        </li>
+      </ul>
+    </nav>
+  </section>
+<div class="decoration"></div>
+</div>
+
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="devel/gitwash/git_resources.html" title="git resources"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="devel/gitwash/maintainer_workflow.html" title="Maintainer workflow"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../contents.html">Clawpack 5.1.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" >Pyclaw</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="for_developers.html" accesskey="U">Information for developers</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="conventions-for-coding-and-documenting-pyclaw">
+<h1>Conventions for coding and documenting PyClaw<a class="headerlink" href="#conventions-for-coding-and-documenting-pyclaw" title="Permalink to this headline">¶</a></h1>
+<p>In order to improve and maintain PyClaw and allow more developers or simply
+users to acces and use it all Python/Fortran code should follow some
+conventions. As stressed in many books, reports, notes, etc. (see for instance
+<a class="reference external" href="http://en.wikipedia.org/wiki/Coding_conventions">Wikipedia</a>) code conventions
+are important to programmers for a number of reasons:</p>
+<blockquote>
+<div><ul class="simple">
+<li>A big part of the lifetime cost of a piece of software goes to maintenance</li>
+<li>Rarely is software maintained for its whole life by the original authors</li>
+<li>Code conventions improve the readability of the software, allowing new developers and users to understand new code more quickly and thoroughly (efficiency increases!)</li>
+<li>Standards makes the source code look consistent, well-organized, and professional</li>
+<li>etc.</li>
+</ul>
+</div></blockquote>
+<p>This page provides some suggested coding conventions for PyClaw developers.
+Most of the ideas/proposed rules listed here are adapted
+from some conventions already used by most of the Python, Fortran90/95, C, C++
+communities.</p>
+<p>Most of the proposed rules listed here have been extracted from the
+documentation available at following links:</p>
+<blockquote>
+<div><ul class="simple">
+<li><a class="reference external" href="http://www.python.org/dev/peps/pep-0008/">pep-0008</a></li>
+<li><a class="reference external" href="http://www.python.org/dev/peps/pep-0257/">pep-0257</a></li>
+<li><a class="reference external" href="https://github.com/numpy/numpy/blob/master/doc/HOWTO_DOCUMENT.rst.txt">numpy</a></li>
+<li><a class="reference external" href="http://www.sagemath.org/doc/developer/conventions.html">sage</a></li>
+</ul>
+</div></blockquote>
+<div class="section" id="code-layout">
+<h2>Code layout<a class="headerlink" href="#code-layout" title="Permalink to this headline">¶</a></h2>
+<dl class="docutils">
+<dt>Indentation:</dt>
+<dd><ul class="first last simple">
+<li>Use 4 spaces per indentation level</li>
+<li>Don&#8217;t use tabs</li>
+<li>Confine your line width to 80 characters, so that your code can be displayed on screen for side-by-side comparison and printed easily on A4 paper.</li>
+<li>For flowing long blocks of text (docstrings or comments), limiting the length to 72 characters is recommended.</li>
+<li>Separate top-level function and class definitions with two blank lines.</li>
+<li>Method definitions inside a class are separated by a single blank line.</li>
+</ul>
+</dd>
+</dl>
+<p><strong>NOTE:</strong> For Python 3.0 and beyond, the following policy is prescribed for the
+standard library (see PEP 3131): All identifiers in the Python standard library
+MUST use ASCII-only identifiers, and SHOULD use English words wherever feasible
+(in many cases, abbreviations and technical terms are used which aren&#8217;t
+English). In addition, string literals and comments must also be in ASCII. The
+only exceptions are (a) test cases testing the non-ASCII features, and (b)
+names of authors. Authors whose names are not based on the latin alphabet MUST
+provide a latin transliteration of their names. <strong>Open source projects with a
+global audience are encouraged to adopt a similar policy.</strong></p>
+</div>
+<div class="section" id="docstring-conventions">
+<h2>Docstring conventions<a class="headerlink" href="#docstring-conventions" title="Permalink to this headline">¶</a></h2>
+<p>A docstring is a string literal that occurs as the first statement in a module, function, class, or method definition. Such a docstring becomes the <code class="docutils literal"><span class="pre">__doc__</span> <span class="pre">special</span></code> attribute of that object.</p>
+<p>All modules should normally have docstrings, and all functions and classes exported by a module should also have docstrings. Public methods (including the __init__ constructor) should also have docstrings. A package may be documented in the module docstring of the <code class="docutils literal"><span class="pre">__init__.py</span></code> file in the package directory.</p>
+<p><strong>One-line Docstrings:</strong> One-liners are for really obvious cases. They should really fit on one line. For example:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">limiter_type</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Return the type of limiter.&quot;&quot;&quot;</span>
+    <span class="k">global</span> <span class="n">lim_type</span>
+    <span class="k">if</span> <span class="n">lim_type</span><span class="p">:</span> <span class="k">return</span> <span class="n">lim_type</span>
+    <span class="o">...</span>
+</pre></div>
+</div>
+<div class="highlight-fortran"><div class="highlight"><pre><span></span><span class="k">subroutine </span><span class="n">limiter_type</span><span class="p">(</span><span class="n">method_data</span><span class="p">)</span>
+<span class="c">! Return the type of limiter.</span>
+<span class="p">...</span>
+<span class="p">...</span>
+<span class="k">return </span><span class="n">lim_type</span>
+<span class="k">end subroutine </span><span class="n">limiter_type</span>
+</pre></div>
+</div>
+<dl class="docutils">
+<dt><strong>NOTES:</strong></dt>
+<dd><ul class="first last simple">
+<li>Triple quotes are used even though the string fits on one line. This makes it easy to later expand it</li>
+<li>The closing quotes are on the same line as the opening quotes. This looks better for one-liners</li>
+<li>There&#8217;s no blank line either before or after the docstring</li>
+<li>The docstring is a phrase ending in a period. It prescribes the function or method&#8217;s effect as a command (&#8220;Do this&#8221;, &#8220;Return that&#8221;), not as a description</li>
+<li>The one-line docstring should NOT be a &#8220;signature&#8221; reiterating the function/method parameters (which can be obtained by introspection)</li>
+</ul>
+</dd>
+</dl>
+<p><strong>Multi-line docstrings:</strong></p>
+<p>Multi-line docstrings consist of a summary line just like a one-line docstring, followed by a blank line, followed by a more elaborate description. The summary line may be used by automatic indexing tools; it is important that it fits on one line and is separated from the rest of the docstring by a blank line. The summary line may be on the same line as the opening quotes or on the next line. The entire docstring is indented the same as the quotes at its first line.</p>
+<p>The docstring of a script (a stand-alone program) should be usable as its &#8220;usage&#8221; message, printed when the script is invoked with incorrect or missing arguments (or perhaps with a &#8220;-h&#8221; option, for &#8220;help&#8221;). Such a docstring should document the script&#8217;s function and command line syntax, environment variables, and files. Usage messages can be fairly elaborate (several screens full) and should be sufficient for a new user to use the command properly, as well as a complete quick reference to all options and arguments for the sophisticated user.</p>
+<p>The docstring for a module should generally list the classes, exceptions and functions (and any other objects) that are exported by the module, with a one-line summary of each. (These summaries generally give less detail than the summary line in the object&#8217;s docstring.) The docstring for a package (i.e., the docstring of the package&#8217;s <code class="docutils literal"><span class="pre">__init__.py</span></code> module) should also list the modules and subpackages exported by the package.</p>
+<p>The docstring for a function or method should summarize its behavior and document its arguments, return value(s), side effects, exceptions raised, and restrictions on when it can be called (all if applicable). Optional arguments should be indicated. It should be documented whether keyword arguments are part of the interface.</p>
+<p>The docstring for a class should summarize its behavior and list the public methods and instance variables. If the class is intended to be subclassed, and has an additional interface for subclasses, this interface should be listed separately (in the docstring). The class constructor should be documented in the docstring for its <code class="docutils literal"><span class="pre">__init__</span></code> method. Individual methods should be documented by their own docstring.</p>
+<p>The extended summary should be used to clarify functionality, not to discuss implementation detail or background theory, which should rather be explored in the notes section below. You may refer to the parameters and the function name, but parameter descriptions still belong in the parameters section.</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">complex</span><span class="p">(</span><span class="n">real</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">imag</span><span class="o">=</span><span class="mf">0.0</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Form a complex number.</span>
+
+<span class="sd">    Keyword arguments:</span>
+<span class="sd">    real -- the real part (default 0.0)</span>
+<span class="sd">    imag -- the imaginary part (default 0.0)</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">imag</span> <span class="o">==</span> <span class="mf">0.0</span> <span class="ow">and</span> <span class="n">real</span> <span class="o">==</span> <span class="mf">0.0</span><span class="p">:</span> <span class="k">return</span> <span class="n">complex_zero</span>
+    <span class="o">...</span>
+</pre></div>
+</div>
+<div class="highlight-fortran"><div class="highlight"><pre><span></span><span class="k">subroutine </span><span class="n">tfluct</span><span class="p">(</span><span class="n">ixy</span><span class="p">,</span><span class="n">maxmx</span><span class="p">,</span><span class="n">num_eqn</span><span class="p">,</span><span class="n">num_waves</span><span class="p">,</span><span class="n">num_ghost</span><span class="p">,</span><span class="n">mx</span><span class="p">,</span><span class="n">ql</span><span class="p">,</span><span class="n">qr</span><span class="p">,</span><span class="n">auxl</span><span class="p">,</span><span class="n">auxr</span><span class="p">,</span><span class="n">s</span><span class="p">,</span><span class="n">adq</span><span class="p">)</span>
+
+<span class="c">! Solve Riemann problems for the 2D shallow water equations</span>
+<span class="c">! using f-wave algorithm and Roe&#39;s approximate Riemann solver.</span>
+<span class="c">!</span>
+<span class="c">! Input arguments:</span>
+<span class="c">! ql -- left state vector at the left edge of each cell</span>
+<span class="c">! qr -- right state vector at the right edge of each cell</span>
+<span class="c">!</span>
+<span class="c">! Output arguments:</span>
+<span class="c">! wave -- Riemann problem waves,</span>
+<span class="c">! s    -- Waves speed,</span>
+<span class="c">! amdq -- left-going flux difference  A^- \Delta q</span>
+<span class="c">! apdq -- right-going flux difference  A^+ \Delta q</span>
+<span class="c">!</span>
+<span class="c">!</span>
+<span class="c">! Note that the i&#39;th Riemann problem has left state qr(i-1,:)</span>
+<span class="c">!                                     and right state ql(i,:)</span>
+<span class="c">! From the basic clawpack routine step1, rp is called with ql = qr = q.</span>
+</pre></div>
+</div>
+<p>If it is not necessary to specify a keyword argument, use optional:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">x</span> <span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">optional</span>
+</pre></div>
+</div>
+<p>An optional section detailing which errors get raised and under what conditions:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">Raises</span>
+<span class="o">------</span>
+    <span class="n">LinAlgException</span>
+        <span class="n">If</span> <span class="n">the</span> <span class="n">matrix</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">numerically</span> <span class="n">invertible</span><span class="o">.</span>
+</pre></div>
+</div>
+<p>References cited in the notes section may be listed here, e.g. if you cited the article below using the text <a class="reference internal" href="#ref" id="id1">[Ref]</a>, include it as in the list as follows:</p>
+<table class="docutils citation" frame="void" id="ref" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id1">[Ref]</a></td><td>Amal Alghamdi, Aron Ahmadia, David I. Ketcheson, Matthew G. Knepley, Kyle T. Mandli, and Lisandro Dalcin, PetClaw: A Scalable Parallel Nonlinear Wave Propagation Solver for Python.</td></tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="naming-conventions">
+<h2>Naming conventions<a class="headerlink" href="#naming-conventions" title="Permalink to this headline">¶</a></h2>
+<dl class="docutils">
+<dt>Reasons for using a naming convention (as opposed to allowing programmers to choose any character sequence) include the following:</dt>
+<dd><ul class="first last simple">
+<li>to reduce the effort needed to read and understand source code</li>
+<li>to enhance source code appearance (for example, by disallowing overly long names or abbreviations)</li>
+</ul>
+</dd>
+<dt>Some of the potential benefits that can be obtained by adopting a naming convention include the following:</dt>
+<dd><ul class="first last simple">
+<li>to provide additional information (i.e., metadata) about the use to which an identifier is put</li>
+<li>to help formalize expectations and promote consistency within a development team</li>
+<li>to enable the use of automated refactoring or search and replace tools with minimal potential for error</li>
+<li>to help avoid &#8220;naming collisions&#8221;</li>
+<li>to provide better understanding in case of code reuse after a long interval of time</li>
+</ul>
+</dd>
+</dl>
+<p>Thus, I would use &#8220;self-explaining names for variables, procedures etc.&#8221;</p>
+<dl class="docutils">
+<dt><strong>Multiple-word identifiers:</strong></dt>
+<dd><ul class="first last simple">
+<li>Delimiter-separated words: hyphen (&#8216;-&#8216;) and the underscore (&#8216;_&#8217;)</li>
+<li>Letter-case separated words: indicate word boundaries using medial capitalization (here we can have the first word in lower case), e.g. limiterType</li>
+</ul>
+</dd>
+</dl>
+</div>
+<div class="section" id="order-of-the-test-cases-instruction">
+<h2>Order of the test cases instruction<a class="headerlink" href="#order-of-the-test-cases-instruction" title="Permalink to this headline">¶</a></h2>
+<p>It would be useful to follow also some rules when preparing the Python script
+of a new test case. Listing  phases and instructions in a logical order could
+improve the readability of the set-up. One idea could be:</p>
+<blockquote>
+<div><ul class="simple">
+<li>Import libraries needed by all the functions</li>
+<li>Define the functions use by the main program, e.g. qinit, setaux, etc.
+Here the conventions introduce previously for the docstrings should be used</li>
+<li><dl class="first docutils">
+<dt>Main function</dt>
+<dd><ul class="first last">
+<li>Import libraries</li>
+<li>Initialize grid, solution and aux array</li>
+<li>Setup the solver and solver parameters</li>
+<li>Setup controller and controller parameters</li>
+<li>Solve problem</li>
+<li>Plot results</li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+</div></blockquote>
+</div>
+<div class="section" id="add-regression-test-to-check-new-piece-of-code">
+<h2>Add regression test to check new piece of code<a class="headerlink" href="#add-regression-test-to-check-new-piece-of-code" title="Permalink to this headline">¶</a></h2>
+<blockquote>
+<div><ul class="simple">
+<li>Add one or more regression test to check the functionality of the new code</li>
+<li>Check with nose if all the tests pass before to commit</li>
+</ul>
+</div></blockquote>
+</div>
+<div class="section" id="add-documentation-when-new-code-is-added">
+<h2>Add documentation when new code is added<a class="headerlink" href="#add-documentation-when-new-code-is-added" title="Permalink to this headline">¶</a></h2>
+<blockquote>
+<div><ul class="simple">
+<li>What the new code does</li>
+<li>How to use it</li>
+<li>Document inputs outputs and  default parameters</li>
+</ul>
+</div></blockquote>
+</div>
+<div class="section" id="write-comments-as-you-code">
+<h2>Write Comments as You Code<a class="headerlink" href="#write-comments-as-you-code" title="Permalink to this headline">¶</a></h2>
+<p>You won&#8217;t ever go back later and document your code. You just won&#8217;t. So when
+you do something document it right then and there. When you create a class-
+document it. When you create a method- document it. And so on. That way when
+you finish coding you will also be finished documenting.
+Won&#8217;t this break the flow? No, I think it improves flow because it keeps you
+mindful of what you are doing, why you are doing, and how it fits in the big
+picture.</p>
+</div>
+<div class="section" id="some-fortran-tips">
+<h2>Some fortran tips<a class="headerlink" href="#some-fortran-tips" title="Permalink to this headline">¶</a></h2>
+<blockquote>
+<div><ul class="simple">
+<li>Always use <strong>IMPLICIT NONE</strong></li>
+<li>Always allocate and deallocate memory</li>
+</ul>
+</div></blockquote>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<p><a href="http://clawpack.org/">
+    <img class="logo" src= "_static/clawlogo.jpg" alt="Logo"/>
+</a>
+<h2>Version 5.1.0</h2>
+</p>
+  <h3><a href="../contents.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Conventions for coding and documenting PyClaw</a><ul>
+<li><a class="reference internal" href="#code-layout">Code layout</a></li>
+<li><a class="reference internal" href="#docstring-conventions">Docstring conventions</a></li>
+<li><a class="reference internal" href="#naming-conventions">Naming conventions</a></li>
+<li><a class="reference internal" href="#order-of-the-test-cases-instruction">Order of the test cases instruction</a></li>
+<li><a class="reference internal" href="#add-regression-test-to-check-new-piece-of-code">Add regression test to check new piece of code</a></li>
+<li><a class="reference internal" href="#add-documentation-when-new-code-is-added">Add documentation when new code is added</a></li>
+<li><a class="reference internal" href="#write-comments-as-you-code">Write Comments as You Code</a></li>
+<li><a class="reference internal" href="#some-fortran-tips">Some fortran tips</a></li>
+</ul>
+</li>
+</ul>
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../contents.html">Documentation overview</a><ul>
+  <li><a href="index.html">Pyclaw</a><ul>
+  <li><a href="for_developers.html">Information for developers</a><ul>
+      <li>Previous: <a href="devel/gitwash/maintainer_workflow.html" title="previous chapter">Maintainer workflow</a></li>
+      <li>Next: <a href="devel/gitwash/git_resources.html" title="next chapter">git resources</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/pyclaw/rulesProposal.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+<h3>Versions</h3>
+<ul>
+    <li><a href="../../v5.3.1/pyclaw/rulesProposal.html">v5.3.1</a></li>
+    <li><a href="../../v5.3.0/pyclaw/rulesProposal.html">v5.3.0</a></li>
+    <li><a href="../../v5.2.1/pyclaw/rulesProposal.html">v5.2.1</a></li>
+    <li><a href="../../v5.2.0/pyclaw/rulesProposal.html">v5.2.0</a></li>
+    <li><a href="rulesProposal.html">v5.1.0</a></li>
+    <li><a href="../../sphinx-versioning/pyclaw/rulesProposal.html">sphinx-versioning</a></li>
+    <li><a href="../../master/contents.html">master</a></li>
+</ul>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+  <div class="footer">
+    &copy; Copyright 2013, The Clawpack Development Team.
+    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
+  </div>
+  
+  </body>
+</html>

@@ -19,7 +19,8 @@
         VERSION:     '5.4.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: ''
       };
     </script>
     <script type="text/javascript" src="_static/jquery.js"></script>
@@ -30,7 +31,8 @@
     <link rel="author" title="About these documents" href="about.html" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="top" title="Clawpack 5.4.0 documentation" href="contents.html" /> 
+    <link rel="next" title="Troubleshooting" href="trouble.html" />
+    <link rel="prev" title="Clawpack components" href="clawpack_components.html" /> 
   </head>
   <body role="document">
 <div id="main-wrapper" class="sphinx">
@@ -47,7 +49,7 @@
           <a href="installing.html">Install</a>
         </li>
         <li>
-          <a class="" href="galleries.html">Gallery</a>
+          <a class="" href="gallery/index.html">Gallery</a>
         </li>
         <li>
           <a class="" href="community.html">Community</a>
@@ -73,6 +75,12 @@
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
+        <li class="right" >
+          <a href="trouble.html" title="Troubleshooting"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="clawpack_components.html" title="Clawpack components"
+             accesskey="P">previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="contents.html">Clawpack 5.4.0 documentation</a> &#187;</li> 
       </ul>
     </div>  
@@ -92,7 +100,7 @@
 <p>where <span class="math">\(q=q(x,t)\in{\cal R}^m\)</span>.  The standard case of a homogeneous
 conservation law has <span class="math">\(\kappa\equiv 1\)</span> and <span class="math">\(\psi\equiv 0\)</span>,</p>
 <div class="math" id="equation-cons1d">
-<span class="eqno">(1)</span>\[q_t+f(q)_x=0.\]</div>
+<span class="eqno">(1)<a class="headerlink" href="#equation-cons1d" title="Permalink to this equation">¶</a></span>\[q_t+f(q)_x=0.\]</div>
 <p>The flux function <span class="math">\(f(q)\)</span> can also depend explicitly on <span class="math">\(x\)</span> and
 <span class="math">\(t\)</span> as well as on <span class="math">\(q\)</span>.
 Hyperbolic systems that are not in conservation form, e.g.,</p>
@@ -111,9 +119,9 @@ satisfying</p>
 <p>The Riemann solver must also return a left-going fluctuation
 <span class="math">\({\cal A}^-\Delta Q_{i-1/2}\)</span> and
 a right-going fluctuation <span class="math">\({\cal A}^+\Delta Q_{i-1/2}\)</span>. In
-the standard conservative case <a href="#equation-cons1d">(1)</a> these should satisfy</p>
+the standard conservative case <a class="reference internal" href="#equation-cons1d">(1)</a> these should satisfy</p>
 <div class="math" id="equation-asum">
-<span class="eqno">(2)</span>\[{\cal A}^-\Delta Q_{i-1/2}+{\cal A}^+\Delta Q_{i-1/2} = f(Q_i)-f(Q_{i-1})\]</div>
+<span class="eqno">(2)<a class="headerlink" href="#equation-asum" title="Permalink to this equation">¶</a></span>\[{\cal A}^-\Delta Q_{i-1/2}+{\cal A}^+\Delta Q_{i-1/2} = f(Q_i)-f(Q_{i-1})\]</div>
 <p>and the fluctuations then define a &#8220;flux-difference splitting&#8221;.</p>
 <div class="math">
 \[{\cal A}^-\Delta Q_{i-1/2} = \sum_p (s^p_{i-1/2})^- {\cal W}^p_{i-1/2},
@@ -121,7 +129,7 @@ the standard conservative case <a href="#equation-cons1d">(1)</a> these should s
 <p>where <span class="math">\(s^- = \min(s,0)\)</span> and <span class="math">\(s^+ = \max(s,0)\)</span>.  In the
 nonconservative case eqn{claw_1dnoncon}, there is no &#8220;flux function&#8221;
 <span class="math">\(f(q)\)</span>,
-and the constraint <a href="#equation-asum">(2)</a> need not be satisfied.</p>
+and the constraint <a class="reference internal" href="#equation-asum">(2)</a> need not be satisfied.</p>
 </div>
 <div class="section" id="godunov-s-method">
 <h2>Godunov&#8217;s method<a class="headerlink" href="#godunov-s-method" title="Permalink to this headline">¶</a></h2>
@@ -166,7 +174,7 @@ if <span class="math">\(s^p&lt;0\)</span>.</p>
 <span id="wp-fwave"></span><h2>f-wave formulation<a class="headerlink" href="#f-wave-formulation" title="Permalink to this headline">¶</a></h2>
 <p>For equations with spatially-varying flux functions, such as</p>
 <div class="math" id="equation-cons1dvf">
-<span class="eqno">(3)</span>\[q_t+f(q,x)_x=0.\]</div>
+<span class="eqno">(3)<a class="headerlink" href="#equation-cons1dvf" title="Permalink to this equation">¶</a></span>\[q_t+f(q,x)_x=0.\]</div>
 <p>it is often convenient to use the f-wave formulation of the algorithm, as
 proposed in <a class="reference internal" href="biblio.html#balelevmitross02" id="id3">[BaleLevMitRoss02]</a>. Rather than decomposing the jump
 <span class="math">\(Q_i-Q_{i-1}\)</span> into waves, the idea of the f-wave approach is to
@@ -228,15 +236,19 @@ step, as described in <a class="reference internal" href="bc.html#bc"><span clas
 <h3>Related Topics</h3>
 <ul>
   <li><a href="contents.html">Documentation overview</a><ul>
+      <li>Previous: <a href="clawpack_components.html" title="previous chapter">Clawpack components</a></li>
+      <li>Next: <a href="trouble.html" title="next chapter">Troubleshooting</a></li>
   </ul></li>
 </ul>
-  <div role="note" aria-label="source link">
-    <h3>This Page</h3>
-    <ul class="this-page-menu">
-      <li><a href="_sources/wp_algorithms.txt"
-            rel="nofollow">Show Source</a></li>
-    </ul>
-   </div>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/wp_algorithms.rst"
+           rel="nofollow">Show Source</a></li>
+    <li><a href="https://github.com/clawpack/doc/blob/master/doc/wp_algorithms.rst"
+           rel="nofollow">Show on GitHub</a></li>
+    <li><a href="https://github.com/clawpack/doc/edit/master/doc/wp_algorithms.rst"
+           rel="nofollow">Edit on GitHub</a></li>
+  </ul>
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
     <form class="search" action="search.html" method="get">

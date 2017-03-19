@@ -19,7 +19,8 @@
         VERSION:     '5.4.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: ''
       };
     </script>
     <script type="text/javascript" src="_static/jquery.js"></script>
@@ -29,8 +30,7 @@
     <link rel="shortcut icon" href="_static/clawicon.ico"/>
     <link rel="author" title="About these documents" href="about.html" />
     <link rel="index" title="Index" href="genindex.html" />
-    <link rel="search" title="Search" href="search.html" />
-    <link rel="top" title="Clawpack 5.4.0 documentation" href="contents.html" /> 
+    <link rel="search" title="Search" href="search.html" /> 
   </head>
   <body role="document">
 <div id="main-wrapper" class="sphinx">
@@ -47,7 +47,7 @@
           <a href="installing.html">Install</a>
         </li>
         <li>
-          <a class="" href="galleries.html">Gallery</a>
+          <a class="" href="gallery/index.html">Gallery</a>
         </li>
         <li>
           <a class="" href="community.html">Community</a>
@@ -364,11 +364,11 @@ is built into the Riemann solver in a manner that achieves well balancing
     <span class="c">! Algorithm parameters</span>
     <span class="c">! Parameter controls when to zero out the momentum at a depth in the</span>
     <span class="c">! friction source term</span>
-    <span class="kt">real</span><span class="p">(</span><span class="nb">kind</span><span class="o">=</span><span class="mi">8</span><span class="p">),</span> <span class="k">parameter</span> <span class="kd">::</span> <span class="n">depth_tolerance</span> <span class="o">=</span> <span class="mf">1.0</span><span class="n">d</span><span class="o">-</span><span class="mi">30</span>
+    <span class="kt">real</span><span class="p">(</span><span class="nb">kind</span><span class="o">=</span><span class="mi">8</span><span class="p">),</span> <span class="k">parameter</span> <span class="kd">::</span> <span class="n">depth_tolerance</span> <span class="o">=</span> <span class="mf">1.0d-30</span>
 
     <span class="c">! Physics</span>
     <span class="c">! Nominal density of water</span>
-    <span class="kt">real</span><span class="p">(</span><span class="nb">kind</span><span class="o">=</span><span class="mi">8</span><span class="p">),</span> <span class="k">parameter</span> <span class="kd">::</span> <span class="n">rho</span> <span class="o">=</span> <span class="mi">102</span><span class="mf">5.</span><span class="n">d0</span>
+    <span class="kt">real</span><span class="p">(</span><span class="nb">kind</span><span class="o">=</span><span class="mi">8</span><span class="p">),</span> <span class="k">parameter</span> <span class="kd">::</span> <span class="n">rho</span> <span class="o">=</span> <span class="mi">102</span><span class="mf">5.d0</span>
     
     <span class="c">! Friction forcing</span>
     <span class="k">if</span> <span class="p">(</span><span class="n">friction_forcing</span><span class="p">)</span> <span class="k">then</span>
@@ -382,7 +382,7 @@ is built into the Riemann solver in a manner that achieves well balancing
 
             <span class="c">! If depth is near-zero, set momentum to zero</span>
             <span class="k">if</span> <span class="p">(</span><span class="n">h</span> <span class="o">&lt;</span> <span class="n">depth_tolerance</span><span class="p">)</span> <span class="k">then</span>
-<span class="k">                </span><span class="n">q1d</span><span class="p">(</span><span class="mi">2</span><span class="p">:</span><span class="mi">3</span><span class="p">,</span><span class="n">i</span><span class="p">)</span> <span class="o">=</span> <span class="mf">0.</span><span class="n">d0</span>
+<span class="k">                </span><span class="n">q1d</span><span class="p">(</span><span class="mi">2</span><span class="p">:</span><span class="mi">3</span><span class="p">,</span><span class="n">i</span><span class="p">)</span> <span class="o">=</span> <span class="mf">0.d0</span>
                 <span class="k">cycle </span>
 <span class="k">            </span><span class="n">endif</span>
             
@@ -399,8 +399,8 @@ is built into the Riemann solver in a manner that achieves well balancing
                 <span class="k">end if</span>
 
                 <span class="c">! Calculate source term</span>
-                <span class="nb">gamma</span> <span class="o">=</span> <span class="nb">sqrt</span><span class="p">(</span><span class="n">hu</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">hv</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">g</span> <span class="o">*</span> <span class="n">coeff</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="o">/</span> <span class="n">h</span><span class="o">**</span><span class="p">(</span><span class="mf">7.</span><span class="n">d0</span><span class="o">/</span><span class="mf">3.</span><span class="n">d0</span><span class="p">)</span>
-                <span class="n">dgamma</span> <span class="o">=</span> <span class="mf">1.</span><span class="n">d0</span> <span class="o">+</span> <span class="n">dt</span> <span class="o">*</span> <span class="nb">gamma</span>
+                <span class="nb">gamma</span> <span class="o">=</span> <span class="nb">sqrt</span><span class="p">(</span><span class="n">hu</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">hv</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">g</span> <span class="o">*</span> <span class="n">coeff</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="o">/</span> <span class="n">h</span><span class="o">**</span><span class="p">(</span><span class="mf">7.d0</span><span class="o">/</span><span class="mf">3.d0</span><span class="p">)</span>
+                <span class="n">dgamma</span> <span class="o">=</span> <span class="mf">1.d0</span> <span class="o">+</span> <span class="n">dt</span> <span class="o">*</span> <span class="nb">gamma</span>
 <span class="nb">                </span><span class="n">q1d</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span> <span class="o">=</span> <span class="n">q1d</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span> <span class="o">/</span> <span class="n">dgamma</span>
                 <span class="n">q1d</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span> <span class="o">=</span> <span class="n">q1d</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span> <span class="o">/</span> <span class="n">dgamma</span>
             <span class="n">endif</span>
@@ -412,12 +412,12 @@ is built into the Riemann solver in a manner that achieves well balancing
 
 <span class="k">        do </span><span class="n">i</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">mx1d</span>
             <span class="c">! aux(3,:,:) stores the y coordinates multiplied by deg2rad</span>
-            <span class="n">fdt</span> <span class="o">=</span> <span class="mf">2.</span><span class="n">d0</span> <span class="o">*</span> <span class="n">omega</span> <span class="o">*</span> <span class="nb">sin</span><span class="p">(</span><span class="n">aux1d</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="n">i</span><span class="p">))</span> <span class="o">*</span> <span class="n">dt</span>
+            <span class="n">fdt</span> <span class="o">=</span> <span class="mf">2.d0</span> <span class="o">*</span> <span class="n">omega</span> <span class="o">*</span> <span class="nb">sin</span><span class="p">(</span><span class="n">aux1d</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="n">i</span><span class="p">))</span> <span class="o">*</span> <span class="n">dt</span>
 
             <span class="c">! Calculate matrix components</span>
-            <span class="n">a</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span> <span class="o">=</span> <span class="mf">1.</span><span class="n">d0</span> <span class="o">-</span> <span class="mf">0.5</span><span class="n">d0</span> <span class="o">*</span> <span class="n">fdt</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">fdt</span><span class="o">**</span><span class="mi">4</span> <span class="o">/</span> <span class="mi">2</span><span class="mf">4.</span><span class="n">d0</span>
-            <span class="n">a</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span> <span class="o">=</span>  <span class="n">fdt</span> <span class="o">-</span> <span class="n">fdt</span><span class="o">**</span><span class="mi">3</span> <span class="o">/</span> <span class="mf">6.</span><span class="n">d0</span>
-            <span class="n">a</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span> <span class="o">=</span> <span class="o">-</span><span class="n">fdt</span> <span class="o">+</span> <span class="n">fdt</span><span class="o">**</span><span class="mi">3</span> <span class="o">/</span> <span class="mf">6.</span><span class="n">d0</span>
+            <span class="n">a</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span> <span class="o">=</span> <span class="mf">1.d0</span> <span class="o">-</span> <span class="mf">0.5d0</span> <span class="o">*</span> <span class="n">fdt</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">fdt</span><span class="o">**</span><span class="mi">4</span> <span class="o">/</span> <span class="mi">2</span><span class="mf">4.d0</span>
+            <span class="n">a</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span> <span class="o">=</span>  <span class="n">fdt</span> <span class="o">-</span> <span class="n">fdt</span><span class="o">**</span><span class="mi">3</span> <span class="o">/</span> <span class="mf">6.d0</span>
+            <span class="n">a</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span> <span class="o">=</span> <span class="o">-</span><span class="n">fdt</span> <span class="o">+</span> <span class="n">fdt</span><span class="o">**</span><span class="mi">3</span> <span class="o">/</span> <span class="mf">6.d0</span>
             <span class="n">a</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span> <span class="o">=</span> <span class="n">a</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
     
             <span class="n">q1d</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="n">i</span><span class="p">)</span> <span class="o">=</span> <span class="n">q1d</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="n">i</span><span class="p">)</span> <span class="o">*</span> <span class="n">a</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="n">q1d</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="n">i</span><span class="p">)</span> <span class="o">*</span> <span class="n">a</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
@@ -479,13 +479,15 @@ is built into the Riemann solver in a manner that achieves well balancing
   <li><a href="contents.html">Documentation overview</a><ul>
   </ul></li>
 </ul>
-  <div role="note" aria-label="source link">
-    <h3>This Page</h3>
-    <ul class="this-page-menu">
-      <li><a href="_sources/src1d_defaults.txt"
-            rel="nofollow">Show Source</a></li>
-    </ul>
-   </div>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/src1d_defaults.rst"
+           rel="nofollow">Show Source</a></li>
+    <li><a href="https://github.com/clawpack/doc/blob/master/doc/src1d_defaults.rst"
+           rel="nofollow">Show on GitHub</a></li>
+    <li><a href="https://github.com/clawpack/doc/edit/master/doc/src1d_defaults.rst"
+           rel="nofollow">Edit on GitHub</a></li>
+  </ul>
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
     <form class="search" action="search.html" method="get">

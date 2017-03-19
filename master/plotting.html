@@ -1,0 +1,276 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Plotting with Visclaw &#8212; Clawpack 5.4.0 documentation</title>
+    
+    <link rel="stylesheet" href="_static/flasky.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/base.css" type="text/css" />
+    <link rel="stylesheet" href="_static/layout.css" type="text/css" />
+    <link rel="stylesheet" href="_static/banner.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '5.4.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: ''
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="shortcut icon" href="_static/clawicon.ico"/>
+    <link rel="author" title="About these documents" href="about.html" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Plotting options in Python" href="plotting_python.html" />
+    <link rel="prev" title="Shallow water Riemann solvers in Clawpack" href="riemann/Shallow_water_Riemann_solvers.html" /> 
+  </head>
+  <body role="document">
+<div id="main-wrapper" class="sphinx">
+<div id="header-wrapper">
+  <section id="header">
+    <!-- <h1><a href="http://clawpack.org/">Clawpack</a></h1> -->
+    <h1><a href="http://clawpack.org/">Clawpack-5</a></h1> 
+    <nav>
+      <ul>
+        <li>
+          <a href="contents.html">Docs</a>
+        </li>
+        <li>
+          <a href="installing.html">Install</a>
+        </li>
+        <li>
+          <a class="" href="galleries.html">Gallery</a>
+        </li>
+        <li>
+          <a class="" href="community.html">Community</a>
+        </li>
+        <li>
+          <a class="active" href="http://github.com/clawpack">Source</a>
+        </li>
+        <li>
+          <a class="" href="developers.html">Develop</a>
+        </li>
+      </ul>
+    </nav>
+  </section>
+<div class="decoration"></div>
+</div>
+
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="plotting_python.html" title="Plotting options in Python"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="riemann/Shallow_water_Riemann_solvers.html" title="Shallow water Riemann solvers in Clawpack"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="contents.html">Clawpack 5.4.0 documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="plotting-with-visclaw">
+<span id="plotting"></span><h1>Plotting with Visclaw<a class="headerlink" href="#plotting-with-visclaw" title="Permalink to this headline">¶</a></h1>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="plotting_python.html">Plotting options in Python</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="plotting_python.html#producing-html-plots-from-the-command-line">Producing html plots from the command line</a></li>
+<li class="toctree-l2"><a class="reference internal" href="plotting_python.html#producing-a-latex-file-with-plots-from-the-command-line">Producing a latex file with plots from the command line</a></li>
+<li class="toctree-l2"><a class="reference internal" href="plotting_python.html#setting-plot-parameters-with-a-setplot-function">Setting plot parameters with a setplot function</a></li>
+<li class="toctree-l2"><a class="reference internal" href="plotting_python.html#interactive-plotting-with-iplotclaw">Interactive plotting with <cite>Iplotclaw</cite></a></li>
+<li class="toctree-l2"><a class="reference internal" href="plotting_python.html#printframes">printframes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="plotting_python.html#specifying-what-and-how-to-plot">Specifying what and how to plot</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="setplot.html">Using setplot.py to specify the desired plots</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="setplot.html#plotting-data-objects">Plotting Data Objects</a></li>
+<li class="toctree-l2"><a class="reference internal" href="setplot.html#overview">Overview</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="current_data.html">current_data</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="current_data.html#attributes-of-current-data">Attributes of <em>current_data</em>:</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="plotexamples.html">Plotting examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="plotting_faq.html">Plotting hints and FAQ</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="plotting_faq.html#what-s-the-difference-between-make-plots-and-make-plots">What&#8217;s the difference between <cite>make .plots</cite> and <cite>make plots</cite> ?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="plotting_faq.html#how-to-plot-a-something-other-than-a-component-of-q">How to plot a something other than a component of q?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="plotting_faq.html#how-to-add-another-curve-to-a-plot-e-g-the-true-solution">How to add another curve to a plot, e.g. the true solution?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="plotting_faq.html#how-to-change-the-title-in-a-plot">How to change the title in a plot?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="plotting_faq.html#how-to-specify-outdir-the-directory-to-find-fort-files-for-plotting">How to specify <code class="docutils literal"><span class="pre">outdir</span></code>, the directory to find <code class="docutils literal"><span class="pre">fort.*</span></code> files for plotting?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="plotting_faq.html#how-to-specify-a-different-outdir-for-some-plot-item">How to specify a different <code class="docutils literal"><span class="pre">outdir</span></code> for some plot item?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="plotting_faq.html#how-to-set-plot-parameters-that-are-not-provided-as-attributes-of-clawplotitem">How to set plot parameters that are not provided as attributes of <code class="docutils literal"><span class="pre">ClawPlotItem</span></code>?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="plotting_faq.html#how-to-change-the-size-or-background-color-of-a-figure">How to change the size or background color of a figure?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="plotting_faq.html#specifying-colormaps-for-pcolor-or-contourf-plots">Specifying colormaps for pcolor or contourf plots</a></li>
+<li class="toctree-l2"><a class="reference internal" href="plotting_faq.html#how-to-debug-setplot-py">How to debug setplot.py?</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="geoplot.html">GeoClaw plotting tools</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="geoplot.html#plotting-water-depth-or-surface-elevation">Plotting water depth or surface elevation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="geoplot.html#tips-on-latitude-longitude-coordinate-axes">Tips on latitude-longitude coordinate axes</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="matlab_plotting.html">Plotting using Matlab</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="matlab_plotting.html#the-matlab-search-path">The Matlab search path</a></li>
+<li class="toctree-l2"><a class="reference internal" href="matlab_plotting.html#creating-output-files">Creating output files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="matlab_plotting.html#the-plotclaw-command">The plotclaw command</a></li>
+<li class="toctree-l2"><a class="reference internal" href="matlab_plotting.html#the-setplot-file">The setplot file</a></li>
+<li class="toctree-l2"><a class="reference internal" href="matlab_plotting.html#the-afterframe-file">The afterframe file</a></li>
+<li class="toctree-l2"><a class="reference internal" href="matlab_plotting.html#getting-help">Getting help</a></li>
+<li class="toctree-l2"><a class="reference internal" href="matlab_plotting.html#trouble-shooting">Trouble shooting</a></li>
+<li class="toctree-l2"><a class="reference internal" href="matlab_plotting.html#matlab-gallery">Matlab Gallery</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="visit_plotting.html">Plotting with VisIt</a></li>
+</ul>
+</div>
+<div class="section" id="plotting-as-post-processing">
+<span id="plotting-postproc"></span><h2>Plotting as post-processing<a class="headerlink" href="#plotting-as-post-processing" title="Permalink to this headline">¶</a></h2>
+<p>Running a Fortran version of Clawpack produces output files that can then be
+read in to a graphics package as a post-processing step.  If you understand
+the format of the output files, you can write custom graphics routines using
+your favorite visualization tools.  The output formats are described in the
+section <a class="reference internal" href="output_styles.html#output-styles"><span class="std std-ref">Output data formats</span></a>.</p>
+<p>Clawpack  includes utilities for plotting using Python, and most of the
+documention assumes you will use these tools.  See
+<a class="reference internal" href="plotting_python.html#plotting-python"><span class="std std-ref">Plotting options in Python</span></a> for a description of these.
+The Python package <a class="reference external" href="matplotlib?">matplotlib</a>
+is used under the hood for 1d and 2d plots, but the tools provided with
+Clawpack simplify some common tasks since they handle looping over all grid
+patches as is generally required when plotting AMR data.</p>
+<p>Matlab plotting tools (mostly the same as in Clawpack 4.x) are available in
+Visclaw.
+See <a class="reference internal" href="matlab_plotting.html#matlabplots"><span class="std std-ref">Plotting using Matlab</span></a> for pointers if you wish to use these tools.
+For 3d plots the Matlab tools may still be the best choice.</p>
+<p>Another alternative for 3d plots (also for 2d) is to use
+<a class="reference external" href="https://wci.llnl.gov/codes/visit/home.html">VisIt</a>.
+See <a class="reference internal" href="visit_plotting.html#visit-plotting"><span class="std std-ref">Plotting with VisIt</span></a>.</p>
+<p>Since Clawpack 4.4, a set of Python plotting tools for 1d and 2d are
+the recommended approach.  The advantages of using the Python options are:</p>
+<blockquote>
+<div><ul class="simple">
+<li>Python and the graphics modules used in Clawpack are open source.  Since
+Clawpack itself is open source we find it desirable to also have an open
+source plotting open for viewing the results.</li>
+<li>The Python tools developed so far (mostly for 1d and 2d data sets) are
+more powerful than the Matlab versions they replace, and can be used for
+example to automatically generate html versions of multiple plots each
+frame over all frames of a computation, to generate latex versions of the
+output, as well as to step through the frames one by one as with the
+Matlab tools.  It is easier to specify a set of multiple plots to be
+produced for each frame.</li>
+<li>Matlab graphics are somewhat limited for 3d data sets, whereas several
+open source visualization tools such as <cite>VisIt</cite>
+are much better for dealing with large data sets, AMR meshes, etc.
+and have Python bindings that should allow scripting in a manner
+compatible with 1d and 2d. (Yet to be done.)</li>
+<li>Python is a powerful language that can be scripted to perform multiple
+runs, such as in a convergence test, and collect the results in tables or
+plots.  We are developing tools to simplify this process.</li>
+</ul>
+</div></blockquote>
+</div>
+<div class="section" id="plotting-on-the-fly">
+<span id="plotting-onfly"></span><h2>Plotting on the fly<a class="headerlink" href="#plotting-on-the-fly" title="Permalink to this headline">¶</a></h2>
+<p><strong>Describe options.</strong></p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<p><a href="http://clawpack.org/">
+    <img class="logo" src= "_static/clawlogo.jpg" alt="Logo"/>
+</a>
+<h2>Version 5.4.0</h2>
+</p>
+  <h3><a href="contents.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Plotting with Visclaw</a><ul>
+<li><a class="reference internal" href="#plotting-as-post-processing">Plotting as post-processing</a></li>
+<li><a class="reference internal" href="#plotting-on-the-fly">Plotting on the fly</a></li>
+</ul>
+</li>
+</ul>
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="contents.html">Documentation overview</a><ul>
+      <li>Previous: <a href="riemann/Shallow_water_Riemann_solvers.html" title="previous chapter">Shallow water Riemann solvers in Clawpack</a></li>
+      <li>Next: <a href="plotting_python.html" title="next chapter">Plotting options in Python</a></li>
+  </ul></li>
+</ul>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/plotting.rst"
+           rel="nofollow">Show Source</a></li>
+    <li><a href="https://github.com/clawpack/doc/blob/master/doc/plotting.rst"
+           rel="nofollow">Show on GitHub</a></li>
+    <li><a href="https://github.com/clawpack/doc/edit/master/doc/plotting.rst"
+           rel="nofollow">Edit on GitHub</a></li>
+  </ul>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+<h3>Versions</h3>
+<ul>
+    <li><a href="../v5.3.1/plotting.html">v5.3.1</a></li>
+    <li><a href="../v5.3.0/plotting.html">v5.3.0</a></li>
+    <li><a href="../v5.2.1/plotting.html">v5.2.1</a></li>
+    <li><a href="../v5.2.0/plotting.html">v5.2.0</a></li>
+    <li><a href="../v5.1.0/plotting.html">v5.1.0</a></li>
+    <li><a href="../sphinx-versioning/plotting.html">sphinx-versioning</a></li>
+    <li><a href="plotting.html">master</a></li>
+</ul>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+  <div class="footer">
+    &copy; Copyright 2017, The Clawpack Development Team.
+    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
+  </div>
+  <script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-44811544-1', 'auto');
+  ga('send', 'pageview');
+
+  </script>
+  
+  </body>
+</html>

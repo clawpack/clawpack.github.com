@@ -1,0 +1,259 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Fortran Compilers &#8212; Clawpack 5.3.0 documentation</title>
+    
+    <link rel="stylesheet" href="_static/flasky.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/base.css" type="text/css" />
+    <link rel="stylesheet" href="_static/layout.css" type="text/css" />
+    <link rel="stylesheet" href="_static/banner.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '5.3.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="shortcut icon" href="_static/clawicon.ico"/>
+    <link rel="author" title="About these documents" href="about.html" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="User files required for the Fortran code" href="user_routines.html" />
+    <link rel="prev" title="Fortran version" href="fortran.html" /> 
+  </head>
+  <body role="document">
+<div id="main-wrapper" class="sphinx">
+<div id="header-wrapper">
+  <section id="header">
+    <!-- <h1><a href="http://clawpack.org/">Clawpack</a></h1> -->
+    <h1><a href="http://clawpack.org/">Clawpack-5</a></h1> 
+    <nav>
+      <ul>
+        <li>
+          <a href="contents.html">Docs</a>
+        </li>
+        <li>
+          <a href="installing.html">Install</a>
+        </li>
+        <li>
+          <a class="" href="galleries.html">Gallery</a>
+        </li>
+        <li>
+          <a class="" href="community.html">Community</a>
+        </li>
+        <li>
+          <a class="active" href="http://github.com/clawpack">Source</a>
+        </li>
+        <li>
+          <a class="" href="developers.html">Develop</a>
+        </li>
+      </ul>
+    </nav>
+  </section>
+<div class="decoration"></div>
+</div>
+
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="user_routines.html" title="User files required for the Fortran code"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="fortran.html" title="Fortran version"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="contents.html">Clawpack 5.3.0 documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="fortran-compilers">
+<span id="id1"></span><h1>Fortran Compilers<a class="headerlink" href="#fortran-compilers" title="Permalink to this headline">¶</a></h1>
+<p>This section is relevant to users who want to compile the fortran code in
+the classic, amrclaw, or geoclaw branches.</p>
+<div class="section" id="fc-environment-variable">
+<span id="fortran-fc"></span><h2><cite>FC</cite> environment variable<a class="headerlink" href="#fc-environment-variable" title="Permalink to this headline">¶</a></h2>
+<p>Users should set the environment variable <cite>FC</cite> to point to the correct
+compiler, e.g. in bash via:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ export FC=gfortran
+</pre></div>
+</div>
+<p>Note that some versions of <cite>make</cite> will set <cite>FC=f77</cite> by default if no value
+is specified, and adding a line to the Makefile such as:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>FC ?= gfortran
+</pre></div>
+</div>
+<p>will not override this.  The common Makefile in
+<cite>$CLAW/clawutil/src/Makefile.common</cite> now tests to see if <cite>FC</cite> is set to
+<cite>f77</cite> and if so resets it to <cite>gfortran</cite> since much of Clawpack is not <cite>f77</cite>
+compliant.  However, it is best to set the <cite>FC</cite> environment variable
+yourself, e.g. in your <cite>.bashrc</cite> file.</p>
+</div>
+<div class="section" id="fflags-environment-variable">
+<span id="fortran-fflags"></span><h2><cite>FFLAGS</cite> environment variable<a class="headerlink" href="#fflags-environment-variable" title="Permalink to this headline">¶</a></h2>
+<p>Compiler flags can be specified using the <cite>FFLAGS</cite> variable that can be set
+in an application Makefile.  By default sample Makefiles now specify:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>FFLAGS ?=
+</pre></div>
+</div>
+<p>so that no flags are used unless the
+environment variable <cite>FFLAGS</cite> is set already.  This line can be changed in
+the Makefile, but it is often easiest to set an environment variable for the
+flags you generally want to use.</p>
+<p><strong>Note:</strong> If you change the flags you generally have to recompile <em>all</em> the
+code, and this dependency is not handled automatically.  So always do:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ make new
+</pre></div>
+</div>
+<p>before rerunning an example with <cite>make .output</cite> or <cite>make .plots</cite>.</p>
+</div>
+<div class="section" id="gfortran-compiler">
+<span id="fortran-gfortran"></span><h2>gfortran compiler<a class="headerlink" href="#gfortran-compiler" title="Permalink to this headline">¶</a></h2>
+<p><em>Some useful flags:</em></p>
+<ul>
+<li><p class="first">For debugging:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">FFLAGS</span> <span class="o">=</span> <span class="o">-</span><span class="n">g</span> <span class="o">-</span><span class="n">Wall</span> <span class="o">-</span><span class="n">pedantic</span> <span class="o">-</span><span class="n">fbounds</span><span class="o">-</span><span class="n">check</span> <span class="o">-</span><span class="n">ffpe</span><span class="o">-</span><span class="n">trap</span><span class="o">=</span><span class="n">invalid</span><span class="p">,</span><span class="n">overflow</span><span class="p">,</span><span class="n">zero</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">For optimizing:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">FFLAGS</span> <span class="o">=</span> <span class="o">-</span><span class="n">O2</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">For using OpenMP:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">FFLAGS</span> <span class="o">=</span> <span class="o">-</span><span class="n">O2</span> <span class="o">-</span><span class="n">fopenmp</span>
+</pre></div>
+</div>
+<p>In this case you should also set some  environment variables.  See
+<a class="reference internal" href="openmp.html#openmp"><span class="std std-ref">Using OpenMP</span></a> for details.</p>
+<p><strong>Note:</strong> Versions of gfortran before 4.6 are known to have OpenMP bugs.</p>
+</li>
+</ul>
+</div>
+<div class="section" id="intel-fortran-compiler">
+<span id="fortran-intel"></span><h2>Intel fortran compiler<a class="headerlink" href="#intel-fortran-compiler" title="Permalink to this headline">¶</a></h2>
+<p>Set the <cite>FC</cite> environment variable to <cite>ifort</cite>.</p>
+<p><em>Some useful flags:</em></p>
+<ul>
+<li><p class="first">For debugging:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">FFLAGS</span> <span class="o">=</span> <span class="o">-</span><span class="n">g</span> <span class="o">-</span><span class="n">C</span> <span class="o">-</span><span class="n">CB</span> <span class="o">-</span><span class="n">CU</span> <span class="o">-</span><span class="n">fpe0</span> <span class="o">-</span><span class="n">ftrapuv</span> <span class="o">-</span><span class="n">fp</span><span class="o">-</span><span class="n">model</span> <span class="n">precise</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">For optimizing:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">FFLAGS</span> <span class="o">=</span> <span class="o">-</span><span class="n">O2</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">For using OpenMP:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">FFLAGS</span> <span class="o">=</span> <span class="o">-</span><span class="n">O2</span> <span class="o">-</span><span class="n">openmp</span>
+</pre></div>
+</div>
+<p>In this case you should also set the environment variable <cite>OMP_NUM_THREADS</cite>
+to indicate how many threads to use.</p>
+</li>
+</ul>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<p><a href="http://clawpack.org/">
+    <img class="logo" src= "_static/clawlogo.jpg" alt="Logo"/>
+</a>
+<h2>Version 5.3.0</h2>
+</p>
+  <h3><a href="contents.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Fortran Compilers</a><ul>
+<li><a class="reference internal" href="#fc-environment-variable"><cite>FC</cite> environment variable</a></li>
+<li><a class="reference internal" href="#fflags-environment-variable"><cite>FFLAGS</cite> environment variable</a></li>
+<li><a class="reference internal" href="#gfortran-compiler">gfortran compiler</a></li>
+<li><a class="reference internal" href="#intel-fortran-compiler">Intel fortran compiler</a></li>
+</ul>
+</li>
+</ul>
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="contents.html">Documentation overview</a><ul>
+      <li>Previous: <a href="fortran.html" title="previous chapter">Fortran version</a></li>
+      <li>Next: <a href="user_routines.html" title="next chapter">User files required for the Fortran code</a></li>
+  </ul></li>
+</ul>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/fortran_compilers.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+<h3>Versions</h3>
+<ul>
+    <li><a href="../v5.3.1/fortran_compilers.html">v5.3.1</a></li>
+    <li><a href="fortran_compilers.html">v5.3.0</a></li>
+    <li><a href="../v5.2.1/fortran_compilers.html">v5.2.1</a></li>
+    <li><a href="../v5.2.0/fortran_compilers.html">v5.2.0</a></li>
+    <li><a href="../v5.1.0/fortran_compilers.html">v5.1.0</a></li>
+    <li><a href="../sphinx-versioning/fortran_compilers.html">sphinx-versioning</a></li>
+    <li><a href="../master/fortran_compilers.html">master</a></li>
+</ul>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+  <div class="footer">
+    &copy; Copyright 2015, The Clawpack Development Team.
+    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
+  </div>
+  <script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-44811544-1', 'auto');
+  ga('send', 'pageview');
+
+  </script>
+  
+  </body>
+</html>

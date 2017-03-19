@@ -1,0 +1,23 @@
+.. _burgers_1d:
+
+1-dimensional Burgers' equation
+-------------------------------
+
+.. automodule:: pyclaw.examples.burgers_1d.burgers_1d
+
+Output:
+~~~~~~~
+.. image:: thumbnails/pyclaw_examples_burgers_1d__plots_burgers_1d_frame0000fig0.png
+   :width: 5cm
+   :target: ../../_static/pyclaw/examples/burgers_1d/_plots_burgers_1d/frame0000fig0.html
+.. image:: thumbnails/pyclaw_examples_burgers_1d__plots_burgers_1d_frame0003fig0.png
+   :width: 5cm
+   :target: ../../_static/pyclaw/examples/burgers_1d/_plots_burgers_1d/frame0003fig0.html
+.. image:: thumbnails/pyclaw_examples_burgers_1d__plots_burgers_1d_frame0006fig0.png
+   :width: 5cm
+   :target: ../../_static/pyclaw/examples/burgers_1d/_plots_burgers_1d/frame0006fig0.html
+
+
+Source:
+~~~~~~~
+.. literalinclude:: ../../../../pyclaw/examples/burgers_1d/burgers_1d.py

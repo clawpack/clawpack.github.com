@@ -1,0 +1,275 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Pyclaw Input/Output Package &#8212; Clawpack 5.2.0 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/flasky.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/base.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/layout.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/banner.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '5.2.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="shortcut icon" href="../_static/clawicon.ico"/>
+    <link rel="author" title="About these documents" href="../about.html" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="PyClaw Solutions" href="solution.html" />
+    <link rel="prev" title="Pyclaw Limiters" href="evolve/limiters.html" /> 
+  </head>
+  <body role="document">
+<div id="main-wrapper" class="sphinx">
+<div id="header-wrapper">
+  <section id="header">
+    <!-- <h1><a href="http://clawpack.org/">Clawpack</a></h1> -->
+    <h1><a href="http://clawpack.org/">Clawpack-5</a></h1> 
+    <nav>
+      <ul>
+        <li>
+          <a href="../toc_condensed.html">Docs</a>
+        </li>
+        <li>
+          <a href="../installing.html">Install</a>
+        </li>
+        <li>
+          <a class="" href="../galleries.html">Gallery</a>
+        </li>
+        <li>
+          <a class="active" href="https://groups.google.com/forum/#!forum/claw-users">Support</a>
+        </li>
+        <li>
+          <a class="active" href="http://github.com/organizations/clawpack">Source</a>
+        </li>
+        <li>
+          <a class="" href="../developers.html">Develop</a>
+        </li>
+      </ul>
+    </nav>
+  </section>
+<div class="decoration"></div>
+</div>
+
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="solution.html" title="PyClaw Solutions"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="evolve/limiters.html" title="Pyclaw Limiters"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../contents.html">Clawpack 5.2.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">Pyclaw</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="pyclaw-input-output-package">
+<span id="pyclaw-io"></span><h1>Pyclaw Input/Output Package<a class="headerlink" href="#pyclaw-input-output-package" title="Permalink to this headline">¶</a></h1>
+<p>Pyclaw supports the following input and output formats:</p>
+<blockquote>
+<div><ul class="simple">
+<li><a class="reference internal" href="#ascii">ASCII</a> - ASCII file I/O, supports traditional clawpack format files</li>
+<li><a class="reference internal" href="#hdf5">HDF5</a> - HDF5 file I/O</li>
+<li><a class="reference internal" href="#netcdf">NetCDF</a> - NetCDF file I/O, support for NetCDF3 and NetCDF4 files</li>
+</ul>
+</div></blockquote>
+<p>Each module contains two main routines <code class="docutils literal"><span class="pre">read_&lt;format&gt;</span></code> and
+<code class="docutils literal"><span class="pre">write_&lt;format&gt;</span></code> which <code class="xref py py-class docutils literal"><span class="pre">Solution</span></code> can call with the
+appropriate &lt;format&gt;.  In order to create a new file I/O extension the calling
+signature must match</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">read_</span><span class="o">&lt;</span><span class="nb">format</span><span class="o">&gt;</span><span class="p">(</span><span class="n">solution</span><span class="p">,</span><span class="n">frame</span><span class="p">,</span><span class="n">path</span><span class="p">,</span><span class="n">file_prefix</span><span class="p">,</span><span class="n">write_aux</span><span class="p">,</span><span class="n">options</span><span class="p">)</span>
+</pre></div>
+</div>
+<dl class="docutils">
+<dt>where the the inputs are</dt>
+<dd><table class="first last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Input:</th><td class="field-body"><ul class="first last simple">
+<li><em>solution</em> - (<code class="xref py py-class docutils literal"><span class="pre">Solution</span></code>) Pyclaw object to be
+output</li>
+<li><em>frame</em> - (int) Frame number</li>
+<li><em>path</em> - (string) Root path</li>
+<li><em>file_prefix</em> - (string) Prefix for the file name.</li>
+<li><em>write_aux</em> - (bool) Boolean controlling whether the associated
+auxiliary array should be written out.</li>
+<li><em>options</em> - (dict) Optional argument dictionary</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd>
+</dl>
+<p>and</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">write_</span><span class="o">&lt;</span><span class="nb">format</span><span class="o">&gt;</span><span class="p">(</span><span class="n">solution</span><span class="p">,</span><span class="n">frame</span><span class="p">,</span><span class="n">path</span><span class="p">,</span><span class="n">file_prefix</span><span class="p">,</span><span class="n">write_aux</span><span class="p">,</span><span class="n">options</span><span class="p">)</span>
+</pre></div>
+</div>
+<dl class="docutils">
+<dt>where the inputs are</dt>
+<dd><table class="first last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Input:</th><td class="field-body"><ul class="first last simple">
+<li><em>solution</em> - (<code class="xref py py-class docutils literal"><span class="pre">Solution</span></code>) Pyclaw object to be
+output</li>
+<li><em>frame</em> - (int) Frame number</li>
+<li><em>path</em> - (string) Root path</li>
+<li><em>file_prefix</em> - (string) Prefix for the file name.</li>
+<li><em>write_aux</em> - (bool) Boolean controlling whether the associated
+auxiliary array should be written out.</li>
+<li><em>options</em> - (dict) Optional argument dictionary.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd>
+</dl>
+<p>Note that both allow for an <code class="docutils literal"><span class="pre">options</span></code> dictionary that is format specific
+and should be documented thoroughly.  For examples of this usage, see the
+<a class="reference internal" href="#hdf5">HDF5</a> and <a class="reference internal" href="#netcdf">NetCDF</a> modules.</p>
+<p><a class="reference internal" href="#hdf5">HDF5</a> and <a class="reference internal" href="#netcdf">NetCDF</a> support require installed libraries in order to work, please
+see the respective modules for details on how to obtain and install the
+libraries needed.</p>
+<blockquote>
+<div><div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Pyclaw automatically detects the availability of HDF5 and NetCDF file
+support and will warn you if you try and use them without the proper
+libraries.</p>
+</div>
+</div></blockquote>
+<div class="section" id="pyclaw-io-ascii">
+<span id="ascii"></span><h2><code class="xref py py-mod docutils literal"><span class="pre">pyclaw.io.ascii</span></code><a class="headerlink" href="#pyclaw-io-ascii" title="Permalink to this headline">¶</a></h2>
+<div class="system-message">
+<p class="system-message-title">System Message: WARNING/2 (<tt class="docutils">/var/folders/_s/dx0xgftn3_x04rdx0_w5nq7w0000gn/T/tmpLKPdOPsphinxcontrib_versioning/f92b77d995d23a1b2f064c2377bf26278fab6ef5/doc/pyclaw/io.rst</tt>, line 71)</p>
+autodoc: failed to import module u&#8217;pyclaw.io.ascii&#8217;; the following exception was raised:
+Traceback (most recent call last):
+  File &#8220;/usr/local/lib/python2.7/site-packages/sphinx/ext/autodoc.py&#8221;, line 551, in import_object
+    __import__(self.modname)
+ImportError: No module named pyclaw.io.ascii
+</div>
+</div>
+<div class="section" id="pyclaw-io-hdf5">
+<span id="hdf5"></span><h2><code class="xref py py-mod docutils literal"><span class="pre">pyclaw.io.hdf5</span></code><a class="headerlink" href="#pyclaw-io-hdf5" title="Permalink to this headline">¶</a></h2>
+<div class="system-message">
+<p class="system-message-title">System Message: WARNING/2 (<tt class="docutils">/var/folders/_s/dx0xgftn3_x04rdx0_w5nq7w0000gn/T/tmpLKPdOPsphinxcontrib_versioning/f92b77d995d23a1b2f064c2377bf26278fab6ef5/doc/pyclaw/io.rst</tt>, line 79)</p>
+autodoc: failed to import module u&#8217;pyclaw.io.hdf5&#8217;; the following exception was raised:
+Traceback (most recent call last):
+  File &#8220;/usr/local/lib/python2.7/site-packages/sphinx/ext/autodoc.py&#8221;, line 551, in import_object
+    __import__(self.modname)
+ImportError: No module named pyclaw.io.hdf5
+</div>
+</div>
+<div class="section" id="pyclaw-io-netcdf">
+<span id="netcdf"></span><h2><code class="xref py py-mod docutils literal"><span class="pre">pyclaw.io.netcdf</span></code><a class="headerlink" href="#pyclaw-io-netcdf" title="Permalink to this headline">¶</a></h2>
+<div class="system-message">
+<p class="system-message-title">System Message: WARNING/2 (<tt class="docutils">/var/folders/_s/dx0xgftn3_x04rdx0_w5nq7w0000gn/T/tmpLKPdOPsphinxcontrib_versioning/f92b77d995d23a1b2f064c2377bf26278fab6ef5/doc/pyclaw/io.rst</tt>, line 87)</p>
+autodoc: failed to import module u&#8217;pyclaw.io.netcdf&#8217;; the following exception was raised:
+Traceback (most recent call last):
+  File &#8220;/usr/local/lib/python2.7/site-packages/sphinx/ext/autodoc.py&#8221;, line 551, in import_object
+    __import__(self.modname)
+ImportError: No module named pyclaw.io.netcdf
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<p><a href="http://clawpack.org/">
+    <img class="logo" src= "_static/clawlogo.jpg" alt="Logo"/>
+</a>
+<h2>Version 5.2.0</h2>
+</p>
+  <h3><a href="../contents.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Pyclaw Input/Output Package</a><ul>
+<li><a class="reference internal" href="#pyclaw-io-ascii"><code class="docutils literal"><span class="pre">pyclaw.io.ascii</span></code></a></li>
+<li><a class="reference internal" href="#pyclaw-io-hdf5"><code class="docutils literal"><span class="pre">pyclaw.io.hdf5</span></code></a></li>
+<li><a class="reference internal" href="#pyclaw-io-netcdf"><code class="docutils literal"><span class="pre">pyclaw.io.netcdf</span></code></a></li>
+</ul>
+</li>
+</ul>
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../contents.html">Documentation overview</a><ul>
+  <li><a href="index.html">Pyclaw</a><ul>
+      <li>Previous: <a href="evolve/limiters.html" title="previous chapter">Pyclaw Limiters</a></li>
+      <li>Next: <a href="solution.html" title="next chapter">PyClaw Solutions</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/pyclaw/io.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+<h3>Versions</h3>
+<ul>
+    <li><a href="../../v5.3.1/pyclaw/io.html">v5.3.1</a></li>
+    <li><a href="../../v5.3.0/pyclaw/io.html">v5.3.0</a></li>
+    <li><a href="../../v5.2.1/pyclaw/io.html">v5.2.1</a></li>
+    <li><a href="io.html">v5.2.0</a></li>
+    <li><a href="../../v5.1.0/pyclaw/io.html">v5.1.0</a></li>
+    <li><a href="../../sphinx-versioning/pyclaw/io.html">sphinx-versioning</a></li>
+    <li><a href="../../master/pyclaw/io.html">master</a></li>
+</ul>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+  <div class="footer">
+    &copy; Copyright 2013, The Clawpack Development Team.
+    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
+  </div>
+  
+  </body>
+</html>

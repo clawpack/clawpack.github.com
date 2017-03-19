@@ -1,0 +1,329 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>2-dimensional advection-reaction &#8212; Clawpack 5.4.0 documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/flasky.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/base.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/layout.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '5.4.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: ''
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="shortcut icon" href="../../_static/clawicon.ico"/>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+  </head>
+  <body role="document">
+<div id="main-wrapper" class="sphinx">
+<div id="header-wrapper">
+  <section id="header">
+    <!-- <h1><a href="http://clawpack.org/">Clawpack</a></h1> -->
+    <h1><a href="http://clawpack.org/">Clawpack-5</a></h1> 
+    <nav>
+      <ul>
+        <li>
+          <a href="../../../contents.html">Docs</a>
+        </li>
+        <li>
+          <a href="../../../installing.html">Install</a>
+        </li>
+        <li>
+          <a class="" href="/index.html">Gallery</a>
+        </li>
+        <li>
+          <a class="" href="../../../community.html">Community</a>
+        </li>
+        <li>
+          <a class="active" href="http://github.com/clawpack">Source</a>
+        </li>
+        <li>
+          <a class="" href="../../../developers.html">Develop</a>
+        </li>
+      </ul>
+    </nav>
+  </section>
+<div class="decoration"></div>
+</div>
+
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">Clawpack 5.4.0 documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="module-pyclaw.examples.advection_reaction_2d.advection_reaction">
+<span id="dimensional-advection-reaction"></span><span id="advection-reaction"></span><h1>2-dimensional advection-reaction<a class="headerlink" href="#module-pyclaw.examples.advection_reaction_2d.advection_reaction" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="advection-reaction-in-2d">
+<h2>Advection-reaction in 2D<a class="headerlink" href="#advection-reaction-in-2d" title="Permalink to this headline">¶</a></h2>
+<p>Solve the 2D advection-reaction problem</p>
+<div class="math">
+\[p_t + u(x,y,t) p_x + v(x,y,t) p_y &amp; = \epsilon q
+q_t + u(x,y,t) q_x + v(x,y,t) q_y &amp; = \epsilon p\]</div>
+<p>Note that the left hand side of this system is the non-conservative transport
+equation for p and q.  The Riemann solver assumes that velocities are specified
+at cell edges.</p>
+<p>This example also shows how to use your own Riemann solver.</p>
+</div>
+<div class="section" id="output">
+<h2>Output:<a class="headerlink" href="#output" title="Permalink to this headline">¶</a></h2>
+<a class="reference external image-reference" href="../../_static/pyclaw/examples/advection_reaction_2d/_plots_advection_reaction/frame0000fig0.html"><img alt="../../_images/pyclaw_examples_advection_reaction_2d__plots_advection_reaction_frame0000fig0.png" src="../../_images/pyclaw_examples_advection_reaction_2d__plots_advection_reaction_frame0000fig0.png" style="width: 5cm;" /></a>
+<a class="reference external image-reference" href="../../_static/pyclaw/examples/advection_reaction_2d/_plots_advection_reaction/frame0004fig0.html"><img alt="../../_images/pyclaw_examples_advection_reaction_2d__plots_advection_reaction_frame0004fig0.png" src="../../_images/pyclaw_examples_advection_reaction_2d__plots_advection_reaction_frame0004fig0.png" style="width: 5cm;" /></a>
+<a class="reference external image-reference" href="../../_static/pyclaw/examples/advection_reaction_2d/_plots_advection_reaction/frame0010fig0.html"><img alt="../../_images/pyclaw_examples_advection_reaction_2d__plots_advection_reaction_frame0010fig0.png" src="../../_images/pyclaw_examples_advection_reaction_2d__plots_advection_reaction_frame0010fig0.png" style="width: 5cm;" /></a>
+</div>
+<div class="section" id="source">
+<h2>Source:<a class="headerlink" href="#source" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1"># encoding: utf-8</span>
+<span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Advection-reaction in 2D</span>
+<span class="sd">========================</span>
+<span class="sd">Solve the 2D advection-reaction problem</span>
+
+<span class="sd">.. math::</span>
+<span class="sd">    p_t + u(x,y,t) p_x + v(x,y,t) p_y &amp; = \epsilon q</span>
+<span class="sd">    q_t + u(x,y,t) q_x + v(x,y,t) q_y &amp; = \epsilon p</span>
+
+<span class="sd">Note that the left hand side of this system is the non-conservative transport</span>
+<span class="sd">equation for p and q.  The Riemann solver assumes that velocities are specified</span>
+<span class="sd">at cell edges.</span>
+
+<span class="sd">This example also shows how to use your own Riemann solver.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">absolute_import</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">os</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">clawpack.pyclaw.examples.advection_reaction_2d</span> <span class="k">import</span> <span class="n">advection_2d</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+    <span class="n">this_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">this_dir</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span><span class="p">:</span>
+        <span class="n">this_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)</span>
+    <span class="kn">import</span> <span class="nn">subprocess</span>
+    <span class="n">cmd</span> <span class="o">=</span> <span class="s2">&quot;make -C &quot;</span><span class="o">+</span><span class="n">this_dir</span>
+    <span class="n">proc</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">(</span><span class="s2">&quot;make -C &quot;</span><span class="o">+</span><span class="n">this_dir</span><span class="o">+</span><span class="s2">&quot;/&quot;</span><span class="p">,</span> <span class="n">shell</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">stdout</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">)</span>
+    <span class="n">proc</span><span class="o">.</span><span class="n">wait</span><span class="p">()</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="c1"># Now try to import again</span>
+        <span class="kn">from</span> <span class="nn">clawpack.pyclaw.examples.advection_reaction_2d</span> <span class="k">import</span> <span class="n">advection_2d</span>
+    <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+        <span class="k">raise</span>
+
+
+
+<span class="n">t_period</span> <span class="o">=</span> <span class="mf">4.0</span>
+<span class="n">epsilon</span> <span class="o">=</span> <span class="mf">0.1</span>
+
+<span class="k">def</span> <span class="nf">source_step</span><span class="p">(</span><span class="n">solver</span><span class="p">,</span><span class="n">state</span><span class="p">,</span><span class="n">dt</span><span class="p">):</span>
+    <span class="s2">&quot;Integrate the source term over one step.&quot;</span>
+    <span class="n">qq</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">q</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">state</span><span class="o">.</span><span class="n">q</span><span class="p">[</span><span class="mi">0</span><span class="p">,:,:]</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">q</span><span class="p">[</span><span class="mi">0</span><span class="p">,:,:]</span> <span class="o">+</span> <span class="n">epsilon</span><span class="o">*</span><span class="n">dt</span><span class="o">*</span><span class="n">qq</span><span class="p">[</span><span class="mi">1</span><span class="p">,:,:]</span>
+    <span class="n">state</span><span class="o">.</span><span class="n">q</span><span class="p">[</span><span class="mi">1</span><span class="p">,:,:]</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">q</span><span class="p">[</span><span class="mi">1</span><span class="p">,:,:]</span> <span class="o">+</span> <span class="n">epsilon</span><span class="o">*</span><span class="n">dt</span><span class="o">*</span><span class="n">qq</span><span class="p">[</span><span class="mi">0</span><span class="p">,:,:]</span>
+
+
+<span class="k">def</span> <span class="nf">psi</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">):</span>
+    <span class="s2">&quot;Velocity field potential.&quot;</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">*</span><span class="n">x</span><span class="p">))</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">*</span><span class="n">y</span><span class="p">))</span><span class="o">**</span><span class="mi">2</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span>
+
+<span class="k">def</span> <span class="nf">set_velocities</span><span class="p">(</span><span class="n">solver</span><span class="p">,</span><span class="n">state</span><span class="p">):</span>
+    <span class="s2">&quot;Update velocity field for current time.&quot;</span>
+    <span class="n">v_t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="p">(</span><span class="n">state</span><span class="o">.</span><span class="n">t</span> <span class="o">+</span> <span class="n">solver</span><span class="o">.</span><span class="n">dt</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span> <span class="o">/</span> <span class="n">t_period</span><span class="p">)</span>
+    <span class="n">X</span><span class="p">,</span> <span class="n">Y</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">p_nodes</span>
+    <span class="n">dx</span><span class="p">,</span> <span class="n">dy</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">delta</span>
+    <span class="c1"># u(x_(i-1/2),y_j)</span>
+    <span class="n">state</span><span class="o">.</span><span class="n">aux</span><span class="p">[</span><span class="mi">0</span><span class="p">,:,:]</span> <span class="o">=</span> <span class="o">-</span> <span class="p">(</span> <span class="n">psi</span><span class="p">(</span><span class="n">X</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">:],</span><span class="n">Y</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">:])</span> <span class="o">-</span> <span class="n">psi</span><span class="p">(</span><span class="n">X</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">,:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span><span class="n">Y</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">,:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span> <span class="p">)</span> <span class="o">/</span> <span class="n">dy</span>
+    <span class="c1"># v(x_i,y_(j-1/2))</span>
+    <span class="n">state</span><span class="o">.</span><span class="n">aux</span><span class="p">[</span><span class="mi">1</span><span class="p">,:,:]</span> <span class="o">=</span>   <span class="p">(</span> <span class="n">psi</span><span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="mi">1</span><span class="p">:,:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span><span class="n">Y</span><span class="p">[</span><span class="mi">1</span><span class="p">:,:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span> <span class="o">-</span> <span class="n">psi</span><span class="p">(</span><span class="n">X</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">,:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span><span class="n">Y</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">,:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span> <span class="p">)</span> <span class="o">/</span> <span class="n">dx</span>
+    <span class="n">state</span><span class="o">.</span><span class="n">aux</span><span class="p">[:]</span> <span class="o">=</span> <span class="n">v_t</span> <span class="o">*</span> <span class="n">state</span><span class="o">.</span><span class="n">aux</span><span class="p">[:]</span>
+
+
+<span class="k">def</span> <span class="nf">setup</span><span class="p">():</span>
+    <span class="kn">from</span> <span class="nn">clawpack</span> <span class="k">import</span> <span class="n">pyclaw</span>
+    <span class="kn">from</span> <span class="nn">clawpack.pyclaw.examples.advection_reaction_2d</span> <span class="k">import</span> <span class="n">advection_2d</span>
+
+    <span class="n">solver</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">ClawSolver2D</span><span class="p">(</span><span class="n">advection_2d</span><span class="p">)</span>
+    <span class="c1"># Use dimensional splitting since no transverse solver is defined</span>
+    <span class="n">solver</span><span class="o">.</span><span class="n">dimensional_split</span> <span class="o">=</span> <span class="mi">1</span>
+
+    <span class="n">solver</span><span class="o">.</span><span class="n">all_bcs</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">BC</span><span class="o">.</span><span class="n">extrap</span>
+    <span class="n">solver</span><span class="o">.</span><span class="n">aux_bc_lower</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">BC</span><span class="o">.</span><span class="n">extrap</span>
+    <span class="n">solver</span><span class="o">.</span><span class="n">aux_bc_upper</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">BC</span><span class="o">.</span><span class="n">extrap</span>
+    <span class="n">solver</span><span class="o">.</span><span class="n">aux_bc_lower</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">BC</span><span class="o">.</span><span class="n">extrap</span>
+    <span class="n">solver</span><span class="o">.</span><span class="n">aux_bc_upper</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">BC</span><span class="o">.</span><span class="n">extrap</span>
+
+    <span class="n">domain</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">Domain</span><span class="p">(</span> <span class="p">(</span><span class="mf">0.</span><span class="p">,</span><span class="mf">0.</span><span class="p">),</span> <span class="p">(</span><span class="mf">1.</span><span class="p">,</span><span class="mf">1.</span><span class="p">),</span> <span class="p">(</span><span class="mi">100</span><span class="p">,</span><span class="mi">100</span><span class="p">)</span> <span class="p">)</span>
+    <span class="n">solver</span><span class="o">.</span><span class="n">num_eqn</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="n">solver</span><span class="o">.</span><span class="n">num_waves</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">num_aux</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="n">state</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">State</span><span class="p">(</span><span class="n">domain</span><span class="p">,</span> <span class="n">solver</span><span class="o">.</span><span class="n">num_eqn</span><span class="p">,</span> <span class="n">num_aux</span><span class="p">)</span>
+
+    <span class="n">Xe</span><span class="p">,</span> <span class="n">Ye</span> <span class="o">=</span> <span class="n">domain</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">p_nodes</span>
+    <span class="n">Xc</span><span class="p">,</span> <span class="n">Yc</span> <span class="o">=</span> <span class="n">domain</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">p_centers</span>
+    <span class="n">dx</span><span class="p">,</span> <span class="n">dy</span> <span class="o">=</span> <span class="n">domain</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">delta</span>
+
+    <span class="c1"># Edge velocities</span>
+    <span class="c1"># u(x_(i-1/2),y_j)</span>
+    <span class="n">state</span><span class="o">.</span><span class="n">aux</span><span class="p">[</span><span class="mi">0</span><span class="p">,:,:]</span> <span class="o">=</span> <span class="o">-</span> <span class="p">(</span> <span class="n">psi</span><span class="p">(</span><span class="n">Xe</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">:],</span><span class="n">Ye</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">:])</span> <span class="o">-</span> <span class="n">psi</span><span class="p">(</span><span class="n">Xe</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">,:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span><span class="n">Ye</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">,:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span> <span class="p">)</span> <span class="o">/</span> <span class="n">dy</span>
+    <span class="c1"># v(x_i,y_(j-1/2))</span>
+    <span class="n">state</span><span class="o">.</span><span class="n">aux</span><span class="p">[</span><span class="mi">1</span><span class="p">,:,:]</span> <span class="o">=</span>   <span class="p">(</span> <span class="n">psi</span><span class="p">(</span><span class="n">Xe</span><span class="p">[</span><span class="mi">1</span><span class="p">:,:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span><span class="n">Ye</span><span class="p">[</span><span class="mi">1</span><span class="p">:,:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span> <span class="o">-</span> <span class="n">psi</span><span class="p">(</span><span class="n">Xe</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">,:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span><span class="n">Ye</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">,:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span> <span class="p">)</span> <span class="o">/</span> <span class="n">dx</span>
+
+    <span class="n">solver</span><span class="o">.</span><span class="n">before_step</span> <span class="o">=</span> <span class="n">set_velocities</span>
+    <span class="n">solver</span><span class="o">.</span><span class="n">step_source</span> <span class="o">=</span> <span class="n">source_step</span>
+    <span class="n">solver</span><span class="o">.</span><span class="n">source_split</span> <span class="o">=</span> <span class="mi">1</span>
+
+    <span class="n">state</span><span class="o">.</span><span class="n">q</span><span class="p">[</span><span class="mi">0</span><span class="p">,:,:]</span> <span class="o">=</span> <span class="p">(</span><span class="n">Xc</span> <span class="o">&lt;=</span> <span class="mf">0.5</span><span class="p">)</span>
+    <span class="n">state</span><span class="o">.</span><span class="n">q</span><span class="p">[</span><span class="mi">1</span><span class="p">,:,:]</span> <span class="o">=</span> <span class="p">(</span><span class="n">Yc</span> <span class="o">&lt;=</span> <span class="mf">0.5</span><span class="p">)</span>
+
+    <span class="n">claw</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">Controller</span><span class="p">()</span>
+    <span class="n">claw</span><span class="o">.</span><span class="n">tfinal</span> <span class="o">=</span> <span class="n">t_period</span>
+    <span class="n">claw</span><span class="o">.</span><span class="n">solution</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">Solution</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">domain</span><span class="p">)</span>
+    <span class="n">claw</span><span class="o">.</span><span class="n">solver</span> <span class="o">=</span> <span class="n">solver</span>
+    <span class="n">claw</span><span class="o">.</span><span class="n">keep_copy</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">claw</span><span class="o">.</span><span class="n">setplot</span> <span class="o">=</span> <span class="n">setplot</span>
+
+    <span class="k">return</span> <span class="n">claw</span>
+
+<span class="k">def</span> <span class="nf">setplot</span><span class="p">(</span><span class="n">plotdata</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; </span>
+<span class="sd">    Plot solution using VisClaw.</span>
+<span class="sd">    &quot;&quot;&quot;</span> 
+    <span class="kn">from</span> <span class="nn">clawpack.visclaw</span> <span class="k">import</span> <span class="n">colormaps</span>
+
+    <span class="n">plotdata</span><span class="o">.</span><span class="n">clearfigures</span><span class="p">()</span>  <span class="c1"># clear any old figures,axes,items data</span>
+
+    <span class="c1"># Figure for pcolor plot</span>
+    <span class="n">plotfigure</span> <span class="o">=</span> <span class="n">plotdata</span><span class="o">.</span><span class="n">new_plotfigure</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;q[0]&#39;</span><span class="p">,</span> <span class="n">figno</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+    <span class="c1"># Set up for axes in this figure:</span>
+    <span class="n">plotaxes</span> <span class="o">=</span> <span class="n">plotfigure</span><span class="o">.</span><span class="n">new_plotaxes</span><span class="p">()</span>
+    <span class="n">plotaxes</span><span class="o">.</span><span class="n">title</span> <span class="o">=</span> <span class="s1">&#39;q[0]&#39;</span>
+    <span class="n">plotaxes</span><span class="o">.</span><span class="n">scaled</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="c1"># Set up for item on these axes:</span>
+    <span class="n">plotitem</span> <span class="o">=</span> <span class="n">plotaxes</span><span class="o">.</span><span class="n">new_plotitem</span><span class="p">(</span><span class="n">plot_type</span><span class="o">=</span><span class="s1">&#39;2d_pcolor&#39;</span><span class="p">)</span>
+    <span class="n">plotitem</span><span class="o">.</span><span class="n">plot_var</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">plotitem</span><span class="o">.</span><span class="n">pcolor_cmap</span> <span class="o">=</span> <span class="n">colormaps</span><span class="o">.</span><span class="n">yellow_red_blue</span>
+    <span class="n">plotitem</span><span class="o">.</span><span class="n">pcolor_cmin</span> <span class="o">=</span> <span class="mf">0.0</span>
+    <span class="n">plotitem</span><span class="o">.</span><span class="n">pcolor_cmax</span> <span class="o">=</span> <span class="mf">1.0</span>
+    <span class="n">plotitem</span><span class="o">.</span><span class="n">add_colorbar</span> <span class="o">=</span> <span class="kc">True</span>
+    
+    <span class="c1"># Figure for contour plot</span>
+    <span class="n">plotfigure</span> <span class="o">=</span> <span class="n">plotdata</span><span class="o">.</span><span class="n">new_plotfigure</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;q[1]&#39;</span><span class="p">,</span> <span class="n">figno</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="c1"># Set up for axes in this figure:</span>
+    <span class="n">plotaxes</span> <span class="o">=</span> <span class="n">plotfigure</span><span class="o">.</span><span class="n">new_plotaxes</span><span class="p">()</span>
+    <span class="n">plotaxes</span><span class="o">.</span><span class="n">title</span> <span class="o">=</span> <span class="s1">&#39;q[1]&#39;</span>
+
+    <span class="c1"># Set up for item on these axes:</span>
+    <span class="n">plotitem</span> <span class="o">=</span> <span class="n">plotaxes</span><span class="o">.</span><span class="n">new_plotitem</span><span class="p">(</span><span class="n">plot_type</span><span class="o">=</span><span class="s1">&#39;2d_pcolor&#39;</span><span class="p">)</span>
+    <span class="n">plotitem</span><span class="o">.</span><span class="n">plot_var</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">plotitem</span><span class="o">.</span><span class="n">pcolor_cmin</span> <span class="o">=</span> <span class="mf">0.0</span>
+    <span class="n">plotitem</span><span class="o">.</span><span class="n">pcolor_cmax</span> <span class="o">=</span> <span class="mf">1.0</span>
+    <span class="n">plotitem</span><span class="o">.</span><span class="n">add_colorbar</span> <span class="o">=</span> <span class="kc">True</span>
+    
+    <span class="k">return</span> <span class="n">plotdata</span>
+
+<span class="k">if</span> <span class="vm">__name__</span><span class="o">==</span><span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">clawpack.pyclaw.util</span> <span class="k">import</span> <span class="n">run_app_from_main</span>
+    <span class="n">output</span> <span class="o">=</span> <span class="n">run_app_from_main</span><span class="p">(</span><span class="n">setup</span><span class="p">,</span><span class="n">setplot</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<p><a href="http://clawpack.org/">
+    <img class="logo" src= "../../_static/clawlogo.jpg" alt="Logo"/>
+</a>
+<h2>Version 5.4.0</h2>
+</p>
+  <h3><a href="../../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">2-dimensional advection-reaction</a><ul>
+<li><a class="reference internal" href="#advection-reaction-in-2d">Advection-reaction in 2D</a></li>
+<li><a class="reference internal" href="#output">Output:</a></li>
+<li><a class="reference internal" href="#source">Source:</a></li>
+</ul>
+</li>
+</ul>
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../../_sources/pyclaw/gallery/advection_reaction.rst"
+           rel="nofollow">Show Source</a></li>
+    <li><a href="https://github.com/clawpack/doc/blob/master/doc/pyclaw/gallery/advection_reaction.rst"
+           rel="nofollow">Show on GitHub</a></li>
+    <li><a href="https://github.com/clawpack/doc/edit/master/doc/pyclaw/gallery/advection_reaction.rst"
+           rel="nofollow">Edit on GitHub</a></li>
+  </ul>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+  <div class="footer">
+    &copy; Copyright 2017, The Clawpack Development Team.
+    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
+  </div>
+  <script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-44811544-1', 'auto');
+  ga('send', 'pageview');
+
+  </script>
+  
+  </body>
+</html>

@@ -1,0 +1,441 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>2-dimensional variable-coefficient advection &#8212; Clawpack 5.4.0 documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/flasky.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/base.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/layout.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '5.4.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: ''
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="shortcut icon" href="../../_static/clawicon.ico"/>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+  </head>
+  <body role="document">
+<div id="main-wrapper" class="sphinx">
+<div id="header-wrapper">
+  <section id="header">
+    <!-- <h1><a href="http://clawpack.org/">Clawpack</a></h1> -->
+    <h1><a href="http://clawpack.org/">Clawpack-5</a></h1> 
+    <nav>
+      <ul>
+        <li>
+          <a href="../../../contents.html">Docs</a>
+        </li>
+        <li>
+          <a href="../../../installing.html">Install</a>
+        </li>
+        <li>
+          <a class="" href="/index.html">Gallery</a>
+        </li>
+        <li>
+          <a class="" href="../../../community.html">Community</a>
+        </li>
+        <li>
+          <a class="active" href="http://github.com/clawpack">Source</a>
+        </li>
+        <li>
+          <a class="" href="../../../developers.html">Develop</a>
+        </li>
+      </ul>
+    </nav>
+  </section>
+<div class="decoration"></div>
+</div>
+
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">Clawpack 5.4.0 documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="module-pyclaw.examples.advection_2d_annulus.advection_annulus">
+<span id="dimensional-variable-coefficient-advection"></span><span id="advection-annulus"></span><h1>2-dimensional variable-coefficient advection<a class="headerlink" href="#module-pyclaw.examples.advection_2d_annulus.advection_annulus" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="advection-in-an-annular-domain">
+<h2>Advection in an annular domain<a class="headerlink" href="#advection-in-an-annular-domain" title="Permalink to this headline">¶</a></h2>
+<p>Solve the linear advection equation:</p>
+<div class="math">
+\[q_t + (u(x,y) q)_x + (v(x,y) q)_y &amp; = 0\]</div>
+<p>in an annular domain, using a mapped grid.</p>
+<p>Here q is the density of some conserved quantity and (u,v) is the velocity
+field.  We take a rotational velocity field: <span class="math">\(u = \cos(\theta), v = \sin(\theta)\)</span>.</p>
+<p>This is the simplest example that shows how to use a mapped grid in PyClaw.</p>
+</div>
+<div class="section" id="output">
+<h2>Output:<a class="headerlink" href="#output" title="Permalink to this headline">¶</a></h2>
+<a class="reference external image-reference" href="../../_static/pyclaw/examples/advection_2d_annulus/_plots_advection_annulus/frame0000fig0.html"><img alt="../../_images/pyclaw_examples_advection_2d_annulus__plots_advection_annulus_frame0000fig0.png" src="../../_images/pyclaw_examples_advection_2d_annulus__plots_advection_annulus_frame0000fig0.png" style="width: 5cm;" /></a>
+<a class="reference external image-reference" href="../../_static/pyclaw/examples/advection_2d_annulus/_plots_advection_annulus/frame0004fig0.html"><img alt="../../_images/pyclaw_examples_advection_2d_annulus__plots_advection_annulus_frame0004fig0.png" src="../../_images/pyclaw_examples_advection_2d_annulus__plots_advection_annulus_frame0004fig0.png" style="width: 5cm;" /></a>
+<a class="reference external image-reference" href="../../_static/pyclaw/examples/advection_2d_annulus/_plots_advection_annulus/frame0008fig0.html"><img alt="../../_images/pyclaw_examples_advection_2d_annulus__plots_advection_annulus_frame0008fig0.png" src="../../_images/pyclaw_examples_advection_2d_annulus__plots_advection_annulus_frame0008fig0.png" style="width: 5cm;" /></a>
+</div>
+<div class="section" id="source">
+<h2>Source:<a class="headerlink" href="#source" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1"># encoding: utf-8</span>
+<span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Advection in an annular domain</span>
+<span class="sd">==============================</span>
+
+<span class="sd">Solve the linear advection equation:</span>
+
+<span class="sd">.. math:: </span>
+<span class="sd">    q_t + (u(x,y) q)_x + (v(x,y) q)_y &amp; = 0</span>
+
+<span class="sd">in an annular domain, using a mapped grid.</span>
+
+<span class="sd">Here q is the density of some conserved quantity and (u,v) is the velocity</span>
+<span class="sd">field.  We take a rotational velocity field: :math:`u = \cos(\theta), v = \sin(\theta)`.</span>
+
+<span class="sd">This is the simplest example that shows how to use a mapped grid in PyClaw.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">absolute_import</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="k">def</span> <span class="nf">mapc2p_annulus</span><span class="p">(</span><span class="n">xc</span><span class="p">,</span> <span class="n">yc</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Specifies the mapping to curvilinear coordinates.</span>
+
+<span class="sd">    Inputs: c_centers = Computational cell centers</span>
+<span class="sd">                 [array ([Xc1, Xc2, ...]), array([Yc1, Yc2, ...])]</span>
+
+<span class="sd">    Output: p_centers = Physical cell centers</span>
+<span class="sd">                 [array ([Xp1, Xp2, ...]), array([Yp1, Yp2, ...])]</span>
+<span class="sd">    &quot;&quot;&quot;</span>  
+    <span class="n">p_centers</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="c1"># Polar coordinates (first coordinate = radius,  second coordinate = theta)</span>
+    <span class="n">p_centers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">xc</span><span class="p">[:]</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">yc</span><span class="p">[:]))</span>
+    <span class="n">p_centers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">xc</span><span class="p">[:]</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">yc</span><span class="p">[:]))</span>
+    
+    <span class="k">return</span> <span class="n">p_centers</span>
+
+
+<span class="k">def</span> <span class="nf">qinit</span><span class="p">(</span><span class="n">state</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Initialize with two Gaussian pulses.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># First gaussian pulse</span>
+    <span class="n">A1</span>     <span class="o">=</span> <span class="mf">1.</span>    <span class="c1"># Amplitude</span>
+    <span class="n">beta1</span>  <span class="o">=</span> <span class="mf">40.</span>   <span class="c1"># Decay factor</span>
+    <span class="n">r1</span>     <span class="o">=</span> <span class="o">-</span><span class="mf">0.5</span>  <span class="c1"># r-coordinate of the center</span>
+    <span class="n">theta1</span> <span class="o">=</span> <span class="mf">0.</span>    <span class="c1"># theta-coordinate of the center</span>
+
+    <span class="c1"># Second gaussian pulse</span>
+    <span class="n">A2</span>     <span class="o">=</span> <span class="o">-</span><span class="mf">1.</span>   <span class="c1"># Amplitude</span>
+    <span class="n">beta2</span>  <span class="o">=</span> <span class="mf">40.</span>   <span class="c1"># Decay factor</span>
+    <span class="n">r2</span>     <span class="o">=</span> <span class="mf">0.5</span>   <span class="c1"># r-coordinate of the centers</span>
+    <span class="n">theta2</span> <span class="o">=</span> <span class="mf">0.</span>    <span class="c1"># theta-coordinate of the centers</span>
+
+    <span class="n">R</span><span class="p">,</span> <span class="n">Theta</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">p_centers</span>
+    <span class="n">state</span><span class="o">.</span><span class="n">q</span><span class="p">[</span><span class="mi">0</span><span class="p">,:,:]</span> <span class="o">=</span> <span class="n">A1</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">beta1</span><span class="o">*</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">square</span><span class="p">(</span><span class="n">R</span><span class="o">-</span><span class="n">r1</span><span class="p">)</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">square</span><span class="p">(</span><span class="n">Theta</span><span class="o">-</span><span class="n">theta1</span><span class="p">)))</span>\
+                   <span class="o">+</span> <span class="n">A2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">beta2</span><span class="o">*</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">square</span><span class="p">(</span><span class="n">R</span><span class="o">-</span><span class="n">r2</span><span class="p">)</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">square</span><span class="p">(</span><span class="n">Theta</span><span class="o">-</span><span class="n">theta2</span><span class="p">)))</span>
+
+
+<span class="k">def</span> <span class="nf">ghost_velocities_upper</span><span class="p">(</span><span class="n">state</span><span class="p">,</span><span class="n">dim</span><span class="p">,</span><span class="n">t</span><span class="p">,</span><span class="n">qbc</span><span class="p">,</span><span class="n">auxbc</span><span class="p">,</span><span class="n">num_ghost</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Set the velocities for the ghost cells outside the outer radius of the annulus.</span>
+<span class="sd">    In the computational domain, these are the cells at the top of the grid.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">grid</span><span class="o">=</span><span class="n">state</span><span class="o">.</span><span class="n">grid</span>
+    <span class="k">if</span> <span class="n">dim</span> <span class="o">==</span> <span class="n">grid</span><span class="o">.</span><span class="n">dimensions</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+        <span class="n">dx</span><span class="p">,</span> <span class="n">dy</span> <span class="o">=</span> <span class="n">grid</span><span class="o">.</span><span class="n">delta</span>
+        <span class="n">R_nodes</span><span class="p">,</span><span class="n">Theta_nodes</span> <span class="o">=</span> <span class="n">grid</span><span class="o">.</span><span class="n">p_nodes_with_ghost</span><span class="p">(</span><span class="n">num_ghost</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+
+        <span class="n">auxbc</span><span class="p">[:,</span><span class="o">-</span><span class="n">num_ghost</span><span class="p">:,:]</span> <span class="o">=</span> <span class="n">edge_velocities_and_area</span><span class="p">(</span><span class="n">R_nodes</span><span class="p">[</span><span class="o">-</span><span class="n">num_ghost</span><span class="o">-</span><span class="mi">1</span><span class="p">:,:],</span><span class="n">Theta_nodes</span><span class="p">[</span><span class="o">-</span><span class="n">num_ghost</span><span class="o">-</span><span class="mi">1</span><span class="p">:,:],</span><span class="n">dx</span><span class="p">,</span><span class="n">dy</span><span class="p">)</span>
+
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;Custom BC for this boundary is not appropriate!&#39;</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">ghost_velocities_lower</span><span class="p">(</span><span class="n">state</span><span class="p">,</span><span class="n">dim</span><span class="p">,</span><span class="n">t</span><span class="p">,</span><span class="n">qbc</span><span class="p">,</span><span class="n">auxbc</span><span class="p">,</span><span class="n">num_ghost</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Set the velocities for the ghost cells outside the inner radius of the annulus.</span>
+<span class="sd">    In the computational domain, these are the cells at the bottom of the grid.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">grid</span><span class="o">=</span><span class="n">state</span><span class="o">.</span><span class="n">grid</span>
+    <span class="k">if</span> <span class="n">dim</span> <span class="o">==</span> <span class="n">grid</span><span class="o">.</span><span class="n">dimensions</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+        <span class="n">dx</span><span class="p">,</span> <span class="n">dy</span> <span class="o">=</span> <span class="n">grid</span><span class="o">.</span><span class="n">delta</span>
+        <span class="n">R_nodes</span><span class="p">,</span><span class="n">Theta_nodes</span> <span class="o">=</span> <span class="n">grid</span><span class="o">.</span><span class="n">p_nodes_with_ghost</span><span class="p">(</span><span class="n">num_ghost</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+
+        <span class="n">auxbc</span><span class="p">[:,</span><span class="mi">0</span><span class="p">:</span><span class="n">num_ghost</span><span class="p">,:]</span> <span class="o">=</span> <span class="n">edge_velocities_and_area</span><span class="p">(</span><span class="n">R_nodes</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="n">num_ghost</span><span class="o">+</span><span class="mi">1</span><span class="p">,:],</span><span class="n">Theta_nodes</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="n">num_ghost</span><span class="o">+</span><span class="mi">1</span><span class="p">,:],</span><span class="n">dx</span><span class="p">,</span><span class="n">dy</span><span class="p">)</span>
+
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;Custom BC for this boundary is not appropriate!&#39;</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">edge_velocities_and_area</span><span class="p">(</span><span class="n">R_nodes</span><span class="p">,</span><span class="n">Theta_nodes</span><span class="p">,</span><span class="n">dx</span><span class="p">,</span><span class="n">dy</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;This routine fills in the aux arrays for the problem:</span>
+
+<span class="sd">        aux[0,i,j] = u-velocity at left edge of cell (i,j)</span>
+<span class="sd">        aux[1,i,j] = v-velocity at bottom edge of cell (i,j)</span>
+<span class="sd">        aux[2,i,j] = physical area of cell (i,j) (relative to area of computational cell)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">mx</span> <span class="o">=</span> <span class="n">R_nodes</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">-</span><span class="mi">1</span>
+    <span class="n">my</span> <span class="o">=</span> <span class="n">R_nodes</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">-</span><span class="mi">1</span>
+    <span class="n">aux</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="mi">3</span><span class="p">,</span><span class="n">mx</span><span class="p">,</span><span class="n">my</span><span class="p">),</span> <span class="n">order</span><span class="o">=</span><span class="s1">&#39;F&#39;</span><span class="p">)</span>
+
+    <span class="c1"># Bottom-left corners</span>
+    <span class="n">Xp0</span> <span class="o">=</span> <span class="n">R_nodes</span><span class="p">[:</span><span class="n">mx</span><span class="p">,:</span><span class="n">my</span><span class="p">]</span>
+    <span class="n">Yp0</span> <span class="o">=</span> <span class="n">Theta_nodes</span><span class="p">[:</span><span class="n">mx</span><span class="p">,:</span><span class="n">my</span><span class="p">]</span>
+
+    <span class="c1"># Top-left corners</span>
+    <span class="n">Xp1</span> <span class="o">=</span> <span class="n">R_nodes</span><span class="p">[:</span><span class="n">mx</span><span class="p">,</span><span class="mi">1</span><span class="p">:]</span>
+    <span class="n">Yp1</span> <span class="o">=</span> <span class="n">Theta_nodes</span><span class="p">[:</span><span class="n">mx</span><span class="p">,</span><span class="mi">1</span><span class="p">:]</span>
+
+    <span class="c1"># Top-right corners</span>
+    <span class="n">Xp2</span> <span class="o">=</span> <span class="n">R_nodes</span><span class="p">[</span><span class="mi">1</span><span class="p">:,</span><span class="mi">1</span><span class="p">:]</span>
+    <span class="n">Yp2</span> <span class="o">=</span> <span class="n">Theta_nodes</span><span class="p">[</span><span class="mi">1</span><span class="p">:,</span><span class="mi">1</span><span class="p">:]</span>
+
+    <span class="c1"># Top-left corners</span>
+    <span class="n">Xp3</span> <span class="o">=</span> <span class="n">R_nodes</span><span class="p">[</span><span class="mi">1</span><span class="p">:,:</span><span class="n">my</span><span class="p">]</span>
+    <span class="n">Yp3</span> <span class="o">=</span> <span class="n">Theta_nodes</span><span class="p">[</span><span class="mi">1</span><span class="p">:,:</span><span class="n">my</span><span class="p">]</span>
+
+    <span class="c1"># Compute velocity component</span>
+    <span class="n">aux</span><span class="p">[</span><span class="mi">0</span><span class="p">,:</span><span class="n">mx</span><span class="p">,:</span><span class="n">my</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">stream</span><span class="p">(</span><span class="n">Xp1</span><span class="p">,</span><span class="n">Yp1</span><span class="p">)</span><span class="o">-</span> <span class="n">stream</span><span class="p">(</span><span class="n">Xp0</span><span class="p">,</span><span class="n">Yp0</span><span class="p">))</span><span class="o">/</span><span class="n">dy</span>
+    <span class="n">aux</span><span class="p">[</span><span class="mi">1</span><span class="p">,:</span><span class="n">mx</span><span class="p">,:</span><span class="n">my</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="p">(</span><span class="n">stream</span><span class="p">(</span><span class="n">Xp3</span><span class="p">,</span><span class="n">Yp3</span><span class="p">)</span><span class="o">-</span> <span class="n">stream</span><span class="p">(</span><span class="n">Xp0</span><span class="p">,</span><span class="n">Yp0</span><span class="p">))</span><span class="o">/</span><span class="n">dx</span>
+
+    <span class="c1"># Compute area of the physical element</span>
+    <span class="n">area</span> <span class="o">=</span> <span class="mf">1.</span><span class="o">/</span><span class="mf">2.</span><span class="o">*</span><span class="p">(</span> <span class="p">(</span><span class="n">Yp0</span><span class="o">+</span><span class="n">Yp1</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">Xp1</span><span class="o">-</span><span class="n">Xp0</span><span class="p">)</span> <span class="o">+</span>
+                   <span class="p">(</span><span class="n">Yp1</span><span class="o">+</span><span class="n">Yp2</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">Xp2</span><span class="o">-</span><span class="n">Xp1</span><span class="p">)</span> <span class="o">+</span>
+                   <span class="p">(</span><span class="n">Yp2</span><span class="o">+</span><span class="n">Yp3</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">Xp3</span><span class="o">-</span><span class="n">Xp2</span><span class="p">)</span> <span class="o">+</span>
+                   <span class="p">(</span><span class="n">Yp3</span><span class="o">+</span><span class="n">Yp0</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">Xp0</span><span class="o">-</span><span class="n">Xp3</span><span class="p">)</span> <span class="p">)</span>
+    
+    <span class="c1"># Compute capa </span>
+    <span class="n">aux</span><span class="p">[</span><span class="mi">2</span><span class="p">,:</span><span class="n">mx</span><span class="p">,:</span><span class="n">my</span><span class="p">]</span> <span class="o">=</span> <span class="n">area</span><span class="o">/</span><span class="p">(</span><span class="n">dx</span><span class="o">*</span><span class="n">dy</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">aux</span>
+
+    
+<span class="k">def</span> <span class="nf">stream</span><span class="p">(</span><span class="n">Xp</span><span class="p">,</span><span class="n">Yp</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; </span>
+<span class="sd">    Calculates the stream function in physical space.</span>
+<span class="sd">    Clockwise rotation. One full rotation corresponds to 1 (second).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">*</span><span class="p">(</span><span class="n">Xp</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">Yp</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">setup</span><span class="p">(</span><span class="n">use_petsc</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">outdir</span><span class="o">=</span><span class="s1">&#39;./_output&#39;</span><span class="p">,</span><span class="n">solver_type</span><span class="o">=</span><span class="s1">&#39;classic&#39;</span><span class="p">):</span>
+    <span class="kn">from</span> <span class="nn">clawpack</span> <span class="k">import</span> <span class="n">riemann</span>
+
+    <span class="k">if</span> <span class="n">use_petsc</span><span class="p">:</span>
+        <span class="kn">import</span> <span class="nn">clawpack.petclaw</span> <span class="k">as</span> <span class="nn">pyclaw</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="kn">from</span> <span class="nn">clawpack</span> <span class="k">import</span> <span class="n">pyclaw</span>
+
+    <span class="k">if</span> <span class="n">solver_type</span> <span class="o">==</span> <span class="s1">&#39;classic&#39;</span><span class="p">:</span>
+        <span class="n">solver</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">ClawSolver2D</span><span class="p">(</span><span class="n">riemann</span><span class="o">.</span><span class="n">vc_advection_2D</span><span class="p">)</span>
+        <span class="n">solver</span><span class="o">.</span><span class="n">dimensional_split</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="n">solver</span><span class="o">.</span><span class="n">transverse_waves</span> <span class="o">=</span> <span class="mi">2</span>
+        <span class="n">solver</span><span class="o">.</span><span class="n">order</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="k">elif</span> <span class="n">solver_type</span> <span class="o">==</span> <span class="s1">&#39;sharpclaw&#39;</span><span class="p">:</span>
+        <span class="n">solver</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">SharpClawSolver2D</span><span class="p">(</span><span class="n">riemann</span><span class="o">.</span><span class="n">vc_advection_2D</span><span class="p">)</span>
+
+    <span class="n">solver</span><span class="o">.</span><span class="n">bc_lower</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">BC</span><span class="o">.</span><span class="n">extrap</span>
+    <span class="n">solver</span><span class="o">.</span><span class="n">bc_upper</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">BC</span><span class="o">.</span><span class="n">extrap</span>
+    <span class="n">solver</span><span class="o">.</span><span class="n">bc_lower</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">BC</span><span class="o">.</span><span class="n">periodic</span>
+    <span class="n">solver</span><span class="o">.</span><span class="n">bc_upper</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">BC</span><span class="o">.</span><span class="n">periodic</span>
+
+    <span class="n">solver</span><span class="o">.</span><span class="n">aux_bc_lower</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">BC</span><span class="o">.</span><span class="n">custom</span>
+    <span class="n">solver</span><span class="o">.</span><span class="n">aux_bc_upper</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">BC</span><span class="o">.</span><span class="n">custom</span>
+    <span class="n">solver</span><span class="o">.</span><span class="n">user_aux_bc_lower</span> <span class="o">=</span> <span class="n">ghost_velocities_lower</span>
+    <span class="n">solver</span><span class="o">.</span><span class="n">user_aux_bc_upper</span> <span class="o">=</span> <span class="n">ghost_velocities_upper</span>
+    <span class="n">solver</span><span class="o">.</span><span class="n">aux_bc_lower</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">BC</span><span class="o">.</span><span class="n">periodic</span>
+    <span class="n">solver</span><span class="o">.</span><span class="n">aux_bc_upper</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">BC</span><span class="o">.</span><span class="n">periodic</span>
+
+    <span class="n">solver</span><span class="o">.</span><span class="n">dt_initial</span> <span class="o">=</span> <span class="mf">0.1</span>
+    <span class="n">solver</span><span class="o">.</span><span class="n">cfl_max</span> <span class="o">=</span> <span class="mf">0.5</span>
+    <span class="n">solver</span><span class="o">.</span><span class="n">cfl_desired</span> <span class="o">=</span> <span class="mf">0.4</span>
+
+    <span class="n">solver</span><span class="o">.</span><span class="n">limiters</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">limiters</span><span class="o">.</span><span class="n">tvd</span><span class="o">.</span><span class="n">vanleer</span>
+
+    <span class="n">r_lower</span> <span class="o">=</span> <span class="mf">0.2</span>
+    <span class="n">r_upper</span> <span class="o">=</span> <span class="mf">1.0</span>
+    <span class="n">m_r</span> <span class="o">=</span> <span class="mi">40</span>
+
+    <span class="n">theta_lower</span> <span class="o">=</span> <span class="mf">0.0</span>
+    <span class="n">theta_upper</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">*</span><span class="mf">2.0</span>
+    <span class="n">m_theta</span> <span class="o">=</span> <span class="mi">120</span>
+
+    <span class="n">r</span>     <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">Dimension</span><span class="p">(</span><span class="n">r_lower</span><span class="p">,</span><span class="n">r_upper</span><span class="p">,</span><span class="n">m_r</span><span class="p">,</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;r&#39;</span><span class="p">)</span>
+    <span class="n">theta</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">Dimension</span><span class="p">(</span><span class="n">theta_lower</span><span class="p">,</span><span class="n">theta_upper</span><span class="p">,</span><span class="n">m_theta</span><span class="p">,</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;theta&#39;</span><span class="p">)</span>
+    <span class="n">domain</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">Domain</span><span class="p">([</span><span class="n">r</span><span class="p">,</span><span class="n">theta</span><span class="p">])</span>
+    <span class="n">domain</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">mapc2p</span> <span class="o">=</span> <span class="n">mapc2p_annulus</span>
+    <span class="n">domain</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">num_ghost</span> <span class="o">=</span> <span class="n">solver</span><span class="o">.</span><span class="n">num_ghost</span>
+
+    <span class="n">num_eqn</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">state</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">State</span><span class="p">(</span><span class="n">domain</span><span class="p">,</span><span class="n">num_eqn</span><span class="p">)</span>
+
+    <span class="n">qinit</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
+
+    <span class="n">dx</span><span class="p">,</span> <span class="n">dy</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">delta</span>
+    <span class="n">p_corners</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">p_nodes</span>
+    <span class="n">state</span><span class="o">.</span><span class="n">aux</span> <span class="o">=</span> <span class="n">edge_velocities_and_area</span><span class="p">(</span><span class="n">p_corners</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">p_corners</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span><span class="n">dx</span><span class="p">,</span><span class="n">dy</span><span class="p">)</span>
+    <span class="n">state</span><span class="o">.</span><span class="n">index_capa</span> <span class="o">=</span> <span class="mi">2</span> <span class="c1"># aux[2,:,:] holds the capacity function</span>
+
+    <span class="n">claw</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">Controller</span><span class="p">()</span>
+    <span class="n">claw</span><span class="o">.</span><span class="n">tfinal</span> <span class="o">=</span> <span class="mf">1.0</span>
+    <span class="n">claw</span><span class="o">.</span><span class="n">solution</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">Solution</span><span class="p">(</span><span class="n">state</span><span class="p">,</span><span class="n">domain</span><span class="p">)</span>
+    <span class="n">claw</span><span class="o">.</span><span class="n">solver</span> <span class="o">=</span> <span class="n">solver</span>
+    <span class="n">claw</span><span class="o">.</span><span class="n">outdir</span> <span class="o">=</span> <span class="n">outdir</span>
+    <span class="n">claw</span><span class="o">.</span><span class="n">setplot</span> <span class="o">=</span> <span class="n">setplot</span>
+    <span class="n">claw</span><span class="o">.</span><span class="n">keep_copy</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="k">return</span> <span class="n">claw</span>
+
+
+<span class="k">def</span> <span class="nf">setplot</span><span class="p">(</span><span class="n">plotdata</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; </span>
+<span class="sd">    Plot solution using VisClaw.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">from</span> <span class="nn">clawpack.pyclaw.examples.advection_2d_annulus.mapc2p</span> <span class="k">import</span> <span class="n">mapc2p</span>
+    <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+    <span class="kn">from</span> <span class="nn">clawpack.visclaw</span> <span class="k">import</span> <span class="n">colormaps</span>
+
+    <span class="n">plotdata</span><span class="o">.</span><span class="n">clearfigures</span><span class="p">()</span>  <span class="c1"># clear any old figures,axes,items data</span>
+    <span class="n">plotdata</span><span class="o">.</span><span class="n">mapc2p</span> <span class="o">=</span> <span class="n">mapc2p</span>
+    
+    <span class="c1"># Figure for contour plot</span>
+    <span class="n">plotfigure</span> <span class="o">=</span> <span class="n">plotdata</span><span class="o">.</span><span class="n">new_plotfigure</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;contour&#39;</span><span class="p">,</span> <span class="n">figno</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+    <span class="c1"># Set up for axes in this figure:</span>
+    <span class="n">plotaxes</span> <span class="o">=</span> <span class="n">plotfigure</span><span class="o">.</span><span class="n">new_plotaxes</span><span class="p">()</span>
+    <span class="n">plotaxes</span><span class="o">.</span><span class="n">xlimits</span> <span class="o">=</span> <span class="s1">&#39;auto&#39;</span>
+    <span class="n">plotaxes</span><span class="o">.</span><span class="n">ylimits</span> <span class="o">=</span> <span class="s1">&#39;auto&#39;</span>
+    <span class="n">plotaxes</span><span class="o">.</span><span class="n">title</span> <span class="o">=</span> <span class="s1">&#39;q[0]&#39;</span>
+    <span class="n">plotaxes</span><span class="o">.</span><span class="n">scaled</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="c1"># Set up for item on these axes:</span>
+    <span class="n">plotitem</span> <span class="o">=</span> <span class="n">plotaxes</span><span class="o">.</span><span class="n">new_plotitem</span><span class="p">(</span><span class="n">plot_type</span><span class="o">=</span><span class="s1">&#39;2d_contour&#39;</span><span class="p">)</span>
+    <span class="n">plotitem</span><span class="o">.</span><span class="n">plot_var</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">plotitem</span><span class="o">.</span><span class="n">contour_levels</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mf">0.9</span><span class="p">,</span> <span class="mf">0.9</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+    <span class="n">plotitem</span><span class="o">.</span><span class="n">contour_colors</span> <span class="o">=</span> <span class="s1">&#39;k&#39;</span>
+    <span class="n">plotitem</span><span class="o">.</span><span class="n">patchedges_show</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">plotitem</span><span class="o">.</span><span class="n">MappedGrid</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="c1"># Figure for pcolor plot</span>
+    <span class="n">plotfigure</span> <span class="o">=</span> <span class="n">plotdata</span><span class="o">.</span><span class="n">new_plotfigure</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;q[0]&#39;</span><span class="p">,</span> <span class="n">figno</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="c1"># Set up for axes in this figure:</span>
+    <span class="n">plotaxes</span> <span class="o">=</span> <span class="n">plotfigure</span><span class="o">.</span><span class="n">new_plotaxes</span><span class="p">()</span>
+    <span class="n">plotaxes</span><span class="o">.</span><span class="n">xlimits</span> <span class="o">=</span> <span class="s1">&#39;auto&#39;</span>
+    <span class="n">plotaxes</span><span class="o">.</span><span class="n">ylimits</span> <span class="o">=</span> <span class="s1">&#39;auto&#39;</span>
+    <span class="n">plotaxes</span><span class="o">.</span><span class="n">title</span> <span class="o">=</span> <span class="s1">&#39;q[0]&#39;</span>
+    <span class="n">plotaxes</span><span class="o">.</span><span class="n">scaled</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="c1"># Set up for item on these axes:</span>
+    <span class="n">plotitem</span> <span class="o">=</span> <span class="n">plotaxes</span><span class="o">.</span><span class="n">new_plotitem</span><span class="p">(</span><span class="n">plot_type</span><span class="o">=</span><span class="s1">&#39;2d_pcolor&#39;</span><span class="p">)</span>
+    <span class="n">plotitem</span><span class="o">.</span><span class="n">plot_var</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">plotitem</span><span class="o">.</span><span class="n">pcolor_cmap</span> <span class="o">=</span> <span class="n">colormaps</span><span class="o">.</span><span class="n">red_yellow_blue</span>
+    <span class="n">plotitem</span><span class="o">.</span><span class="n">pcolor_cmin</span> <span class="o">=</span> <span class="o">-</span><span class="mf">1.</span>
+    <span class="n">plotitem</span><span class="o">.</span><span class="n">pcolor_cmax</span> <span class="o">=</span> <span class="mf">1.</span>
+    <span class="n">plotitem</span><span class="o">.</span><span class="n">add_colorbar</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">plotitem</span><span class="o">.</span><span class="n">MappedGrid</span> <span class="o">=</span> <span class="kc">True</span>
+
+
+    <span class="k">return</span> <span class="n">plotdata</span>
+
+ 
+<span class="k">if</span> <span class="vm">__name__</span><span class="o">==</span><span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">clawpack.pyclaw.util</span> <span class="k">import</span> <span class="n">run_app_from_main</span>
+    <span class="n">output</span> <span class="o">=</span> <span class="n">run_app_from_main</span><span class="p">(</span><span class="n">setup</span><span class="p">,</span><span class="n">setplot</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<p><a href="http://clawpack.org/">
+    <img class="logo" src= "../../_static/clawlogo.jpg" alt="Logo"/>
+</a>
+<h2>Version 5.4.0</h2>
+</p>
+  <h3><a href="../../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">2-dimensional variable-coefficient advection</a><ul>
+<li><a class="reference internal" href="#advection-in-an-annular-domain">Advection in an annular domain</a></li>
+<li><a class="reference internal" href="#output">Output:</a></li>
+<li><a class="reference internal" href="#source">Source:</a></li>
+</ul>
+</li>
+</ul>
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../../_sources/pyclaw/gallery/advection_annulus.rst"
+           rel="nofollow">Show Source</a></li>
+    <li><a href="https://github.com/clawpack/doc/blob/master/doc/pyclaw/gallery/advection_annulus.rst"
+           rel="nofollow">Show on GitHub</a></li>
+    <li><a href="https://github.com/clawpack/doc/edit/master/doc/pyclaw/gallery/advection_annulus.rst"
+           rel="nofollow">Edit on GitHub</a></li>
+  </ul>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+  <div class="footer">
+    &copy; Copyright 2017, The Clawpack Development Team.
+    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
+  </div>
+  <script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-44811544-1', 'auto');
+  ga('send', 'pageview');
+
+  </script>
+  
+  </body>
+</html>

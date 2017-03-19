@@ -1,0 +1,798 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>2-dimensional shallow water on the sphere &#8212; Clawpack 5.4.0 documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/flasky.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/base.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/layout.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '5.4.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: ''
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="shortcut icon" href="../../_static/clawicon.ico"/>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+  </head>
+  <body role="document">
+<div id="main-wrapper" class="sphinx">
+<div id="header-wrapper">
+  <section id="header">
+    <!-- <h1><a href="http://clawpack.org/">Clawpack</a></h1> -->
+    <h1><a href="http://clawpack.org/">Clawpack-5</a></h1> 
+    <nav>
+      <ul>
+        <li>
+          <a href="../../../contents.html">Docs</a>
+        </li>
+        <li>
+          <a href="../../../installing.html">Install</a>
+        </li>
+        <li>
+          <a class="" href="/index.html">Gallery</a>
+        </li>
+        <li>
+          <a class="" href="../../../community.html">Community</a>
+        </li>
+        <li>
+          <a class="active" href="http://github.com/clawpack">Source</a>
+        </li>
+        <li>
+          <a class="" href="../../../developers.html">Develop</a>
+        </li>
+      </ul>
+    </nav>
+  </section>
+<div class="decoration"></div>
+</div>
+
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">Clawpack 5.4.0 documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="module-pyclaw.examples.shallow_sphere.Rossby_wave">
+<span id="dimensional-shallow-water-on-the-sphere"></span><span id="rossby-wave"></span><h1>2-dimensional shallow water on the sphere<a class="headerlink" href="#module-pyclaw.examples.shallow_sphere.Rossby_wave" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="shallow-water-flow-on-the-sphere">
+<h2>Shallow water flow on the sphere<a class="headerlink" href="#shallow-water-flow-on-the-sphere" title="Permalink to this headline">¶</a></h2>
+<p>2D shallow water equations on a spherical surface. The approximation of the 
+three-dimensional equations is restricted to the surface of the sphere. 
+Therefore only the solution on the surface is updated.</p>
+<dl class="docutils">
+<dt>Reference: Logically Rectangular Grids and Finite Volume Methods for PDEs in </dt>
+<dd>Circular and Spherical Domains. 
+By Donna A. Calhoun, Christiane Helzel, and Randall J. LeVeque
+SIAM Review 50 (2008), 723-752.</dd>
+</dl>
+</div>
+<div class="section" id="output">
+<h2>Output:<a class="headerlink" href="#output" title="Permalink to this headline">¶</a></h2>
+<a class="reference external image-reference" href="../../_static/pyclaw/examples/shallow_sphere/_plots_Rossby_wave/frame0000fig0.html"><img alt="../../_images/pyclaw_examples_shallow_sphere__plots_Rossby_wave_frame0000fig0.png" src="../../_images/pyclaw_examples_shallow_sphere__plots_Rossby_wave_frame0000fig0.png" style="width: 5cm;" /></a>
+<a class="reference external image-reference" href="../../_static/pyclaw/examples/shallow_sphere/_plots_Rossby_wave/frame0004fig0.html"><img alt="../../_images/pyclaw_examples_shallow_sphere__plots_Rossby_wave_frame0004fig0.png" src="../../_images/pyclaw_examples_shallow_sphere__plots_Rossby_wave_frame0004fig0.png" style="width: 5cm;" /></a>
+<a class="reference external image-reference" href="../../_static/pyclaw/examples/shallow_sphere/_plots_Rossby_wave/frame0010fig0.html"><img alt="../../_images/pyclaw_examples_shallow_sphere__plots_Rossby_wave_frame0010fig0.png" src="../../_images/pyclaw_examples_shallow_sphere__plots_Rossby_wave_frame0010fig0.png" style="width: 5cm;" /></a>
+</div>
+<div class="section" id="source">
+<h2>Source:<a class="headerlink" href="#source" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1"># encoding: utf-8</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Shallow water flow on the sphere</span>
+<span class="sd">================================</span>
+
+<span class="sd">2D shallow water equations on a spherical surface. The approximation of the </span>
+<span class="sd">three-dimensional equations is restricted to the surface of the sphere. </span>
+<span class="sd">Therefore only the solution on the surface is updated. </span>
+
+<span class="sd">Reference: Logically Rectangular Grids and Finite Volume Methods for PDEs in </span>
+<span class="sd">           Circular and Spherical Domains. </span>
+<span class="sd">           By Donna A. Calhoun, Christiane Helzel, and Randall J. LeVeque</span>
+<span class="sd">           SIAM Review 50 (2008), 723-752. </span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">absolute_import</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">print_function</span>
+<span class="kn">import</span> <span class="nn">math</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="kn">from</span> <span class="nn">clawpack</span> <span class="k">import</span> <span class="n">pyclaw</span>
+<span class="kn">from</span> <span class="nn">clawpack</span> <span class="k">import</span> <span class="n">riemann</span>
+<span class="kn">from</span> <span class="nn">clawpack.pyclaw.util</span> <span class="k">import</span> <span class="n">inplace_build</span>
+<span class="kn">from</span> <span class="nn">six.moves</span> <span class="k">import</span> <span class="nb">range</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">clawpack.pyclaw.examples.shallow_sphere</span> <span class="k">import</span> <span class="n">problem</span>
+    <span class="kn">from</span> <span class="nn">clawpack.pyclaw.examples.shallow_sphere</span> <span class="k">import</span> <span class="n">classic2</span>
+
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+    <span class="n">this_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">this_dir</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span><span class="p">:</span>
+        <span class="n">this_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)</span>
+    <span class="n">inplace_build</span><span class="p">(</span><span class="n">this_dir</span><span class="p">)</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="c1"># Now try to import again</span>
+        <span class="kn">from</span> <span class="nn">clawpack.pyclaw.examples.shallow_sphere</span> <span class="k">import</span> <span class="n">problem</span>
+        <span class="kn">from</span> <span class="nn">clawpack.pyclaw.examples.shallow_sphere</span> <span class="k">import</span> <span class="n">classic2</span>
+    <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;***</span><span class="se">\n</span><span class="s2">Unable to import problem module or automatically build, try running (in the directory of this file):</span><span class="se">\n</span><span class="s2"> python setup.py build_ext -i</span><span class="se">\n</span><span class="s2">***&quot;</span><span class="p">,</span> <span class="n">file</span><span class="o">=</span><span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="p">)</span>
+        <span class="k">raise</span>
+
+
+<span class="c1"># Nondimensionalized radius of the earth</span>
+<span class="n">Rsphere</span> <span class="o">=</span> <span class="mf">1.0</span>
+
+
+<span class="k">def</span> <span class="nf">fortran_src_wrapper</span><span class="p">(</span><span class="n">solver</span><span class="p">,</span><span class="n">state</span><span class="p">,</span><span class="n">dt</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Wraps Fortran src2.f routine. </span>
+<span class="sd">    src2.f contains the discretization of the source term.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Some simplifications</span>
+    <span class="n">grid</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">grid</span>
+
+    <span class="c1"># Get parameters and variables that have to be passed to the fortran src2</span>
+    <span class="c1"># routine.</span>
+    <span class="n">mx</span><span class="p">,</span> <span class="n">my</span> <span class="o">=</span> <span class="n">grid</span><span class="o">.</span><span class="n">num_cells</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">grid</span><span class="o">.</span><span class="n">num_cells</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">num_ghost</span> <span class="o">=</span> <span class="n">solver</span><span class="o">.</span><span class="n">num_ghost</span>
+    <span class="n">xlower</span><span class="p">,</span> <span class="n">ylower</span> <span class="o">=</span> <span class="n">grid</span><span class="o">.</span><span class="n">lower</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">grid</span><span class="o">.</span><span class="n">lower</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">dx</span><span class="p">,</span> <span class="n">dy</span> <span class="o">=</span> <span class="n">grid</span><span class="o">.</span><span class="n">delta</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">grid</span><span class="o">.</span><span class="n">delta</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">q</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">q</span>
+    <span class="n">aux</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">aux</span>
+    <span class="n">t</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">t</span>
+
+    <span class="c1"># Call src2 function</span>
+    <span class="n">state</span><span class="o">.</span><span class="n">q</span> <span class="o">=</span> <span class="n">problem</span><span class="o">.</span><span class="n">src2</span><span class="p">(</span><span class="n">mx</span><span class="p">,</span><span class="n">my</span><span class="p">,</span><span class="n">num_ghost</span><span class="p">,</span><span class="n">xlower</span><span class="p">,</span><span class="n">ylower</span><span class="p">,</span><span class="n">dx</span><span class="p">,</span><span class="n">dy</span><span class="p">,</span><span class="n">q</span><span class="p">,</span><span class="n">aux</span><span class="p">,</span><span class="n">t</span><span class="p">,</span><span class="n">dt</span><span class="p">,</span><span class="n">Rsphere</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">mapc2p_sphere_nonvectorized</span><span class="p">(</span><span class="n">X</span><span class="p">,</span><span class="n">Y</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Maps to points on a sphere of radius Rsphere. Nonvectorized version (slow).</span>
+<span class="sd">    </span>
+<span class="sd">    Inputs: x-coordinates, y-coordinates in the computational space.</span>
+
+<span class="sd">    Output: list of x-, y- and z-coordinates in the physical space.</span>
+
+<span class="sd">    NOTE: this function is not used in the standard script.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Get number of cells in both directions</span>
+    <span class="n">mx</span><span class="p">,</span> <span class="n">my</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">shape</span>
+
+    <span class="c1"># Define new list of numpy array, pC = physical coordinates</span>
+    <span class="n">pC</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">mx</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">my</span><span class="p">):</span>
+            <span class="n">xc</span> <span class="o">=</span> <span class="n">X</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span>
+            <span class="n">yc</span> <span class="o">=</span> <span class="n">Y</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span>
+
+            <span class="c1"># Ghost cell values outside of [-3,1]x[-1,1] get mapped to other</span>
+            <span class="c1"># hemisphere:</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">xc</span> <span class="o">&gt;=</span> <span class="mf">1.0</span><span class="p">):</span>
+                <span class="n">xc</span> <span class="o">=</span> <span class="n">xc</span> <span class="o">-</span> <span class="mf">4.0</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">xc</span> <span class="o">&lt;=</span> <span class="o">-</span><span class="mf">3.0</span><span class="p">):</span>
+                <span class="n">xc</span> <span class="o">=</span> <span class="n">xc</span> <span class="o">+</span> <span class="mf">4.0</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="n">yc</span> <span class="o">&gt;=</span> <span class="mf">1.0</span><span class="p">):</span>
+                <span class="n">yc</span> <span class="o">=</span> <span class="mf">2.0</span> <span class="o">-</span> <span class="n">yc</span>
+                <span class="n">xc</span> <span class="o">=</span> <span class="o">-</span><span class="mf">2.0</span> <span class="o">-</span> <span class="n">xc</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="n">yc</span> <span class="o">&lt;=</span> <span class="o">-</span><span class="mf">1.0</span><span class="p">):</span>
+                <span class="n">yc</span> <span class="o">=</span> <span class="o">-</span><span class="mf">2.0</span> <span class="o">-</span> <span class="n">yc</span>
+                <span class="n">xc</span> <span class="o">=</span> <span class="o">-</span><span class="mf">2.0</span> <span class="o">-</span> <span class="n">xc</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="n">xc</span> <span class="o">&lt;=</span> <span class="o">-</span><span class="mf">1.0</span><span class="p">):</span>
+                <span class="c1"># Points in [-3,-1] map to lower hemisphere - reflect about x=-1</span>
+                <span class="c1"># to compute x,y mapping and set sgnz appropriately:</span>
+                <span class="n">xc</span> <span class="o">=</span> <span class="o">-</span><span class="mf">2.0</span> <span class="o">-</span> <span class="n">xc</span>
+                <span class="n">sgnz</span> <span class="o">=</span> <span class="o">-</span><span class="mf">1.0</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">sgnz</span> <span class="o">=</span> <span class="mf">1.0</span>
+
+            <span class="n">sgnxc</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">copysign</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span><span class="n">xc</span><span class="p">)</span>
+            <span class="n">sgnyc</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">copysign</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span><span class="n">yc</span><span class="p">)</span>
+
+            <span class="n">xc1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">xc</span><span class="p">)</span>
+            <span class="n">yc1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">yc</span><span class="p">)</span>
+            <span class="n">d</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span><span class="n">xc1</span><span class="p">,</span><span class="n">yc1</span><span class="p">),</span> <span class="mf">1.0e-10</span><span class="p">)</span>     
+
+            <span class="n">DD</span> <span class="o">=</span> <span class="n">Rsphere</span><span class="o">*</span><span class="n">d</span><span class="o">*</span><span class="p">(</span><span class="mf">2.0</span> <span class="o">-</span> <span class="n">d</span><span class="p">)</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">2.0</span><span class="p">)</span>
+            <span class="n">R</span> <span class="o">=</span> <span class="n">Rsphere</span>
+            <span class="n">centers</span> <span class="o">=</span> <span class="n">DD</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span><span class="n">R</span><span class="o">**</span><span class="mi">2</span> <span class="o">-</span> <span class="n">DD</span><span class="o">**</span><span class="mi">2</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">))</span>
+            
+            <span class="n">xp</span> <span class="o">=</span> <span class="n">DD</span><span class="o">/</span><span class="n">d</span> <span class="o">*</span> <span class="n">xc1</span>
+            <span class="n">yp</span> <span class="o">=</span> <span class="n">DD</span><span class="o">/</span><span class="n">d</span> <span class="o">*</span> <span class="n">yc1</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="n">yc1</span> <span class="o">&gt;=</span> <span class="n">xc1</span><span class="p">):</span>
+                <span class="n">yp</span> <span class="o">=</span> <span class="n">centers</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span><span class="n">R</span><span class="o">**</span><span class="mi">2</span> <span class="o">-</span> <span class="n">xp</span><span class="o">**</span><span class="mi">2</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">xp</span> <span class="o">=</span> <span class="n">centers</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span><span class="n">R</span><span class="o">**</span><span class="mi">2</span> <span class="o">-</span> <span class="n">yp</span><span class="o">**</span><span class="mi">2</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">))</span>
+
+            <span class="c1"># Compute physical coordinates</span>
+            <span class="n">zp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span><span class="n">Rsphere</span><span class="o">**</span><span class="mi">2</span> <span class="o">-</span> <span class="p">(</span><span class="n">xp</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">yp</span><span class="o">**</span><span class="mi">2</span><span class="p">),</span> <span class="mf">0.0</span><span class="p">))</span>
+            <span class="n">pC</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">xp</span><span class="o">*</span><span class="n">sgnxc</span><span class="p">)</span>
+            <span class="n">pC</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">yp</span><span class="o">*</span><span class="n">sgnyc</span><span class="p">)</span>
+            <span class="n">pC</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">zp</span><span class="o">*</span><span class="n">sgnz</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">pC</span>
+
+
+<span class="k">def</span> <span class="nf">mapc2p_sphere_vectorized</span><span class="p">(</span><span class="n">X</span><span class="p">,</span><span class="n">Y</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Maps to points on a sphere of radius Rsphere. Vectorized version (fast).  </span>
+
+<span class="sd">    Inputs: x-coordinates, y-coordinates in the computational space.</span>
+
+<span class="sd">    Output: list of x-, y- and z-coordinates in the physical space.</span>
+
+<span class="sd">    NOTE: this function is used in the standard script.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Get number of cells in both directions</span>
+    <span class="n">mx</span><span class="p">,</span> <span class="n">my</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">shape</span>
+    
+    <span class="c1"># 2D array useful for the vectorization of the function</span>
+    <span class="n">sgnz</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="n">mx</span><span class="p">,</span><span class="n">my</span><span class="p">))</span>
+
+    <span class="c1"># 2D coordinates in the computational domain</span>
+    <span class="n">xc</span> <span class="o">=</span> <span class="n">X</span><span class="p">[:][:]</span>
+    <span class="n">yc</span> <span class="o">=</span> <span class="n">Y</span><span class="p">[:][:]</span>
+
+    <span class="c1"># Compute 3D coordinates in the physical domain</span>
+    <span class="c1"># =============================================</span>
+
+    <span class="c1"># Note: yc &lt; -1 =&gt; second copy of sphere:</span>
+    <span class="n">ij2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">yc</span> <span class="o">&lt;</span> <span class="o">-</span><span class="mf">1.0</span><span class="p">)</span>
+    <span class="n">xc</span><span class="p">[</span><span class="n">ij2</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="n">xc</span><span class="p">[</span><span class="n">ij2</span><span class="p">]</span> <span class="o">-</span> <span class="mf">2.0</span><span class="p">;</span>
+    <span class="n">yc</span><span class="p">[</span><span class="n">ij2</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="n">yc</span><span class="p">[</span><span class="n">ij2</span><span class="p">]</span> <span class="o">-</span> <span class="mf">2.0</span><span class="p">;</span>
+
+    <span class="n">ij</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">xc</span> <span class="o">&lt;</span> <span class="o">-</span><span class="mf">1.0</span><span class="p">)</span>
+    <span class="n">xc</span><span class="p">[</span><span class="n">ij</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="mf">2.0</span> <span class="o">-</span> <span class="n">xc</span><span class="p">[</span><span class="n">ij</span><span class="p">]</span>
+    <span class="n">sgnz</span><span class="p">[</span><span class="n">ij</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="mf">1.0</span><span class="p">;</span>
+    <span class="n">xc1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">xc</span><span class="p">)</span>
+    <span class="n">yc1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">yc</span><span class="p">)</span>
+    <span class="n">d</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span><span class="n">xc1</span><span class="p">,</span><span class="n">yc1</span><span class="p">)</span>
+    <span class="n">d</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="mf">1e-10</span><span class="p">)</span>
+    <span class="n">D</span> <span class="o">=</span> <span class="n">Rsphere</span><span class="o">*</span><span class="n">d</span><span class="o">*</span><span class="p">(</span><span class="mi">2</span><span class="o">-</span><span class="n">d</span><span class="p">)</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">R</span> <span class="o">=</span> <span class="n">Rsphere</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">d</span><span class="p">)))</span>
+
+    <span class="n">centers</span> <span class="o">=</span> <span class="n">D</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">R</span><span class="o">**</span><span class="mi">2</span> <span class="o">-</span> <span class="n">D</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">xp</span> <span class="o">=</span> <span class="n">D</span><span class="o">/</span><span class="n">d</span> <span class="o">*</span> <span class="n">xc1</span>
+    <span class="n">yp</span> <span class="o">=</span> <span class="n">D</span><span class="o">/</span><span class="n">d</span> <span class="o">*</span> <span class="n">yc1</span>
+
+    <span class="n">ij</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">yc1</span><span class="o">==</span><span class="n">d</span><span class="p">)</span>
+    <span class="n">yp</span><span class="p">[</span><span class="n">ij</span><span class="p">]</span> <span class="o">=</span> <span class="n">centers</span><span class="p">[</span><span class="n">ij</span><span class="p">]</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">R</span><span class="p">[</span><span class="n">ij</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span> <span class="o">-</span> <span class="n">xp</span><span class="p">[</span><span class="n">ij</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">ij</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">xc1</span><span class="o">==</span><span class="n">d</span><span class="p">)</span>
+    <span class="n">xp</span><span class="p">[</span><span class="n">ij</span><span class="p">]</span> <span class="o">=</span> <span class="n">centers</span><span class="p">[</span><span class="n">ij</span><span class="p">]</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">R</span><span class="p">[</span><span class="n">ij</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span> <span class="o">-</span> <span class="n">yp</span><span class="p">[</span><span class="n">ij</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+    
+    <span class="c1"># Define new list of numpy array, pC = physical coordinates</span>
+    <span class="n">pC</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="n">xp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sign</span><span class="p">(</span><span class="n">xc</span><span class="p">)</span> <span class="o">*</span> <span class="n">xp</span>
+    <span class="n">yp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sign</span><span class="p">(</span><span class="n">yc</span><span class="p">)</span> <span class="o">*</span> <span class="n">yp</span>
+    <span class="n">zp</span> <span class="o">=</span> <span class="n">sgnz</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">Rsphere</span><span class="o">**</span><span class="mi">2</span> <span class="o">-</span> <span class="p">(</span><span class="n">xp</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">yp</span><span class="o">**</span><span class="mi">2</span><span class="p">))</span>
+    
+    <span class="n">pC</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">xp</span><span class="p">)</span>
+    <span class="n">pC</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">yp</span><span class="p">)</span>
+    <span class="n">pC</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">zp</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">pC</span>
+
+
+<span class="k">def</span> <span class="nf">qinit</span><span class="p">(</span><span class="n">state</span><span class="p">,</span><span class="n">mx</span><span class="p">,</span><span class="n">my</span><span class="p">):</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Initialize solution with 4-Rossby-Haurwitz wave.</span>
+
+<span class="sd">    NOTE: this function is not used in the standard script.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Parameters</span>
+    <span class="n">a</span> <span class="o">=</span> <span class="mf">6.37122e6</span>     <span class="c1"># Radius of the earth</span>
+    <span class="n">Omega</span> <span class="o">=</span> <span class="mf">7.292e-5</span>  <span class="c1"># Rotation rate</span>
+    <span class="n">G</span> <span class="o">=</span> <span class="mf">9.80616</span>       <span class="c1"># Gravitational acceleration</span>
+
+    <span class="n">K</span> <span class="o">=</span> <span class="mf">7.848e-6</span>   
+    <span class="n">t0</span> <span class="o">=</span> <span class="mf">86400.0</span>     
+    <span class="n">h0</span> <span class="o">=</span> <span class="mf">8.e3</span>         <span class="c1"># Minimum fluid height at the poles        </span>
+    <span class="n">R</span> <span class="o">=</span> <span class="mf">4.0</span>
+
+    <span class="c1"># Compute the the physical coordinates of the cells&#39; centerss</span>
+    <span class="n">state</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">compute_p_centers</span><span class="p">(</span><span class="n">recompute</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+ 
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">mx</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">my</span><span class="p">):</span>
+            <span class="n">xp</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">p_centers</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span>
+            <span class="n">yp</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">p_centers</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span>
+            <span class="n">zp</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">p_centers</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span>
+
+            <span class="n">rad</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">xp</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">yp</span><span class="o">**</span><span class="mi">2</span><span class="p">),</span><span class="mf">1.e-6</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="n">xp</span> <span class="o">&gt;=</span> <span class="mf">0.0</span> <span class="ow">and</span> <span class="n">yp</span> <span class="o">&gt;=</span> <span class="mf">0.0</span><span class="p">):</span>
+                <span class="n">theta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arcsin</span><span class="p">(</span><span class="n">yp</span><span class="o">/</span><span class="n">rad</span><span class="p">)</span> 
+            <span class="k">elif</span> <span class="p">(</span><span class="n">xp</span> <span class="o">&lt;=</span> <span class="mf">0.0</span> <span class="ow">and</span> <span class="n">yp</span> <span class="o">&gt;=</span> <span class="mf">0.0</span><span class="p">):</span>
+                <span class="n">theta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">arcsin</span><span class="p">(</span><span class="n">yp</span><span class="o">/</span><span class="n">rad</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="p">(</span><span class="n">xp</span> <span class="o">&lt;=</span> <span class="mf">0.0</span> <span class="ow">and</span> <span class="n">yp</span> <span class="o">&lt;=</span> <span class="mf">0.0</span><span class="p">):</span>
+                 <span class="n">theta</span> <span class="o">=</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">arcsin</span><span class="p">(</span><span class="o">-</span><span class="n">yp</span><span class="o">/</span><span class="n">rad</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="p">(</span><span class="n">xp</span> <span class="o">&gt;=</span> <span class="mf">0.0</span> <span class="ow">and</span> <span class="n">yp</span> <span class="o">&lt;=</span> <span class="mf">0.0</span><span class="p">):</span>
+                <span class="n">theta</span> <span class="o">=</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">arcsin</span><span class="p">(</span><span class="o">-</span><span class="n">yp</span><span class="o">/</span><span class="n">rad</span><span class="p">)</span>
+
+            <span class="c1"># Compute phi, at north pole: pi/2 at south pool: -pi/2</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">zp</span> <span class="o">&gt;=</span> <span class="mf">0.0</span><span class="p">):</span> 
+                <span class="n">phi</span> <span class="o">=</span>  <span class="n">np</span><span class="o">.</span><span class="n">arcsin</span><span class="p">(</span><span class="n">zp</span><span class="o">/</span><span class="n">Rsphere</span><span class="p">)</span> 
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">phi</span> <span class="o">=</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">arcsin</span><span class="p">(</span><span class="o">-</span><span class="n">zp</span><span class="o">/</span><span class="n">Rsphere</span><span class="p">)</span>  
+        
+            <span class="n">xp</span> <span class="o">=</span> <span class="n">theta</span> 
+            <span class="n">yp</span> <span class="o">=</span> <span class="n">phi</span> 
+
+
+            <span class="n">bigA</span> <span class="o">=</span> <span class="mf">0.5</span><span class="o">*</span><span class="n">K</span><span class="o">*</span><span class="p">(</span><span class="mf">2.0</span><span class="o">*</span><span class="n">Omega</span> <span class="o">+</span> <span class="n">K</span><span class="p">)</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">yp</span><span class="p">)</span><span class="o">**</span><span class="mf">2.0</span> <span class="o">+</span> \
+                   <span class="mf">0.25</span><span class="o">*</span><span class="n">K</span><span class="o">*</span><span class="n">K</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">yp</span><span class="p">)</span><span class="o">**</span><span class="p">(</span><span class="mf">2.0</span><span class="o">*</span><span class="n">R</span><span class="p">)</span><span class="o">*</span><span class="p">((</span><span class="mf">1.0</span><span class="o">*</span><span class="n">R</span><span class="o">+</span><span class="mf">1.0</span><span class="p">)</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">yp</span><span class="p">)</span><span class="o">**</span><span class="mf">2.0</span> <span class="o">+</span> \
+                   <span class="p">(</span><span class="mf">2.0</span><span class="o">*</span><span class="n">R</span><span class="o">*</span><span class="n">R</span> <span class="o">-</span> <span class="mf">1.0</span><span class="o">*</span><span class="n">R</span> <span class="o">-</span> <span class="mf">2.0</span><span class="p">)</span> <span class="o">-</span> <span class="mf">2.0</span><span class="o">*</span><span class="n">R</span><span class="o">*</span><span class="n">R</span><span class="o">*</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">yp</span><span class="p">))</span><span class="o">**</span><span class="p">(</span><span class="o">-</span><span class="mf">2.0</span><span class="p">))</span>
+            <span class="n">bigB</span> <span class="o">=</span> <span class="p">(</span><span class="mf">2.0</span><span class="o">*</span><span class="p">(</span><span class="n">Omega</span> <span class="o">+</span> <span class="n">K</span><span class="p">)</span><span class="o">*</span><span class="n">K</span><span class="p">)</span><span class="o">/</span><span class="p">((</span><span class="mf">1.0</span><span class="o">*</span><span class="n">R</span> <span class="o">+</span> <span class="mf">1.0</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="mf">1.0</span><span class="o">*</span><span class="n">R</span> <span class="o">+</span> <span class="mf">2.0</span><span class="p">))</span> <span class="o">*</span> \
+                   <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">yp</span><span class="p">)</span><span class="o">**</span><span class="n">R</span><span class="o">*</span><span class="p">(</span> <span class="p">(</span><span class="mf">1.0</span><span class="o">*</span><span class="n">R</span><span class="o">*</span><span class="n">R</span> <span class="o">+</span> <span class="mf">2.0</span><span class="o">*</span><span class="n">R</span> <span class="o">+</span> <span class="mf">2.0</span><span class="p">)</span> <span class="o">-</span> \
+                   <span class="p">(</span><span class="mf">1.0</span><span class="o">*</span><span class="n">R</span> <span class="o">+</span> <span class="mf">1.0</span><span class="p">)</span><span class="o">**</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">yp</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="p">)</span>
+            <span class="n">bigC</span> <span class="o">=</span> <span class="mf">0.25</span><span class="o">*</span><span class="n">K</span><span class="o">*</span><span class="n">K</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">yp</span><span class="p">)</span><span class="o">**</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">R</span><span class="p">)</span><span class="o">*</span><span class="p">(</span> <span class="p">(</span><span class="mf">1.0</span><span class="o">*</span><span class="n">R</span> <span class="o">+</span> <span class="mf">1.0</span><span class="p">)</span><span class="o">*</span> \
+                   <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">yp</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="o">-</span> <span class="p">(</span><span class="mf">1.0</span><span class="o">*</span><span class="n">R</span> <span class="o">+</span> <span class="mf">2.0</span><span class="p">))</span>
+
+
+            <span class="c1"># Calculate local longitude-latitude velocity vector</span>
+            <span class="c1"># ==================================================</span>
+            <span class="n">Uin</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+
+            <span class="c1"># Longitude (angular) velocity component</span>
+            <span class="n">Uin</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">K</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">yp</span><span class="p">)</span><span class="o">+</span><span class="n">K</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">yp</span><span class="p">)</span><span class="o">**</span><span class="p">(</span><span class="n">R</span><span class="o">-</span><span class="mf">1.</span><span class="p">)</span><span class="o">*</span><span class="p">(</span> <span class="n">R</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">yp</span><span class="p">)</span><span class="o">**</span><span class="mf">2.0</span> <span class="o">-</span> \
+                     <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">yp</span><span class="p">)</span><span class="o">**</span><span class="mf">2.0</span><span class="p">)</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">R</span><span class="o">*</span><span class="n">xp</span><span class="p">))</span><span class="o">*</span><span class="n">t0</span>
+
+            <span class="c1"># Latitude (angular) velocity component</span>
+            <span class="n">Uin</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="o">-</span><span class="n">K</span><span class="o">*</span><span class="n">R</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">yp</span><span class="p">)</span><span class="o">**</span><span class="p">(</span><span class="n">R</span><span class="o">-</span><span class="mf">1.0</span><span class="p">)</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">yp</span><span class="p">)</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">R</span><span class="o">*</span><span class="n">xp</span><span class="p">))</span><span class="o">*</span><span class="n">t0</span>
+
+            <span class="c1"># Radial velocity component</span>
+            <span class="n">Uin</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span> <span class="c1"># The fluid does not enter in the sphere</span>
+            
+
+            <span class="c1"># Calculate velocity vetor in cartesian coordinates</span>
+            <span class="c1"># =================================================</span>
+            <span class="n">Uout</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+
+            <span class="n">Uout</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">xp</span><span class="p">)</span><span class="o">*</span><span class="n">Uin</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">yp</span><span class="p">)</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">xp</span><span class="p">)</span><span class="o">*</span><span class="n">Uin</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+            <span class="n">Uout</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">xp</span><span class="p">)</span><span class="o">*</span><span class="n">Uin</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">yp</span><span class="p">)</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">xp</span><span class="p">)</span><span class="o">*</span><span class="n">Uin</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+            <span class="n">Uout</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">yp</span><span class="p">)</span><span class="o">*</span><span class="n">Uin</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+            <span class="c1"># Set the initial condition</span>
+            <span class="c1"># =========================</span>
+            <span class="n">state</span><span class="o">.</span><span class="n">q</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span>  <span class="n">h0</span><span class="o">/</span><span class="n">a</span> <span class="o">+</span> <span class="p">(</span><span class="n">a</span><span class="o">/</span><span class="n">G</span><span class="p">)</span><span class="o">*</span><span class="p">(</span> <span class="n">bigA</span> <span class="o">+</span> <span class="n">bigB</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">R</span><span class="o">*</span><span class="n">xp</span><span class="p">)</span> <span class="o">+</span> \
+                              <span class="n">bigC</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="mf">2.0</span><span class="o">*</span><span class="n">R</span><span class="o">*</span><span class="n">xp</span><span class="p">))</span>
+            <span class="n">state</span><span class="o">.</span><span class="n">q</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">q</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">]</span><span class="o">*</span><span class="n">Uout</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> 
+            <span class="n">state</span><span class="o">.</span><span class="n">q</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">q</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">]</span><span class="o">*</span><span class="n">Uout</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> 
+            <span class="n">state</span><span class="o">.</span><span class="n">q</span><span class="p">[</span><span class="mi">3</span><span class="p">,</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">q</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">]</span><span class="o">*</span><span class="n">Uout</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> 
+
+
+<span class="k">def</span> <span class="nf">qbc_lower_y</span><span class="p">(</span><span class="n">state</span><span class="p">,</span><span class="n">dim</span><span class="p">,</span><span class="n">t</span><span class="p">,</span><span class="n">qbc</span><span class="p">,</span><span class="n">auxbc</span><span class="p">,</span><span class="n">num_ghost</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Impose periodic boundary condition to q at the bottom boundary for the </span>
+<span class="sd">    sphere. This function does not work in parallel.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_ghost</span><span class="p">):</span>
+        <span class="n">qbc1D</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">qbc</span><span class="p">[:,:,</span><span class="mi">2</span><span class="o">*</span><span class="n">num_ghost</span><span class="o">-</span><span class="mi">1</span><span class="o">-</span><span class="n">j</span><span class="p">])</span>
+        <span class="n">qbc</span><span class="p">[:,:,</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">qbc1D</span><span class="p">[:,::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+
+<span class="k">def</span> <span class="nf">qbc_upper_y</span><span class="p">(</span><span class="n">state</span><span class="p">,</span><span class="n">dim</span><span class="p">,</span><span class="n">t</span><span class="p">,</span><span class="n">qbc</span><span class="p">,</span><span class="n">auxbc</span><span class="p">,</span><span class="n">num_ghost</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Impose periodic boundary condition to q at the top boundary for the sphere.</span>
+<span class="sd">    This function does not work in parallel.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">my</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">num_cells</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_ghost</span><span class="p">):</span>
+        <span class="n">qbc1D</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">qbc</span><span class="p">[:,:,</span><span class="n">my</span><span class="o">+</span><span class="n">num_ghost</span><span class="o">-</span><span class="mi">1</span><span class="o">-</span><span class="n">j</span><span class="p">])</span>
+        <span class="n">qbc</span><span class="p">[:,:,</span><span class="n">my</span><span class="o">+</span><span class="n">num_ghost</span><span class="o">+</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">qbc1D</span><span class="p">[:,::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+
+<span class="k">def</span> <span class="nf">auxbc_lower_y</span><span class="p">(</span><span class="n">state</span><span class="p">,</span><span class="n">dim</span><span class="p">,</span><span class="n">t</span><span class="p">,</span><span class="n">qbc</span><span class="p">,</span><span class="n">auxbc</span><span class="p">,</span><span class="n">num_ghost</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Impose periodic boundary condition to aux at the bottom boundary for the </span>
+<span class="sd">    sphere.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">grid</span><span class="o">=</span><span class="n">state</span><span class="o">.</span><span class="n">grid</span>
+
+    <span class="c1"># Get parameters and variables that have to be passed to the fortran src2</span>
+    <span class="c1"># routine.</span>
+    <span class="n">mx</span><span class="p">,</span> <span class="n">my</span> <span class="o">=</span> <span class="n">grid</span><span class="o">.</span><span class="n">num_cells</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">grid</span><span class="o">.</span><span class="n">num_cells</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">xlower</span><span class="p">,</span> <span class="n">ylower</span> <span class="o">=</span> <span class="n">grid</span><span class="o">.</span><span class="n">lower</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">grid</span><span class="o">.</span><span class="n">lower</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">dx</span><span class="p">,</span> <span class="n">dy</span> <span class="o">=</span> <span class="n">grid</span><span class="o">.</span><span class="n">delta</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">grid</span><span class="o">.</span><span class="n">delta</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+    <span class="c1"># Impose BC</span>
+    <span class="n">auxtemp</span> <span class="o">=</span> <span class="n">auxbc</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">auxtemp</span> <span class="o">=</span> <span class="n">problem</span><span class="o">.</span><span class="n">setaux</span><span class="p">(</span><span class="n">mx</span><span class="p">,</span><span class="n">my</span><span class="p">,</span><span class="n">num_ghost</span><span class="p">,</span><span class="n">mx</span><span class="p">,</span><span class="n">my</span><span class="p">,</span><span class="n">xlower</span><span class="p">,</span><span class="n">ylower</span><span class="p">,</span><span class="n">dx</span><span class="p">,</span><span class="n">dy</span><span class="p">,</span><span class="n">auxtemp</span><span class="p">,</span><span class="n">Rsphere</span><span class="p">)</span>
+    <span class="n">auxbc</span><span class="p">[:,:,:</span><span class="n">num_ghost</span><span class="p">]</span> <span class="o">=</span> <span class="n">auxtemp</span><span class="p">[:,:,:</span><span class="n">num_ghost</span><span class="p">]</span>
+
+<span class="k">def</span> <span class="nf">auxbc_upper_y</span><span class="p">(</span><span class="n">state</span><span class="p">,</span><span class="n">dim</span><span class="p">,</span><span class="n">t</span><span class="p">,</span><span class="n">qbc</span><span class="p">,</span><span class="n">auxbc</span><span class="p">,</span><span class="n">num_ghost</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Impose periodic boundary condition to aux at the top boundary for the </span>
+<span class="sd">    sphere. </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">grid</span><span class="o">=</span><span class="n">state</span><span class="o">.</span><span class="n">grid</span>
+
+    <span class="c1"># Get parameters and variables that have to be passed to the fortran src2</span>
+    <span class="c1"># routine.</span>
+    <span class="n">mx</span><span class="p">,</span> <span class="n">my</span> <span class="o">=</span> <span class="n">grid</span><span class="o">.</span><span class="n">num_cells</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">grid</span><span class="o">.</span><span class="n">num_cells</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">xlower</span><span class="p">,</span> <span class="n">ylower</span> <span class="o">=</span> <span class="n">grid</span><span class="o">.</span><span class="n">lower</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">grid</span><span class="o">.</span><span class="n">lower</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">dx</span><span class="p">,</span> <span class="n">dy</span> <span class="o">=</span> <span class="n">grid</span><span class="o">.</span><span class="n">delta</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">grid</span><span class="o">.</span><span class="n">delta</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    
+    <span class="c1"># Impose BC</span>
+    <span class="n">auxtemp</span> <span class="o">=</span> <span class="n">auxbc</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">auxtemp</span> <span class="o">=</span> <span class="n">problem</span><span class="o">.</span><span class="n">setaux</span><span class="p">(</span><span class="n">mx</span><span class="p">,</span><span class="n">my</span><span class="p">,</span><span class="n">num_ghost</span><span class="p">,</span><span class="n">mx</span><span class="p">,</span><span class="n">my</span><span class="p">,</span><span class="n">xlower</span><span class="p">,</span><span class="n">ylower</span><span class="p">,</span><span class="n">dx</span><span class="p">,</span><span class="n">dy</span><span class="p">,</span><span class="n">auxtemp</span><span class="p">,</span><span class="n">Rsphere</span><span class="p">)</span>
+    <span class="n">auxbc</span><span class="p">[:,:,</span><span class="o">-</span><span class="n">num_ghost</span><span class="p">:]</span> <span class="o">=</span> <span class="n">auxtemp</span><span class="p">[:,:,</span><span class="o">-</span><span class="n">num_ghost</span><span class="p">:]</span>
+
+
+<span class="k">def</span> <span class="nf">setup</span><span class="p">(</span><span class="n">use_petsc</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">solver_type</span><span class="o">=</span><span class="s1">&#39;classic&#39;</span><span class="p">,</span><span class="n">outdir</span><span class="o">=</span><span class="s1">&#39;./_output&#39;</span><span class="p">,</span> <span class="n">disable_output</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">use_petsc</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;petclaw does not currently support mapped grids (go bug Lisandro who promised to implement them)&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">solver_type</span> <span class="o">!=</span> <span class="s1">&#39;classic&#39;</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Only Classic-style solvers (solver_type=&#39;classic&#39;) are supported on mapped grids&quot;</span><span class="p">)</span>
+
+    <span class="n">solver</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">ClawSolver2D</span><span class="p">(</span><span class="n">riemann</span><span class="o">.</span><span class="n">shallow_sphere_2D</span><span class="p">)</span>
+    <span class="n">solver</span><span class="o">.</span><span class="n">fmod</span> <span class="o">=</span> <span class="n">classic2</span>
+
+    <span class="c1"># Set boundary conditions</span>
+    <span class="c1"># =======================</span>
+    <span class="n">solver</span><span class="o">.</span><span class="n">bc_lower</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">BC</span><span class="o">.</span><span class="n">periodic</span>
+    <span class="n">solver</span><span class="o">.</span><span class="n">bc_upper</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">BC</span><span class="o">.</span><span class="n">periodic</span>
+    <span class="n">solver</span><span class="o">.</span><span class="n">bc_lower</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">BC</span><span class="o">.</span><span class="n">custom</span>  <span class="c1"># Custom BC for sphere</span>
+    <span class="n">solver</span><span class="o">.</span><span class="n">bc_upper</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">BC</span><span class="o">.</span><span class="n">custom</span>  <span class="c1"># Custom BC for sphere</span>
+
+    <span class="n">solver</span><span class="o">.</span><span class="n">user_bc_lower</span> <span class="o">=</span> <span class="n">qbc_lower_y</span>
+    <span class="n">solver</span><span class="o">.</span><span class="n">user_bc_upper</span> <span class="o">=</span> <span class="n">qbc_upper_y</span>
+
+    <span class="c1"># Auxiliary array</span>
+    <span class="n">solver</span><span class="o">.</span><span class="n">aux_bc_lower</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">BC</span><span class="o">.</span><span class="n">periodic</span>
+    <span class="n">solver</span><span class="o">.</span><span class="n">aux_bc_upper</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">BC</span><span class="o">.</span><span class="n">periodic</span>
+    <span class="n">solver</span><span class="o">.</span><span class="n">aux_bc_lower</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">BC</span><span class="o">.</span><span class="n">custom</span>  <span class="c1"># Custom BC for sphere</span>
+    <span class="n">solver</span><span class="o">.</span><span class="n">aux_bc_upper</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">BC</span><span class="o">.</span><span class="n">custom</span>  <span class="c1"># Custom BC for sphere</span>
+
+    <span class="n">solver</span><span class="o">.</span><span class="n">user_aux_bc_lower</span> <span class="o">=</span> <span class="n">auxbc_lower_y</span>
+    <span class="n">solver</span><span class="o">.</span><span class="n">user_aux_bc_upper</span> <span class="o">=</span> <span class="n">auxbc_upper_y</span>
+
+
+    <span class="c1"># Dimensional splitting ?</span>
+    <span class="c1"># =======================</span>
+    <span class="n">solver</span><span class="o">.</span><span class="n">dimensional_split</span> <span class="o">=</span> <span class="mi">0</span>
+ 
+    <span class="c1"># Transverse increment waves and transverse correction waves are computed </span>
+    <span class="c1"># and propagated.</span>
+    <span class="c1"># =======================================================================</span>
+    <span class="n">solver</span><span class="o">.</span><span class="n">transverse_waves</span> <span class="o">=</span> <span class="mi">2</span>
+    
+    <span class="c1"># Use source splitting method</span>
+    <span class="c1"># ===========================</span>
+    <span class="n">solver</span><span class="o">.</span><span class="n">source_split</span> <span class="o">=</span> <span class="mi">2</span>
+
+    <span class="c1"># Set source function</span>
+    <span class="c1"># ===================</span>
+    <span class="n">solver</span><span class="o">.</span><span class="n">step_source</span> <span class="o">=</span> <span class="n">fortran_src_wrapper</span>
+
+    <span class="c1"># Set the limiter for the waves</span>
+    <span class="c1"># =============================</span>
+    <span class="n">solver</span><span class="o">.</span><span class="n">limiters</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">limiters</span><span class="o">.</span><span class="n">tvd</span><span class="o">.</span><span class="n">MC</span>
+
+
+    <span class="c1">#===========================================================================</span>
+    <span class="c1"># Initialize domain and state, then initialize the solution associated to the </span>
+    <span class="c1"># state and finally initialize aux array</span>
+    <span class="c1">#===========================================================================</span>
+    <span class="c1"># Domain:</span>
+    <span class="n">xlower</span> <span class="o">=</span> <span class="o">-</span><span class="mf">3.0</span>
+    <span class="n">xupper</span> <span class="o">=</span> <span class="mf">1.0</span>
+    <span class="n">mx</span> <span class="o">=</span> <span class="mi">40</span>
+
+    <span class="n">ylower</span> <span class="o">=</span> <span class="o">-</span><span class="mf">1.0</span>
+    <span class="n">yupper</span> <span class="o">=</span> <span class="mf">1.0</span>
+    <span class="n">my</span> <span class="o">=</span> <span class="mi">20</span>
+
+    <span class="c1"># Check whether or not the even number of cells are used in in both </span>
+    <span class="c1"># directions. If odd numbers are used a message is print at screen and the </span>
+    <span class="c1"># simulation is interrputed.</span>
+    <span class="k">if</span><span class="p">(</span><span class="n">mx</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">!=</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">my</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">):</span>
+        <span class="n">message</span> <span class="o">=</span> <span class="s1">&#39;Please, use even numbers of cells in both direction. &#39;</span> \
+                  <span class="s1">&#39;Only even numbers allow to impose correctly the boundary &#39;</span> \
+                  <span class="s1">&#39;conditions!&#39;</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+
+
+    <span class="n">x</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">Dimension</span><span class="p">(</span><span class="n">xlower</span><span class="p">,</span><span class="n">xupper</span><span class="p">,</span><span class="n">mx</span><span class="p">,</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;x&#39;</span><span class="p">)</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">Dimension</span><span class="p">(</span><span class="n">ylower</span><span class="p">,</span><span class="n">yupper</span><span class="p">,</span><span class="n">my</span><span class="p">,</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;y&#39;</span><span class="p">)</span>
+    <span class="n">domain</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">Domain</span><span class="p">([</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">])</span>
+    <span class="n">dx</span> <span class="o">=</span> <span class="n">domain</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">delta</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">dy</span> <span class="o">=</span> <span class="n">domain</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">delta</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+    <span class="c1"># Define some parameters used in Fortran common blocks </span>
+    <span class="n">solver</span><span class="o">.</span><span class="n">fmod</span><span class="o">.</span><span class="n">comxyt</span><span class="o">.</span><span class="n">dxcom</span> <span class="o">=</span> <span class="n">dx</span>
+    <span class="n">solver</span><span class="o">.</span><span class="n">fmod</span><span class="o">.</span><span class="n">comxyt</span><span class="o">.</span><span class="n">dycom</span> <span class="o">=</span> <span class="n">dy</span>
+    <span class="n">solver</span><span class="o">.</span><span class="n">fmod</span><span class="o">.</span><span class="n">sw</span><span class="o">.</span><span class="n">g</span> <span class="o">=</span> <span class="mf">11489.57219</span>  
+    <span class="n">solver</span><span class="o">.</span><span class="n">rp</span><span class="o">.</span><span class="n">comxyt</span><span class="o">.</span><span class="n">dxcom</span> <span class="o">=</span> <span class="n">dx</span>
+    <span class="n">solver</span><span class="o">.</span><span class="n">rp</span><span class="o">.</span><span class="n">comxyt</span><span class="o">.</span><span class="n">dycom</span> <span class="o">=</span> <span class="n">dy</span>
+    <span class="n">solver</span><span class="o">.</span><span class="n">rp</span><span class="o">.</span><span class="n">sw</span><span class="o">.</span><span class="n">g</span> <span class="o">=</span> <span class="mf">11489.57219</span>  
+
+    <span class="c1"># Define state object</span>
+    <span class="c1"># ===================</span>
+    <span class="n">num_aux</span> <span class="o">=</span> <span class="mi">16</span> <span class="c1"># Number of auxiliary variables</span>
+    <span class="n">state</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">State</span><span class="p">(</span><span class="n">domain</span><span class="p">,</span><span class="n">solver</span><span class="o">.</span><span class="n">num_eqn</span><span class="p">,</span><span class="n">num_aux</span><span class="p">)</span>
+
+    <span class="c1"># Override default mapc2p function</span>
+    <span class="c1"># ================================</span>
+    <span class="n">state</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">mapc2p</span> <span class="o">=</span> <span class="n">mapc2p_sphere_vectorized</span>
+        
+
+    <span class="c1"># Set auxiliary variables</span>
+    <span class="c1"># =======================</span>
+    
+    <span class="c1"># Get lower left corner coordinates </span>
+    <span class="n">xlower</span><span class="p">,</span><span class="n">ylower</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">lower</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">state</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">lower</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+    <span class="n">num_ghost</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="n">auxtmp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="n">num_aux</span><span class="p">,</span><span class="n">mx</span><span class="o">+</span><span class="mi">2</span><span class="o">*</span><span class="n">num_ghost</span><span class="p">,</span><span class="n">my</span><span class="o">+</span><span class="mi">2</span><span class="o">*</span><span class="n">num_ghost</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="s1">&#39;F&#39;</span><span class="p">)</span>
+    <span class="n">auxtmp</span> <span class="o">=</span> <span class="n">problem</span><span class="o">.</span><span class="n">setaux</span><span class="p">(</span><span class="n">mx</span><span class="p">,</span><span class="n">my</span><span class="p">,</span><span class="n">num_ghost</span><span class="p">,</span><span class="n">mx</span><span class="p">,</span><span class="n">my</span><span class="p">,</span><span class="n">xlower</span><span class="p">,</span><span class="n">ylower</span><span class="p">,</span><span class="n">dx</span><span class="p">,</span><span class="n">dy</span><span class="p">,</span><span class="n">auxtmp</span><span class="p">,</span><span class="n">Rsphere</span><span class="p">)</span>
+    <span class="n">state</span><span class="o">.</span><span class="n">aux</span><span class="p">[:,:,:]</span> <span class="o">=</span> <span class="n">auxtmp</span><span class="p">[:,</span><span class="n">num_ghost</span><span class="p">:</span><span class="o">-</span><span class="n">num_ghost</span><span class="p">,</span><span class="n">num_ghost</span><span class="p">:</span><span class="o">-</span><span class="n">num_ghost</span><span class="p">]</span>
+
+    <span class="c1"># Set index for capa</span>
+    <span class="n">state</span><span class="o">.</span><span class="n">index_capa</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="c1"># Set initial conditions</span>
+    <span class="c1"># ====================== </span>
+    <span class="c1"># 1) Call fortran function</span>
+    <span class="n">qtmp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="n">solver</span><span class="o">.</span><span class="n">num_eqn</span><span class="p">,</span><span class="n">mx</span><span class="o">+</span><span class="mi">2</span><span class="o">*</span><span class="n">num_ghost</span><span class="p">,</span><span class="n">my</span><span class="o">+</span><span class="mi">2</span><span class="o">*</span><span class="n">num_ghost</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="s1">&#39;F&#39;</span><span class="p">)</span>
+    <span class="n">qtmp</span> <span class="o">=</span> <span class="n">problem</span><span class="o">.</span><span class="n">qinit</span><span class="p">(</span><span class="n">mx</span><span class="p">,</span><span class="n">my</span><span class="p">,</span><span class="n">num_ghost</span><span class="p">,</span><span class="n">mx</span><span class="p">,</span><span class="n">my</span><span class="p">,</span><span class="n">xlower</span><span class="p">,</span><span class="n">ylower</span><span class="p">,</span><span class="n">dx</span><span class="p">,</span><span class="n">dy</span><span class="p">,</span><span class="n">qtmp</span><span class="p">,</span><span class="n">auxtmp</span><span class="p">,</span><span class="n">Rsphere</span><span class="p">)</span>
+    <span class="n">state</span><span class="o">.</span><span class="n">q</span><span class="p">[:,:,:]</span> <span class="o">=</span> <span class="n">qtmp</span><span class="p">[:,</span><span class="n">num_ghost</span><span class="p">:</span><span class="o">-</span><span class="n">num_ghost</span><span class="p">,</span><span class="n">num_ghost</span><span class="p">:</span><span class="o">-</span><span class="n">num_ghost</span><span class="p">]</span>
+
+    <span class="c1"># 2) call python function define above</span>
+    <span class="c1">#qinit(state,mx,my)</span>
+
+
+    <span class="c1">#===========================================================================</span>
+    <span class="c1"># Set up controller and controller parameters</span>
+    <span class="c1">#===========================================================================</span>
+    <span class="n">claw</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">Controller</span><span class="p">()</span>
+    <span class="n">claw</span><span class="o">.</span><span class="n">keep_copy</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="k">if</span> <span class="n">disable_output</span><span class="p">:</span>
+        <span class="n">claw</span><span class="o">.</span><span class="n">output_format</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">claw</span><span class="o">.</span><span class="n">output_style</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">claw</span><span class="o">.</span><span class="n">num_output_times</span> <span class="o">=</span> <span class="mi">10</span>
+    <span class="n">claw</span><span class="o">.</span><span class="n">tfinal</span> <span class="o">=</span> <span class="mi">10</span>
+    <span class="n">claw</span><span class="o">.</span><span class="n">solution</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">Solution</span><span class="p">(</span><span class="n">state</span><span class="p">,</span><span class="n">domain</span><span class="p">)</span>
+    <span class="n">claw</span><span class="o">.</span><span class="n">solver</span> <span class="o">=</span> <span class="n">solver</span>
+    <span class="n">claw</span><span class="o">.</span><span class="n">outdir</span> <span class="o">=</span> <span class="n">outdir</span>
+
+    <span class="k">return</span> <span class="n">claw</span>
+
+        
+<span class="k">if</span> <span class="vm">__name__</span><span class="o">==</span><span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">clawpack.pyclaw.util</span> <span class="k">import</span> <span class="n">run_app_from_main</span>
+    <span class="n">output</span> <span class="o">=</span> <span class="n">run_app_from_main</span><span class="p">(</span><span class="n">setup</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">plot_on_sphere</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Plots the solution of the shallow water on a sphere in the </span>
+<span class="sd">    rectangular computational domain. The user can specify the name of the solution</span>
+<span class="sd">    file and its path. If these are not given, the script checks </span>
+<span class="sd">    whether the solution fort.q0000 in ./_output exists and plots it. If it it does</span>
+<span class="sd">    not exist an error message is printed at screen.</span>
+<span class="sd">    The file must be ascii and clawpack format.</span>
+
+<span class="sd">    To use this, you must first install the basemap toolkit; see</span>
+<span class="sd">    http://matplotlib.org/basemap/users/installing.html.</span>
+
+<span class="sd">    This function also shows how to manually read and plot the solution stored in</span>
+<span class="sd">    an ascii file written by pyclaw, without using the pyclaw.io.ascii routines.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+
+    <span class="c1"># Nondimensionalized radius of the earth</span>
+    <span class="n">Rsphere</span> <span class="o">=</span> <span class="mf">1.0</span>
+
+    <span class="k">def</span> <span class="nf">contourLineSphere</span><span class="p">(</span><span class="n">fileName</span><span class="o">=</span><span class="s1">&#39;fort.q0000&#39;</span><span class="p">,</span><span class="n">path</span><span class="o">=</span><span class="s1">&#39;./_output&#39;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        This function plots the contour lines on a spherical surface for the shallow</span>
+<span class="sd">        water equations solved on a sphere.</span>
+<span class="sd">        &quot;&quot;&quot;</span>  
+     
+        <span class="c1"># Open file</span>
+        <span class="c1"># =========</span>
+        
+        <span class="c1"># Concatenate path and file name</span>
+        <span class="n">pathFileName</span> <span class="o">=</span> <span class="n">path</span> <span class="o">+</span> <span class="s2">&quot;/&quot;</span> <span class="o">+</span> <span class="n">fileName</span>
+
+        <span class="n">f</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">pathFileName</span><span class="p">,</span><span class="s2">&quot;r&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Read file header</span>
+        <span class="c1"># ================</span>
+        <span class="c1"># The information contained in the first two lines are not used.</span>
+        <span class="n">unused</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span>  <span class="c1"># patch_number</span>
+        <span class="n">unused</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span> <span class="c1"># AMR_level</span>
+
+        <span class="c1"># Read mx, my, xlow, ylow, dx and dy</span>
+        <span class="n">line</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span>
+        <span class="n">sline</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+        <span class="n">mx</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">sline</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+        <span class="n">line</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span>
+        <span class="n">sline</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+        <span class="n">my</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">sline</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+        <span class="n">line</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span>
+        <span class="n">sline</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+        <span class="n">xlower</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">sline</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+        <span class="n">line</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span>
+        <span class="n">sline</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+        <span class="n">ylower</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">sline</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+        <span class="n">line</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span>
+        <span class="n">sline</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+        <span class="n">dx</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">sline</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+        <span class="n">line</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span>
+        <span class="n">sline</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+        <span class="n">dy</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">sline</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+
+        <span class="c1"># Patch:</span>
+        <span class="c1"># ====</span>
+        <span class="n">xupper</span> <span class="o">=</span> <span class="n">xlower</span> <span class="o">+</span> <span class="n">mx</span> <span class="o">*</span> <span class="n">dx</span>
+        <span class="n">yupper</span> <span class="o">=</span> <span class="n">ylower</span> <span class="o">+</span> <span class="n">my</span> <span class="o">*</span> <span class="n">dy</span>
+
+        <span class="n">x</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">Dimension</span><span class="p">(</span><span class="n">xlower</span><span class="p">,</span><span class="n">xupper</span><span class="p">,</span><span class="n">mx</span><span class="p">,</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;x&#39;</span><span class="p">)</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">Dimension</span><span class="p">(</span><span class="n">ylower</span><span class="p">,</span><span class="n">yupper</span><span class="p">,</span><span class="n">my</span><span class="p">,</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;y&#39;</span><span class="p">)</span>
+        <span class="n">patch</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">Patch</span><span class="p">([</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">])</span>
+
+
+        <span class="c1"># Override default mapc2p function</span>
+        <span class="c1"># ================================</span>
+        <span class="n">patch</span><span class="o">.</span><span class="n">mapc2p</span> <span class="o">=</span> <span class="n">mapc2p_sphere_vectorized</span>
+
+
+        <span class="c1"># Compute the physical coordinates of each cell&#39;s centers</span>
+        <span class="c1"># ======================================================</span>
+        <span class="n">patch</span><span class="o">.</span><span class="n">compute_p_centers</span><span class="p">(</span><span class="n">recompute</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">xp</span> <span class="o">=</span> <span class="n">patch</span><span class="o">.</span><span class="n">_p_centers</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">yp</span> <span class="o">=</span> <span class="n">patch</span><span class="o">.</span><span class="n">_p_centers</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">zp</span> <span class="o">=</span> <span class="n">patch</span><span class="o">.</span><span class="n">_p_centers</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+
+        <span class="n">patch</span><span class="o">.</span><span class="n">compute_c_centers</span><span class="p">(</span><span class="n">recompute</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">xc</span> <span class="o">=</span> <span class="n">patch</span><span class="o">.</span><span class="n">_c_centers</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">yc</span> <span class="o">=</span> <span class="n">patch</span><span class="o">.</span><span class="n">_c_centers</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        
+        <span class="c1"># Define arrays of conserved variables</span>
+        <span class="n">h</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">mx</span><span class="p">,</span><span class="n">my</span><span class="p">))</span>
+        <span class="n">hu</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">mx</span><span class="p">,</span><span class="n">my</span><span class="p">))</span>
+        <span class="n">hv</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">mx</span><span class="p">,</span><span class="n">my</span><span class="p">))</span>
+        <span class="n">hw</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">mx</span><span class="p">,</span><span class="n">my</span><span class="p">))</span>
+
+        <span class="c1"># Read solution</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">my</span><span class="p">):</span>
+            <span class="n">tmp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">fromfile</span><span class="p">(</span><span class="n">f</span><span class="p">,</span><span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;float&#39;</span><span class="p">,</span><span class="n">sep</span><span class="o">=</span><span class="s2">&quot; &quot;</span><span class="p">,</span><span class="n">count</span><span class="o">=</span><span class="mi">4</span><span class="o">*</span><span class="n">mx</span><span class="p">)</span>
+            <span class="n">tmp</span> <span class="o">=</span> <span class="n">tmp</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="n">mx</span><span class="p">,</span><span class="mi">4</span><span class="p">))</span>
+            <span class="n">h</span><span class="p">[:,</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">tmp</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">hu</span><span class="p">[:,</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">tmp</span><span class="p">[:,</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">hv</span><span class="p">[:,</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">tmp</span><span class="p">[:,</span><span class="mi">2</span><span class="p">]</span>
+            <span class="n">hw</span><span class="p">[:,</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">tmp</span><span class="p">[:,</span><span class="mi">3</span><span class="p">]</span>
+
+        
+        <span class="c1"># Plot solution in the computational domain</span>
+        <span class="c1"># =========================================</span>
+
+        <span class="c1"># Fluid height</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+        <span class="n">CS</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">contour</span><span class="p">(</span><span class="n">xc</span><span class="p">,</span><span class="n">yc</span><span class="p">,</span><span class="n">h</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Fluid height (computational domain)&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;xc&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;yc&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">clabel</span><span class="p">(</span><span class="n">CS</span><span class="p">,</span> <span class="n">inline</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+
+</pre></div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<p><a href="http://clawpack.org/">
+    <img class="logo" src= "../../_static/clawlogo.jpg" alt="Logo"/>
+</a>
+<h2>Version 5.4.0</h2>
+</p>
+  <h3><a href="../../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">2-dimensional shallow water on the sphere</a><ul>
+<li><a class="reference internal" href="#shallow-water-flow-on-the-sphere">Shallow water flow on the sphere</a></li>
+<li><a class="reference internal" href="#output">Output:</a></li>
+<li><a class="reference internal" href="#source">Source:</a></li>
+</ul>
+</li>
+</ul>
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../../_sources/pyclaw/gallery/Rossby_wave.rst"
+           rel="nofollow">Show Source</a></li>
+    <li><a href="https://github.com/clawpack/doc/blob/master/doc/pyclaw/gallery/Rossby_wave.rst"
+           rel="nofollow">Show on GitHub</a></li>
+    <li><a href="https://github.com/clawpack/doc/edit/master/doc/pyclaw/gallery/Rossby_wave.rst"
+           rel="nofollow">Edit on GitHub</a></li>
+  </ul>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+  <div class="footer">
+    &copy; Copyright 2017, The Clawpack Development Team.
+    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
+  </div>
+  <script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-44811544-1', 'auto');
+  ga('send', 'pageview');
+
+  </script>
+  
+  </body>
+</html>

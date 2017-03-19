@@ -1,0 +1,202 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Pyclaw Controller Class &#8212; Clawpack 5.2.0 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/flasky.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/base.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/layout.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/banner.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '5.2.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="shortcut icon" href="../_static/clawicon.ico"/>
+    <link rel="author" title="About these documents" href="../about.html" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Pyclaw Limiters" href="evolve/limiters.html" />
+    <link rel="prev" title="Building the PyClaw gallery locally" href="gallery/how-to-build.html" /> 
+  </head>
+  <body role="document">
+<div id="main-wrapper" class="sphinx">
+<div id="header-wrapper">
+  <section id="header">
+    <!-- <h1><a href="http://clawpack.org/">Clawpack</a></h1> -->
+    <h1><a href="http://clawpack.org/">Clawpack-5</a></h1> 
+    <nav>
+      <ul>
+        <li>
+          <a href="../toc_condensed.html">Docs</a>
+        </li>
+        <li>
+          <a href="../installing.html">Install</a>
+        </li>
+        <li>
+          <a class="" href="../galleries.html">Gallery</a>
+        </li>
+        <li>
+          <a class="active" href="https://groups.google.com/forum/#!forum/claw-users">Support</a>
+        </li>
+        <li>
+          <a class="active" href="http://github.com/organizations/clawpack">Source</a>
+        </li>
+        <li>
+          <a class="" href="../developers.html">Develop</a>
+        </li>
+      </ul>
+    </nav>
+  </section>
+<div class="decoration"></div>
+</div>
+
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="evolve/limiters.html" title="Pyclaw Limiters"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="gallery/how-to-build.html" title="Building the PyClaw gallery locally"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../contents.html">Clawpack 5.2.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">Pyclaw</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="pyclaw-controller-class">
+<span id="pyclaw-controller"></span><h1>Pyclaw Controller Class<a class="headerlink" href="#pyclaw-controller-class" title="Permalink to this headline">¶</a></h1>
+<p>The pyclaw controller object is a convenience class for running simulations
+based on the classic clawpack formats and output specifications.  It allows
+for a variety of output time specifications, output styles and other ways to
+keep a simulation organized.</p>
+<p>The main way to use a Controller object then is to provide it with an
+appropriate <code class="xref py py-class docutils literal"><span class="pre">Solver</span></code> and initial
+<code class="xref py py-class docutils literal"><span class="pre">Solution</span></code> object.  Then specify what kind of output
+you would like different than the defaults (see
+<code class="xref py py-class docutils literal"><span class="pre">Controller</span></code> for
+details on what those are).  Then simply call
+<code class="xref py py-meth docutils literal"><span class="pre">run()</span></code> in order to run the desired
+simulation.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">pyclaw.controller</span> <span class="k">as</span> <span class="nn">controller</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">claw</span> <span class="o">=</span> <span class="n">controller</span><span class="o">.</span><span class="n">Controller</span><span class="p">()</span>            <span class="c1"># Instantiate a new controller</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">claw</span><span class="o">.</span><span class="n">solver</span> <span class="o">=</span> <span class="n">my_solver</span>                   <span class="c1"># Assign a solver              </span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">claw</span><span class="o">.</span><span class="n">solution</span> <span class="o">=</span> <span class="n">my_initial_solution</span>       <span class="c1"># Assign an initial condition  </span>
+</pre></div>
+</div>
+<p>Here we would set a variety of run parameters such as <code class="docutils literal"><span class="pre">tfinal</span></code>,
+<code class="docutils literal"><span class="pre">keep_copy</span></code> if we wanted to plot the solutions immediately, or
+<code class="docutils literal"><span class="pre">output_format</span></code> to specify a format other than <code class="docutils literal"><span class="pre">ascii</span></code> or no output files
+if we are going to use <code class="docutils literal"><span class="pre">keep_copy</span> <span class="pre">=</span> <span class="pre">True</span></code>.  After we are all set up we just
+need to call the controller&#8217;s <code class="xref py py-meth docutils literal"><span class="pre">run()</span></code> method and off we go.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">claw</span><span class="o">.</span><span class="n">run</span><span class="p">()</span> 
+</pre></div>
+</div>
+<p>Please see the <a class="reference internal" href="tutorial.html#pyclaw-tutorial"><span class="std std-ref">PyClaw tutorial: Solve the acoustics equations</span></a> for a detailed example of how this would
+work in its entirety.</p>
+<div class="section" id="pyclaw-controller-controller">
+<h2><code class="xref py py-class docutils literal"><span class="pre">pyclaw.controller.Controller</span></code><a class="headerlink" href="#pyclaw-controller-controller" title="Permalink to this headline">¶</a></h2>
+<div class="system-message">
+<p class="system-message-title">System Message: WARNING/2 (<tt class="docutils">/var/folders/_s/dx0xgftn3_x04rdx0_w5nq7w0000gn/T/tmpLKPdOPsphinxcontrib_versioning/f92b77d995d23a1b2f064c2377bf26278fab6ef5/doc/pyclaw/controller.rst</tt>, line 46)</p>
+autodoc: failed to import class u&#8217;Controller&#8217; from module u&#8217;pyclaw.controller&#8217;; the following exception was raised:
+Traceback (most recent call last):
+  File &#8220;/usr/local/lib/python2.7/site-packages/sphinx/ext/autodoc.py&#8221;, line 551, in import_object
+    __import__(self.modname)
+ImportError: No module named pyclaw.controller
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<p><a href="http://clawpack.org/">
+    <img class="logo" src= "_static/clawlogo.jpg" alt="Logo"/>
+</a>
+<h2>Version 5.2.0</h2>
+</p>
+  <h3><a href="../contents.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Pyclaw Controller Class</a><ul>
+<li><a class="reference internal" href="#pyclaw-controller-controller"><code class="docutils literal"><span class="pre">pyclaw.controller.Controller</span></code></a></li>
+</ul>
+</li>
+</ul>
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../contents.html">Documentation overview</a><ul>
+  <li><a href="index.html">Pyclaw</a><ul>
+      <li>Previous: <a href="gallery/how-to-build.html" title="previous chapter">Building the PyClaw gallery locally</a></li>
+      <li>Next: <a href="evolve/limiters.html" title="next chapter">Pyclaw Limiters</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/pyclaw/controller.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+<h3>Versions</h3>
+<ul>
+    <li><a href="../../v5.3.1/pyclaw/controller.html">v5.3.1</a></li>
+    <li><a href="../../v5.3.0/pyclaw/controller.html">v5.3.0</a></li>
+    <li><a href="../../v5.2.1/pyclaw/controller.html">v5.2.1</a></li>
+    <li><a href="controller.html">v5.2.0</a></li>
+    <li><a href="../../v5.1.0/pyclaw/controller.html">v5.1.0</a></li>
+    <li><a href="../../sphinx-versioning/pyclaw/controller.html">sphinx-versioning</a></li>
+    <li><a href="../../master/pyclaw/controller.html">master</a></li>
+</ul>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+  <div class="footer">
+    &copy; Copyright 2013, The Clawpack Development Team.
+    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
+  </div>
+  
+  </body>
+</html>
