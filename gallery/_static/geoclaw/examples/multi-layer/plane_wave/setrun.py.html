@@ -8,27 +8,27 @@
 
 
           <head>
-           <link rel="icon" href="http://clawpack.github.io//clawicon.ico" />
+           <link rel="icon" href="http://www.clawpack.org//clawicon.ico" />
           </head> 
            <BODY TEXT="#000000" BGCOLOR="#FFFFFF" LINK="#0000FF" 
                  VLINK="#5500DD" ALINK="#FF0000">
            <font FACE="HELVETICA,ARIAL">
            
 <!-- Created from the file /Users/rjl/git/clawpack/geoclaw/examples/multi-layer/plane_wave/setrun.py -->
-<!-- Date: Wed Dec 28 2016 at 23:12:17 -->
+<!-- Date: Sun Jun 25 2017 at 11:04:47 -->
 
 <table bgcolor="#FFEE99"> <tr> <td>
 &nbsp;<font size=6> setrun.py.html </font> </td>
 
-            <td><a href="http://clawpack.github.io/doc/index.html"><img
-            src="http://clawpack.github.io//clawlogo.jpg"
+            <td><a href="http://www.clawpack.org/index.html"><img
+            src="http://www.clawpack.org//clawlogo.jpg"
             width=100 alt="CLAWPACK"></a>&nbsp;&nbsp; </td> </tr> <tr> <td>
 &nbsp;Source file: &nbsp;&nbsp;<a href="setrun.py">setrun.py </a>
 </td></tr><tr><td>
 &nbsp;Directory:  &nbsp; /Users/rjl/git/clawpack/geoclaw/examples/multi-layer/plane_wave 
 </td></tr><tr><td>
-&nbsp;Converted:  &nbsp; Wed Dec 28 2016 at 23:12:17 
-&nbsp; using <a href="http://clawpack.github.io//doc/application_documentation.html#clawcode2html">clawcode2html</a>
+&nbsp;Converted:  &nbsp; Sun Jun 25 2017 at 11:04:47 
+&nbsp; using <a href="http://www.clawpack.org//doc/application_documentation.html#clawcode2html">clawcode2html</a>
 </td></tr><tr><td>
 <font color="#BB3300"> &nbsp;This documentation file will 
 not reflect any later changes in the source file. </font>
@@ -465,6 +465,7 @@ def setgeo(rundata):
     geo_data.gravity = 9.81
     geo_data.coordinate_system = 1
     geo_data.earth_radius = 6367.5e3
+    geo_data.rho = [922.5, 1025.0]
 
     <font color="blue"># == Forcing Options</font>
     geo_data.coriolis_forcing = False
@@ -488,12 +489,11 @@ def setgeo(rundata):
     <font color="blue"># for topography, append lines of the form</font>
     <font color="blue">#    [topotype, minlevel, maxlevel, t1, t2, fname]</font>
     topo_data.topofiles.append([2, 1, 5, 0.0, 1e10, 'topo.tt2'])
-    
+
     <font color="blue"># == setdtopo.data values ==</font>
     dtopo_data = rundata.dtopo_data
-    <font color="blue"># for moving topography, append lines of the form :   (<= 1 allowed for now!)</font>
+    <font color="blue"># for moving topography, append lines of the form : (<= 1 allowed for now!)</font>
     <font color="blue">#   [topotype, minlevel,maxlevel,fname]</font>
-
 
     return rundata
     <font color="blue"># end of function setgeo</font>
@@ -506,15 +506,12 @@ def set_multilayer(rundata):
 
     <font color="blue"># Physics parameters</font>
     data.num_layers = 2
-    data.rho = [0.9,1.0]
-    data.eta = [0.0,-0.6]
-    
+    data.eta = [0.0, -0.6]
+
     <font color="blue"># Algorithm parameters</font>
     data.eigen_method = 2
     data.inundation_method = 2
     data.richardson_tolerance = 0.95
-    <font color="blue"># data.wave_tolerance = [0.1,0.1]</font>
-    <font color="blue"># data.dry_limit = True</font>
 
     rundata.replace_data('qinit_data', QinitMultilayerData())
     rundata.qinit_data.qinit_type = 6
@@ -522,27 +519,26 @@ def set_multilayer(rundata):
     rundata.qinit_data.angle = 0.0
     rundata.qinit_data.sigma = 0.02
     rundata.qinit_data.wave_family = 4
-    rundata.qinit_data.init_location = [-0.1,0.0]
+    rundata.qinit_data.init_location = [-0.1, 0.0]
 
     return rundata
 
 
 def bathy_step(x, y, location=0.15, angle=0.0, left=-1.0, right=-0.2):
-    x_c,y_c = transform_p2c(x, y, location, 0.0, angle)
-    return ((x_c <= 0.0) * left 
-          + (x_c >  0.0) * right)
+    x_c, y_c = transform_p2c(x, y, location, 0.0, angle)
+    return ((x_c <= 0.0) * left +
+            (x_c > 0.0) * right)
 
 
 def write_topo_file(run_data, out_file, **kwargs):
-
     <font color="blue"># Make topography</font>
     topo_func = lambda x, y: bathy_step(x, y, **kwargs)
     topo = tt.Topography(topo_func=topo_func)
-    topo.x = numpy.linspace(run_data.clawdata.lower[0], 
-                            run_data.clawdata.upper[0], 
+    topo.x = numpy.linspace(run_data.clawdata.lower[0],
+                            run_data.clawdata.upper[0],
                             run_data.clawdata.num_cells[0] + 8)
-    topo.y = numpy.linspace(run_data.clawdata.lower[1], 
-                            run_data.clawdata.upper[1], 
+    topo.y = numpy.linspace(run_data.clawdata.lower[1],
+                            run_data.clawdata.upper[1],
                             run_data.clawdata.num_cells[1] + 8)
     topo.write(out_file)
 
@@ -556,7 +552,7 @@ def write_topo_file(run_data, out_file, **kwargs):
             angle = kwargs['angle']
         else:
             angle = 0.0
-        bathy_geometry_file.write("%s\n%s" % (location, angle) )
+        bathy_geometry_file.write("%s\n%s" % (location, angle))
 
 
 if __name__ == '__main__':

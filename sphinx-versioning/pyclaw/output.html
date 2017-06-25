@@ -50,7 +50,7 @@
           <a href="../installing.html">Install</a>
         </li>
         <li>
-          <a class="" href="../galleries.html">Gallery</a>
+          <a class="" href="../../../../gallery/_build/html/index.html">Gallery</a>
         </li>
         <li>
           <a class="" href="../community.html">Community</a>
@@ -96,21 +96,85 @@
   <div class="contents topic" id="contents">
 <p class="topic-title first">Contents</p>
 <ul class="simple">
-<li><a class="reference internal" href="#pyclaw-output" id="id1">PyClaw output</a><ul>
-<li><a class="reference internal" href="#outputting-derived-quantities" id="id2">Outputting derived quantities</a></li>
-<li><a class="reference internal" href="#outputting-functionals" id="id3">Outputting functionals</a></li>
-<li><a class="reference internal" href="#using-gauges" id="id4">Using gauges</a></li>
-<li><a class="reference internal" href="#logging" id="id5">Logging</a></li>
+<li><a class="reference internal" href="#pyclaw-output" id="id3">PyClaw output</a><ul>
+<li><a class="reference internal" href="#output-frames" id="id4">Output frames</a></li>
+<li><a class="reference internal" href="#when-output-is-saved-written" id="id5">When output is saved/written</a></li>
+<li><a class="reference internal" href="#where-and-how-output-is-written" id="id6">Where and how output is written</a></li>
+<li><a class="reference internal" href="#what-output-is-written" id="id7">What output is written</a></li>
+<li><a class="reference internal" href="#outputting-derived-quantities" id="id8">Outputting derived quantities</a></li>
+<li><a class="reference internal" href="#outputting-functionals" id="id9">Outputting functionals</a></li>
+<li><a class="reference internal" href="#using-gauges" id="id10">Using gauges</a></li>
 </ul>
 </li>
+<li><a class="reference internal" href="#logging" id="id11">Logging</a></li>
 </ul>
 </div>
 <div class="section" id="pyclaw-output">
-<span id="output"></span><h1><a class="toc-backref" href="#id1">PyClaw output</a><a class="headerlink" href="#pyclaw-output" title="Permalink to this headline">¶</a></h1>
+<span id="output"></span><h1><a class="toc-backref" href="#id3">PyClaw output</a><a class="headerlink" href="#pyclaw-output" title="Permalink to this headline">¶</a></h1>
+<p>In the documentation below, it is assumed that <cite>claw</cite> refers to a
+<cite>pyclaw.controller.Controller</cite> object, as is customary in the example
+scripts.</p>
+<div class="section" id="output-frames">
+<h2><a class="toc-backref" href="#id4">Output frames</a><a class="headerlink" href="#output-frames" title="Permalink to this headline">¶</a></h2>
+<p>The result of a PyClaw simulation is a set of snapshots, or <em>frames</em>
+of the solution.  By default these are written to disk in a subdirectory
+named <cite>_outdir</cite>.  Writing of output files can be turned off by setting
+<cite>claw.output_format = None</cite>.</p>
+<p>If <cite>claw.keep_copy = True</cite>, then output frames are also saved in memory
+in the list <cite>claw.frames</cite>.  Each entry is a <cite>pyclaw.solution.Solution</cite>
+object.  Thus the initial condition is available from <cite>claw.frames[0].q</cite>
+and the final solution is in <cite>claw.frames[-1].q</cite>.
+This can be convenient for working with
+smaller simulations without reading from and writing to disk.</p>
+</div>
+<div class="section" id="when-output-is-saved-written">
+<h2><a class="toc-backref" href="#id5">When output is saved/written</a><a class="headerlink" href="#when-output-is-saved-written" title="Permalink to this headline">¶</a></h2>
+<p>PyClaw supports the same basic options as other Clawpack packages for
+controlling output.  These are selected by setting <cite>claw.output_style</cite>:</p>
+<blockquote>
+<div><ul class="simple">
+<li><cite>claw.output_style = 1</cite>: Evenly spaced output, between the initial
+and final simulation times.  The number of outputs is the value of
+<cite>claw.num_output_times</cite>.</li>
+<li><cite>claw.output_style = 2</cite>: Manual specification of output times.
+Output will be written at the times specified in
+<cite>claw.output_times</cite>, which should be a list.</li>
+<li>Write output after a certain number of steps have been taken;
+the number is specified in <cite>claw.nstepout</cite>.  For instance,
+if <cite>claw.nstepout = 3</cite>, then output is written after every 3
+steps.  This is most often useful for debugging.</li>
+</ul>
+</div></blockquote>
+</div>
+<div class="section" id="where-and-how-output-is-written">
+<h2><a class="toc-backref" href="#id6">Where and how output is written</a><a class="headerlink" href="#where-and-how-output-is-written" title="Permalink to this headline">¶</a></h2>
+<p>The following options control the kind and location of output
+files:</p>
+<blockquote>
+<div><ul class="simple">
+<li><cite>claw.output_format</cite>: A string specifying the format in which output data
+is written.  The default is <cite>ascii</cite>.  Other valid options are <cite>binary</cite>,
+<cite>hdf5</cite>, and <cite>petsc</cite>.  These formats can be useful for obtaining
+smaller output files or for loading output data into other software.
+Finally, this can be set to <cite>None</cite> to avoid writing any output to disk.</li>
+<li><cite>claw.outdir</cite>: Subdirectory in which to place output files.  Defaults
+to <cite>_output</cite>.</li>
+<li><cite>claw.output_file_prefix</cite>: Allows manual specification of the prefix
+for output files.</li>
+<li><cite>claw.overwrite</cite>: if True, allow existing files in the output
+directory to be overwritten by the current run.</li>
+</ul>
+</div></blockquote>
+</div>
+<div class="section" id="what-output-is-written">
+<h2><a class="toc-backref" href="#id7">What output is written</a><a class="headerlink" href="#what-output-is-written" title="Permalink to this headline">¶</a></h2>
 <p>PyClaw supports options to output more
 than just the solution <span class="math">\(q\)</span>.  It can provide:</p>
 <blockquote>
 <div><ul class="simple">
+<li>Snapshots of the values in the <cite>aux</cite> array at the initial time
+and/or output times.  This is turned on by setting
+<cite>claw.write_aux_int = True</cite> or <cite>claw.write_aux_always = True</cite>.</li>
 <li>Output of derived quantities computed from <span class="math">\(q\)</span>; for instance,
 pressure (not a conserved quantity) could be computed from density
 and energy.</li>
@@ -125,8 +189,9 @@ to compute them at run-time for large parallel runs.</p>
 <p>Gauge output is written at every timestep.  In order to get this data without a
 gauge, one would otherwise have to write the full solution out at every
 timestep, which might be very slow.</p>
+</div>
 <div class="section" id="outputting-derived-quantities">
-<h2><a class="toc-backref" href="#id2">Outputting derived quantities</a><a class="headerlink" href="#outputting-derived-quantities" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id8">Outputting derived quantities</a><a class="headerlink" href="#outputting-derived-quantities" title="Permalink to this headline">¶</a></h2>
 <p>It is sometimes desirable to output quantities other than those
 in the vector q.  To do so, just add a function <cite>p_function</cite> to
 the controller that accepts the state and sets the derived quantities
@@ -138,9 +203,10 @@ in state.p</p>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">claw</span><span class="o">.</span><span class="n">p_function</span> <span class="o">=</span> <span class="n">stress</span>
 </pre></div>
 </div>
+<p>For a working example, see <a class="reference external" href="https://github.com/clawpack/pyclaw/blob/master/examples/psystem_2d/psystem_2d.py">the PyClaw P-system example</a>.</p>
 </div>
 <div class="section" id="outputting-functionals">
-<h2><a class="toc-backref" href="#id3">Outputting functionals</a><a class="headerlink" href="#outputting-functionals" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id9">Outputting functionals</a><a class="headerlink" href="#outputting-functionals" title="Permalink to this headline">¶</a></h2>
 <p>In PyClaw a functional is a scalar quantity computed from <span class="math">\(q\)</span> that is written
 to file at each output time.  For now, only functionals of the form</p>
 <div class="math">
@@ -149,17 +215,28 @@ to file at each output time.  For now, only functionals of the form</p>
 \end{equation}\]</div>
 <p>are supported.  In other words, the functional must be the absolute
 integral of some function of <span class="math">\(q\)</span>.  To enable writing functionals, simply
-set state.mf to the number of functionals and point the controller to a
-function that computes <span class="math">\(f(q)\)</span></p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">compute_f</span><span class="p">(</span><span class="n">state</span><span class="p">):</span>
-<span class="gp">... </span>   <span class="n">state</span><span class="o">.</span><span class="n">F</span><span class="p">[</span><span class="mi">0</span><span class="p">,:,:]</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">q</span><span class="p">[</span><span class="mi">0</span><span class="p">,:,:]</span><span class="o">*</span><span class="n">state</span><span class="o">.</span><span class="n">q</span><span class="p">[</span><span class="mi">1</span><span class="p">,:,:]</span>
-
-<span class="gp">&gt;&gt;&gt; </span><span class="n">state</span><span class="o">.</span><span class="n">mf</span> <span class="o">=</span> <span class="mi">1</span>
+set <cite>state.mF</cite> to the number of functionals:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">state</span><span class="o">.</span><span class="n">mf</span> <span class="o">=</span> <span class="mi">1</span>
 </pre></div>
 </div>
+<p>and point the controller to a function that computes <span class="math">\(f(q)\)</span> elementwise
+and stores it in the array
+<cite>state.F</cite>.  For instance, if your first two conserved quantities are density
+and momentum, you might write:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">energy</span><span class="p">(</span><span class="n">state</span><span class="p">):</span>
+<span class="gp">... </span>   <span class="n">state</span><span class="o">.</span><span class="n">F</span><span class="p">[</span><span class="mi">0</span><span class="p">,:,:]</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">state</span><span class="o">.</span><span class="n">q</span><span class="p">[</span><span class="mi">0</span><span class="p">,:,:]</span><span class="o">*</span><span class="n">state</span><span class="o">.</span><span class="n">q</span><span class="p">[</span><span class="mi">1</span><span class="p">,:,:]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">claw</span><span class="o">.</span><span class="n">compute_F</span> <span class="o">=</span> <span class="n">energy</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">claw</span><span class="o">.</span><span class="n">F_file_name</span> <span class="o">=</span> <span class="s1">&#39;total_energy&#39;</span>
+</pre></div>
+</div>
+<p>The total energy (summed over the grid) would then be written to
+<cite>_output/total_energy.txt</cite>.  The output file has two columns; the
+first is time and the second is the functional value.  Output is
+written at the same times that <cite>q</cite> is written to file.</p>
+<p>For a working example, see <a class="reference external" href="https://github.com/clawpack/pyclaw/blob/master/examples/psystem_2d/psystem_2d.py">the PyClaw P-system example</a>.</p>
 </div>
 <div class="section" id="using-gauges">
-<h2><a class="toc-backref" href="#id4">Using gauges</a><a class="headerlink" href="#using-gauges" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id10">Using gauges</a><a class="headerlink" href="#using-gauges" title="Permalink to this headline">¶</a></h2>
 <p>A gauge in PyClaw is a single grid location for which output is written at
 every time step.  This can be very useful in some applications, like comparing
 with data from tidal gauges (from whence the name is derived) in tsunami modeling.
@@ -178,9 +255,11 @@ To write some other quantity, simply provide a function
 <span class="gp">&gt;&gt;&gt; </span><span class="n">solver</span><span class="o">.</span><span class="n">compute_gauge_values</span> <span class="o">=</span> <span class="n">f</span>
 </pre></div>
 </div>
+<p>For a working example, see <a class="reference external" href="https://github.com/clawpack/pyclaw/blob/master/examples/psystem_2d/psystem_2d.py">the PyClaw P-system example</a>.</p>
+</div>
 </div>
 <div class="section" id="logging">
-<h2><a class="toc-backref" href="#id5">Logging</a><a class="headerlink" href="#logging" title="Permalink to this headline">¶</a></h2>
+<h1><a class="toc-backref" href="#id11">Logging</a><a class="headerlink" href="#logging" title="Permalink to this headline">¶</a></h1>
 <p>By default, PyClaw prints a message to the screen each time it writes
 an output file.  This message is also writing to the file <cite>pyclaw.log</cite>
 in the working directory.  There are additional warning or error messages
@@ -237,7 +316,6 @@ change the level of the root logger:</p>
 <p>Again since we don&#8217;t use <cite>CRITICAL</cite> logger messages in PyClaw, this has the
 effect of turning the loggers off.</p>
 </div>
-</div>
 
 
           </div>
@@ -246,19 +324,23 @@ effect of turning the loggers off.</p>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
 <p><a href="http://clawpack.org/">
-    <img class="logo" src= "_static/clawlogo.jpg" alt="Logo"/>
+    <img class="logo" src= "../_static/clawlogo.jpg" alt="Logo"/>
 </a>
 <h2>Version 5.4.0</h2>
 </p>
   <h3><a href="../contents.html">Table Of Contents</a></h3>
   <ul>
 <li><a class="reference internal" href="#">PyClaw output</a><ul>
+<li><a class="reference internal" href="#output-frames">Output frames</a></li>
+<li><a class="reference internal" href="#when-output-is-saved-written">When output is saved/written</a></li>
+<li><a class="reference internal" href="#where-and-how-output-is-written">Where and how output is written</a></li>
+<li><a class="reference internal" href="#what-output-is-written">What output is written</a></li>
 <li><a class="reference internal" href="#outputting-derived-quantities">Outputting derived quantities</a></li>
 <li><a class="reference internal" href="#outputting-functionals">Outputting functionals</a></li>
 <li><a class="reference internal" href="#using-gauges">Using gauges</a></li>
-<li><a class="reference internal" href="#logging">Logging</a></li>
 </ul>
 </li>
+<li><a class="reference internal" href="#logging">Logging</a></li>
 </ul>
 <h3>Related Topics</h3>
 <ul>
@@ -271,13 +353,15 @@ effect of turning the loggers off.</p>
   </ul></li>
   </ul></li>
 </ul>
-  <div role="note" aria-label="source link">
-    <h3>This Page</h3>
-    <ul class="this-page-menu">
-      <li><a href="../_sources/pyclaw/output.rst.txt"
-            rel="nofollow">Show Source</a></li>
-    </ul>
-   </div>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../_sources/pyclaw/output.rst.txt"
+           rel="nofollow">Show Source</a></li>
+    <li><a href="https://github.com/clawpack/doc/blob/master/doc/pyclaw/output.rst"
+           rel="nofollow">Show on GitHub</a></li>
+    <li><a href="https://github.com/clawpack/doc/edit/master/doc/pyclaw/output.rst"
+           rel="nofollow">Edit on GitHub</a></li>
+  </ul>
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
     <form class="search" action="../search.html" method="get">
@@ -290,6 +374,7 @@ effect of turning the loggers off.</p>
 <script type="text/javascript">$('#searchbox').show(0);</script>
 <h3>Versions</h3>
 <ul>
+    <li><a href="../../v5.4.0/pyclaw/output.html">v5.4.0</a></li>
     <li><a href="../../v5.3.1/pyclaw/output.html">v5.3.1</a></li>
     <li><a href="../../v5.3.0/pyclaw/output.html">v5.3.0</a></li>
     <li><a href="../../v5.2.1/pyclaw/output.html">v5.2.1</a></li>

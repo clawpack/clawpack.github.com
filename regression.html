@@ -6,17 +6,18 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Regression testing &#8212; Clawpack 5.4.0 documentation</title>
+    <title>Regression testing &#8212; Clawpack 5.4.1rc documentation</title>
     
     <link rel="stylesheet" href="_static/flasky.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="stylesheet" href="_static/base.css" type="text/css" />
     <link rel="stylesheet" href="_static/layout.css" type="text/css" />
+    <link rel="stylesheet" href="_static/banner.css" type="text/css" />
     
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '5.4.0',
+        VERSION:     '5.4.1rc',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true,
@@ -81,7 +82,7 @@
         <li class="right" >
           <a href="howto_doc.html" title="Guide for updating this documentation"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="contents.html">Clawpack 5.4.0 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="contents.html">Clawpack 5.4.1rc documentation</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -134,7 +135,7 @@ these tests do not provide good coverage of the code or check that
 everything is working properly.</p>
 <p>A somewhat more complete set of tests can be run by executing all of the
 codes in the <cite>examples</cite> subdirectories and comparing the resulting plots
-with those archived in the <a class="reference external" href="gallery/index.html#galleries" title="(in Clawpack v5.4)"><span>Galleries of all Clawpack applications</span></a>.  An attempt at automating this
+with those archived in the <span class="xref std std-ref">galleries</span>.  An attempt at automating this
 can be found in the <cite>$CLAW/amrclaw/examples</cite> directory, which uses the
 <cite>imagediff</cite> tool described below.  This is still under development.</p>
 </div>
@@ -190,7 +191,7 @@ details.</p>
 <div class="section" id="id2">
 <h3>Running the tests<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h3>
 <p>The PyClaw test suite is built around <a class="reference external" href="http://nose.readthedocs.org/en/latest/">nosetests</a> for automatic test discovery, with
-supplementary functionality from the <a class="reference internal" href="pyclaw/util.html#module-pyclaw.util" title="pyclaw.util"><code class="xref py py-mod docutils literal"><span class="pre">pyclaw.util</span></code></a> module.  To run the
+supplementary functionality from the <code class="xref py py-mod docutils literal"><span class="pre">pyclaw.util</span></code> module.  To run the
 complete test suite with helpful output, issue the following command at the
 top-level of the pyclaw source directory:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">nosetests</span> <span class="o">-</span><span class="n">vs</span>
@@ -253,19 +254,19 @@ further changes to other parts of PyClaw or your code don&#8217;t break your fea
 You do not have to use any of the functionality offered by <cite>pyclaw.util</cite>, but it
 may simplify your test-writing and allow you to check more cases than you would
 easily specify by hand.</p>
-<p>The most important function in <a class="reference internal" href="pyclaw/util.html#module-pyclaw.util" title="pyclaw.util"><code class="xref py py-mod docutils literal"><span class="pre">pyclaw.util</span></code></a> is
-<a class="reference internal" href="pyclaw/util.html#pyclaw.util.gen_variants" title="pyclaw.util.gen_variants"><code class="xref py py-func docutils literal"><span class="pre">pyclaw.util.gen_variants()</span></code></a>, which allows you to perform combinatorial
+<p>The most important function in <code class="xref py py-mod docutils literal"><span class="pre">pyclaw.util</span></code> is
+<code class="xref py py-func docutils literal"><span class="pre">pyclaw.util.gen_variants()</span></code>, which allows you to perform combinatorial
 testing without manually specifying every feature you&#8217;d like to perform.
-Currently, <a class="reference internal" href="pyclaw/util.html#pyclaw.util.gen_variants" title="pyclaw.util.gen_variants"><code class="xref py py-func docutils literal"><span class="pre">gen_variants()</span></code></a> can multiplicatively exercise
+Currently, <code class="xref py py-func docutils literal"><span class="pre">gen_variants()</span></code> can multiplicatively exercise
 kernel_languages (Fortran or Python) and pure PyClaw or PetClaw implementations.
 This allows you to write one function that tests four variants.</p>
-<p>Another function provided by <a class="reference internal" href="pyclaw/util.html#module-pyclaw.util" title="pyclaw.util"><code class="xref py py-mod docutils literal"><span class="pre">util</span></code></a> is
-<a class="reference internal" href="pyclaw/util.html#pyclaw.util.test_app" title="pyclaw.util.test_app"><code class="xref py py-func docutils literal"><span class="pre">pyclaw.util.test_app()</span></code></a>. The <a class="reference internal" href="pyclaw/util.html#pyclaw.util.test_app" title="pyclaw.util.test_app"><code class="xref py py-func docutils literal"><span class="pre">test_app()</span></code></a> function will
+<p>Another function provided by <code class="xref py py-mod docutils literal"><span class="pre">util</span></code> is
+<code class="xref py py-func docutils literal"><span class="pre">pyclaw.util.test_app()</span></code>. The <code class="xref py py-func docutils literal"><span class="pre">test_app()</span></code> function will
 run an application as if started from the command line with the specified
 keyword arguments passed in.  This is useful for testing specific code that does
 not necessarily work with <code class="xref py py-mod docutils literal"><span class="pre">petclaw</span></code>, for example, and is not expected to.</p>
-<p>You will notice that both <a class="reference internal" href="pyclaw/util.html#pyclaw.util.gen_variants" title="pyclaw.util.gen_variants"><code class="xref py py-func docutils literal"><span class="pre">gen_variants()</span></code></a> and
-<a class="reference internal" href="pyclaw/util.html#pyclaw.util.test_app" title="pyclaw.util.test_app"><code class="xref py py-func docutils literal"><span class="pre">test_app()</span></code></a> require a <cite>verifier</cite> method as an argument.
+<p>You will notice that both <code class="xref py py-func docutils literal"><span class="pre">gen_variants()</span></code> and
+<code class="xref py py-func docutils literal"><span class="pre">test_app()</span></code> require a <cite>verifier</cite> method as an argument.
 These functions both effectively run tests and verify output with the following
 function calls:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">output</span> <span class="o">=</span> <span class="n">application</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
@@ -275,13 +276,13 @@ function calls:</p>
 <p>The <cite>verifier</cite> method needs to return <cite>None</cite> if there is no problem with the
 output, or a sequence of three values describing what was expected, what it
 received, and more details about the error.  A very simple <cite>verifier</cite> method
-that you can use is <a class="reference internal" href="pyclaw/util.html#pyclaw.util.check_diff" title="pyclaw.util.check_diff"><code class="xref py py-func docutils literal"><span class="pre">pyclaw.util.check_diff()</span></code></a>, which can use either an
+that you can use is <code class="xref py py-func docutils literal"><span class="pre">pyclaw.util.check_diff()</span></code>, which can use either an
 absolute tolerance or a relative tolerance to compare an expected value against
 the test output from the application.</p>
 <p>See <cite>examples/acoustics_1d_homogeneous/test_acoustics.py</cite> for a comprehensive example
-of how to use <a class="reference internal" href="pyclaw/util.html#pyclaw.util.gen_variants" title="pyclaw.util.gen_variants"><code class="xref py py-func docutils literal"><span class="pre">gen_variants()</span></code></a> and
-<a class="reference internal" href="pyclaw/util.html#pyclaw.util.check_diff" title="pyclaw.util.check_diff"><code class="xref py py-func docutils literal"><span class="pre">check_diff()</span></code></a>. See <cite>examples/shallow_sphere/test_shallow_sphere.py</cite>
-for an example that uses <a class="reference internal" href="pyclaw/util.html#pyclaw.util.test_app" title="pyclaw.util.test_app"><code class="xref py py-func docutils literal"><span class="pre">test_app()</span></code></a> and also loads a known
+of how to use <code class="xref py py-func docutils literal"><span class="pre">gen_variants()</span></code> and
+<code class="xref py py-func docutils literal"><span class="pre">check_diff()</span></code>. See <cite>examples/shallow_sphere/test_shallow_sphere.py</cite>
+for an example that uses <code class="xref py py-func docutils literal"><span class="pre">test_app()</span></code> and also loads a known
 solution from disk using numpy.</p>
 </div>
 </div>
@@ -296,7 +297,7 @@ solution from disk using numpy.</p>
 <p><a href="http://clawpack.org/">
     <img class="logo" src= "_static/clawlogo.jpg" alt="Logo"/>
 </a>
-<h2>Version 5.4.0</h2>
+<h2>Version 5.4.1rc</h2>
 </p>
   <h3><a href="contents.html">Table Of Contents</a></h3>
   <ul>
@@ -349,6 +350,16 @@ solution from disk using numpy.</p>
     </form>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
+<h3>Versions</h3>
+<ul>
+    <li><a href="v5.4.0/regression.html">v5.4.0</a></li>
+    <li><a href="v5.3.1/regression.html">v5.3.1</a></li>
+    <li><a href="v5.3.0/regression.html">v5.3.0</a></li>
+    <li><a href="v5.2.1/regression.html">v5.2.1</a></li>
+    <li><a href="v5.2.0/regression.html">v5.2.0</a></li>
+    <li><a href="v5.1.0/regression.html">v5.1.0</a></li>
+    <li><a href="master/regression.html">master</a></li>
+</ul>
         </div>
       </div>
       <div class="clearer"></div>

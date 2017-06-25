@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Riemann Solver Package &#8212; Clawpack 5.4.0 documentation</title>
+    <title>Riemann Solver Package &#8212; Clawpack 5.4.1rc documentation</title>
     
     <link rel="stylesheet" href="../_static/flasky.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -17,11 +17,11 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '5.4.0',
+        VERSION:     '5.4.1rc',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true,
-        SOURCELINK_SUFFIX: ''
+        SOURCELINK_SUFFIX: '.txt'
       };
     </script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
@@ -50,7 +50,7 @@
           <a href="../installing.html">Install</a>
         </li>
         <li>
-          <a class="" href="../galleries.html">Gallery</a>
+          <a class="" href="../gallery/index.html">Gallery</a>
         </li>
         <li>
           <a class="" href="../community.html">Community</a>
@@ -82,7 +82,7 @@
         <li class="right" >
           <a href="util.html" title="Pyclaw Utility Module"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../contents.html">Clawpack 5.4.0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../contents.html">Clawpack 5.4.1rc documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">Pyclaw</a> &#187;</li> 
       </ul>
     </div>  
@@ -442,7 +442,7 @@ Inline emphasis start-string without end-string.</div>
 <li>Roe - Use Roe averages to caluclate the solution to the Riemann problem</li>
 <li>HLL - Use a HLL solver</li>
 <li><dl class="first docutils">
-<dt>Exact - Use a newton iteration to calculate the exact solution to the </dt>
+<dt>Exact - Use a newton iteration to calculate the exact solution to the</dt>
 <dd>Riemann problem</dd>
 </dl>
 </li>
@@ -459,14 +459,6 @@ Inline emphasis start-string without end-string.</div>
 \[\begin{split}f(q) = \left [ \begin{array}{c} h u \\ hu^2 + 1/2 g h^2 \end{array}\right ].\end{split}\]</div>
 <p>and <span class="math">\(h\)</span> is the water column height, <span class="math">\(u\)</span> the velocity and <span class="math">\(g\)</span>
 is the gravitational acceleration.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Authors:</th><td class="field-body">Kyle T. Mandli (2009-02-05): Initial version</td>
-</tr>
-</tbody>
-</table>
 <dl class="function">
 <dt id="clawpack.riemann.shallow_1D_py.shallow_exact_1D">
 <code class="descclassname">clawpack.riemann.shallow_1D_py.</code><code class="descname">shallow_exact_1D</code><span class="sig-paren">(</span><em>q_l</em>, <em>q_r</em>, <em>aux_l</em>, <em>aux_r</em>, <em>problem_data</em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.riemann.shallow_1D_py.shallow_exact_1D" title="Permalink to this definition">¶</a></dt>
@@ -487,6 +479,8 @@ dry states as this has not been tested.</p>
 <dt><em>problem_data</em> should contain:</dt>
 <dd><ul class="first last simple">
 <li><em>grav</em> - (float) Gravitational constant</li>
+<li><em>dry_tolerance</em> - (float) Set velocities to zero if h is below this
+tolerance.</li>
 <li><em>sea_level</em> - (float) Datum from which the dry-state is calculated.</li>
 </ul>
 </dd>
@@ -496,6 +490,8 @@ dry states as this has not been tested.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Version:</th><td class="field-body">1.0 (2014-09-05)</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Version:</th><td class="field-body">2.0 (2017-03-07)</td>
 </tr>
 </tbody>
 </table>
@@ -534,13 +530,13 @@ dry states as this has not been tested.</p>
 <dd><p>Roe shallow water solver in 1d:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">ubar</span> <span class="o">=</span> <span class="p">(</span><span class="n">sqrt</span><span class="p">(</span><span class="n">u_l</span><span class="p">)</span> <span class="o">+</span> <span class="n">sqrt</span><span class="p">(</span><span class="n">u_r</span><span class="p">))</span> <span class="o">/</span> <span class="p">(</span><span class="n">sqrt</span><span class="p">(</span><span class="n">h_l</span><span class="p">)</span> <span class="o">+</span> <span class="n">sqrt</span><span class="p">(</span><span class="n">h_r</span><span class="p">))</span>
 <span class="n">cbar</span> <span class="o">=</span> <span class="n">sqrt</span><span class="p">(</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">g</span> <span class="o">*</span> <span class="p">(</span><span class="n">h_l</span> <span class="o">+</span> <span class="n">h_r</span><span class="p">))</span>
- 
+
 <span class="n">W_1</span> <span class="o">=</span> <span class="o">|</span>      <span class="mi">1</span>      <span class="o">|</span>  <span class="n">s_1</span> <span class="o">=</span> <span class="n">ubar</span> <span class="o">-</span> <span class="n">cbar</span>
       <span class="o">|</span> <span class="n">ubar</span> <span class="o">-</span> <span class="n">cbar</span> <span class="o">|</span>
- 
+
 <span class="n">W_2</span> <span class="o">=</span> <span class="o">|</span>      <span class="mi">1</span>      <span class="o">|</span>  <span class="n">s_1</span> <span class="o">=</span> <span class="n">ubar</span> <span class="o">+</span> <span class="n">cbar</span>
       <span class="o">|</span> <span class="n">ubar</span> <span class="o">+</span> <span class="n">cbar</span> <span class="o">|</span>
-  
+
 <span class="n">a1</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="p">(</span> <span class="o">-</span> <span class="n">delta_hu</span> <span class="o">+</span> <span class="p">(</span><span class="n">ubar</span> <span class="o">+</span> <span class="n">cbar</span><span class="p">)</span> <span class="o">*</span> <span class="n">delta_h</span> <span class="p">)</span> <span class="o">/</span> <span class="n">cbar</span>
 <span class="n">a2</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="p">(</span>   <span class="n">delta_hu</span> <span class="o">-</span> <span class="p">(</span><span class="n">ubar</span> <span class="o">-</span> <span class="n">cbar</span><span class="p">)</span> <span class="o">*</span> <span class="n">delta_h</span> <span class="p">)</span> <span class="o">/</span> <span class="n">cbar</span>
 </pre></div>
@@ -549,7 +545,7 @@ dry states as this has not been tested.</p>
 <dt><em>problem_data</em> should contain:</dt>
 <dd><ul class="first last simple">
 <li><em>g</em> - (float) Gravitational constant</li>
-<li><em>efix</em> - (bool) Boolean as to whether a entropy fix should be used, if 
+<li><em>efix</em> - (bool) Boolean as to whether a entropy fix should be used, if
 not present, false is assumed</li>
 </ul>
 </dd>
@@ -576,7 +572,7 @@ not present, false is assumed</li>
 <p><a href="http://clawpack.org/">
     <img class="logo" src= "../_static/clawlogo.jpg" alt="Logo"/>
 </a>
-<h2>Version 5.4.0</h2>
+<h2>Version 5.4.1rc</h2>
 </p>
   <h3><a href="../contents.html">Table Of Contents</a></h3>
   <ul>
@@ -600,7 +596,7 @@ not present, false is assumed</li>
 </ul>
   <h3>This Page</h3>
   <ul class="this-page-menu">
-    <li><a href="../_sources/pyclaw/rp.rst"
+    <li><a href="../_sources/pyclaw/rp.rst.txt"
            rel="nofollow">Show Source</a></li>
     <li><a href="https://github.com/clawpack/doc/blob/master/doc/pyclaw/rp.rst"
            rel="nofollow">Show on GitHub</a></li>
@@ -619,12 +615,12 @@ not present, false is assumed</li>
 <script type="text/javascript">$('#searchbox').show(0);</script>
 <h3>Versions</h3>
 <ul>
+    <li><a href="../../v5.4.0/pyclaw/rp.html">v5.4.0</a></li>
     <li><a href="../../v5.3.1/pyclaw/rp.html">v5.3.1</a></li>
     <li><a href="../../v5.3.0/pyclaw/rp.html">v5.3.0</a></li>
     <li><a href="../../v5.2.1/pyclaw/rp.html">v5.2.1</a></li>
     <li><a href="../../v5.2.0/pyclaw/rp.html">v5.2.0</a></li>
     <li><a href="../../v5.1.0/pyclaw/rp.html">v5.1.0</a></li>
-    <li><a href="../../sphinx-versioning/pyclaw/rp.html">sphinx-versioning</a></li>
     <li><a href="rp.html">master</a></li>
 </ul>
         </div>

@@ -18,13 +18,12 @@ OUTDIR = _output               # Directory for output
 SETPLOT_FILE = setplot.py      # File containing function to set plots
 PLOTDIR = _plots               # Directory for plots
 
-OVERWRITE ?= True                   # False ==> make a copy of OUTDIR first
-RESTART ?= False                    # Should = clawdata.restart in setrun
+RESTART = False
 
 # Environment variable FC should be set to fortran compiler, e.g. gfortran
 
 # Compiler flags can be specified here or set as an environment variable
-FFLAGS ?=
+FFLAGS ?= -O2 -fopenmp
 
 # ---------------------------------
 # List of sources for this program:
@@ -40,21 +39,17 @@ MODULES = \
  $(AMRLIB)/gauges_module.f90 \
  $(GEOLIB)/geoclaw_module.f90 \
  $(GEOLIB)/topo_module.f90 \
+ $(GEOLIB)/dtopo_module.f90 \
  $(GEOLIB)/qinit_module.f90 \
  $(GEOLIB)/refinement_module.f90 \
  $(GEOLIB)/fixedgrids_module.f90 \
- $(GEOLIB)/fgmax_module.f90 \
- $(GEOLIB)/surge/holland_storm_module.f90 \
- $(GEOLIB)/surge/stommel_storm_module.f90 \
- $(GEOLIB)/surge/constant_storm_module.f90 \
- $(GEOLIB)/surge/storm_module.f90 \
- $(GEOLIB)/friction_module.f90
+ $(GEOLIB)/fgmax_module.f90
 
 SOURCES = \
   $(GEOLIB)/setprob.f90 \
   $(GEOLIB)/qinit.f90 \
-  $(GEOLIB)/topo_update.f90 \
-  $(GEOLIB)/cellgridintegrate2.f \
+  $(GEOLIB)/movetopo.f \
+  $(GEOLIB)/cellgridintegrate.f \
   $(GEOLIB)/topointegral.f \
   $(GEOLIB)/bilinearintegral.f \
   $(GEOLIB)/stepgrid.f \
@@ -80,6 +75,7 @@ SOURCES = \
   $(AMRLIB)/flagregions2.f90  \
   $(GEOLIB)/allowflag.f90  \
   $(GEOLIB)/b4step2.f90 \
+  $(GEOLIB)/dumpgauge.f \
   $(GEOLIB)/upbnd.f  \
   $(GEOLIB)/tick.f \
   $(GEOLIB)/setgrd.f \
@@ -185,9 +181,7 @@ topo:
 	python maketopo.py
 
 all:
-	$(MAKE) topo
-	python make_fgmax.py
-	$(MAKE) .output
-	python plot_fgmax.py
-	$(MAKE) plots
-	$(MAKE) .htmls
+	make topo
+	make .plots
+	python plot_fgmax_grid.py
+	python plot_fgmax_transect.py
