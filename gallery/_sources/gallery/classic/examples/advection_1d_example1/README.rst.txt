@@ -15,6 +15,6 @@ After running this code and creating plots via "make .plots", you
 should be able to view the plots in _plots/_PlotIndex.html.
 
 The true solution is computed in setplot.py.  If you change the initial
-conditions, this should be changed accordingly.  (Except that if `beta` is 
+conditions, this should be changed accordingly.  (Except that if beta is 
 modified and the code rerun, then then reloading setplot should read
-in the latest value of `beta` used.)
+in the latest value of beta used.)
