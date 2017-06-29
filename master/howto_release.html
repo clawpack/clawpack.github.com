@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Guide for doing a Clawpack release &#8212; Clawpack 5.4.1rc documentation</title>
+    <title>Guide for doing a Clawpack release &#8212; Clawpack 5.4.1 documentation</title>
     
     <link rel="stylesheet" href="_static/flasky.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '5.4.1rc',
+        VERSION:     '5.4.1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true,
@@ -82,7 +82,7 @@
         <li class="right" >
           <a href="howto_doc.html" title="Guide for updating this documentation"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="contents.html">Clawpack 5.4.1rc documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="contents.html">Clawpack 5.4.1 documentation</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -143,20 +143,22 @@ source pull_all.sh  # to make sure all subrepos are up to date
 </div>
 <p>Create tar file (first install <a class="reference external" href="https://github.com/Kentzo/git-archive-all">https://github.com/Kentzo/git-archive-all</a>):</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span>cd $CLAW
-git-archive-all --prefix clawpack-5.x.x/ clawpack-5.x.x.tar
-gzip clawpack-5.x.x.tar
+git-archive-all --prefix clawpack-v5.x.x/ clawpack-v5.x.x.tar
+gzip clawpack-v5.x.x.tar
 </pre></div>
 </div>
+<p>(Note: best to use v5.x.x rather than just 5.x.x to be consistent with the
+directory name created if following <a class="reference internal" href="installing_pip.html#installing-pip"><span class="std std-ref">Installation instructions (pip)</span></a>.)</p>
 <p>Draft a new release on the webpage
 <a class="reference external" href="https://github.com/clawpack/clawpack/releases">https://github.com/clawpack/clawpack/releases</a>.
 Indicate that it is pre-release if desired.</p>
 <p>As a comment, add text such as:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">Download</span> <span class="n">the</span> <span class="n">clawpack</span><span class="o">-</span><span class="mf">5.</span><span class="n">x</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">tar</span><span class="o">.</span><span class="n">gz</span> <span class="n">file</span> <span class="n">below</span><span class="p">,</span> <span class="ow">not</span> <span class="n">the</span> <span class="n">other</span> <span class="n">tar</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">Download</span> <span class="n">the</span> <span class="n">clawpack</span><span class="o">-</span><span class="n">v5</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">tar</span><span class="o">.</span><span class="n">gz</span> <span class="n">file</span> <span class="n">below</span><span class="p">,</span> <span class="ow">not</span> <span class="n">the</span> <span class="n">other</span> <span class="n">tar</span>
 <span class="n">file</span> <span class="n">of</span> <span class="nb">zip</span> <span class="n">file</span><span class="o">.</span> <span class="n">Those</span> <span class="n">only</span> <span class="n">include</span> <span class="n">the</span> <span class="n">top</span><span class="o">-</span><span class="n">level</span> <span class="n">Clawpack</span> <span class="n">directories</span> <span class="ow">and</span>
 <span class="ow">not</span> <span class="nb">all</span> <span class="n">the</span> <span class="n">submodules</span><span class="o">.</span>
 </pre></div>
 </div>
-<p>Then attach the tar file <cite>clawpack-5.x.x.tar.gz</cite> to be
+<p>Then attach the tar file <cite>clawpack-v5.x.x.tar.gz</cite> to be
 included in the release by using the link &#8220;Attach binaries...&#8221; before
 finalizing the release.  (You can go back and &#8220;Edit release&#8221; if necessary.)</p>
 </div>
@@ -180,12 +182,19 @@ git push --tags upstream
 <p>Do the same in all other repos (classic, amrclaw, geoclaw, clawutil, clawvis,
 riemann).</p>
 <p>Note these tags are used in the documentation for pages like
-<a class="reference internal" href="changes_to_master.html#changes-to-master"><span class="std std-ref">Changes to master since v5.4.0</span></a> which generate diffs between the latest version and
+<a class="reference internal" href="changes_to_master.html#changes-to-master"><span class="std std-ref">Changes to master since v5.4.1</span></a> which generate diffs between the latest version and
 the current master branch of each resposity.</p>
-<p>When you do a release on <a class="reference external" href="https://github.com/clawpack/clawpack/releases">https://github.com/clawpack/clawpack/releases</a> that
-is not a pre-release, it should trigger uploading a zipfile to Zenodo
-and assigning it a DOI.  Go to the <a class="reference external" href="https://zenodo.org/">the Zenodo page</a>
-and search for Clawpack to find this.</p>
+</div>
+<div class="section" id="zenodo">
+<h2>Zenodo<a class="headerlink" href="#zenodo" title="Permalink to this headline">¶</a></h2>
+<p>Go to the <a class="reference external" href="https://zenodo.org/">the Zenodo page</a>
+and create a new upload for the latest tar file, following the framework of
+<a class="reference external" href="https://doi.org/10.5281/zenodo.820730">https://doi.org/10.5281/zenodo.820730</a>, for example.  This will issue a new
+DOI, which should be added to the page <cite>$CLAW/doc/doc/previous.rst</cite>.</p>
+<p>Note that the Github repository is not linked to Zenodo for automatic uploading
+on release since that would only archive a zip file of the main <cite>clawpack</cite>
+repository.  Instead we want to archive the tar file containing all
+subrepositories too.</p>
 </div>
 <div class="section" id="updating-the-documentation">
 <h2>Updating the documentation<a class="headerlink" href="#updating-the-documentation" title="Permalink to this headline">¶</a></h2>
@@ -226,7 +235,7 @@ version number in several places.</li>
 <p><a href="http://clawpack.org/">
     <img class="logo" src= "_static/clawlogo.jpg" alt="Logo"/>
 </a>
-<h2>Version 5.4.1rc</h2>
+<h2>Version 5.4.1</h2>
 </p>
   <h3><a href="contents.html">Table Of Contents</a></h3>
   <ul>
@@ -235,6 +244,7 @@ version number in several places.</li>
 <li><a class="reference internal" href="#release-candidates">Release candidates</a></li>
 <li><a class="reference internal" href="#create-a-tar-file-and-a-github-release">Create a tar file and a Github release</a></li>
 <li><a class="reference internal" href="#final-release">Final release</a></li>
+<li><a class="reference internal" href="#zenodo">Zenodo</a></li>
 <li><a class="reference internal" href="#updating-the-documentation">Updating the documentation</a></li>
 </ul>
 </li>
