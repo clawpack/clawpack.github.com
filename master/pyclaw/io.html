@@ -171,38 +171,341 @@ support and will warn you if you try and use them without the proper
 libraries.</p>
 </div>
 </div></blockquote>
-<div class="section" id="pyclaw-io-ascii">
-<span id="ascii"></span><h2><code class="xref py py-mod docutils literal"><span class="pre">pyclaw.io.ascii</span></code><a class="headerlink" href="#pyclaw-io-ascii" title="Permalink to this headline">¶</a></h2>
-<div class="system-message">
-<p class="system-message-title">System Message: WARNING/2 (<tt class="docutils">/var/folders/_s/dx0xgftn3_x04rdx0_w5nq7w0000gn/T/tmpoB5Tktsphinxcontrib_versioning/56744eeda50bfc1d8fec79d45060637228943b2f/doc/pyclaw/io.rst</tt>, line 71)</p>
-autodoc: failed to import module u&#8217;pyclaw.io.ascii&#8217;; the following exception was raised:
-Traceback (most recent call last):
-  File &#8220;/usr/local/lib/python2.7/site-packages/sphinx/ext/autodoc.py&#8221;, line 551, in import_object
-    __import__(self.modname)
-ImportError: No module named pyclaw.io.ascii
-</div>
+<div class="section" id="module-clawpack.pyclaw.fileio.ascii">
+<span id="pyclaw-io-ascii"></span><span id="ascii"></span><h2><code class="xref py py-mod docutils literal"><span class="pre">pyclaw.io.ascii</span></code><a class="headerlink" href="#module-clawpack.pyclaw.fileio.ascii" title="Permalink to this headline">¶</a></h2>
+<p>Routines for reading and writing an ascii output file</p>
+<dl class="function">
+<dt id="clawpack.pyclaw.fileio.ascii.read">
+<code class="descclassname">clawpack.pyclaw.fileio.ascii.</code><code class="descname">read</code><span class="sig-paren">(</span><em>solution</em>, <em>frame</em>, <em>path='./'</em>, <em>file_prefix='fort'</em>, <em>read_aux=False</em>, <em>options={}</em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.pyclaw.fileio.ascii.read" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read in a frame of ascii formatted files, and enter the data into the
+solution object.</p>
+<p>This routine reads the ascii formatted files corresponding to the classic
+clawpack format &#8216;fort.txxxx&#8217;, &#8216;fort.qxxxx&#8217;, and &#8216;fort.axxxx&#8217; or &#8216;fort.aux&#8217;
+Note that the fort prefix can be changed.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Input:</th><td class="field-body"><ul class="first last simple">
+<li><em>solution</em> - (<code class="xref py py-class docutils literal"><span class="pre">Solution</span></code>) Solution object to 
+read the data into.</li>
+<li><em>frame</em> - (int) Frame number to be read in</li>
+<li><em>path</em> - (string) Path to the current directory of the file</li>
+<li><em>file_prefix</em> - (string) Prefix of the files to be read in.  
+<code class="docutils literal"><span class="pre">default</span> <span class="pre">=</span> <span class="pre">'fort'</span></code></li>
+<li><em>read_aux</em> (bool) Whether or not an auxillary file will try to be read 
+in.  <code class="docutils literal"><span class="pre">default</span> <span class="pre">=</span> <span class="pre">False</span></code></li>
+<li><em>options</em> - (dict) Dictionary of optional arguments dependent on 
+the format being read in.  <code class="docutils literal"><span class="pre">default</span> <span class="pre">=</span> <span class="pre">{}</span></code></li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="clawpack.pyclaw.fileio.ascii.read_array">
+<code class="descclassname">clawpack.pyclaw.fileio.ascii.</code><code class="descname">read_array</code><span class="sig-paren">(</span><em>f</em>, <em>state</em>, <em>num_var</em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.pyclaw.fileio.ascii.read_array" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read in an array from an ASCII output file f.</p>
+<p>The variable q here may in fact refer to q or to aux.</p>
+<p>This routine supports the possibility that the values
+q[:,i,j,k] (for a fixed i,j,k) have been split over multiple lines, because
+some packages write just 4 values per line.
+For Clawpack 6.0, we plan to make all packages write
+q[:,i,j,k] on a single line.  This routine can then be simplified.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="clawpack.pyclaw.fileio.ascii.read_patch_header">
+<code class="descclassname">clawpack.pyclaw.fileio.ascii.</code><code class="descname">read_patch_header</code><span class="sig-paren">(</span><em>f</em>, <em>num_dim</em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.pyclaw.fileio.ascii.read_patch_header" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read header describing the next patch</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Input:</th><td class="field-body"><ul class="first simple">
+<li><em>f</em> - (file) Handle to open file</li>
+<li><em>num_dim</em> - (int) Number of dimensions</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Output:</th><td class="field-body"><ul class="first last simple">
+<li><em>patch</em> - (clawpack.pyclaw.geometry.Patch) Initialized patch represented
+by the header data.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="clawpack.pyclaw.fileio.ascii.read_t">
+<code class="descclassname">clawpack.pyclaw.fileio.ascii.</code><code class="descname">read_t</code><span class="sig-paren">(</span><em>frame</em>, <em>path='./'</em>, <em>file_prefix='fort'</em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.pyclaw.fileio.ascii.read_t" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read only the fort.t file and return the data</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Input:</th><td class="field-body"><ul class="first simple">
+<li><em>frame</em> - (int) Frame number to be read in</li>
+<li><em>path</em> - (string) Path to the current directory of the file</li>
+<li><em>file_prefix</em> - (string) Prefix of the files to be read in.  
+<code class="docutils literal"><span class="pre">default</span> <span class="pre">=</span> <span class="pre">'fort'</span></code></li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Output:</th><td class="field-body"><ul class="first last simple">
+<li>(list) List of output variables</li>
+<li><em>t</em> - (int) Time of frame</li>
+<li><em>num_eqn</em> - (int) Number of equations in the frame</li>
+<li><em>nstates</em> - (int) Number of states</li>
+<li><em>num_aux</em> - (int) Auxillary value in the frame</li>
+<li><em>num_dim</em> - (int) Number of dimensions in q and aux</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="clawpack.pyclaw.fileio.ascii.write">
+<code class="descclassname">clawpack.pyclaw.fileio.ascii.</code><code class="descname">write</code><span class="sig-paren">(</span><em>solution</em>, <em>frame</em>, <em>path</em>, <em>file_prefix='fort'</em>, <em>write_aux=False</em>, <em>options={}</em>, <em>write_p=False</em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.pyclaw.fileio.ascii.write" title="Permalink to this definition">¶</a></dt>
+<dd><p>Write out ascii data file</p>
+<p>Write out an ascii file formatted identical to the fortran clawpack files
+including writing out fort.t, fort.q, and fort.aux if necessary.  Note
+that there are some parameters that assumed to be the same for every patch
+in this format which is not necessarily true for the actual data objects.
+Make sure that if you use this output format that all of you patchs share
+the appropriate values of num_dim, num_eqn, num_aux, and t.  Only supports up to
+3 dimensions.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Input:</th><td class="field-body"><ul class="first last simple">
+<li><em>solution</em> - (<code class="xref py py-class docutils literal"><span class="pre">Solution</span></code>) Pyclaw object to be 
+output.</li>
+<li><em>frame</em> - (int) Frame number</li>
+<li><em>path</em> - (string) Root path</li>
+<li><em>file_prefix</em> - (string) Prefix for the file name.  <code class="docutils literal"><span class="pre">default</span> <span class="pre">=</span> <span class="pre">'fort'</span></code></li>
+<li><em>write_aux</em> - (bool) Boolean controlling whether the associated 
+auxiliary array should be written out.  <code class="docutils literal"><span class="pre">default</span> <span class="pre">=</span> <span class="pre">False</span></code></li>
+<li><em>options</em> - (dict) Dictionary of optional arguments dependent on 
+the format being written.  <code class="docutils literal"><span class="pre">default</span> <span class="pre">=</span> <span class="pre">{}</span></code></li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="clawpack.pyclaw.fileio.ascii.write_array">
+<code class="descclassname">clawpack.pyclaw.fileio.ascii.</code><code class="descname">write_array</code><span class="sig-paren">(</span><em>f</em>, <em>patch</em>, <em>q</em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.pyclaw.fileio.ascii.write_array" title="Permalink to this definition">¶</a></dt>
+<dd><p>Write a single array to output file f as ASCII text.</p>
+<p>The variable q here may in fact refer to q or to aux.</p>
+</dd></dl>
+
 </div>
 <div class="section" id="pyclaw-io-hdf5">
 <span id="hdf5"></span><h2><code class="xref py py-mod docutils literal"><span class="pre">pyclaw.io.hdf5</span></code><a class="headerlink" href="#pyclaw-io-hdf5" title="Permalink to this headline">¶</a></h2>
 <div class="system-message">
-<p class="system-message-title">System Message: WARNING/2 (<tt class="docutils">/var/folders/_s/dx0xgftn3_x04rdx0_w5nq7w0000gn/T/tmpoB5Tktsphinxcontrib_versioning/56744eeda50bfc1d8fec79d45060637228943b2f/doc/pyclaw/io.rst</tt>, line 79)</p>
-autodoc: failed to import module u&#8217;pyclaw.io.hdf5&#8217;; the following exception was raised:
+<p class="system-message-title">System Message: WARNING/2 (<tt class="docutils">/var/folders/_s/dx0xgftn3_x04rdx0_w5nq7w0000gn/T/tmpnNPMxKsphinxcontrib_versioning/3b2d9a4260894c0b2493739a42ac2099b1ff6bc1/doc/pyclaw/io.rst</tt>, line 79)</p>
+autodoc: failed to import module u&#8217;clawpack.pyclaw.fileio.hdf5&#8217;; the following exception was raised:
 Traceback (most recent call last):
   File &#8220;/usr/local/lib/python2.7/site-packages/sphinx/ext/autodoc.py&#8221;, line 551, in import_object
     __import__(self.modname)
-ImportError: No module named pyclaw.io.hdf5
+  File &#8220;/Users/rjl/git/clawpack/clawpack/pyclaw/fileio/hdf5.py&#8221;, line 42, in &lt;module&gt;
+    raise Exception(error_msg)
+Exception: Could not import h5py or PyTables, please install either h5py or PyTables.  See the doc_string for more information.
 </div>
 </div>
-<div class="section" id="pyclaw-io-netcdf">
-<span id="netcdf"></span><h2><code class="xref py py-mod docutils literal"><span class="pre">pyclaw.io.netcdf</span></code><a class="headerlink" href="#pyclaw-io-netcdf" title="Permalink to this headline">¶</a></h2>
-<div class="system-message">
-<p class="system-message-title">System Message: WARNING/2 (<tt class="docutils">/var/folders/_s/dx0xgftn3_x04rdx0_w5nq7w0000gn/T/tmpoB5Tktsphinxcontrib_versioning/56744eeda50bfc1d8fec79d45060637228943b2f/doc/pyclaw/io.rst</tt>, line 87)</p>
-autodoc: failed to import module u&#8217;pyclaw.io.netcdf&#8217;; the following exception was raised:
-Traceback (most recent call last):
-  File &#8220;/usr/local/lib/python2.7/site-packages/sphinx/ext/autodoc.py&#8221;, line 551, in import_object
-    __import__(self.modname)
-ImportError: No module named pyclaw.io.netcdf
+<div class="section" id="module-clawpack.pyclaw.fileio.netcdf">
+<span id="pyclaw-io-netcdf"></span><span id="netcdf"></span><h2><code class="xref py py-mod docutils literal"><span class="pre">pyclaw.io.netcdf</span></code><a class="headerlink" href="#module-clawpack.pyclaw.fileio.netcdf" title="Permalink to this headline">¶</a></h2>
+<p>Routines for reading and writing a NetCDF output file</p>
+<dl class="docutils">
+<dt>Routines for reading and writing a NetCDF output file via either</dt>
+<dd><ul class="first last simple">
+<li>netcdf4-python - <a class="reference external" href="http://code.google.com/p/netcdf4-python/">http://code.google.com/p/netcdf4-python/</a></li>
+<li>pupynere - <a class="reference external" href="http://pypi.python.org/pypi/pupynere/">http://pypi.python.org/pypi/pupynere/</a></li>
+</ul>
+</dd>
+</dl>
+<p>These interfaces are very similar so if a different module needs to be used,
+it can more than likely be inserted with a minimal of effort.</p>
+<p>This module will first try to import the netcdf4-python module which is based
+on the compiled libraries and failing that will attempt to import the pure
+python interface pupynere which requires no libraries.</p>
+<dl class="docutils">
+<dt>To install the netCDF 4 library, please see:</dt>
+<dd><a class="reference external" href="http://www.unidata.ucar.edu/software/netcdf/">http://www.unidata.ucar.edu/software/netcdf/</a></dd>
+</dl>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Authors:</th><td class="field-body">Kyle T. Mandli (2009-02-17) Initial version</td>
+</tr>
+</tbody>
+</table>
+<dl class="function">
+<dt id="clawpack.pyclaw.fileio.netcdf.read">
+<code class="descclassname">clawpack.pyclaw.fileio.netcdf.</code><code class="descname">read</code><span class="sig-paren">(</span><em>solution</em>, <em>frame</em>, <em>path='./'</em>, <em>file_prefix='claw'</em>, <em>read_aux=True</em>, <em>options={}</em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.pyclaw.fileio.netcdf.read" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read in a NetCDF data files into solution</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Input:</th><td class="field-body"><ul class="first last simple">
+<li><em>solution</em> - (<code class="xref py py-class docutils literal"><span class="pre">Solution</span></code>) Pyclaw object to be 
+output</li>
+<li><em>frame</em> - (int) Frame number</li>
+<li><em>path</em> - (string) Root path</li>
+<li><em>file_prefix</em> - (string) Prefix for the file name.  <code class="docutils literal"><span class="pre">default</span> <span class="pre">=</span> <span class="pre">'claw'</span></code></li>
+<li><em>write_aux</em> - (bool) Boolean controlling whether the associated 
+auxiliary array should be written out.  <code class="docutils literal"><span class="pre">default</span> <span class="pre">=</span> <span class="pre">False</span></code></li>
+<li><em>options</em> - (dict) Optional argument dictionary, unused for reading.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="clawpack.pyclaw.fileio.netcdf.write">
+<code class="descclassname">clawpack.pyclaw.fileio.netcdf.</code><code class="descname">write</code><span class="sig-paren">(</span><em>solution</em>, <em>frame</em>, <em>path</em>, <em>file_prefix='claw'</em>, <em>write_aux=False</em>, <em>options={}</em>, <em>write_p=False</em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.pyclaw.fileio.netcdf.write" title="Permalink to this definition">¶</a></dt>
+<dd><p>Write out a NetCDF data file representation of solution</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Input:</th><td class="field-body"><ul class="first last simple">
+<li><em>solution</em> - (<code class="xref py py-class docutils literal"><span class="pre">Solution</span></code>) Pyclaw object to be 
+output</li>
+<li><em>frame</em> - (int) Frame number</li>
+<li><em>path</em> - (string) Root path</li>
+<li><em>file_prefix</em> - (string) Prefix for the file name. <code class="docutils literal"><span class="pre">default</span> <span class="pre">=</span> <span class="pre">'claw'</span></code></li>
+<li><em>write_aux</em> - (bool) Boolean controlling whether the associated 
+auxiliary array should be written out. <code class="docutils literal"><span class="pre">default</span> <span class="pre">=</span> <span class="pre">False</span></code></li>
+<li><em>options</em> - (dict) Optional argument dictionary, see 
+<a class="reference internal" href="#netcdf-option-table">NetCDF Option Table</a></li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<table border="1" class="docutils" id="netcdf-option-table">
+<colgroup>
+<col width="35%" />
+<col width="65%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Key</th>
+<th class="head">Value</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>description</td>
+<td>Dictionary of key/value pairs that will be
+attached to the root group as attributes,
+i.e. {&#8216;time&#8217;:3}</td>
+</tr>
+<tr class="row-odd"><td>format</td>
+<td>Can be one of the following netCDF flavors:
+NETCDF3_CLASSIC, NETCDF3_64BIT,
+NETCDF4_CLASSIC, and NETCDF4
+<code class="docutils literal"><span class="pre">default</span> <span class="pre">=</span> <span class="pre">NETCDF4</span></code></td>
+</tr>
+<tr class="row-even"><td>clobber</td>
+<td>if True (Default), file will be overwritten,
+if False an exception will be raised</td>
+</tr>
+<tr class="row-odd"><td>zlib</td>
+<td>if True, data assigned to the Variable
+instance is compressed on disk.
+<code class="docutils literal"><span class="pre">default</span> <span class="pre">=</span> <span class="pre">False</span></code></td>
+</tr>
+<tr class="row-even"><td>complevel</td>
+<td>the level of zlib compression to use (1 is
+the fastest, but poorest compression, 9 is
+the slowest but best compression).  Ignored
+if zlib=False.  <code class="docutils literal"><span class="pre">default</span> <span class="pre">=</span> <span class="pre">6</span></code></td>
+</tr>
+<tr class="row-odd"><td>shuffle</td>
+<td>if True, the HDF5 shuffle filter is applied
+to improve compression. Ignored if
+zlib=False. <code class="docutils literal"><span class="pre">default</span> <span class="pre">=</span> <span class="pre">True</span></code></td>
+</tr>
+<tr class="row-even"><td>fletcher32</td>
+<td>if True (default False), the Fletcher32
+checksum algorithm is used for error
+detection.</td>
+</tr>
+<tr class="row-odd"><td>contiguous</td>
+<td>if True (default False), the variable data
+is stored contiguously on disk.  Setting to
+True for a variable with an unlimited
+dimension will trigger an error.
+<code class="docutils literal"><span class="pre">default</span> <span class="pre">=</span> <span class="pre">False</span></code></td>
+</tr>
+<tr class="row-even"><td>chunksizes</td>
+<td>Can be used to specify the HDF5 chunksizes
+for each dimension of the variable. A
+detailed discussion of HDF chunking and I/O
+performance is available here. Basically,
+you want the chunk size for each dimension
+to match as closely as possible the size of
+the data block that users will read from the
+file. chunksizes cannot be set if
+contiguous=True.</td>
+</tr>
+<tr class="row-odd"><td>least_significant_digit</td>
+<td>If specified, variable data will be
+truncated (quantized). In conjunction with
+zlib=True this produces &#8216;lossy&#8217;, but
+significantly more efficient compression.
+For example, if least_significant_digit=1,
+data will be quantized using around
+(scale*data)/scale, where scale = 2**bits,
+and bits is determined so that a precision
+of 0.1 is retained (in this case bits=4).
+<code class="docutils literal"><span class="pre">default</span> <span class="pre">=</span> <span class="pre">None</span></code>, or no quantization.</td>
+</tr>
+<tr class="row-even"><td>endian</td>
+<td>Can be used to control whether the data is
+stored in little or big endian format on
+disk. Possible values are little, big or
+native (default). The library will
+automatically handle endian conversions when
+the data is read, but if the data is always
+going to be read on a computer with the
+opposite format as the one used to create
+the file, there may be some performance
+advantage to be gained by setting the
+endian-ness.</td>
+</tr>
+<tr class="row-odd"><td>fill_value</td>
+<td>If specified, the default netCDF _FillValue
+(the value that the variable gets filled
+with before any data is written to it) is
+replaced with this value. If fill_value is
+set to False, then the variable is not
+pre-filled.</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">The zlib, complevel, shuffle, fletcher32, contiguous, chunksizes and
+endian keywords are silently ignored for netCDF 3 files that do not 
+use HDF5.</p>
 </div>
+</dd></dl>
+
 </div>
 </div>
 
@@ -220,9 +523,9 @@ ImportError: No module named pyclaw.io.netcdf
   <h3><a href="../contents.html">Table Of Contents</a></h3>
   <ul>
 <li><a class="reference internal" href="#">Pyclaw Input/Output Package</a><ul>
-<li><a class="reference internal" href="#pyclaw-io-ascii"><code class="docutils literal"><span class="pre">pyclaw.io.ascii</span></code></a></li>
+<li><a class="reference internal" href="#module-clawpack.pyclaw.fileio.ascii"><code class="docutils literal"><span class="pre">pyclaw.io.ascii</span></code></a></li>
 <li><a class="reference internal" href="#pyclaw-io-hdf5"><code class="docutils literal"><span class="pre">pyclaw.io.hdf5</span></code></a></li>
-<li><a class="reference internal" href="#pyclaw-io-netcdf"><code class="docutils literal"><span class="pre">pyclaw.io.netcdf</span></code></a></li>
+<li><a class="reference internal" href="#module-clawpack.pyclaw.fileio.netcdf"><code class="docutils literal"><span class="pre">pyclaw.io.netcdf</span></code></a></li>
 </ul>
 </li>
 </ul>

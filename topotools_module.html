@@ -151,13 +151,24 @@ initialization ability to the class to handle this?</li>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Properties:</th><td class="field-body"></td>
 </tr>
-<tr class="field-even field"><th class="field-name">Initialization:</th><td class="field-body"><ul class="first simple">
+</tbody>
+</table>
+<p>Note: Modified to check the <cite>grid_registration</cite> when reading or writing
+topo files and properly deal with <cite>llcorner</cite> registration in which case
+the x,y data should be offset by dx/2, dy/2 from the lower left corner 
+specified in the header of a DEM file.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Initialization:</th><td class="field-body"><ul class="first simple">
 <li></li>
 </ul>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Examples:</th><td class="field-body"><div class="first last highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">clawpack.geoclaw.topotools</span> <span class="k">as</span> <span class="nn">topo</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">topo_file</span> <span class="o">=</span> <span class="n">topo</span><span class="o">.</span><span class="n">Topography</span><span class="p">(</span><span class="s1">&#39;./topo.tt3&#39;</span><span class="p">)</span>
+<tr class="field-even field"><th class="field-name">Examples:</th><td class="field-body"><div class="first last highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">clawpack.geoclaw.topotools</span> <span class="k">as</span> <span class="nn">topo</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">topo_file</span> <span class="o">=</span> <span class="n">topo</span><span class="o">.</span><span class="n">Topography</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">topo_file</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;./topo.tt3&#39;</span><span class="p">,</span> <span class="n">topo_type</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">topo_file</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
 </pre></div>
 </div>
@@ -486,7 +497,7 @@ inf-norm.  Acts as a low-band pass filter and removes oscillatory data.</p>
 
 <dl class="method">
 <dt id="clawpack.geoclaw.topotools.Topography.write">
-<code class="descname">write</code><span class="sig-paren">(</span><em>path</em>, <em>topo_type=None</em>, <em>no_data_value=None</em>, <em>masked=True</em>, <em>header_style='geoclaw'</em>, <em>Z_format='%15.7e'</em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.geoclaw.topotools.Topography.write" title="Permalink to this definition">¶</a></dt>
+<code class="descname">write</code><span class="sig-paren">(</span><em>path</em>, <em>topo_type=None</em>, <em>no_data_value=None</em>, <em>masked=True</em>, <em>header_style='geoclaw'</em>, <em>Z_format='%15.7e'</em>, <em>grid_registration=None</em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.geoclaw.topotools.Topography.write" title="Permalink to this definition">¶</a></dt>
 <dd><p>Write out a topography file to path of type <em>topo_type</em>.</p>
 <p>Writes out a topography file of topo type specified with <em>topo_type</em> or
 inferred from the output file&#8217;s extension, defaulting to 3, to path
@@ -510,15 +521,21 @@ GeoClaw version 5.3.1 and earlier.</p>
 </li>
 <li><dl class="first docutils">
 <dt><em>header_style</em> (str) - indicates format of header lines</dt>
-<dd><p class="first">&#8216;geoclaw&#8217; or &#8216;default&#8217;  ==&gt; write value then label 
-&#8216;arcgis&#8217; or &#8216;asc&#8217; ==&gt; write label then value</p>
-<div class="system-message">
-<p class="system-message-title">System Message: ERROR/3 (<tt class="docutils">/Users/rjl/git/clawpack/clawpack/geoclaw/topotools.py:docstring of clawpack.geoclaw.topotools.Topography.write</tt>, line 19)</p>
-<p>Unexpected indentation.</p>
-</div>
-<blockquote class="last">
-<div><p>(needed for .asc files in ArcGIS)</p>
+<dd><dl class="first last docutils">
+<dt>&#8216;geoclaw&#8217; or &#8216;default&#8217;  ==&gt; write value then label </dt>
+<dd><p class="first last">with grid_registration == &#8216;lower&#8217; as default</p>
+</dd>
+<dt>&#8216;arcgis&#8217; or &#8216;asc&#8217; ==&gt; write label then value  </dt>
+<dd><blockquote class="first">
+<div><p>with grid_registration == &#8216;llcorner&#8217; as default</p>
 </div></blockquote>
+<div class="system-message">
+<p class="system-message-title">System Message: WARNING/2 (<tt class="docutils">/Users/rjl/git/clawpack/clawpack/geoclaw/topotools.py:docstring of clawpack.geoclaw.topotools.Topography.write</tt>, line 21)</p>
+<p>Block quote ends without a blank line; unexpected unindent.</p>
+</div>
+<p class="last">(needed for .asc files in ArcGIS)</p>
+</dd>
+</dl>
 </dd>
 </dl>
 </li>
@@ -531,6 +548,12 @@ if the user knows there are fewer significant digits, e.g.
 etopo1 data is integers and so has a resolution of 1 meter.
 In this case a cropped or coarsened version might be written
 with <cite>Z_format = &#8220;%7i&#8221;</cite>, for example.</p>
+</li>
+<li><dl class="first docutils">
+<dt><em>grid_registration</em> (str) - &#8216;lower&#8217;, &#8216;llcorner&#8217;, &#8216;llcenter&#8217; </dt>
+<dd><p class="first last">or None for defaults described above.</p>
+</dd>
+</dl>
 </li>
 </ul>
 </td>

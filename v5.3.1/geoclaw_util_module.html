@@ -100,6 +100,7 @@
 <li>dist_latlong2meters - Convert dx, dy distance in degrees to meters</li>
 <li>haversine - Calculate the haversine based great circle distance</li>
 <li>inv_haversine - Inverts the haversine distance</li>
+<li>fetch_noaa_tide_data - Fetches water levels and tide predictions</li>
 </ul>
 </td>
 </tr>
@@ -147,6 +148,52 @@ if using E coordinates everywhere in a computation spanning date line.)</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">float</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="clawpack.geoclaw.util.fetch_noaa_tide_data">
+<code class="descclassname">clawpack.geoclaw.util.</code><code class="descname">fetch_noaa_tide_data</code><span class="sig-paren">(</span><em>station</em>, <em>begin_date</em>, <em>end_date</em>, <em>time_zone='GMT'</em>, <em>datum='STND'</em>, <em>units='metric'</em>, <em>cache_dir=None</em>, <em>verbose=True</em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.geoclaw.util.fetch_noaa_tide_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fetch water levels and tide predictions at given NOAA tide station.</p>
+<p>The data is returned in 6 minute intervals between the specified begin and
+end dates/times.  A complete specification of the NOAA CO-OPS API for Data
+Retrieval used to fetch the data can be found at:</p>
+<blockquote>
+<div><a class="reference external" href="https://tidesandcurrents.noaa.gov/api/">https://tidesandcurrents.noaa.gov/api/</a></div></blockquote>
+<p>By default, retrieved data is cached in the geoclaw scratch directory
+located at:</p>
+<blockquote>
+<div>$CLAW/geoclaw/scratch</div></blockquote>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name" colspan="2">Required Arguments:</th></tr>
+<tr class="field-odd field"><td>&#160;</td><td class="field-body"><ul class="first simple">
+<li>station (string): 7 character station ID</li>
+<li>begin_date (datetime): start of date/time range of retrieval</li>
+<li>end_date (datetime): end of date/time range of retrieval</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name" colspan="2">Optional Arguments:</th></tr>
+<tr class="field-even field"><td>&#160;</td><td class="field-body"><ul class="first simple">
+<li>time_zone (string): see NOAA API documentation for possible values</li>
+<li>datum (string): see NOAA API documentation for possible values</li>
+<li>units (string): see NOAA API documentation for possible values</li>
+<li>cache_dir (string): alternative directory to use for caching data</li>
+<li>verbose (bool): whether to output informational messages</li>
+</ul>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><ul class="first last simple">
+<li>date_time (numpy.ndarray): times corresponding to retrieved data</li>
+<li>water_level (numpy.ndarray): preliminary or verified water levels</li>
+<li>prediction (numpy.ndarray): tide predictions</li>
+</ul>
+</td>
 </tr>
 </tbody>
 </table>

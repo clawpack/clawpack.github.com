@@ -124,14 +124,264 @@ need to call the controller&#8217;s <code class="xref py py-meth docutils litera
 work in its entirety.</p>
 <div class="section" id="pyclaw-controller-controller">
 <h2><code class="xref py py-class docutils literal"><span class="pre">pyclaw.controller.Controller</span></code><a class="headerlink" href="#pyclaw-controller-controller" title="Permalink to this headline">¶</a></h2>
-<div class="system-message">
-<p class="system-message-title">System Message: WARNING/2 (<tt class="docutils">/var/folders/_s/dx0xgftn3_x04rdx0_w5nq7w0000gn/T/tmpoB5Tktsphinxcontrib_versioning/56744eeda50bfc1d8fec79d45060637228943b2f/doc/pyclaw/controller.rst</tt>, line 46)</p>
-autodoc: failed to import class u&#8217;Controller&#8217; from module u&#8217;pyclaw.controller&#8217;; the following exception was raised:
-Traceback (most recent call last):
-  File &#8220;/usr/local/lib/python2.7/site-packages/sphinx/ext/autodoc.py&#8221;, line 551, in import_object
-    __import__(self.modname)
-ImportError: No module named pyclaw.controller
+<dl class="class">
+<dt id="clawpack.pyclaw.controller.Controller">
+<em class="property">class </em><code class="descclassname">clawpack.pyclaw.controller.</code><code class="descname">Controller</code><a class="headerlink" href="#clawpack.pyclaw.controller.Controller" title="Permalink to this definition">¶</a></dt>
+<dd><p>Controller for pyclaw simulation runs and plotting</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Initialization:</th><td class="field-body"><p class="first">Input: None</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Examples:</th><td class="field-body"><div class="first last highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">clawpack.pyclaw</span> <span class="k">as</span> <span class="nn">pyclaw</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">Dimension</span><span class="p">(</span><span class="mf">0.</span><span class="p">,</span><span class="mf">1.</span><span class="p">,</span><span class="mi">100</span><span class="p">,</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;x&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">domain</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">Domain</span><span class="p">((</span><span class="n">x</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">state</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">State</span><span class="p">(</span><span class="n">domain</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">claw</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">Controller</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">claw</span><span class="o">.</span><span class="n">solution</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">Solution</span><span class="p">(</span><span class="n">state</span><span class="p">,</span><span class="n">domain</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">claw</span><span class="o">.</span><span class="n">solver</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">ClawSolver1D</span><span class="p">()</span>
+</pre></div>
 </div>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="clawpack.pyclaw.controller.Controller.check_validity">
+<code class="descname">check_validity</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.pyclaw.controller.Controller.check_validity" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check that the controller has been properly set up and is ready to run.</p>
+<p>Also checks validity of the solver, solution and states.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="clawpack.pyclaw.controller.Controller.plot">
+<code class="descname">plot</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.pyclaw.controller.Controller.plot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plot from memory.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="clawpack.pyclaw.controller.Controller.run">
+<code class="descname">run</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.pyclaw.controller.Controller.run" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convenience routine that will evolve solution based on the 
+traditional clawpack output and run parameters.</p>
+<p>This function uses the run parameters and solver parameters to evolve
+the solution to the end time specified in run_data, outputting at the
+appropriate times.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Input:</th><td class="field-body">None</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Ouput:</th><td class="field-body">(dict) - Return a dictionary of the status of the solver.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="clawpack.pyclaw.controller.Controller.F_file_name">
+<code class="descname">F_file_name</code><em class="property"> = None</em><a class="headerlink" href="#clawpack.pyclaw.controller.Controller.F_file_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>(string) - Name of text file containing functionals</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="clawpack.pyclaw.controller.Controller.F_path">
+<code class="descname">F_path</code><a class="headerlink" href="#clawpack.pyclaw.controller.Controller.F_path" title="Permalink to this definition">¶</a></dt>
+<dd><p>(string) - Full path to output file for functionals</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="clawpack.pyclaw.controller.Controller.compute_F">
+<code class="descname">compute_F</code><em class="property"> = None</em><a class="headerlink" href="#clawpack.pyclaw.controller.Controller.compute_F" title="Permalink to this definition">¶</a></dt>
+<dd><p>(function) - Function that computes density of functional F</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="clawpack.pyclaw.controller.Controller.compute_p">
+<code class="descname">compute_p</code><em class="property"> = None</em><a class="headerlink" href="#clawpack.pyclaw.controller.Controller.compute_p" title="Permalink to this definition">¶</a></dt>
+<dd><p>(function) - function that computes derived quantities</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="clawpack.pyclaw.controller.Controller.file_prefix_p">
+<code class="descname">file_prefix_p</code><em class="property"> = None</em><a class="headerlink" href="#clawpack.pyclaw.controller.Controller.file_prefix_p" title="Permalink to this definition">¶</a></dt>
+<dd><p>(string) - File prefix to be prepended to derived quantity output files</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="clawpack.pyclaw.controller.Controller.frames">
+<code class="descname">frames</code><em class="property"> = None</em><a class="headerlink" href="#clawpack.pyclaw.controller.Controller.frames" title="Permalink to this definition">¶</a></dt>
+<dd><p>(list) - List of saved frames if <code class="docutils literal"><span class="pre">keep_copy</span></code> is set to <code class="docutils literal"><span class="pre">True</span></code></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="clawpack.pyclaw.controller.Controller.keep_copy">
+<code class="descname">keep_copy</code><em class="property"> = None</em><a class="headerlink" href="#clawpack.pyclaw.controller.Controller.keep_copy" title="Permalink to this definition">¶</a></dt>
+<dd><p>(bool) - Keep a copy in memory of every output time,
+<code class="docutils literal"><span class="pre">default</span> <span class="pre">=</span> <span class="pre">False</span></code></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="clawpack.pyclaw.controller.Controller.nstepout">
+<code class="descname">nstepout</code><em class="property"> = None</em><a class="headerlink" href="#clawpack.pyclaw.controller.Controller.nstepout" title="Permalink to this definition">¶</a></dt>
+<dd><p>(int) - Number of steps between output, only used with
+<code class="docutils literal"><span class="pre">output_style</span> <span class="pre">=</span> <span class="pre">3</span></code>, <code class="docutils literal"><span class="pre">default</span> <span class="pre">=</span> <span class="pre">1</span></code></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="clawpack.pyclaw.controller.Controller.num_output_times">
+<code class="descname">num_output_times</code><em class="property"> = None</em><a class="headerlink" href="#clawpack.pyclaw.controller.Controller.num_output_times" title="Permalink to this definition">¶</a></dt>
+<dd><p>(int) - Number of output times, only used with <code class="docutils literal"><span class="pre">output_style</span> <span class="pre">=</span> <span class="pre">1</span></code>,
+<code class="docutils literal"><span class="pre">default</span> <span class="pre">=</span> <span class="pre">10</span></code></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="clawpack.pyclaw.controller.Controller.out_times">
+<code class="descname">out_times</code><em class="property"> = None</em><a class="headerlink" href="#clawpack.pyclaw.controller.Controller.out_times" title="Permalink to this definition">¶</a></dt>
+<dd><p>(int) - Output time list, only used with <code class="docutils literal"><span class="pre">output_style</span> <span class="pre">=</span> <span class="pre">2</span></code>,
+<code class="docutils literal"><span class="pre">default</span> <span class="pre">=</span> <span class="pre">numpy.linspace(0.0,tfinal,num_output_times)</span></code></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="clawpack.pyclaw.controller.Controller.outdir">
+<code class="descname">outdir</code><em class="property"> = None</em><a class="headerlink" href="#clawpack.pyclaw.controller.Controller.outdir" title="Permalink to this definition">¶</a></dt>
+<dd><p>(string) - Output directory, directs output files to outdir</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="clawpack.pyclaw.controller.Controller.outdir_p">
+<code class="descname">outdir_p</code><a class="headerlink" href="#clawpack.pyclaw.controller.Controller.outdir_p" title="Permalink to this definition">¶</a></dt>
+<dd><p>(string) - Directory to use for writing derived quantity files</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="clawpack.pyclaw.controller.Controller.output_file_prefix">
+<code class="descname">output_file_prefix</code><em class="property"> = None</em><a class="headerlink" href="#clawpack.pyclaw.controller.Controller.output_file_prefix" title="Permalink to this definition">¶</a></dt>
+<dd><p>(string) - File prefix to be appended to output files,
+<code class="docutils literal"><span class="pre">default</span> <span class="pre">=</span> <span class="pre">None</span></code></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="clawpack.pyclaw.controller.Controller.output_format">
+<code class="descname">output_format</code><em class="property"> = None</em><a class="headerlink" href="#clawpack.pyclaw.controller.Controller.output_format" title="Permalink to this definition">¶</a></dt>
+<dd><p>(list of strings) - Format or list of formats to output the data,
+if this is None, no output is performed.  See _pyclaw_io for more info
+on available formats.  <code class="docutils literal"><span class="pre">default</span> <span class="pre">=</span> <span class="pre">'ascii'</span></code></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="clawpack.pyclaw.controller.Controller.output_options">
+<code class="descname">output_options</code><em class="property"> = None</em><a class="headerlink" href="#clawpack.pyclaw.controller.Controller.output_options" title="Permalink to this definition">¶</a></dt>
+<dd><p>(dict) - Output options passed to function writing and reading
+data in output_format&#8217;s format.  <code class="docutils literal"><span class="pre">default</span> <span class="pre">=</span> <span class="pre">{}</span></code></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="clawpack.pyclaw.controller.Controller.output_style">
+<code class="descname">output_style</code><em class="property"> = None</em><a class="headerlink" href="#clawpack.pyclaw.controller.Controller.output_style" title="Permalink to this definition">¶</a></dt>
+<dd><p>(int) - Time output style, <code class="docutils literal"><span class="pre">default</span> <span class="pre">=</span> <span class="pre">1</span></code></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="clawpack.pyclaw.controller.Controller.overwrite">
+<code class="descname">overwrite</code><em class="property"> = None</em><a class="headerlink" href="#clawpack.pyclaw.controller.Controller.overwrite" title="Permalink to this definition">¶</a></dt>
+<dd><p>(bool) - Ok to overwrite old result in outdir, <code class="docutils literal"><span class="pre">default</span> <span class="pre">=</span> <span class="pre">True</span></code></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="clawpack.pyclaw.controller.Controller.plotdata">
+<code class="descname">plotdata</code><em class="property"> = None</em><a class="headerlink" href="#clawpack.pyclaw.controller.Controller.plotdata" title="Permalink to this definition">¶</a></dt>
+<dd><p>(<code class="xref py py-class docutils literal"><span class="pre">ClawPlotData</span></code>) - An instance of a
+<code class="xref py py-class docutils literal"><span class="pre">ClawPlotData</span></code> object defining the
+objects plot parameters.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="clawpack.pyclaw.controller.Controller.rundir">
+<code class="descname">rundir</code><em class="property"> = None</em><a class="headerlink" href="#clawpack.pyclaw.controller.Controller.rundir" title="Permalink to this definition">¶</a></dt>
+<dd><p>(string) - Directory to run from (containing *.data files), uses
+*.data from rundir</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="clawpack.pyclaw.controller.Controller.runmake">
+<code class="descname">runmake</code><em class="property"> = None</em><a class="headerlink" href="#clawpack.pyclaw.controller.Controller.runmake" title="Permalink to this definition">¶</a></dt>
+<dd><p>(bool) - Run make in xdir before xclawcmd</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="clawpack.pyclaw.controller.Controller.savecode">
+<code class="descname">savecode</code><em class="property"> = None</em><a class="headerlink" href="#clawpack.pyclaw.controller.Controller.savecode" title="Permalink to this definition">¶</a></dt>
+<dd><p>(bool) - Save a copy of *.f files in outdir</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="clawpack.pyclaw.controller.Controller.solver">
+<code class="descname">solver</code><em class="property"> = None</em><a class="headerlink" href="#clawpack.pyclaw.controller.Controller.solver" title="Permalink to this definition">¶</a></dt>
+<dd><p>(<code class="xref py py-class docutils literal"><span class="pre">Solver</span></code>) - Solver object</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="clawpack.pyclaw.controller.Controller.tfinal">
+<code class="descname">tfinal</code><em class="property"> = None</em><a class="headerlink" href="#clawpack.pyclaw.controller.Controller.tfinal" title="Permalink to this definition">¶</a></dt>
+<dd><p>(float) - Final time output, <code class="docutils literal"><span class="pre">default</span> <span class="pre">=</span> <span class="pre">1.0</span></code></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="clawpack.pyclaw.controller.Controller.verbosity">
+<code class="descname">verbosity</code><a class="headerlink" href="#clawpack.pyclaw.controller.Controller.verbosity" title="Permalink to this definition">¶</a></dt>
+<dd><p>(int) - Level of output to screen; <code class="docutils literal"><span class="pre">default</span> <span class="pre">=</span> <span class="pre">3</span></code></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="clawpack.pyclaw.controller.Controller.viewable_attributes">
+<code class="descname">viewable_attributes</code><em class="property"> = None</em><a class="headerlink" href="#clawpack.pyclaw.controller.Controller.viewable_attributes" title="Permalink to this definition">¶</a></dt>
+<dd><p>(list) - Viewable attributes of the <cite>:class:`~pyclaw.controller.Controller</cite></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="clawpack.pyclaw.controller.Controller.write_aux_always">
+<code class="descname">write_aux_always</code><em class="property"> = None</em><a class="headerlink" href="#clawpack.pyclaw.controller.Controller.write_aux_always" title="Permalink to this definition">¶</a></dt>
+<dd><p>(bool) - Write out auxiliary array at every time step,
+<code class="docutils literal"><span class="pre">default</span> <span class="pre">=</span> <span class="pre">False</span></code></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="clawpack.pyclaw.controller.Controller.write_aux_init">
+<code class="descname">write_aux_init</code><em class="property"> = None</em><a class="headerlink" href="#clawpack.pyclaw.controller.Controller.write_aux_init" title="Permalink to this definition">¶</a></dt>
+<dd><p>(bool) - Write out initial auxiliary array, <code class="docutils literal"><span class="pre">default</span> <span class="pre">=</span> <span class="pre">False</span></code></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="clawpack.pyclaw.controller.Controller.xclawcmd">
+<code class="descname">xclawcmd</code><em class="property"> = None</em><a class="headerlink" href="#clawpack.pyclaw.controller.Controller.xclawcmd" title="Permalink to this definition">¶</a></dt>
+<dd><p>(string) - Command to execute (if using fortran), defaults to xclaw or
+xclaw.exe if cygwin is being used (which it checks vis sys.platform)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="clawpack.pyclaw.controller.Controller.xclawerr">
+<code class="descname">xclawerr</code><em class="property"> = None</em><a class="headerlink" href="#clawpack.pyclaw.controller.Controller.xclawerr" title="Permalink to this definition">¶</a></dt>
+<dd><p>(string) - Where to write error messages</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="clawpack.pyclaw.controller.Controller.xclawout">
+<code class="descname">xclawout</code><em class="property"> = None</em><a class="headerlink" href="#clawpack.pyclaw.controller.Controller.xclawout" title="Permalink to this definition">¶</a></dt>
+<dd><p>(string) - Where to write timestep messages</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="clawpack.pyclaw.controller.Controller.xdir">
+<code class="descname">xdir</code><em class="property"> = None</em><a class="headerlink" href="#clawpack.pyclaw.controller.Controller.xdir" title="Permalink to this definition">¶</a></dt>
+<dd><p>(string) - Executable path, executes xclawcmd in xdir</p>
+</dd></dl>
+
+</dd></dl>
+
 </div>
 </div>
 
