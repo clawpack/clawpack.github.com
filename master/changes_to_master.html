@@ -90,28 +90,155 @@ each repository since the last release (v5.4.1) on February 17, 2017.</p>
 <p>These changes should appear in the next release.  If you need them now,
 see <a class="reference internal" href="developers.html#developers"><span class="std std-ref">Developers&#8217; Guide</span></a> for instructions on cloning and installing from the
 master branch.</p>
+<div class="section" id="changes-that-are-not-backward-compatible">
+<h2>Changes that are not backward compatible<a class="headerlink" href="#changes-that-are-not-backward-compatible" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>The format of checkpoint styles has changed for AMRClaw and GeoClaw, so old
+checkpoint files can not be used to restart with newer code.</li>
+<li>In GeoClaw, the way some topofiles are interpreted has been changed to conform with
+the intended &#8220;grid registration&#8221;.
+This is not backward compatable for files with headers that specify
+<cite>xllower, yllower</cite>.  See below for more details.</li>
+</ul>
+</div>
+<div class="section" id="general-changes">
+<h2>General changes<a class="headerlink" href="#general-changes" title="Permalink to this headline">¶</a></h2>
+<blockquote>
+<div><ul class="simple">
+<li><cite>LICENSE</cite> file added to all repositories, with BSD license</li>
+</ul>
+</div></blockquote>
+</div>
 <div class="section" id="changes-to-classic">
 <h2>Changes to classic<a class="headerlink" href="#changes-to-classic" title="Permalink to this headline">¶</a></h2>
+<blockquote>
+<div><ul class="simple">
+<li>None other than addition of License.</li>
+</ul>
+</div></blockquote>
 <p>See <a class="reference external" href="https://github.com/clawpack/classic/compare/v5.4.1...master">classic diffs</a></p>
 </div>
 <div class="section" id="changes-to-clawutil">
 <h2>Changes to clawutil<a class="headerlink" href="#changes-to-clawutil" title="Permalink to this headline">¶</a></h2>
+<blockquote>
+<div><ul class="simple">
+<li>Minor changes</li>
+</ul>
+</div></blockquote>
 <p>See <a class="reference external" href="https://github.com/clawpack/clawutil/compare/v5.4.1...master">clawutil diffs</a></p>
 </div>
 <div class="section" id="changes-to-visclaw">
 <h2>Changes to visclaw<a class="headerlink" href="#changes-to-visclaw" title="Permalink to this headline">¶</a></h2>
+<blockquote>
+<div><ul class="simple">
+<li>Minor changes to Matlab codes</li>
+<li>Minor changes to kml functionality</li>
+<li><cite>ClawPlotItem.colorbar_kwargs</cite> added for setting other colorbar keyword
+arguments</li>
+<li><cite>ClawPlotAxes.beforeframe</cite> added to allow e.g. plotting on a background
+image, see <a class="reference external" href="https://github.com/clawpack/visclaw/pull/226">PR #226</a> for an
+example.</li>
+</ul>
+</div></blockquote>
 <p>See <a class="reference external" href="https://github.com/clawpack/visclaw/compare/v5.4.1...master">visclaw diffs</a></p>
 </div>
 <div class="section" id="changes-to-riemann">
 <h2>Changes to riemann<a class="headerlink" href="#changes-to-riemann" title="Permalink to this headline">¶</a></h2>
+<blockquote>
+<div><ul class="simple">
+<li>Add some vectorized Riemann solvers</li>
+<li>Changes to layered shallow water solvers</li>
+</ul>
+</div></blockquote>
 <p>See <a class="reference external" href="https://github.com/clawpack/riemann/compare/v5.4.1...master">riemann diffs</a></p>
 </div>
 <div class="section" id="changes-to-amrclaw">
 <h2>Changes to amrclaw<a class="headerlink" href="#changes-to-amrclaw" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>The <cite>valout</cite> routine has been rewritten and now prints out timing
+information to two files in the output directory: <cite>timing.txt</cite> contains a
+summary at the end of the run, while <cite>timing.csv</cite> contains cumulative timing
+information at each output time.  The script
+<cite>examples/advection_2d_inflow/plot_timing_stats.py</cite> gives an example of how
+this data might be plotted.  Information on both wall time and CPU time is
+included, particularly useful for multi-core simulations.</li>
+<li>Write more digits in <cite>regions.data</cite> file.</li>
+<li>Clean up some timing variables.</li>
+<li>The maximum number of allowable refined grids is now
+variable, and no longer static. If the current maximum
+is exceeded, all arrays dimension at <cite>maxgr</cite>, namely
+<cite>rnode</cite>, <cite>node</cite>, and <cite>listOfGrids</cite> (currently set
+to 10000) are resized by another 10K.
+<cite>bndList</cite> is also now resizable.</li>
+<li>The format of checkpoint files changed to include <cite>maxgr</cite>.
+<strong>This is not backward compatible &#8211; old checkpoint files can not be used
+to restart with the new code.</strong></li>
+<li><cite>Makefile.amr_2d</cite> changed to include the new files to initialize,
+restart, and resize the nodal arrays and boundary lists.</li>
+<li>The gauges had one some variable that depended
+on <cite>maxgr</cite>. By changing the gauges algorithm, this was
+eliminated. The old algorithm did not scale well for
+<cite>O(10^5)</cite> grids and <cite>O(100)</cite> gauges. The new algorithm just
+has each grid patch sort the gauge list to see if it has any
+gauges to update. (The old algorithm sorted all grid owners and
+their owner gauges, (thus needing to save that mapping), and
+therefore was  an index lookup by grid number. But again, 10^5
+grids needing 2 arrays for only 100 gauges did not make sense.
+Also changed the algorithm for finding the best source grid for a
+gauge. By starting at the finest level, and rearranging the order
+of the loops, once a grid owner was found for a gauge there was no
+need to search the rest of the grids.</li>
+</ul>
 <p>See <a class="reference external" href="https://github.com/clawpack/amrclaw/compare/v5.4.1...master">amrclaw diffs</a></p>
 </div>
 <div class="section" id="changes-to-geoclaw">
 <h2>Changes to geoclaw<a class="headerlink" href="#changes-to-geoclaw" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>Makefile.geoclaw changed to include the new files to initialize,
+restart, and resize the nodal arrays and boundary lists.</li>
+<li>The way some topofiles are interpreted has been changed to conform with
+the intended &#8220;grid registration&#8221;.  In particular, topofiles with a header
+containing <cite>xllower</cite> and <cite>yllower</cite> contain data that should be viewed as
+cell-centered data on a uniform grid that starts at
+<cite>(xllower + dx/2, yllower + dy/2)</cite> and not at <cite>(xllower, yllower)</cite>.
+See <a class="reference external" href="https://github.com/clawpack/geoclaw/pull/303">PR #303</a> for more
+discussion and <span class="xref std std-ref">grid_registration</span> for documentation.
+<strong>This is not backward compatable for files with these headers.</strong>
+Change the header to specify <cite>xlower</cite> and <cite>ylower</cite> (or <cite>xllcenter,
+yllcenter</cite>) if you want the data to be interpreted in the old manner.</li>
+<li>The format of checkpoint files changed to include <cite>maxgr</cite>.
+<strong>This is not backward compatible &#8211; old checkpoint files can not be used
+to restart with the new code.</strong></li>
+<li>Multi-layer shallow water solvers have been extended to work with AMR.
+(This is still under development and may have some bugs.)</li>
+<li>Makefile.geoclaw changed to include the new files to initialize,
+restart, and resize the nodal arrays and boundary lists.</li>
+<li>New capabilities have been added to read topofiles in netCDF, and also to
+download topo DEMs from <cite>.nc</cite> files at remote URLs.  This allows downloading
+only a subset of the DEM and at a coarsened resolution.
+See <cite>topotools.read_netcdf</cite> in <a class="reference internal" href="topotools_module.html#topotools-module"><span class="std std-ref">topotools module for working with topography data</span></a>,
+and <cite>tests/test_etopo1.py</cite> for an example of usage.
+<em>More documentation needed.</em></li>
+<li>The <cite>etopotools.py</cite> module has been deprecated in favor of the
+<cite>topotools.read_netcdf</cite> function, which can be called with
+<cite>path = &#8216;etopo1</cite> to read from the online etopo1 database in netCDF format.
+This allows downloading only a subset of the DEM and at a coarsened resolution.
+The old way of doing this is not robust and sometimes gave incorrect results
+due to issues with the old etopo1 server (which is no longer maintained).
+See <span class="xref std std-ref">topo_netcdf</span> and
+<a class="reference external" href="https://github.com/clawpack/geoclaw/pull/308">PR #308</a>.
+An example can be found in <cite>tests/test_etopo1.py</cite>.</li>
+<li>More generally, topofiles can now be read in from netCDF files either
+locally or from the web.  See <span class="xref std std-ref">topo_netcdf</span> for some documentation.</li>
+<li>New capabilities have been added to download NOAA tide gauge data, see
+<a class="reference external" href="https://github.com/clawpack/geoclaw/pull/287">PR #287</a>.</li>
+<li>Some plotting issues have been resolved.</li>
+<li><cite>dtopotools.SiftFault</cite> now has the rigidity <cite>mu</cite> set properly, which
+changes the magnitude <cite>Mw</cite> that is reported for a fault created using
+the NOAA SIFT database.</li>
+<li><cite>topotools.read</cite> now allows <cite>dx != dy</cite> in a header for <cite>topo_type in [2,3]</cite>.</li>
+<li>Many other minor changes.</li>
+</ul>
 <p>See <a class="reference external" href="https://github.com/clawpack/geoclaw/compare/v5.4.1...master">geoclaw diffs</a></p>
 </div>
 <div class="section" id="changes-to-pyclaw">
@@ -145,6 +272,8 @@ install, but changes to these repositories may also be of interest.</p>
   <h3><a href="contents.html">Table Of Contents</a></h3>
   <ul>
 <li><a class="reference internal" href="#">Changes to master since v5.4.1</a><ul>
+<li><a class="reference internal" href="#changes-that-are-not-backward-compatible">Changes that are not backward compatible</a></li>
+<li><a class="reference internal" href="#general-changes">General changes</a></li>
 <li><a class="reference internal" href="#changes-to-classic">Changes to classic</a></li>
 <li><a class="reference internal" href="#changes-to-clawutil">Changes to clawutil</a></li>
 <li><a class="reference internal" href="#changes-to-visclaw">Changes to visclaw</a></li>
@@ -189,6 +318,7 @@ install, but changes to these repositories may also be of interest.</p>
     <li><a href="../v5.2.1/changes_to_master.html">v5.2.1</a></li>
     <li><a href="../v5.2.0/changes_to_master.html">v5.2.0</a></li>
     <li><a href="../v5.1.0/contents.html">v5.1.0</a></li>
+    <li><a href="../v5.5.0_future/changes_to_master.html">v5.5.0_future</a></li>
     <li><a href="changes_to_master.html">master</a></li>
 </ul>
         </div>

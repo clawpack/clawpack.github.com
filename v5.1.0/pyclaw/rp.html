@@ -310,20 +310,11 @@ form (in 1d):</p>
 <p>the flux function is</p>
 <div class="math">
 \[\begin{split}f(q) = \left [ \begin{array}{c} \rho u \\ \rho u^2 + p \\ u(E+p) \end{array}\right ].\end{split}\]</div>
-<p>and <span class="math">\(\rho\)</span> is the density, <span class="math">\(u\)</span> the velocity, <span class="math">\(E\)</span> is the 
+<p>and <span class="math">\(\rho\)</span> is the density, <span class="math">\(u\)</span> the velocity, <span class="math">\(E\)</span> is the
 energy and <span class="math">\(p\)</span> is the pressure.</p>
 <p>Unless otherwise noted, the ideal gas equation of state is used:</p>
 <div class="math">
 \[E = (\gamma - 1) \left (E - \frac{1}{2}\rho u^2 \right)\]</div>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Authors:</th><td class="field-body">Kyle T. Mandli (2009-06-26): Initial version
-Kyle T. Mandli (2011-03-28): Interleaved version</td>
-</tr>
-</tbody>
-</table>
 <dl class="function">
 <dt id="clawpack.riemann.euler_1D_py.euler_exact_1D">
 <code class="descclassname">clawpack.riemann.euler_1D_py.</code><code class="descname">euler_exact_1D</code><span class="sig-paren">(</span><em>q_l</em>, <em>q_r</em>, <em>aux_l</em>, <em>aux_r</em>, <em>problem_data</em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.riemann.euler_1D_py.euler_exact_1D" title="Permalink to this definition">¶</a></dt>
@@ -366,45 +357,34 @@ Kyle T. Mandli (2011-03-28): Interleaved version</td>
 <dt id="clawpack.riemann.euler_1D_py.euler_hllc_1D">
 <code class="descclassname">clawpack.riemann.euler_1D_py.</code><code class="descname">euler_hllc_1D</code><span class="sig-paren">(</span><em>q_l</em>, <em>q_r</em>, <em>aux_l</em>, <em>aux_r</em>, <em>problem_data</em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.riemann.euler_1D_py.euler_hllc_1D" title="Permalink to this definition">¶</a></dt>
 <dd><p>HLLC Euler solver</p>
-<div class="system-message">
-<p class="system-message-title">System Message: WARNING/2 (<tt class="docutils">/Users/rjl/git/clawpack/clawpack/riemann/euler_1D_py.py:docstring of clawpack.riemann.euler_1D_py.euler_hllc_1D</tt>, line 3)</p>
-Literal block expected; none found.</div>
-<p>W_1 = q_hat_l - q_l      s_1 = min(u_l-c_l,u_l+c_l,lambda_roe_1,lambda_roe_2)
-W_2 = q_hat_r - q_hat_l  s_2 = s_m
-W_3 = q_r - q_hat_r      s_3 = max(u_r-c_r,u_r+c_r,lambda_roe_1,lambda_roe_2)</p>
-<dl class="docutils">
-<dt>s_m = (p_r - p_l + rho_l*u_l*(s_l - u_l) - rho_r*u_r*(s_r - u_r))</dt>
-<dd>/ (rho_l*(s_l-u_l) - rho_r*(s_r - u_r))</dd>
-</dl>
-<p># left middle state
-q_hat_l[0,:] = rho_l*(s_l - u_l)/(s_l - s_m)
-q_hat_l[1,:] = rho_l*(s_l - u_l)/(s_l - s_m)*s_m
-q_hat_l[2,:] = rho_l*(s_l - u_l)/(s_l - s_m)</p>
-<div class="system-message">
-<p class="system-message-title">System Message: ERROR/3 (<tt class="docutils">/Users/rjl/git/clawpack/clawpack/riemann/euler_1D_py.py:docstring of clawpack.riemann.euler_1D_py.euler_hllc_1D</tt>, line 14)</p>
-Unexpected indentation.</div>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">W_1</span> <span class="o">=</span> <span class="n">q_hat_l</span> <span class="o">-</span> <span class="n">q_l</span>      <span class="n">s_1</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">u_l</span><span class="o">-</span><span class="n">c_l</span><span class="p">,</span><span class="n">u_l</span><span class="o">+</span><span class="n">c_l</span><span class="p">,</span><span class="n">lambda_roe_1</span><span class="p">,</span><span class="n">lambda_roe_2</span><span class="p">)</span>
+<span class="n">W_2</span> <span class="o">=</span> <span class="n">q_hat_r</span> <span class="o">-</span> <span class="n">q_hat_l</span>  <span class="n">s_2</span> <span class="o">=</span> <span class="n">s_m</span>
+<span class="n">W_3</span> <span class="o">=</span> <span class="n">q_r</span> <span class="o">-</span> <span class="n">q_hat_r</span>      <span class="n">s_3</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">u_r</span><span class="o">-</span><span class="n">c_r</span><span class="p">,</span><span class="n">u_r</span><span class="o">+</span><span class="n">c_r</span><span class="p">,</span><span class="n">lambda_roe_1</span><span class="p">,</span><span class="n">lambda_roe_2</span><span class="p">)</span>
+<span class="n">s_m</span> <span class="o">=</span> <span class="p">(</span><span class="n">p_r</span> <span class="o">-</span> <span class="n">p_l</span> <span class="o">+</span> <span class="n">rho_l</span><span class="o">*</span><span class="n">u_l</span><span class="o">*</span><span class="p">(</span><span class="n">s_l</span> <span class="o">-</span> <span class="n">u_l</span><span class="p">)</span> <span class="o">-</span> <span class="n">rho_r</span><span class="o">*</span><span class="n">u_r</span><span class="o">*</span><span class="p">(</span><span class="n">s_r</span> <span class="o">-</span> <span class="n">u_r</span><span class="p">))</span>\
+  <span class="o">/</span> <span class="p">(</span><span class="n">rho_l</span><span class="o">*</span><span class="p">(</span><span class="n">s_l</span><span class="o">-</span><span class="n">u_l</span><span class="p">)</span> <span class="o">-</span> <span class="n">rho_r</span><span class="o">*</span><span class="p">(</span><span class="n">s_r</span> <span class="o">-</span> <span class="n">u_r</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>left middle state:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">q_hat_l</span><span class="p">[</span><span class="mi">0</span><span class="p">,:]</span> <span class="o">=</span> <span class="n">rho_l</span><span class="o">*</span><span class="p">(</span><span class="n">s_l</span> <span class="o">-</span> <span class="n">u_l</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">s_l</span> <span class="o">-</span> <span class="n">s_m</span><span class="p">)</span>
+<span class="n">q_hat_l</span><span class="p">[</span><span class="mi">1</span><span class="p">,:]</span> <span class="o">=</span> <span class="n">rho_l</span><span class="o">*</span><span class="p">(</span><span class="n">s_l</span> <span class="o">-</span> <span class="n">u_l</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">s_l</span> <span class="o">-</span> <span class="n">s_m</span><span class="p">)</span><span class="o">*</span><span class="n">s_m</span>
+<span class="n">q_hat_l</span><span class="p">[</span><span class="mi">2</span><span class="p">,:]</span> <span class="o">=</span> <span class="n">rho_l</span><span class="o">*</span><span class="p">(</span><span class="n">s_l</span> <span class="o">-</span> <span class="n">u_l</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">s_l</span> <span class="o">-</span> <span class="n">s_m</span><span class="p">)</span>\
+        <span class="o">*</span><span class="p">(</span><span class="n">E_l</span><span class="o">/</span><span class="n">rho_l</span> <span class="o">+</span> <span class="p">(</span><span class="n">s_m</span> <span class="o">-</span> <span class="n">u_l</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">s_m</span> <span class="o">+</span> <span class="n">p_l</span><span class="o">/</span><span class="p">(</span><span class="n">rho_l</span><span class="o">*</span><span class="p">(</span><span class="n">s_l</span> <span class="o">-</span> <span class="n">u_l</span><span class="p">))))</span>
+</pre></div>
+</div>
+<p>right middle state:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">q_hat_r</span><span class="p">[</span><span class="mi">0</span><span class="p">,:]</span> <span class="o">=</span> <span class="n">rho_r</span><span class="o">*</span><span class="p">(</span><span class="n">s_r</span> <span class="o">-</span> <span class="n">u_r</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">s_r</span> <span class="o">-</span> <span class="n">s_m</span><span class="p">)</span>
+<span class="n">q_hat_r</span><span class="p">[</span><span class="mi">1</span><span class="p">,:]</span> <span class="o">=</span> <span class="n">rho_r</span><span class="o">*</span><span class="p">(</span><span class="n">s_r</span> <span class="o">-</span> <span class="n">u_r</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">s_r</span> <span class="o">-</span> <span class="n">s_m</span><span class="p">)</span><span class="o">*</span><span class="n">s_m</span>
+<span class="n">q_hat_r</span><span class="p">[</span><span class="mi">2</span><span class="p">,:]</span> <span class="o">=</span> <span class="n">rho_r</span><span class="o">*</span><span class="p">(</span><span class="n">s_r</span> <span class="o">-</span> <span class="n">u_r</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">s_r</span> <span class="o">-</span> <span class="n">s_m</span><span class="p">)</span>\
+        <span class="o">*</span><span class="p">(</span><span class="n">E_r</span><span class="o">/</span><span class="n">rho_r</span> <span class="o">+</span> <span class="p">(</span><span class="n">s_m</span> <span class="o">-</span> <span class="n">u_r</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">s_m</span> <span class="o">+</span> <span class="n">p_r</span><span class="o">/</span><span class="p">(</span><span class="n">rho_r</span><span class="o">*</span><span class="p">(</span><span class="n">s_r</span> <span class="o">-</span> <span class="n">u_r</span><span class="p">))))</span>
+</pre></div>
+</div>
+<p><em>problem_data</em> should contain:</p>
 <blockquote>
-<div><p><a href="#id6"><span class="problematic" id="id7">*</span></a>(E_l/rho_l + (s_m - u_l)*(s_m + p_l/(rho_l*(s_l - u_l))))</p>
-<div class="system-message" id="id6">
-<p class="system-message-title">System Message: WARNING/2 (<tt class="docutils">/Users/rjl/git/clawpack/clawpack/riemann/euler_1D_py.py:docstring of clawpack.riemann.euler_1D_py.euler_hllc_1D</tt>, line 14); <em><a href="#id7">backlink</a></em></p>
-Inline emphasis start-string without end-string.</div>
+<div><ul class="simple">
+<li><em>gamma</em>: (float) Ratio of specific heat capacities</li>
+<li><em>gamma1</em>: (float) <span class="math">\(\gamma - 1\)</span></li>
+</ul>
 </div></blockquote>
-<p># right middle state
-q_hat_r[0,:] = rho_r*(s_r - u_r)/(s_r - s_m)
-q_hat_r[1,:] = rho_r*(s_r - u_r)/(s_r - s_m)*s_m
-q_hat_r[2,:] = rho_r*(s_r - u_r)/(s_r - s_m)</p>
-<div class="system-message">
-<p class="system-message-title">System Message: ERROR/3 (<tt class="docutils">/Users/rjl/git/clawpack/clawpack/riemann/euler_1D_py.py:docstring of clawpack.riemann.euler_1D_py.euler_hllc_1D</tt>, line 20)</p>
-Unexpected indentation.</div>
-<blockquote>
-<div><p><a href="#id8"><span class="problematic" id="id9">*</span></a>(E_r/rho_r + (s_m - u_r)*(s_m + p_r/(rho_r*(s_r - u_r))))</p>
-<div class="system-message" id="id8">
-<p class="system-message-title">System Message: WARNING/2 (<tt class="docutils">/Users/rjl/git/clawpack/clawpack/riemann/euler_1D_py.py:docstring of clawpack.riemann.euler_1D_py.euler_hllc_1D</tt>, line 20); <em><a href="#id9">backlink</a></em></p>
-Inline emphasis start-string without end-string.</div>
-</div></blockquote>
-<p><em>problem_data</em> should contain:
-- <em>gamma</em> - (float) Ratio of specific heat capacities
-- <em>gamma1</em> - (float) <span class="math">\(\gamma - 1\)</span></p>
 <p>:Version 1.0 (2015-11-18)</p>
 </dd></dl>
 
@@ -434,7 +414,7 @@ Inline emphasis start-string without end-string.</div>
 
 </div>
 <div class="section" id="shallow-water-equations">
-<span id="id10"></span><h2><code class="xref py py-mod docutils literal"><span class="pre">Shallow</span> <span class="pre">Water</span> <span class="pre">Equations</span></code><a class="headerlink" href="#shallow-water-equations" title="Permalink to this headline">¶</a></h2>
+<span id="id6"></span><h2><code class="xref py py-mod docutils literal"><span class="pre">Shallow</span> <span class="pre">Water</span> <span class="pre">Equations</span></code><a class="headerlink" href="#shallow-water-equations" title="Permalink to this headline">¶</a></h2>
 <span class="target" id="module-clawpack.riemann.shallow_1D_py"></span><p>Riemann solvers for the shallow water equations.</p>
 <dl class="docutils">
 <dt>The available solvers are:</dt>
@@ -620,6 +600,7 @@ not present, false is assumed</li>
     <li><a href="../../v5.2.1/pyclaw/rp.html">v5.2.1</a></li>
     <li><a href="../../v5.2.0/pyclaw/rp.html">v5.2.0</a></li>
     <li><a href="rp.html">v5.1.0</a></li>
+    <li><a href="../../v5.5.0_future/pyclaw/rp.html">v5.5.0_future</a></li>
     <li><a href="../../master/pyclaw/rp.html">master</a></li>
 </ul>
         </div>
