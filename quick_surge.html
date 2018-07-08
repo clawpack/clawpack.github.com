@@ -1,0 +1,188 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Quick start guide for storm surge modeling &#8212; Clawpack 5.5.0_future documentation</title>
+    <link rel="stylesheet" href="_static/flasky.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/base.css" type="text/css" />
+    <link rel="stylesheet" href="_static/layout.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="shortcut icon" href="_static/clawicon.ico"/>
+    <link rel="author" title="About these documents" href="about.html" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Earthquake sources: Fault slip and the Okada model" href="okada.html" />
+    <link rel="prev" title="Quick start guide for tsunami modeling" href="quick_tsunami.html" /> 
+  </head><body>
+<div id="main-wrapper" class="sphinx">
+<div id="header-wrapper">
+  <section id="header">
+    <!-- <h1><a href="http://clawpack.org/">Clawpack</a></h1> -->
+    <h1><a href="http://clawpack.org/">Clawpack-5</a></h1> 
+    <nav>
+      <ul>
+        <li>
+          <a href="contents.html">Docs</a>
+        </li>
+        <li>
+          <a href="installing.html">Install</a>
+        </li>
+        <li>
+          <a class="" href="gallery/index.html">Gallery</a>
+        </li>
+        <li>
+          <a class="" href="community.html">Community</a>
+        </li>
+        <li>
+          <a class="active" href="http://github.com/clawpack">Source</a>
+        </li>
+        <li>
+          <a class="" href="developers.html">Develop</a>
+        </li>
+      </ul>
+    </nav>
+  </section>
+<div class="decoration"></div>
+</div>
+
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="okada.html" title="Earthquake sources: Fault slip and the Okada model"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="quick_tsunami.html" title="Quick start guide for tsunami modeling"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="contents.html">Clawpack 5.5.0_future documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="geoclaw.html" accesskey="U">GeoClaw</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="quick-start-guide-for-storm-surge-modeling">
+<span id="quick-surge"></span><h1>Quick start guide for storm surge modeling<a class="headerlink" href="#quick-start-guide-for-storm-surge-modeling" title="Permalink to this headline">¶</a></h1>
+<p>To get started with a storm surge computation it is best to refer to a previous
+working example.  For example, you might start with
+<cite>$CLAW/geoclaw/examples/storm-surge/ike</cite>.  There are also a number of additional
+examples in the <cite>$CLAW/geoclaw/examples/storm-surge</cite> directory as well as some
+in the <cite>$CLAW/apps/surge-examples</cite> directory (this is actually a repository of
+examples that is actively updated).  The primary input that one needs to provide
+for a new example usually involves two data source</p>
+<blockquote>
+<div><ul class="simple">
+<li>Topography data:  Data that specifies the topography and bathymetry of the
+region around the area of interest.  For storm surge computations it is
+generally good practice to include entire oceanic basins so that you can
+ensure that flow into and out of the basin is resolved by the computation
+and is sufficiently distant from the computational domain’s boundaries.</li>
+<li>Storm data:  Of course we need to specify the particular storm that you
+are interested in.  There are a number of ways to specify a storm which
+are described in <a class="reference internal" href="setrun_geoclaw.html#setrun-surge"><span class="std std-ref">Storm Specification Data</span></a>.  Sources for parameterized storms
+can also be found in <a class="reference internal" href="surgedata.html#surgedata"><span class="std std-ref">Sources for Storm Surge Data</span></a> and a description of how to include
+them in <span class="xref std std-ref">_surge_module</span>.</li>
+</ul>
+</div></blockquote>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">This is a work in progress and only partially has been filled out.
+If you are interested in the rest of the steps or wish to contribute your
+own workflow please let us know!</p>
+</div>
+<p>Here we will concentrate on changing the Hurricane Ike example into one for
+Hurricane Katrina.</p>
+<ol class="arabic simple">
+<li>First copy the files located in the Hurricane Ike directorty located at
+<cite>$CLAW/geoclaw/examples/storm-surge/ike</cite>.</li>
+<li>Next let’s find some better topography for the New Orleans area…</li>
+<li>Now let’s find a storm specification for Hurricane Katrina.  In this
+example we will use the ATCF database.  For Katrina this ends up being
+the file located <a href="#id1"><span class="problematic" id="id2">`here &lt;&gt;`_</span></a>.</li>
+<li>We now need to modify the <cite>setrun.py</cite> to use our new storm format and
+topography we now added…</li>
+<li>Finally we need to also modify the plotting so that we have an</li>
+<li>Gauges…</li>
+<li>Running the simulation…</li>
+</ol>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<p><a href="http://clawpack.org/">
+    <img class="logo" src= "_static/clawlogo.jpg" alt="Logo"/>
+</a>
+<h2>Version 5.5.0_future</h2>
+</p><h3>Related Topics</h3>
+<ul>
+  <li><a href="contents.html">Documentation overview</a><ul>
+  <li><a href="geoclaw.html">GeoClaw</a><ul>
+      <li>Previous: <a href="quick_tsunami.html" title="previous chapter">Quick start guide for tsunami modeling</a></li>
+      <li>Next: <a href="okada.html" title="next chapter">Earthquake sources: Fault slip and the Okada model</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/quick_surge.rst.txt"
+           rel="nofollow">Show Source</a></li>
+    <li><a href="https://github.com/clawpack/doc/blob/master/doc/quick_surge.rst"
+           rel="nofollow">Show on GitHub</a></li>
+    <li><a href="https://github.com/clawpack/doc/edit/master/doc/quick_surge.rst"
+           rel="nofollow">Edit on GitHub</a></li>
+  </ul>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+  <div class="footer">
+    &copy; Copyright CC-BY 2018, The Clawpack Development Team.
+    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
+  </div>
+  <script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-44811544-1', 'auto');
+  ga('send', 'pageview');
+
+  </script>
+  
+  </body>
+</html>

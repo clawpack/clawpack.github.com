@@ -1,28 +1,17 @@
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
-
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
-    <title>Demo of running AMRClaw Fortran code and plotting results &#8212; Clawpack 5.5.0alpha documentation</title>
-    
+    <title>Demo of running AMRClaw Fortran code and plotting results &#8212; Clawpack 5.5.0_future documentation</title>
     <link rel="stylesheet" href="../../../../_static/flasky.css" type="text/css" />
     <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" href="../../../../_static/base.css" type="text/css" />
     <link rel="stylesheet" href="../../../../_static/layout.css" type="text/css" />
-    
-    <script type="text/javascript">
-      var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    '../../../../',
-        VERSION:     '5.5.0alpha',
-        COLLAPSE_INDEX: false,
-        FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true,
-        SOURCELINK_SUFFIX: '.txt'
-      };
-    </script>
+    <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../../../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../../_static/doctools.js"></script>
@@ -31,8 +20,7 @@
     <link rel="author" title="About these documents" href="../../../../about.html" />
     <link rel="index" title="Index" href="../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../search.html" /> 
-  </head>
-  <body role="document">
+  </head><body>
 <div id="main-wrapper" class="sphinx">
 <div id="header-wrapper">
   <section id="header">
@@ -47,7 +35,7 @@
           <a href="../../../../installing.html">Install</a>
         </li>
         <li>
-          <a class="" href="../../../../../../../gallery/_build/html/index.html">Gallery</a>
+          <a class="" href="../../../../gallery/index.html">Gallery</a>
         </li>
         <li>
           <a class="" href="../../../../community.html">Community</a>
@@ -73,7 +61,7 @@
         <li class="right" >
           <a href="../../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../../contents.html">Clawpack 5.5.0alpha documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="../../../../contents.html">Clawpack 5.5.0_future documentation</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -242,27 +230,31 @@ div.nboutput div.output_area.stderr {
 .ansi-white-intense-fg { color: #A1A6B2; }
 .ansi-white-intense-bg { background-color: #A1A6B2; }
 
+.ansi-default-inverse-fg { color: #FFFFFF; }
+.ansi-default-inverse-bg { background-color: #000000; }
+
 .ansi-bold { font-weight: bold; }
+.ansi-underline { text-decoration: underline; }
 </style>
 <div class="section" id="Demo-of-running-AMRClaw-Fortran-code-and-plotting-results">
 <h1>Demo of running AMRClaw Fortran code and plotting results<a class="headerlink" href="#Demo-of-running-AMRClaw-Fortran-code-and-plotting-results" title="Permalink to this headline">¶</a></h1>
 <p>This notebook can be found in
-<code class="docutils literal"><span class="pre">$CLAW/apps/notebooks/amrclaw_advection_2d_square</span></code></p>
+<code class="docutils literal notranslate"><span class="pre">$CLAW/apps/notebooks/amrclaw_advection_2d_square</span></code></p>
 <p>The is adapted from $CLAW/amrclaw/examples/advection_2d_square to
 illustrate the use of IPython notebooks.</p>
 <p>The setrun.py and setplot.py files are taken from that example but some
 parameters are modified in the notebook below.</p>
-<p>The 2-dimensional advection equation <span class="math">\(q_t + uq_x + vq_y = 0\)</span> is
+<p>The 2-dimensional advection equation <span class="math notranslate nohighlight">\(q_t + uq_x + vq_y = 0\)</span> is
 solved in the unit square with periodic boundary conditions. The
-constant advection velocities <span class="math">\(u\)</span> and <span class="math">\(v\)</span> are specified in
+constant advection velocities <span class="math notranslate nohighlight">\(u\)</span> and <span class="math notranslate nohighlight">\(v\)</span> are specified in
 setrun.py but can be changed below.</p>
 <p>Have plots appear inline in notebook:</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none"><div class="highlight"><pre>
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
 <span></span>In [1]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython2"><div class="highlight"><pre>
+<div class="input_area highlight-ipython2 notranslate"><div class="highlight"><pre>
 <span></span><span class="o">%</span><span class="k">pylab</span> inline
 </pre></div>
 </div>
@@ -278,11 +270,11 @@ Populating the interactive namespace from numpy and matplotlib
 <p>Check that the CLAW environment variable is set. (It must be set in the
 Unix shell before starting the notebook server).</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none"><div class="highlight"><pre>
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
 <span></span>In [2]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython2"><div class="highlight"><pre>
+<div class="input_area highlight-ipython2 notranslate"><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">os</span>
 <span class="k">try</span><span class="p">:</span>
     <span class="n">CLAW</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s1">&#39;CLAW&#39;</span><span class="p">]</span>
@@ -303,11 +295,11 @@ Using Clawpack from  /Users/rjl/git/clawpack
 <div class="section" id="Module-with-functions-used-to-execute-system-commands-and-capture-output:">
 <h2>Module with functions used to execute system commands and capture output:<a class="headerlink" href="#Module-with-functions-used-to-execute-system-commands-and-capture-output:" title="Permalink to this headline">¶</a></h2>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none"><div class="highlight"><pre>
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
 <span></span>In [3]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython2"><div class="highlight"><pre>
+<div class="input_area highlight-ipython2 notranslate"><div class="highlight"><pre>
 <span></span><span class="kn">from</span> <span class="nn">clawpack.clawutil</span> <span class="kn">import</span> <span class="n">nbtools</span>
 </pre></div>
 </div>
@@ -316,11 +308,11 @@ Using Clawpack from  /Users/rjl/git/clawpack
 <div class="section" id="Compile-the-code:">
 <h2>Compile the code:<a class="headerlink" href="#Compile-the-code:" title="Permalink to this headline">¶</a></h2>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none"><div class="highlight"><pre>
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
 <span></span>In [6]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython2"><div class="highlight"><pre>
+<div class="input_area highlight-ipython2 notranslate"><div class="highlight"><pre>
 <span></span><span class="n">nbtools</span><span class="o">.</span><span class="n">make_exe</span><span class="p">(</span><span class="n">new</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>  <span class="c1"># new=True ==&gt; force recompilation of all code</span>
 </pre></div>
 </div>
@@ -344,11 +336,11 @@ Done...  Check this file to see output:
 <div class="section" id="Make-documentation-files:">
 <h2>Make documentation files:<a class="headerlink" href="#Make-documentation-files:" title="Permalink to this headline">¶</a></h2>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none"><div class="highlight"><pre>
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
 <span></span>In [7]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython2"><div class="highlight"><pre>
+<div class="input_area highlight-ipython2 notranslate"><div class="highlight"><pre>
 <span></span><span class="n">nbtools</span><span class="o">.</span><span class="n">make_htmls</span><span class="p">()</span>
 </pre></div>
 </div>
@@ -373,11 +365,11 @@ See the README.html file for links to input files...
 <p>First create data files needed for the Fortran code, using parameters
 specified in setrun.py:</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none"><div class="highlight"><pre>
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
 <span></span>In [8]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython2"><div class="highlight"><pre>
+<div class="input_area highlight-ipython2 notranslate"><div class="highlight"><pre>
 <span></span><span class="n">nbtools</span><span class="o">.</span><span class="n">make_data</span><span class="p">(</span><span class="n">verbose</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -385,11 +377,11 @@ specified in setrun.py:</p>
 <p>Now run the code and produce plots. Specifying a label insures the
 resulting plot directory will persist after later runs are done below.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none"><div class="highlight"><pre>
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
 <span></span>In [9]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython2"><div class="highlight"><pre>
+<div class="input_area highlight-ipython2 notranslate"><div class="highlight"><pre>
 <span></span><span class="n">outdir</span><span class="p">,</span><span class="n">plotdir</span> <span class="o">=</span> <span class="n">nbtools</span><span class="o">.</span><span class="n">make_output_and_plots</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s1">&#39;1&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -446,11 +438,11 @@ results.</p>
 <p>After creating all png files in the _plots directory, these can also be
 combined in an animation that is displayed inline:</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none"><div class="highlight"><pre>
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
 <span></span>In [10]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython2"><div class="highlight"><pre>
+<div class="input_area highlight-ipython2 notranslate"><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">clawpack.visclaw.JSAnimation.JSAnimation_frametools</span> <span class="kn">as</span> <span class="nn">J</span>
 <span class="n">anim</span> <span class="o">=</span> <span class="n">J</span><span class="o">.</span><span class="n">make_anim</span><span class="p">(</span><span class="n">plotdir</span><span class="p">,</span> <span class="n">figno</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span><span class="mi">4</span><span class="p">))</span>
 <span class="n">anim</span>
@@ -458,7 +450,7 @@ combined in an animation that is displayed inline:</p>
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none"><div class="highlight"><pre>
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
 <span></span>Out[10]:
 </pre></div>
 </div>
@@ -3163,39 +3155,39 @@ iC0pwERExJYUYCIiYksKMBERsSUFmIiI2NL/B2mcIYTYkmNkAAAAAElFTkSuQmCC\
 <div class="section" id="Illustrate-how-to-adjust-some-parameters-and-rerun-the-code:">
 <h2>Illustrate how to adjust some parameters and rerun the code:<a class="headerlink" href="#Illustrate-how-to-adjust-some-parameters-and-rerun-the-code:" title="Permalink to this headline">¶</a></h2>
 <p>First read in the current rundata. (See the README.html file for a link
-to <code class="docutils literal"><span class="pre">setrun.py</span></code>).</p>
+to <code class="docutils literal notranslate"><span class="pre">setrun.py</span></code>).</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none"><div class="highlight"><pre>
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
 <span></span>In [11]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython2"><div class="highlight"><pre>
+<div class="input_area highlight-ipython2 notranslate"><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">setrun</span>
 <span class="n">rundata</span> <span class="o">=</span> <span class="n">setrun</span><span class="o">.</span><span class="n">setrun</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
-<p>Here we adjust the mesh to be <span class="math">\(40 \times 40\)</span> and set two gauges at
-<span class="math">\((0.6, 0.4)\)</span> and <span class="math">\((0.6,0.8)\)</span>.</p>
+<p>Here we adjust the mesh to be <span class="math notranslate nohighlight">\(40 \times 40\)</span> and set two gauges at
+<span class="math notranslate nohighlight">\((0.6, 0.4)\)</span> and <span class="math notranslate nohighlight">\((0.6,0.8)\)</span>.</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none"><div class="highlight"><pre>
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
 <span></span>In [12]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython2"><div class="highlight"><pre>
+<div class="input_area highlight-ipython2 notranslate"><div class="highlight"><pre>
 <span></span><span class="n">rundata</span><span class="o">.</span><span class="n">clawdata</span><span class="o">.</span><span class="n">num_cells</span> <span class="o">=</span> <span class="p">[</span><span class="mi">40</span><span class="p">,</span><span class="mi">40</span><span class="p">]</span>
 <span class="n">rundata</span><span class="o">.</span><span class="n">gaugedata</span><span class="o">.</span><span class="n">gauges</span> <span class="o">=</span> <span class="p">[[</span><span class="mi">1</span><span class="p">,</span> <span class="mf">0.6</span><span class="p">,</span> <span class="mf">0.4</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">10.</span><span class="p">],</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mf">0.6</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">10.</span><span class="p">]]</span>
 </pre></div>
 </div>
 </div>
 <p>The advection velocities can also be changed (in setrun.py,
-<span class="math">\((u,v) = (0.5,1)\)</span>.</p>
+<span class="math notranslate nohighlight">\((u,v) = (0.5,1)\)</span>.</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none"><div class="highlight"><pre>
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
 <span></span>In [13]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython2"><div class="highlight"><pre>
+<div class="input_area highlight-ipython2 notranslate"><div class="highlight"><pre>
 <span></span><span class="n">rundata</span><span class="o">.</span><span class="n">probdata</span><span class="o">.</span><span class="n">u</span> <span class="o">=</span> <span class="o">-</span><span class="mf">1.0</span>
 <span class="n">rundata</span><span class="o">.</span><span class="n">probdata</span><span class="o">.</span><span class="n">v</span> <span class="o">=</span> <span class="mf">1.0</span>
 </pre></div>
@@ -3204,14 +3196,14 @@ to <code class="docutils literal"><span class="pre">setrun.py</span></code>).</p
 <p>Change the limiter if you want to experiment with other methods. A list
 of 1 limiter is required since this is a scalar problem with only 1 wave
 in the Riemann solution.</p>
-<p>Here we set the limiter to [&#8216;none&#8217;] to see the oscillations that arise
+<p>Here we set the limiter to [‘none’] to see the oscillations that arise
 if Lax-Wendroff is used with no limiter.</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none"><div class="highlight"><pre>
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
 <span></span>In [14]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython2"><div class="highlight"><pre>
+<div class="input_area highlight-ipython2 notranslate"><div class="highlight"><pre>
 <span></span><span class="n">rundata</span><span class="o">.</span><span class="n">clawdata</span><span class="o">.</span><span class="n">limiter</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;none&#39;</span><span class="p">]</span>
 </pre></div>
 </div>
@@ -3220,11 +3212,11 @@ if Lax-Wendroff is used with no limiter.</p>
 <div class="section" id="Write-the-data-out-(for-the-Fortran-code-to-read-in)-and-run-the-code:">
 <h2>Write the data out (for the Fortran code to read in) and run the code:<a class="headerlink" href="#Write-the-data-out-(for-the-Fortran-code-to-read-in)-and-run-the-code:" title="Permalink to this headline">¶</a></h2>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none"><div class="highlight"><pre>
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
 <span></span>In [15]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython2"><div class="highlight"><pre>
+<div class="input_area highlight-ipython2 notranslate"><div class="highlight"><pre>
 <span></span><span class="n">rundata</span><span class="o">.</span><span class="n">write</span><span class="p">()</span>
 <span class="n">outdir</span><span class="p">,</span> <span class="n">plotdir</span> <span class="o">=</span> <span class="n">nbtools</span><span class="o">.</span><span class="n">make_output_and_plots</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s1">&#39;2&#39;</span><span class="p">)</span>
 </pre></div>
@@ -3280,13 +3272,13 @@ View plots created at this link:
 <h1>Changing plot parameters and plotting inline<a class="headerlink" href="#Changing-plot-parameters-and-plotting-inline" title="Permalink to this headline">¶</a></h1>
 <p>In addition to producing a _plots directory using the parameters in
 setplot.py, plot parameters can be changed and plots produced inline as
-the examples below illustrate...</p>
+the examples below illustrate…</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none"><div class="highlight"><pre>
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
 <span></span>In [16]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython2"><div class="highlight"><pre>
+<div class="input_area highlight-ipython2 notranslate"><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">setplot</span>
 <span class="n">plotdata</span> <span class="o">=</span> <span class="n">setplot</span><span class="o">.</span><span class="n">setplot</span><span class="p">()</span>
 <span class="n">plotdata</span><span class="o">.</span><span class="n">outdir</span> <span class="o">=</span> <span class="n">outdir</span>
@@ -3296,11 +3288,11 @@ the examples below illustrate...</p>
 <div class="section" id="Plot-one-frame-of-the-solution:">
 <h2>Plot one frame of the solution:<a class="headerlink" href="#Plot-one-frame-of-the-solution:" title="Permalink to this headline">¶</a></h2>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none"><div class="highlight"><pre>
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
 <span></span>In [17]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython2"><div class="highlight"><pre>
+<div class="input_area highlight-ipython2 notranslate"><div class="highlight"><pre>
 <span></span><span class="n">plotdata</span><span class="o">.</span><span class="n">plotframe</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -3338,11 +3330,11 @@ the examples below illustrate...</p>
 <div class="section" id="Adjust-some-plot-parameters:">
 <h2>Adjust some plot parameters:<a class="headerlink" href="#Adjust-some-plot-parameters:" title="Permalink to this headline">¶</a></h2>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none"><div class="highlight"><pre>
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
 <span></span>In [18]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython2"><div class="highlight"><pre>
+<div class="input_area highlight-ipython2 notranslate"><div class="highlight"><pre>
 <span></span><span class="n">plotdata</span><span class="o">.</span><span class="n">showitems</span><span class="p">()</span>   <span class="c1"># shows the currently defined figures, axes, items</span>
 </pre></div>
 </div>
@@ -3375,13 +3367,13 @@ Current plot figures, axes, and items:
 </pre></div></div>
 </div>
 <p>Change the color limits for the pcolor plot to show the overshoots and
-undershoots with Lax-Wendroff. Also suppress showing the other plots...</p>
+undershoots with Lax-Wendroff. Also suppress showing the other plots…</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none"><div class="highlight"><pre>
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
 <span></span>In [19]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython2"><div class="highlight"><pre>
+<div class="input_area highlight-ipython2 notranslate"><div class="highlight"><pre>
 <span></span><span class="n">plotitem</span> <span class="o">=</span> <span class="n">plotdata</span><span class="o">.</span><span class="n">getitem</span><span class="p">(</span><span class="s1">&#39;ITEM1&#39;</span><span class="p">,</span><span class="s1">&#39;AXES1&#39;</span><span class="p">,</span><span class="s1">&#39;pcolor&#39;</span><span class="p">)</span>
 <span class="n">plotitem</span><span class="o">.</span><span class="n">pcolor_cmin</span> <span class="o">=</span> <span class="o">-</span><span class="mf">0.2</span>
 <span class="n">plotitem</span><span class="o">.</span><span class="n">pcolor_cmax</span> <span class="o">=</span> <span class="mf">1.2</span>
@@ -3402,13 +3394,13 @@ undershoots with Lax-Wendroff. Also suppress showing the other plots...</p>
 <div class="section" id="Explore-the-gauge-output:">
 <h2>Explore the gauge output:<a class="headerlink" href="#Explore-the-gauge-output:" title="Permalink to this headline">¶</a></h2>
 <p>The overshoots and undershoots with Lax-Wendroff are even more visible
-in the gauge output...</p>
+in the gauge output…</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none"><div class="highlight"><pre>
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
 <span></span>In [21]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython2"><div class="highlight"><pre>
+<div class="input_area highlight-ipython2 notranslate"><div class="highlight"><pre>
 <span></span><span class="k">for</span> <span class="n">gaugeno</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">]:</span>
     <span class="n">gauge</span> <span class="o">=</span> <span class="n">plotdata</span><span class="o">.</span><span class="n">getgauge</span><span class="p">(</span><span class="n">gaugeno</span><span class="p">)</span>
     <span class="n">q</span> <span class="o">=</span> <span class="n">gauge</span><span class="o">.</span><span class="n">q</span><span class="p">[</span><span class="mi">0</span><span class="p">,:]</span>
@@ -3437,11 +3429,11 @@ Gauge 2 at [0.6, 0.8] has a maximum value of q = 1.15636 at t = 1.54062
 </pre></div></div>
 </div>
 <div class="nboutput docutils container">
-<div class="prompt highlight-none"><div class="highlight"><pre>
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
 <span></span>Out[21]:
 </pre></div>
 </div>
-<div class="output_area highlight-none"><div class="highlight"><pre>
+<div class="output_area highlight-none notranslate"><div class="highlight"><pre>
 <span></span>&lt;matplotlib.text.Text at 0x10ae9a190&gt;
 </pre></div>
 </div>
@@ -3451,16 +3443,6 @@ Gauge 2 at [0.6, 0.8] has a maximum value of q = 1.15636 at t = 1.54062
 </div>
 <div class="output_area docutils container">
 <img alt="../../../../_images/_build_html_v5.3.1_notebooks_amrclaw_advection_2d_square_37_2.png" src="../../../../_images/_build_html_v5.3.1_notebooks_amrclaw_advection_2d_square_37_2.png" />
-</div>
-</div>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none"><div class="highlight"><pre>
-<span></span>In [ ]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython2"><div class="highlight"><pre>
-<span></span>
-</pre></div>
 </div>
 </div>
 </div>
@@ -3475,7 +3457,7 @@ Gauge 2 at [0.6, 0.8] has a maximum value of q = 1.15636 at t = 1.54062
 <p><a href="http://clawpack.org/">
     <img class="logo" src= "../../../../_static/clawlogo.jpg" alt="Logo"/>
 </a>
-<h2>Version 5.5.0alpha</h2>
+<h2>Version 5.5.0_future</h2>
 </p>
   <h3><a href="../../../../contents.html">Table Of Contents</a></h3>
   <ul>
@@ -3512,12 +3494,14 @@ Gauge 2 at [0.6, 0.8] has a maximum value of q = 1.15636 at t = 1.54062
   </ul>
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
+    <div class="searchformwrapper">
     <form class="search" action="../../../../search.html" method="get">
-      <div><input type="text" name="q" /></div>
-      <div><input type="submit" value="Go" /></div>
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
+    </div>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>

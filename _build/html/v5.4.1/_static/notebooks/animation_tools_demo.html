@@ -1,28 +1,17 @@
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
-
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
-    <title>Demonstrate animation_tools module &#8212; Clawpack 5.5.0alpha documentation</title>
-    
+    <title>Demonstrate animation_tools module &#8212; Clawpack 5.5.0_future documentation</title>
     <link rel="stylesheet" href="../../../../../_static/flasky.css" type="text/css" />
     <link rel="stylesheet" href="../../../../../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" href="../../../../../_static/base.css" type="text/css" />
     <link rel="stylesheet" href="../../../../../_static/layout.css" type="text/css" />
-    
-    <script type="text/javascript">
-      var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    '../../../../../',
-        VERSION:     '5.5.0alpha',
-        COLLAPSE_INDEX: false,
-        FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true,
-        SOURCELINK_SUFFIX: '.txt'
-      };
-    </script>
+    <script type="text/javascript" id="documentation_options" data-url_root="../../../../../" src="../../../../../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../../../../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../../../_static/doctools.js"></script>
@@ -31,8 +20,7 @@
     <link rel="author" title="About these documents" href="../../../../../about.html" />
     <link rel="index" title="Index" href="../../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../../search.html" /> 
-  </head>
-  <body role="document">
+  </head><body>
 <div id="main-wrapper" class="sphinx">
 <div id="header-wrapper">
   <section id="header">
@@ -47,7 +35,7 @@
           <a href="../../../../../installing.html">Install</a>
         </li>
         <li>
-          <a class="" href="../../../../../../../../gallery/_build/html/index.html">Gallery</a>
+          <a class="" href="../../../../../gallery/index.html">Gallery</a>
         </li>
         <li>
           <a class="" href="../../../../../community.html">Community</a>
@@ -73,7 +61,7 @@
         <li class="right" >
           <a href="../../../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../../../contents.html">Clawpack 5.5.0alpha documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="../../../../../contents.html">Clawpack 5.5.0_future documentation</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -242,48 +230,52 @@ div.nboutput div.output_area.stderr {
 .ansi-white-intense-fg { color: #A1A6B2; }
 .ansi-white-intense-bg { background-color: #A1A6B2; }
 
+.ansi-default-inverse-fg { color: #FFFFFF; }
+.ansi-default-inverse-bg { background-color: #000000; }
+
 .ansi-bold { font-weight: bold; }
+.ansi-underline { text-decoration: underline; }
 </style>
 <div class="section" id="Demonstrate-animation_tools-module">
 <h1>Demonstrate animation_tools module<a class="headerlink" href="#Demonstrate-animation_tools-module" title="Permalink to this headline">¶</a></h1>
 <p>This notebook demonstrates the tools in the
-<code class="docutils literal"><span class="pre">clawpack.visclaw.animation_tools</span></code> module (new in Version 5.4.0),
+<code class="docutils literal notranslate"><span class="pre">clawpack.visclaw.animation_tools</span></code> module (new in Version 5.4.0),
 which facilitates creating a list of figures or images and viewing them
 as an animation.</p>
-<p>This notebook can be found in <code class="docutils literal"><span class="pre">$CLAW/apps/notebooks/visclaw</span></code>, see
+<p>This notebook can be found in <code class="docutils literal notranslate"><span class="pre">$CLAW/apps/notebooks/visclaw</span></code>, see
 <a class="reference external" href="http://www.clawpack.org/apps.html">http://www.clawpack.org/apps.html</a> for instructions for cloning the
-Clawpack <code class="docutils literal"><span class="pre">apps</span></code> repository.</p>
+Clawpack <code class="docutils literal notranslate"><span class="pre">apps</span></code> repository.</p>
 <p>Several approaches are supported:</p>
 <ul class="simple">
-<li>Using the <code class="docutils literal"><span class="pre">ipywidgets.interact</span></code> allows generating an interactive
+<li>Using the <code class="docutils literal notranslate"><span class="pre">ipywidgets.interact</span></code> allows generating an interactive
 widget for sweeping through the frames. This may be easiest to work
 with when running a notebook interactively, including when using
 <a class="reference external" href="http://mybinder.org">http://mybinder.org</a>.</li>
-<li>Using the <code class="docutils literal"><span class="pre">JSAnimation</span></code> package from
+<li>Using the <code class="docutils literal notranslate"><span class="pre">JSAnimation</span></code> package from
 <a class="reference external" href="https://github.com/jakevdp/JSAnimation">https://github.com/jakevdp/JSAnimation</a> creates animations with
 controls that allow viewing as a movie more easily. You can also
 create a stand-alone html file of an animation to post on the web.
 Moreover movies created with JSAnimation and saved with the notebook
-will operate properly when viewed via <code class="docutils literal"><span class="pre">nbviewer</span></code> or when viewing a
+will operate properly when viewed via <code class="docutils literal notranslate"><span class="pre">nbviewer</span></code> or when viewing a
 notebook on GitHub. However, do not try to run such a movie on a
 binder instance, or the JavaScript will go into an infinite loop.</li>
-<li>The <code class="docutils literal"><span class="pre">JSAnimation</span></code> version can also be embedded in another webpage
-or in Sphinx documentation, using the <code class="docutils literal"><span class="pre">animation_tools.make_html</span></code>
-and <code class="docutils literal"><span class="pre">animation_tools.make_rst</span></code> functions.</li>
-<li>An <code class="docutils literal"><span class="pre">mp4</span></code> file can also be created using the
-<code class="docutils literal"><span class="pre">animation_tools.make_mp4</span></code> function.</li>
+<li>The <code class="docutils literal notranslate"><span class="pre">JSAnimation</span></code> version can also be embedded in another webpage
+or in Sphinx documentation, using the <code class="docutils literal notranslate"><span class="pre">animation_tools.make_html</span></code>
+and <code class="docutils literal notranslate"><span class="pre">animation_tools.make_rst</span></code> functions.</li>
+<li>An <code class="docutils literal notranslate"><span class="pre">mp4</span></code> file can also be created using the
+<code class="docutils literal notranslate"><span class="pre">animation_tools.make_mp4</span></code> function.</li>
 </ul>
 <div class="section" id="Converting-frames-in-a-Clawpack-_plots-directory-to-animations:">
-<h2>Converting frames in a Clawpack <code class="docutils literal"><span class="pre">_plots</span></code> directory to animations:<a class="headerlink" href="#Converting-frames-in-a-Clawpack-_plots-directory-to-animations:" title="Permalink to this headline">¶</a></h2>
+<h2>Converting frames in a Clawpack <code class="docutils literal notranslate"><span class="pre">_plots</span></code> directory to animations:<a class="headerlink" href="#Converting-frames-in-a-Clawpack-_plots-directory-to-animations:" title="Permalink to this headline">¶</a></h2>
 <p>The script <a class="reference external" href="make_anim.py">make_anim.py</a> illustrates how to turn the
-png files in a Clawpack <code class="docutils literal"><span class="pre">_plots</span></code> directory into stand-alone <code class="docutils literal"><span class="pre">.html</span></code>,
-<code class="docutils literal"><span class="pre">.mp4</span></code>, or <code class="docutils literal"><span class="pre">.rst</span></code> files.</p>
+png files in a Clawpack <code class="docutils literal notranslate"><span class="pre">_plots</span></code> directory into stand-alone <code class="docutils literal notranslate"><span class="pre">.html</span></code>,
+<code class="docutils literal notranslate"><span class="pre">.mp4</span></code>, or <code class="docutils literal notranslate"><span class="pre">.rst</span></code> files.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none"><div class="highlight"><pre>
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
 <span></span>In [1]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython2"><div class="highlight"><pre>
+<div class="input_area highlight-ipython2 notranslate"><div class="highlight"><pre>
 <span></span><span class="o">%</span><span class="k">pylab</span> inline
 </pre></div>
 </div>
@@ -297,11 +289,11 @@ Populating the interactive namespace from numpy and matplotlib
 </pre></div></div>
 </div>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none"><div class="highlight"><pre>
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
 <span></span>In [2]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython2"><div class="highlight"><pre>
+<div class="input_area highlight-ipython2 notranslate"><div class="highlight"><pre>
 <span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">print_function</span>
 <span class="kn">from</span> <span class="nn">ipywidgets</span> <span class="kn">import</span> <span class="n">interact</span><span class="p">,</span> <span class="n">interact_manual</span>
 <span class="kn">import</span> <span class="nn">ipywidgets</span>
@@ -313,11 +305,11 @@ Populating the interactive namespace from numpy and matplotlib
 </div>
 </div>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none"><div class="highlight"><pre>
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
 <span></span>In [4]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython2"><div class="highlight"><pre>
+<div class="input_area highlight-ipython2 notranslate"><div class="highlight"><pre>
 <span></span><span class="kn">from</span> <span class="nn">clawpack.visclaw</span> <span class="kn">import</span> <span class="n">animation_tools</span>
 </pre></div>
 </div>
@@ -325,13 +317,13 @@ Populating the interactive namespace from numpy and matplotlib
 <div class="section" id="Generate-a-set-of-figures-to-use-for-demos">
 <h3>Generate a set of figures to use for demos<a class="headerlink" href="#Generate-a-set-of-figures-to-use-for-demos" title="Permalink to this headline">¶</a></h3>
 <p>You can make figures however you want. As they are created, append to a
-list called <code class="docutils literal"><span class="pre">figs</span></code>:</p>
+list called <code class="docutils literal notranslate"><span class="pre">figs</span></code>:</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none"><div class="highlight"><pre>
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
 <span></span>In [5]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython2"><div class="highlight"><pre>
+<div class="input_area highlight-ipython2 notranslate"><div class="highlight"><pre>
 <span></span><span class="n">figs</span> <span class="o">=</span> <span class="p">[]</span>
 <span class="n">x</span> <span class="o">=</span> <span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1000</span><span class="p">)</span>
 
@@ -348,15 +340,15 @@ list called <code class="docutils literal"><span class="pre">figs</span></code>:
 </div>
 <div class="section" id="Animating-a-list-of-figures">
 <h3>Animating a list of figures<a class="headerlink" href="#Animating-a-list-of-figures" title="Permalink to this headline">¶</a></h3>
-<p>The tool <code class="docutils literal"><span class="pre">animation_tools.interact_animate_figs</span></code> can be used to create
+<p>The tool <code class="docutils literal notranslate"><span class="pre">animation_tools.interact_animate_figs</span></code> can be used to create
 an interact that loops over all the frames contained in a list of
 figures.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none"><div class="highlight"><pre>
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
 <span></span>In [6]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython2"><div class="highlight"><pre>
+<div class="input_area highlight-ipython2 notranslate"><div class="highlight"><pre>
 <span></span><span class="n">animation_tools</span><span class="o">.</span><span class="n">interact_animate_figs</span><span class="p">(</span><span class="n">figs</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -368,31 +360,31 @@ figures.</p>
 <img alt="../../../../../_images/_build_html_v5.4.1__static_notebooks_animation_tools_demo_7_0.png" src="../../../../../_images/_build_html_v5.4.1__static_notebooks_animation_tools_demo_7_0.png" />
 </div>
 </div>
-<p>Passing in the argument <code class="docutils literal"><span class="pre">manual=True</span></code> will use the widget
-<code class="docutils literal"><span class="pre">interact_manual</span></code> instead of <code class="docutils literal"><span class="pre">interact</span></code>. This refrains from updating
+<p>Passing in the argument <code class="docutils literal notranslate"><span class="pre">manual=True</span></code> will use the widget
+<code class="docutils literal notranslate"><span class="pre">interact_manual</span></code> instead of <code class="docutils literal notranslate"><span class="pre">interact</span></code>. This refrains from updating
 the image as you move the slider bar. Instead you move the slider as
-desired and then click on the <code class="docutils literal"><span class="pre">Run</span></code> button to re-display the image.
+desired and then click on the <code class="docutils literal notranslate"><span class="pre">Run</span></code> button to re-display the image.
 This is useful if there are many frames and you want to be able to jump
 to around without all the intermediate frames being displayed, which can
 slow down the response significantly.</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none"><div class="highlight"><pre>
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
 <span></span>In [7]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython2"><div class="highlight"><pre>
+<div class="input_area highlight-ipython2 notranslate"><div class="highlight"><pre>
 <span></span><span class="n">animation_tools</span><span class="o">.</span><span class="n">interact_animate_figs</span><span class="p">(</span><span class="n">figs</span><span class="p">,</span> <span class="n">manual</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
-<p>The argument <code class="docutils literal"><span class="pre">TextInput=True</span></code> can be specified to produce a text input
+<p>The argument <code class="docutils literal notranslate"><span class="pre">TextInput=True</span></code> can be specified to produce a text input
 cell rather than a slider bar:</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none"><div class="highlight"><pre>
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
 <span></span>In [8]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython2"><div class="highlight"><pre>
+<div class="input_area highlight-ipython2 notranslate"><div class="highlight"><pre>
 <span></span><span class="n">animation_tools</span><span class="o">.</span><span class="n">interact_animate_figs</span><span class="p">(</span><span class="n">figs</span><span class="p">,</span> <span class="n">manual</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">TextInput</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -408,19 +400,19 @@ Valid frameno values: from 0 to 10
 </div>
 <div class="section" id="Animating-a-list-of-images">
 <h3>Animating a list of images<a class="headerlink" href="#Animating-a-list-of-images" title="Permalink to this headline">¶</a></h3>
-<p>The tool <code class="docutils literal"><span class="pre">animation_tools.interact_animate_images</span></code> can be used to
+<p>The tool <code class="docutils literal notranslate"><span class="pre">animation_tools.interact_animate_images</span></code> can be used to
 create an interact that loops over all the frames contained in a list of
 images rather than figures. The images can be generated from a list of
 figures, as illustrated in the next cell. Or they can be read in from a
 directory of png files, for example, as illustrated later.</p>
-<p>This function also takes the arguments <code class="docutils literal"><span class="pre">manual</span></code> and <code class="docutils literal"><span class="pre">TextInput</span></code> as
-described above, with default values <code class="docutils literal"><span class="pre">False</span></code>.</p>
+<p>This function also takes the arguments <code class="docutils literal notranslate"><span class="pre">manual</span></code> and <code class="docutils literal notranslate"><span class="pre">TextInput</span></code> as
+described above, with default values <code class="docutils literal notranslate"><span class="pre">False</span></code>.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none"><div class="highlight"><pre>
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
 <span></span>In [9]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython2"><div class="highlight"><pre>
+<div class="input_area highlight-ipython2 notranslate"><div class="highlight"><pre>
 <span></span><span class="n">images</span> <span class="o">=</span> <span class="n">animation_tools</span><span class="o">.</span><span class="n">make_images</span><span class="p">(</span><span class="n">figs</span><span class="p">)</span>
 <span class="n">animation_tools</span><span class="o">.</span><span class="n">interact_animate_images</span><span class="p">(</span><span class="n">images</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span><span class="mi">3</span><span class="p">))</span>
 </pre></div>
@@ -438,17 +430,17 @@ described above, with default values <code class="docutils literal"><span class=
 <h3>JSAnimation<a class="headerlink" href="#JSAnimation" title="Permalink to this headline">¶</a></h3>
 <p>A list of images can also be turned into a JSAnimation inline plot:</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none"><div class="highlight"><pre>
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
 <span></span>In [10]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython2"><div class="highlight"><pre>
+<div class="input_area highlight-ipython2 notranslate"><div class="highlight"><pre>
 <span></span><span class="n">animation_tools</span><span class="o">.</span><span class="n">JSAnimate_images</span><span class="p">(</span><span class="n">images</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span><span class="mi">3</span><span class="p">))</span>
 </pre></div>
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none"><div class="highlight"><pre>
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
 <span></span>Out[10]:
 </pre></div>
 </div>
@@ -6571,22 +6563,22 @@ iUQikUgkkjOMFFgSiUQikUgkZxgpsCQSiUQikUjOMP8PWKybR0rF0CYAAAAASUVORK5CYII=\
 JSAnimation. This can be posted on the web for others to view, for
 example.</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none"><div class="highlight"><pre>
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
 <span></span>In [11]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython2"><div class="highlight"><pre>
+<div class="input_area highlight-ipython2 notranslate"><div class="highlight"><pre>
 <span></span><span class="n">anim</span> <span class="o">=</span> <span class="n">animation_tools</span><span class="o">.</span><span class="n">JSAnimate_images</span><span class="p">(</span><span class="n">images</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span><span class="mi">4</span><span class="p">));</span>
 <span class="c1"># display(anim)  # to display it in the notebook</span>
 </pre></div>
 </div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none"><div class="highlight"><pre>
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
 <span></span>In [12]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython2"><div class="highlight"><pre>
+<div class="input_area highlight-ipython2 notranslate"><div class="highlight"><pre>
 <span></span><span class="n">file_name</span> <span class="o">=</span> <span class="s1">&#39;SineFunctions.html&#39;</span>
 <span class="n">animation_tools</span><span class="o">.</span><span class="n">make_html</span><span class="p">(</span><span class="n">anim</span><span class="p">,</span> <span class="n">file_name</span><span class="o">=</span><span class="n">file_name</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Sine Functions&quot;</span><span class="p">,</span>
                           <span class="n">raw_html</span><span class="o">=</span><span class="s2">&quot;Illustration of html file created by &lt;tt&gt;make_html&lt;/tt&gt;&quot;</span><span class="p">)</span>
@@ -6603,7 +6595,7 @@ Created SineFunctions.html
 </pre></div></div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none"><div class="highlight"><pre>
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
 <span></span>Out[12]:
 </pre></div>
 </div>
@@ -6613,14 +6605,14 @@ Created SineFunctions.html
 </div>
 <div class="section" id="reStructured-text-file">
 <h4>reStructured text file<a class="headerlink" href="#reStructured-text-file" title="Permalink to this headline">¶</a></h4>
-<p>You can also produce a <code class="docutils literal"><span class="pre">.rst</span></code> file containing the animation, which can
+<p>You can also produce a <code class="docutils literal notranslate"><span class="pre">.rst</span></code> file containing the animation, which can
 be incorporated into Sphinx documentation:</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none"><div class="highlight"><pre>
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
 <span></span>In [13]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython2"><div class="highlight"><pre>
+<div class="input_area highlight-ipython2 notranslate"><div class="highlight"><pre>
 <span></span><span class="n">file_name</span> <span class="o">=</span> <span class="s1">&#39;SineFunctions.rst&#39;</span>
 <span class="n">animation_tools</span><span class="o">.</span><span class="n">make_rst</span><span class="p">(</span><span class="n">anim</span><span class="p">,</span> <span class="n">file_name</span><span class="o">=</span><span class="n">file_name</span><span class="p">)</span>
 <span class="n">FileLink</span><span class="p">(</span><span class="n">file_name</span><span class="p">)</span>
@@ -6638,7 +6630,7 @@ Imbed this in another rst file using:
 </pre></div></div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none"><div class="highlight"><pre>
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
 <span></span>Out[13]:
 </pre></div>
 </div>
@@ -6649,14 +6641,14 @@ Imbed this in another rst file using:
 <div class="section" id="Create-an-mp4-file">
 <h4>Create an mp4 file<a class="headerlink" href="#Create-an-mp4-file" title="Permalink to this headline">¶</a></h4>
 <p>Note that <a class="reference external" href="https://ffmpeg.org">ffmpeg</a> must be installed in order to
-create an <code class="docutils literal"><span class="pre">mp4</span></code> file.</p>
+create an <code class="docutils literal notranslate"><span class="pre">mp4</span></code> file.</p>
 <p>Give it a try:</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none"><div class="highlight"><pre>
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
 <span></span>In [14]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython2"><div class="highlight"><pre>
+<div class="input_area highlight-ipython2 notranslate"><div class="highlight"><pre>
 <span></span><span class="n">file_name</span> <span class="o">=</span> <span class="s1">&#39;SineFunctions.mp4&#39;</span>
 <span class="n">animation_tools</span><span class="o">.</span><span class="n">make_mp4</span><span class="p">(</span><span class="n">anim</span><span class="p">,</span> <span class="n">file_name</span><span class="o">=</span><span class="n">file_name</span><span class="p">)</span>
 </pre></div>
@@ -6671,11 +6663,11 @@ Created SineFunctions.mp4
 </pre></div></div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none"><div class="highlight"><pre>
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
 <span></span>In [15]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython2"><div class="highlight"><pre>
+<div class="input_area highlight-ipython2 notranslate"><div class="highlight"><pre>
 <span></span><span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">file_name</span><span class="p">):</span>
     <span class="n">video</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">file_name</span><span class="p">,</span> <span class="s1">&#39;r+b&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
     <span class="n">encoded</span> <span class="o">=</span> <span class="n">base64</span><span class="o">.</span><span class="n">b64encode</span><span class="p">(</span><span class="n">video</span><span class="p">)</span>
@@ -6699,7 +6691,7 @@ If the mp4 file doesn&#39;t display here your browser (e.g. Chrome) might not su
 </pre></div></div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none"><div class="highlight"><pre>
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
 <span></span>Out[15]:
 </pre></div>
 </div>
@@ -6714,15 +6706,15 @@ If the mp4 file doesn&#39;t display here your browser (e.g. Chrome) might not su
 <h3>Create a directory of png files<a class="headerlink" href="#Create-a-directory-of-png-files" title="Permalink to this headline">¶</a></h3>
 <p>Sometimes it is useful to create a directory containing png files for
 each figure, or you might have such a directory generated by other means
-(e.g. from VisClaw).</p>
-<p>Here we create a directory named <code class="docutils literal"><span class="pre">_plots</span></code> to store png files for each
+(e.g.&nbsp;from VisClaw).</p>
+<p>Here we create a directory named <code class="docutils literal notranslate"><span class="pre">_plots</span></code> to store png files for each
 frame:</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none"><div class="highlight"><pre>
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
 <span></span>In [16]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython2"><div class="highlight"><pre>
+<div class="input_area highlight-ipython2 notranslate"><div class="highlight"><pre>
 <span></span><span class="n">plotdir</span> <span class="o">=</span> <span class="s1">&#39;_plots&#39;</span>
 <span class="n">animation_tools</span><span class="o">.</span><span class="n">make_plotdir</span><span class="p">(</span><span class="n">plotdir</span><span class="p">,</span> <span class="n">clobber</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
 </pre></div>
@@ -6737,19 +6729,19 @@ Figure files for each frame will be stored in  _plots
 </pre></div></div>
 </div>
 <p>You can create frames any way you wish and then use
-<code class="docutils literal"><span class="pre">animation_tools.save_frame</span></code> to save each one. You can also explicitly
-call <code class="docutils literal"><span class="pre">savefig</span></code>, but then you should construct file names such that
-<code class="docutils literal"><span class="pre">glob.glob</span></code> can be used to return a list of filenames in the directory
+<code class="docutils literal notranslate"><span class="pre">animation_tools.save_frame</span></code> to save each one. You can also explicitly
+call <code class="docutils literal notranslate"><span class="pre">savefig</span></code>, but then you should construct file names such that
+<code class="docutils literal notranslate"><span class="pre">glob.glob</span></code> can be used to return a list of filenames in the directory
 that are in the correct order for plotting as frames in an animation.
-The <code class="docutils literal"><span class="pre">animation_tools.save_frame</span></code> creates names such as
-<code class="docutils literal"><span class="pre">frame00000.png</span></code> etc. as shown below. The optional argument
-<code class="docutils literal"><span class="pre">fname_base</span></code> can be used to change <code class="docutils literal"><span class="pre">frame</span></code> to something else.</p>
+The <code class="docutils literal notranslate"><span class="pre">animation_tools.save_frame</span></code> creates names such as
+<code class="docutils literal notranslate"><span class="pre">frame00000.png</span></code> etc. as shown below. The optional argument
+<code class="docutils literal notranslate"><span class="pre">fname_base</span></code> can be used to change <code class="docutils literal notranslate"><span class="pre">frame</span></code> to something else.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none"><div class="highlight"><pre>
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
 <span></span>In [17]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython2"><div class="highlight"><pre>
+<div class="input_area highlight-ipython2 notranslate"><div class="highlight"><pre>
 <span></span><span class="n">x</span> <span class="o">=</span> <span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1000</span><span class="p">)</span>
 
 <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">):</span>
@@ -6775,17 +6767,17 @@ Saved  _plots/frame00004.png
 </pre></div></div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none"><div class="highlight"><pre>
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
 <span></span>In [18]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython2"><div class="highlight"><pre>
+<div class="input_area highlight-ipython2 notranslate"><div class="highlight"><pre>
 <span></span><span class="n">FileLinks</span><span class="p">(</span><span class="n">plotdir</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none"><div class="highlight"><pre>
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
 <span></span>Out[18]:
 </pre></div>
 </div>
@@ -6798,13 +6790,13 @@ _plots/<br>
 &nbsp;&nbsp;<a href='_plots/frame00004.png' target='_blank'>frame00004.png</a><br></div>
 </div>
 <p>Given such a directory of png files, we can read them in using
-<code class="docutils literal"><span class="pre">animation_tools.read_images</span></code> to produce a list of images:</p>
+<code class="docutils literal notranslate"><span class="pre">animation_tools.read_images</span></code> to produce a list of images:</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none"><div class="highlight"><pre>
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
 <span></span>In [19]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython2"><div class="highlight"><pre>
+<div class="input_area highlight-ipython2 notranslate"><div class="highlight"><pre>
 <span></span><span class="n">cosine_images</span> <span class="o">=</span> <span class="n">animation_tools</span><span class="o">.</span><span class="n">read_images</span><span class="p">(</span><span class="n">plotdir</span><span class="o">=</span><span class="s1">&#39;_plots&#39;</span><span class="p">,</span> <span class="n">fname_pattern</span><span class="o">=</span><span class="s1">&#39;frame*.png&#39;</span><span class="p">)</span>
 <span class="k">print</span><span class="p">(</span><span class="s2">&quot;Found </span><span class="si">%i</span><span class="s2"> images&quot;</span> <span class="o">%</span> <span class="nb">len</span><span class="p">(</span><span class="n">cosine_images</span><span class="p">))</span>
 </pre></div>
@@ -6818,14 +6810,14 @@ _plots/<br>
 Found 5 images
 </pre></div></div>
 </div>
-<p>The resulting list of images <code class="docutils literal"><span class="pre">new_images</span></code> can now be animated using
+<p>The resulting list of images <code class="docutils literal notranslate"><span class="pre">new_images</span></code> can now be animated using
 any of the tools illustrated earlier, e.g.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none"><div class="highlight"><pre>
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
 <span></span>In [20]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython2"><div class="highlight"><pre>
+<div class="input_area highlight-ipython2 notranslate"><div class="highlight"><pre>
 <span></span><span class="n">animation_tools</span><span class="o">.</span><span class="n">interact_animate_images</span><span class="p">(</span><span class="n">cosine_images</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -6841,14 +6833,14 @@ any of the tools illustrated earlier, e.g.</p>
 <div class="section" id="Saving-a-list-of-figures-or-images">
 <h3>Saving a list of figures or images<a class="headerlink" href="#Saving-a-list-of-figures-or-images" title="Permalink to this headline">¶</a></h3>
 <p>If you already have a list of figures or images and wish to create a
-directory containing them, the utilities <code class="docutils literal"><span class="pre">animation_tools.save_figs</span></code>
-or <code class="docutils literal"><span class="pre">animation_tools.save_images</span></code> can be used. For example:</p>
+directory containing them, the utilities <code class="docutils literal notranslate"><span class="pre">animation_tools.save_figs</span></code>
+or <code class="docutils literal notranslate"><span class="pre">animation_tools.save_images</span></code> can be used. For example:</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none"><div class="highlight"><pre>
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
 <span></span>In [21]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython2"><div class="highlight"><pre>
+<div class="input_area highlight-ipython2 notranslate"><div class="highlight"><pre>
 <span></span><span class="n">animation_tools</span><span class="o">.</span><span class="n">save_images</span><span class="p">(</span><span class="n">cosine_images</span><span class="p">,</span> <span class="n">plotdir</span><span class="o">=</span><span class="s1">&#39;cosine_images&#39;</span><span class="p">,</span> <span class="n">fname_base</span><span class="o">=</span><span class="s1">&#39;wavenumber&#39;</span><span class="p">,</span>
                             <span class="n">format</span><span class="o">=</span><span class="s1">&#39;png&#39;</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">kwargs</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;dpi&#39;</span><span class="p">:</span><span class="mi">150</span><span class="p">})</span>
 <span class="n">FileLinks</span><span class="p">(</span><span class="s1">&#39;cosine_images&#39;</span><span class="p">)</span>
@@ -6869,7 +6861,7 @@ Saved  cosine_images/wavenumber00004.png
 </pre></div></div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none"><div class="highlight"><pre>
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
 <span></span>Out[21]:
 </pre></div>
 </div>
@@ -6882,11 +6874,11 @@ cosine_images/<br>
 &nbsp;&nbsp;<a href='cosine_images/wavenumber00004.png' target='_blank'>wavenumber00004.png</a><br></div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none"><div class="highlight"><pre>
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
 <span></span>In [22]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython2"><div class="highlight"><pre>
+<div class="input_area highlight-ipython2 notranslate"><div class="highlight"><pre>
 <span></span><span class="n">reload_images</span> <span class="o">=</span> <span class="n">animation_tools</span><span class="o">.</span><span class="n">read_images</span><span class="p">(</span><span class="n">plotdir</span><span class="o">=</span><span class="s1">&#39;cosine_images&#39;</span><span class="p">,</span> <span class="n">fname_pattern</span><span class="o">=</span><span class="s1">&#39;wavenumber*.png&#39;</span><span class="p">)</span>
 <span class="n">animation_tools</span><span class="o">.</span><span class="n">interact_animate_images</span><span class="p">(</span><span class="n">reload_images</span><span class="p">)</span>
 </pre></div>
@@ -6897,16 +6889,6 @@ cosine_images/<br>
 </div>
 <div class="output_area docutils container">
 <img alt="../../../../../_images/_build_html_v5.4.1__static_notebooks_animation_tools_demo_36_0.png" src="../../../../../_images/_build_html_v5.4.1__static_notebooks_animation_tools_demo_36_0.png" />
-</div>
-</div>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none"><div class="highlight"><pre>
-<span></span>In [ ]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython2"><div class="highlight"><pre>
-<span></span>
-</pre></div>
 </div>
 </div>
 </div>
@@ -6922,12 +6904,12 @@ cosine_images/<br>
 <p><a href="http://clawpack.org/">
     <img class="logo" src= "../../../../../_static/clawlogo.jpg" alt="Logo"/>
 </a>
-<h2>Version 5.5.0alpha</h2>
+<h2>Version 5.5.0_future</h2>
 </p>
   <h3><a href="../../../../../contents.html">Table Of Contents</a></h3>
   <ul>
 <li><a class="reference internal" href="#">Demonstrate animation_tools module</a><ul>
-<li><a class="reference internal" href="#Converting-frames-in-a-Clawpack-_plots-directory-to-animations:">Converting frames in a Clawpack <code class="docutils literal"><span class="pre">_plots</span></code> directory to animations:</a><ul>
+<li><a class="reference internal" href="#Converting-frames-in-a-Clawpack-_plots-directory-to-animations:">Converting frames in a Clawpack <code class="docutils literal notranslate"><span class="pre">_plots</span></code> directory to animations:</a><ul>
 <li><a class="reference internal" href="#Generate-a-set-of-figures-to-use-for-demos">Generate a set of figures to use for demos</a></li>
 <li><a class="reference internal" href="#Animating-a-list-of-figures">Animating a list of figures</a></li>
 <li><a class="reference internal" href="#Animating-a-list-of-images">Animating a list of images</a></li>
@@ -6960,12 +6942,14 @@ cosine_images/<br>
   </ul>
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
+    <div class="searchformwrapper">
     <form class="search" action="../../../../../search.html" method="get">
-      <div><input type="text" name="q" /></div>
-      <div><input type="submit" value="Go" /></div>
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
+    </div>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
