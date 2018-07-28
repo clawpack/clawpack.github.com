@@ -1,17 +1,28 @@
-
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
+
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
     <title>Riemann problem for acoustics &#8212; Clawpack 5.5.0_future documentation</title>
+    
     <link rel="stylesheet" href="../../../../_static/flasky.css" type="text/css" />
     <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" href="../../../../_static/base.css" type="text/css" />
     <link rel="stylesheet" href="../../../../_static/layout.css" type="text/css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../../',
+        VERSION:     '5.5.0_future',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
     <script type="text/javascript" src="../../../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../../_static/doctools.js"></script>
@@ -20,7 +31,8 @@
     <link rel="author" title="About these documents" href="../../../../about.html" />
     <link rel="index" title="Index" href="../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../search.html" /> 
-  </head><body>
+  </head>
+  <body role="document">
 <div id="main-wrapper" class="sphinx">
 <div id="header-wrapper">
   <section id="header">
@@ -35,7 +47,7 @@
           <a href="../../../../installing.html">Install</a>
         </li>
         <li>
-          <a class="" href="../../../../gallery/index.html">Gallery</a>
+          <a class="" href="../../../../../../../gallery/_build/html/index.html">Gallery</a>
         </li>
         <li>
           <a class="" href="../../../../community.html">Community</a>
@@ -230,11 +242,7 @@ div.nboutput div.output_area.stderr {
 .ansi-white-intense-fg { color: #A1A6B2; }
 .ansi-white-intense-bg { background-color: #A1A6B2; }
 
-.ansi-default-inverse-fg { color: #FFFFFF; }
-.ansi-default-inverse-bg { background-color: #000000; }
-
 .ansi-bold { font-weight: bold; }
-.ansi-underline { text-decoration: underline; }
 </style>
 <div class="section" id="Riemann-problem-for-acoustics">
 <h1>Riemann problem for acoustics<a class="headerlink" href="#Riemann-problem-for-acoustics" title="Permalink to this headline">¶</a></h1>
@@ -242,15 +250,15 @@ div.nboutput div.output_area.stderr {
 1-dimensional constant coefficient acoustics equations.</p>
 <p>The notebook can be found in the clawpack apps respository:</p>
 <ul class="simple">
-<li><code class="docutils literal notranslate"><span class="pre">$CLAW/apps/notebooks/riemann/Riemann_problem_acoustics.ipynb</span></code></li>
+<li><code class="docutils literal"><span class="pre">$CLAW/apps/notebooks/riemann/Riemann_problem_acoustics.ipynb</span></code></li>
 <li>See <a class="reference external" href="http://www.clawpack.org/apps.html">http://www.clawpack.org/apps.html</a>.</li>
 </ul>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
+<div class="prompt highlight-none"><div class="highlight"><pre>
 <span></span>In [1]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython2 notranslate"><div class="highlight"><pre>
+<div class="input_area highlight-ipython2"><div class="highlight"><pre>
 <span></span><span class="o">%</span><span class="k">matplotlib</span> inline
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">as</span> <span class="nn">plt</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
@@ -262,11 +270,11 @@ Riemann problem (left state, right state, and approximate solver), and
 computes the Riemann solution, as well as functions to plot the solution
 in various forms.</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
+<div class="prompt highlight-none"><div class="highlight"><pre>
 <span></span>In [3]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython2 notranslate"><div class="highlight"><pre>
+<div class="input_area highlight-ipython2"><div class="highlight"><pre>
 <span></span><span class="c1">#from clawpack.riemann import riemann_tools</span>
 
 <span class="c1"># the version from clawpack.riemann needs updating,</span>
@@ -283,31 +291,31 @@ in various forms.</p>
 <p>We can use this to examine the exact solution of an acoustics Riemann
 problem.</p>
 <p>This is a linear hyperbolic system of two equations for
-<span class="math notranslate nohighlight">\(q = [p, u]^T\)</span>, where <span class="math notranslate nohighlight">\(p\)</span> is the pressure perturbation and
-<span class="math notranslate nohighlight">\(u\)</span> is the velocity. The system is <span class="math notranslate nohighlight">\(q_t + Aq_x = 0\)</span>, where
+<span class="math">\(q = [p, u]^T\)</span>, where <span class="math">\(p\)</span> is the pressure perturbation and
+<span class="math">\(u\)</span> is the velocity. The system is <span class="math">\(q_t + Aq_x = 0\)</span>, where
 the coefficient matrix is</p>
-<div class="math notranslate nohighlight">
+<div class="math">
 \[\begin{split}A = \left[\begin{array}{cc}0&amp;K\\1/\rho&amp;0\end{array}\right],\end{split}\]</div>
-<p>where <span class="math notranslate nohighlight">\(\rho\)</span> is the density and <span class="math notranslate nohighlight">\(K\)</span> the bulk modulus. If we
-define the sound speed <span class="math notranslate nohighlight">\(c = \sqrt{K/\rho}\)</span> and impedance
-<span class="math notranslate nohighlight">\(Z=\sqrt{K\rho}\)</span>, then the eigenvalues of the matrix are
-<span class="math notranslate nohighlight">\(s^1 = -c\)</span> and <span class="math notranslate nohighlight">\(s^2 = +c\)</span> and the corresponding eigenvectors
+<p>where <span class="math">\(\rho\)</span> is the density and <span class="math">\(K\)</span> the bulk modulus. If we
+define the sound speed <span class="math">\(c = \sqrt{K/\rho}\)</span> and impedance
+<span class="math">\(Z=\sqrt{K\rho}\)</span>, then the eigenvalues of the matrix are
+<span class="math">\(s^1 = -c\)</span> and <span class="math">\(s^2 = +c\)</span> and the corresponding eigenvectors
 are</p>
-<div class="math notranslate nohighlight">
+<div class="math">
 \[\begin{split}r^1 = \left[\begin{array}{c}-Z\\1\end{array}\right], \qquad r^2 = \left[\begin{array}{c}Z\\1\end{array}\right].\end{split}\]</div>
-<p>For arbitrary states <span class="math notranslate nohighlight">\(q_\ell\)</span> and <span class="math notranslate nohighlight">\(q_r\)</span>, the Riemann
-solution consists of two waves propagating with velocities <span class="math notranslate nohighlight">\(\pm c\)</span>
-with an intermediate state <span class="math notranslate nohighlight">\(q_m\)</span> that is connected to
-<span class="math notranslate nohighlight">\(q_\ell\)</span> by a multiple of <span class="math notranslate nohighlight">\(r^1\)</span> and to <span class="math notranslate nohighlight">\(q_r\)</span> by a
-multiple of <span class="math notranslate nohighlight">\(r^2\)</span>.</p>
+<p>For arbitrary states <span class="math">\(q_\ell\)</span> and <span class="math">\(q_r\)</span>, the Riemann
+solution consists of two waves propagating with velocities <span class="math">\(\pm c\)</span>
+with an intermediate state <span class="math">\(q_m\)</span> that is connected to
+<span class="math">\(q_\ell\)</span> by a multiple of <span class="math">\(r^1\)</span> and to <span class="math">\(q_r\)</span> by a
+multiple of <span class="math">\(r^2\)</span>.</p>
 <p>This Riemann solver can be solved by the PyClaw solver
-<code class="docutils literal notranslate"><span class="pre">riemann.acoustics_1D_py.acoustics_1D</span></code>:</p>
+<code class="docutils literal"><span class="pre">riemann.acoustics_1D_py.acoustics_1D</span></code>:</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
+<div class="prompt highlight-none"><div class="highlight"><pre>
 <span></span>In [4]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython2 notranslate"><div class="highlight"><pre>
+<div class="input_area highlight-ipython2"><div class="highlight"><pre>
 <span></span><span class="kn">from</span> <span class="nn">clawpack.riemann.acoustics_1D_py</span> <span class="kn">import</span> <span class="n">acoustics_1D</span>
 <span class="n">solver</span> <span class="o">=</span> <span class="n">acoustics_1D</span>
 </pre></div>
@@ -316,11 +324,11 @@ multiple of <span class="math notranslate nohighlight">\(r^2\)</span>.</p>
 <div class="section" id="Set-some-problem-data-needed-by-the-solver:">
 <h2>Set some problem data needed by the solver:<a class="headerlink" href="#Set-some-problem-data-needed-by-the-solver:" title="Permalink to this headline">¶</a></h2>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
+<div class="prompt highlight-none"><div class="highlight"><pre>
 <span></span>In [5]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython2 notranslate"><div class="highlight"><pre>
+<div class="input_area highlight-ipython2"><div class="highlight"><pre>
 <span></span><span class="n">problem_data</span> <span class="o">=</span> <span class="p">{}</span>
 
 <span class="n">rho</span> <span class="o">=</span> <span class="mf">1.</span>            <span class="c1"># density</span>
@@ -349,11 +357,11 @@ Sound speed = 2, Impedance = 2
 <div class="section" id="Set-the-left-and-right-states,-and-solve-the-Riemann-problem">
 <h2>Set the left and right states, and solve the Riemann problem<a class="headerlink" href="#Set-the-left-and-right-states,-and-solve-the-Riemann-problem" title="Permalink to this headline">¶</a></h2>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
+<div class="prompt highlight-none"><div class="highlight"><pre>
 <span></span>In [6]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython2 notranslate"><div class="highlight"><pre>
+<div class="input_area highlight-ipython2"><div class="highlight"><pre>
 <span></span><span class="n">q_l</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span><span class="mi">4</span><span class="p">))</span>  <span class="c1"># Left state</span>
 <span class="n">q_r</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">((</span><span class="mi">3</span><span class="p">,</span><span class="mi">7</span><span class="p">))</span>  <span class="c1"># Right state</span>
 
@@ -374,8 +382,9 @@ States in Riemann solution:
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<div class="math notranslate nohighlight">
-$$\left [ \left[\begin{matrix}1.0\\4.0\end{matrix}\right], \quad \left[\begin{matrix}-1.0\\5.0\end{matrix}\right], \quad \left[\begin{matrix}3.0\\7.0\end{matrix}\right]\right ]$$</div></div>
+<div class="math">
+\[\begin{split}\left [ \left[\begin{matrix}1.0\\4.0\end{matrix}\right], \quad \left[\begin{matrix}-1.0\\5.0\end{matrix}\right], \quad \left[\begin{matrix}3.0\\7.0\end{matrix}\right]\right ]\end{split}\]</div>
+</div>
 </div>
 <div class="nboutput docutils container">
 <div class="prompt empty docutils container">
@@ -389,8 +398,9 @@ Waves (jumps between states):
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<div class="math notranslate nohighlight">
-$$\left [ \left[\begin{matrix}-2.0\\1.0\end{matrix}\right], \quad \left[\begin{matrix}4.0\\2.0\end{matrix}\right]\right ]$$</div></div>
+<div class="math">
+\[\begin{split}\left [ \left[\begin{matrix}-2.0\\1.0\end{matrix}\right], \quad \left[\begin{matrix}4.0\\2.0\end{matrix}\right]\right ]\end{split}\]</div>
+</div>
 </div>
 <div class="nboutput docutils container">
 <div class="prompt empty docutils container">
@@ -404,8 +414,9 @@ Speeds:
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<div class="math notranslate nohighlight">
-$$\left[\begin{matrix}-2.0 &amp; 2.0\end{matrix}\right]$$</div></div>
+<div class="math">
+\[\left[\begin{matrix}-2.0 &amp; 2.0\end{matrix}\right]\]</div>
+</div>
 </div>
 <div class="nboutput docutils container">
 <div class="prompt empty docutils container">
@@ -419,18 +430,19 @@ Fluctuations amdq, apdq:
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<div class="math notranslate nohighlight">
-$$\left [ \left[\begin{matrix}4.0 &amp; -2.0\end{matrix}\right], \quad \left[\begin{matrix}8.0 &amp; 4.0\end{matrix}\right]\right ]$$</div></div>
+<div class="math">
+\[\left [ \left[\begin{matrix}4.0 &amp; -2.0\end{matrix}\right], \quad \left[\begin{matrix}8.0 &amp; 4.0\end{matrix}\right]\right ]\]</div>
+</div>
 </div>
 </div>
 <div class="section" id="Plot-the-states-in-the-phase-plane:">
 <h2>Plot the states in the phase plane:<a class="headerlink" href="#Plot-the-states-in-the-phase-plane:" title="Permalink to this headline">¶</a></h2>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
+<div class="prompt highlight-none"><div class="highlight"><pre>
 <span></span>In [7]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython2 notranslate"><div class="highlight"><pre>
+<div class="input_area highlight-ipython2"><div class="highlight"><pre>
 <span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span><span class="mi">3</span><span class="p">))</span>
 <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">axes</span><span class="p">()</span>
 <span class="n">riemann_tools</span><span class="o">.</span><span class="n">plot_phase</span><span class="p">(</span><span class="n">states</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span> <span class="n">label_h</span><span class="o">=</span><span class="s1">&#39;pressure&#39;</span><span class="p">,</span> <span class="n">label_v</span><span class="o">=</span><span class="s1">&#39;velocity&#39;</span><span class="p">)</span>
@@ -448,11 +460,11 @@ $$\left [ \left[\begin{matrix}4.0 &amp; -2.0\end{matrix}\right], \quad \left[\be
 <div class="section" id="Plot-the-waves-in-the-x-t-plane,-and-the-solution-at-one-particular-time:">
 <h2>Plot the waves in the x-t plane, and the solution at one particular time:<a class="headerlink" href="#Plot-the-waves-in-the-x-t-plane,-and-the-solution-at-one-particular-time:" title="Permalink to this headline">¶</a></h2>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
+<div class="prompt highlight-none"><div class="highlight"><pre>
 <span></span>In [8]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython2 notranslate"><div class="highlight"><pre>
+<div class="input_area highlight-ipython2"><div class="highlight"><pre>
 <span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">riemann_tools</span><span class="o">.</span><span class="n">plot_riemann</span><span class="p">(</span><span class="n">states</span><span class="p">,</span><span class="n">s</span><span class="p">,</span><span class="n">riemann_eval</span><span class="p">,</span><span class="n">t</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -468,17 +480,17 @@ $$\left [ \left[\begin{matrix}4.0 &amp; -2.0\end{matrix}\right], \quad \left[\be
 <div class="section" id="Animate-the-Riemann-solution:">
 <h2>Animate the Riemann solution:<a class="headerlink" href="#Animate-the-Riemann-solution:" title="Permalink to this headline">¶</a></h2>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
+<div class="prompt highlight-none"><div class="highlight"><pre>
 <span></span>In [9]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython2 notranslate"><div class="highlight"><pre>
+<div class="input_area highlight-ipython2"><div class="highlight"><pre>
 <span></span><span class="n">riemann_tools</span><span class="o">.</span><span class="n">JSAnimate_plot_riemann</span><span class="p">(</span><span class="n">states</span><span class="p">,</span><span class="n">s</span><span class="p">,</span><span class="n">riemann_eval</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
+<div class="prompt highlight-none"><div class="highlight"><pre>
 <span></span>Out[9]:
 </pre></div>
 </div>
@@ -8758,11 +8770,11 @@ then the resulting Riemann solution consists of pressure jumps of equal
 magnitude propagating in each direction, with equal and opposite jumps
 in velocity.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
+<div class="prompt highlight-none"><div class="highlight"><pre>
 <span></span>In [10]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython2 notranslate"><div class="highlight"><pre>
+<div class="input_area highlight-ipython2"><div class="highlight"><pre>
 <span></span><span class="n">q_l</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">((</span><span class="mi">5</span><span class="p">,</span><span class="mi">0</span><span class="p">))</span>  <span class="c1"># Left state</span>
 <span class="n">q_r</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">))</span>  <span class="c1"># Right state</span>
 
@@ -8787,8 +8799,9 @@ States in Riemann solution:
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<div class="math notranslate nohighlight">
-$$\left [ \left[\begin{matrix}5.0\\0.0\end{matrix}\right], \quad \left[\begin{matrix}3.0\\1.0\end{matrix}\right], \quad \left[\begin{matrix}1.0\\0.0\end{matrix}\right]\right ]$$</div></div>
+<div class="math">
+\[\begin{split}\left [ \left[\begin{matrix}5.0\\0.0\end{matrix}\right], \quad \left[\begin{matrix}3.0\\1.0\end{matrix}\right], \quad \left[\begin{matrix}1.0\\0.0\end{matrix}\right]\right ]\end{split}\]</div>
+</div>
 </div>
 <div class="nboutput docutils container">
 <div class="prompt empty docutils container">
@@ -8802,8 +8815,9 @@ Waves (jumps between states):
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<div class="math notranslate nohighlight">
-$$\left [ \left[\begin{matrix}-2.0\\1.0\end{matrix}\right], \quad \left[\begin{matrix}-2.0\\-1.0\end{matrix}\right]\right ]$$</div></div>
+<div class="math">
+\[\begin{split}\left [ \left[\begin{matrix}-2.0\\1.0\end{matrix}\right], \quad \left[\begin{matrix}-2.0\\-1.0\end{matrix}\right]\right ]\end{split}\]</div>
+</div>
 </div>
 <div class="nboutput docutils container">
 <div class="prompt empty docutils container">
@@ -8817,8 +8831,9 @@ Speeds:
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<div class="math notranslate nohighlight">
-$$\left[\begin{matrix}-2.0 &amp; 2.0\end{matrix}\right]$$</div></div>
+<div class="math">
+\[\left[\begin{matrix}-2.0 &amp; 2.0\end{matrix}\right]\]</div>
+</div>
 </div>
 <div class="nboutput docutils container">
 <div class="prompt empty docutils container">
@@ -8832,8 +8847,9 @@ Fluctuations amdq, apdq:
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<div class="math notranslate nohighlight">
-$$\left [ \left[\begin{matrix}4.0 &amp; -2.0\end{matrix}\right], \quad \left[\begin{matrix}-4.0 &amp; -2.0\end{matrix}\right]\right ]$$</div></div>
+<div class="math">
+\[\left [ \left[\begin{matrix}4.0 &amp; -2.0\end{matrix}\right], \quad \left[\begin{matrix}-4.0 &amp; -2.0\end{matrix}\right]\right ]\]</div>
+</div>
 </div>
 <div class="nboutput nblast docutils container">
 <div class="prompt empty docutils container">
@@ -8843,17 +8859,17 @@ $$\left [ \left[\begin{matrix}4.0 &amp; -2.0\end{matrix}\right], \quad \left[\be
 </div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
+<div class="prompt highlight-none"><div class="highlight"><pre>
 <span></span>In [11]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython2 notranslate"><div class="highlight"><pre>
+<div class="input_area highlight-ipython2"><div class="highlight"><pre>
 <span></span><span class="n">riemann_tools</span><span class="o">.</span><span class="n">JSAnimate_plot_riemann</span><span class="p">(</span><span class="n">states</span><span class="p">,</span><span class="n">s</span><span class="p">,</span><span class="n">riemann_eval</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
+<div class="prompt highlight-none"><div class="highlight"><pre>
 <span></span>Out[11]:
 </pre></div>
 </div>
@@ -17047,26 +17063,26 @@ REREREREOoABnYiIiIiIiEgH/D+p258X8KK1XAAAAABJRU5ErkJggg==\
 </div>
 <div class="section" id="Plot-the-particle-trajectories">
 <h2>Plot the particle trajectories<a class="headerlink" href="#Plot-the-particle-trajectories" title="Permalink to this headline">¶</a></h2>
-<p>For the acoustics equations, the second component of <code class="docutils literal notranslate"><span class="pre">q</span></code> is the
+<p>For the acoustics equations, the second component of <code class="docutils literal"><span class="pre">q</span></code> is the
 velocity. By integrating the velocities we can get particle positions.
 The following utility function does this for us based on the Riemann
 solution, solving</p>
-<div class="math notranslate nohighlight">
+<div class="math">
 \[X'(t) = u(X(t), t),\qquad \text{for} \quad t \geq 0, \qquad \text{with initial data} ~ X(0) = x_0\]</div>
-<p>for a set of 20 initial particle locations <span class="math notranslate nohighlight">\(x_0\)</span> evenly
-distributed along the x-axis at time <span class="math notranslate nohighlight">\(=0\)</span>.</p>
+<p>for a set of 20 initial particle locations <span class="math">\(x_0\)</span> evenly
+distributed along the x-axis at time <span class="math">\(=0\)</span>.</p>
 <p>Note that the particles initially have velocity 0 and are accelerated to
 the right by either acoustic wave. The velocity is constant between the
 two waves and positive because the pressure chosen was greater to be
 greater in the left state than in the right state. If
-<span class="math notranslate nohighlight">\(p_\ell &lt; p_r\)</span> the the fluid would be accelerated to the left
+<span class="math">\(p_\ell &lt; p_r\)</span> the the fluid would be accelerated to the left
 instead.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
+<div class="prompt highlight-none"><div class="highlight"><pre>
 <span></span>In [12]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython2 notranslate"><div class="highlight"><pre>
+<div class="input_area highlight-ipython2"><div class="highlight"><pre>
 <span></span><span class="n">riemann_tools</span><span class="o">.</span><span class="n">plot_riemann_trajectories</span><span class="p">(</span><span class="n">states</span><span class="p">,</span><span class="n">s</span><span class="p">,</span><span class="n">riemann_eval</span><span class="p">,</span><span class="n">i_vel</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -17082,16 +17098,16 @@ instead.</p>
 <h3>Flow into a wall:<a class="headerlink" href="#Flow-into-a-wall:" title="Permalink to this headline">¶</a></h3>
 <p>As another example, suppose the pressure is initially the same in the
 left and right states, while the velocities are non-zero with
-<span class="math notranslate nohighlight">\(u_r = -u_\ell &gt; 0\)</span>. Particles are converging from both sides and
+<span class="math">\(u_r = -u_\ell &gt; 0\)</span>. Particles are converging from both sides and
 if the initial states have this symmetry, then the result is a middle
-state <span class="math notranslate nohighlight">\(q_m\)</span> in which the velocity is 0 (and the pressure is higher
+state <span class="math">\(q_m\)</span> in which the velocity is 0 (and the pressure is higher
 than on either side).</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
+<div class="prompt highlight-none"><div class="highlight"><pre>
 <span></span>In [13]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython2 notranslate"><div class="highlight"><pre>
+<div class="input_area highlight-ipython2"><div class="highlight"><pre>
 <span></span><span class="n">q_l</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">((</span><span class="mi">3</span><span class="p">,</span><span class="mi">2</span><span class="p">))</span>  <span class="c1"># Left state</span>
 <span class="n">q_r</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">((</span><span class="mi">3</span><span class="p">,</span><span class="o">-</span><span class="mi">2</span><span class="p">))</span>  <span class="c1"># Right state</span>
 
@@ -17116,8 +17132,9 @@ States in Riemann solution:
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<div class="math notranslate nohighlight">
-$$\left [ \left[\begin{matrix}3.0\\2.0\end{matrix}\right], \quad \left[\begin{matrix}7.0\\0.0\end{matrix}\right], \quad \left[\begin{matrix}3.0\\-2.0\end{matrix}\right]\right ]$$</div></div>
+<div class="math">
+\[\begin{split}\left [ \left[\begin{matrix}3.0\\2.0\end{matrix}\right], \quad \left[\begin{matrix}7.0\\0.0\end{matrix}\right], \quad \left[\begin{matrix}3.0\\-2.0\end{matrix}\right]\right ]\end{split}\]</div>
+</div>
 </div>
 <div class="nboutput docutils container">
 <div class="prompt empty docutils container">
@@ -17131,8 +17148,9 @@ Waves (jumps between states):
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<div class="math notranslate nohighlight">
-$$\left [ \left[\begin{matrix}4.0\\-2.0\end{matrix}\right], \quad \left[\begin{matrix}-4.0\\-2.0\end{matrix}\right]\right ]$$</div></div>
+<div class="math">
+\[\begin{split}\left [ \left[\begin{matrix}4.0\\-2.0\end{matrix}\right], \quad \left[\begin{matrix}-4.0\\-2.0\end{matrix}\right]\right ]\end{split}\]</div>
+</div>
 </div>
 <div class="nboutput docutils container">
 <div class="prompt empty docutils container">
@@ -17146,8 +17164,9 @@ Speeds:
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<div class="math notranslate nohighlight">
-$$\left[\begin{matrix}-2.0 &amp; 2.0\end{matrix}\right]$$</div></div>
+<div class="math">
+\[\left[\begin{matrix}-2.0 &amp; 2.0\end{matrix}\right]\]</div>
+</div>
 </div>
 <div class="nboutput docutils container">
 <div class="prompt empty docutils container">
@@ -17161,8 +17180,9 @@ Fluctuations amdq, apdq:
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<div class="math notranslate nohighlight">
-$$\left [ \left[\begin{matrix}-8.0 &amp; 4.0\end{matrix}\right], \quad \left[\begin{matrix}-8.0 &amp; -4.0\end{matrix}\right]\right ]$$</div></div>
+<div class="math">
+\[\left [ \left[\begin{matrix}-8.0 &amp; 4.0\end{matrix}\right], \quad \left[\begin{matrix}-8.0 &amp; -4.0\end{matrix}\right]\right ]\]</div>
+</div>
 </div>
 <div class="nboutput nblast docutils container">
 <div class="prompt empty docutils container">
@@ -17172,17 +17192,17 @@ $$\left [ \left[\begin{matrix}-8.0 &amp; 4.0\end{matrix}\right], \quad \left[\be
 </div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
+<div class="prompt highlight-none"><div class="highlight"><pre>
 <span></span>In [14]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython2 notranslate"><div class="highlight"><pre>
+<div class="input_area highlight-ipython2"><div class="highlight"><pre>
 <span></span><span class="n">riemann_tools</span><span class="o">.</span><span class="n">JSAnimate_plot_riemann</span><span class="p">(</span><span class="n">states</span><span class="p">,</span><span class="n">s</span><span class="p">,</span><span class="n">riemann_eval</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
+<div class="prompt highlight-none"><div class="highlight"><pre>
 <span></span>Out[14]:
 </pre></div>
 </div>
@@ -25039,11 +25059,11 @@ bvIK8Jp30FwAAAAASUVORK5CYII=\
 </script></div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
+<div class="prompt highlight-none"><div class="highlight"><pre>
 <span></span>In [15]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython2 notranslate"><div class="highlight"><pre>
+<div class="input_area highlight-ipython2"><div class="highlight"><pre>
 <span></span><span class="n">riemann_tools</span><span class="o">.</span><span class="n">plot_riemann_trajectories</span><span class="p">(</span><span class="n">states</span><span class="p">,</span><span class="n">s</span><span class="p">,</span><span class="n">riemann_eval</span><span class="p">,</span><span class="n">i_vel</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -25055,11 +25075,11 @@ bvIK8Jp30FwAAAAASUVORK5CYII=\
 <img alt="../../../../_images/_build_html__static_notebooks_Riemann_problem_acoustics_24_0.png" src="../../../../_images/_build_html__static_notebooks_Riemann_problem_acoustics_24_0.png" />
 </div>
 </div>
-<p>If you discard half the solution (for <span class="math notranslate nohighlight">\(x&gt;0\)</span> or for <span class="math notranslate nohighlight">\(x&lt;0\)</span>)
+<p>If you discard half the solution (for <span class="math">\(x&gt;0\)</span> or for <span class="math">\(x&lt;0\)</span>)
 then what you see can be viewed as the solution to a problem with fluid
 streaming at constant velocity toward a solid wall. The result is an
 acoustic wave that moves away from the wall, and the fluid behind the
-shock has been decelerated to velocity 0, i.e.&nbsp;it is stationary at the
+shock has been decelerated to velocity 0, i.e. it is stationary at the
 wall.</p>
 <p>This type of Riemann solution is critical when imposing solid wall
 boundary conditions in a numerical method. If ghost cells are introduced
@@ -25068,6 +25088,16 @@ interior solution with the symmetry seen here (equal pressure, negated
 velocity), then the solution to the Riemann problem at the cell
 interfaces yields a solution that satisfies the desired boundary
 conditions.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython2"><div class="highlight"><pre>
+<span></span>
+</pre></div>
+</div>
+</div>
 </div>
 </div>
 </div>
@@ -25118,14 +25148,12 @@ conditions.</p>
   </ul>
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
-    <div class="searchformwrapper">
     <form class="search" action="../../../../search.html" method="get">
-      <input type="text" name="q" />
-      <input type="submit" value="Go" />
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
-    </div>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>

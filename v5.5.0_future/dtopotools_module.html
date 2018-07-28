@@ -95,6 +95,20 @@
             
   <div class="section" id="dtopotools-module-for-moving-topography">
 <span id="dtopotools-module"></span><h1>dtopotools module for moving topography<a class="headerlink" href="#dtopotools-module-for-moving-topography" title="Permalink to this headline">¶</a></h1>
+<p>See also <a class="reference internal" href="okada.html#okada"><span class="std std-ref">Earthquake sources: Fault slip and the Okada model</span></a> for a discussion of the subfault parameters required
+for the Okada model of seafloor deformation resulting from slip on a
+specified fault plane.</p>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">Starting in Version 5.5.0, the subfault parameter <cite>rise_time</cite>
+now refers to the total rise time of a subfault, while <cite>rise_time_starting</cite>
+is the rise time up to the break in the piecewise quadratic
+function defining the rise. By default <cite>rise_time_ending</cite> is set equal to
+<cite>rise_time_starting</cite>.  See the module function <cite>rise_fraction</cite> below
+for more description. (In earlier versions, <cite>rise_time</cite> read in from csv
+files, for example, was erroneously interpreted as <cite>rise_time_starting</cite>
+is now.)</p>
+</div>
 <p>The notebook <a class="reference external" href="http://www.clawpack.org/gallery/_static/notebooks/geoclaw/dtopotools_examples.html">geoclaw/dtopotools_examples.ipynb</a>
 illustrates how to use some of the tools.</p>
 <p>The notebook <a class="reference external" href="http://www.clawpack.org/gallery/_static/notebooks/geoclaw/Okada.html">geoclaw/Okada.ipynb</a>
@@ -170,7 +184,7 @@ DEPRECATE? &#8211; it&#8217;s now a 1-liner</p>
 
 <dl class="method">
 <dt id="clawpack.geoclaw.dtopotools.DTopography.plot_dZ_colors">
-<code class="descname">plot_dZ_colors</code><span class="sig-paren">(</span><em>t</em>, <em>axes=None</em>, <em>cmax_dZ=None</em>, <em>dZ_interval=None</em>, <em>fig_kwargs={}</em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.geoclaw.dtopotools.DTopography.plot_dZ_colors" title="Permalink to this definition">¶</a></dt>
+<code class="descname">plot_dZ_colors</code><span class="sig-paren">(</span><em>t</em>, <em>axes=None</em>, <em>cmax_dZ=None</em>, <em>dZ_interval=None</em>, <em>colorbar_ticksize=10</em>, <em>colorbar_labelsize=10</em>, <em>fig_kwargs={}</em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.geoclaw.dtopotools.DTopography.plot_dZ_colors" title="Permalink to this definition">¶</a></dt>
 <dd><p>Interpolate self.dZ to specified time t and then call module function
 plot_dZ_colors.</p>
 </dd></dl>
@@ -304,7 +318,7 @@ deformations together.</p>
 
 <dl class="method">
 <dt id="clawpack.geoclaw.dtopotools.Fault.plot_subfaults">
-<code class="descname">plot_subfaults</code><span class="sig-paren">(</span><em>axes=None</em>, <em>plot_centerline=False</em>, <em>slip_color=False</em>, <em>cmap_slip=None</em>, <em>cmin_slip=None</em>, <em>cmax_slip=None</em>, <em>slip_time=None</em>, <em>plot_rake=False</em>, <em>xylim=None</em>, <em>plot_box=True</em>, <em>colorbar_shrink=1</em>, <em>verbose=False</em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.geoclaw.dtopotools.Fault.plot_subfaults" title="Permalink to this definition">¶</a></dt>
+<code class="descname">plot_subfaults</code><span class="sig-paren">(</span><em>axes=None</em>, <em>plot_centerline=False</em>, <em>slip_color=False</em>, <em>cmap_slip=None</em>, <em>cmin_slip=None</em>, <em>cmax_slip=None</em>, <em>slip_time=None</em>, <em>plot_rake=False</em>, <em>xylim=None</em>, <em>plot_box=True</em>, <em>colorbar_shrink=1</em>, <em>verbose=False</em>, <em>colorbar_labelsize=10</em>, <em>colorbar_ticksize=10</em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.geoclaw.dtopotools.Fault.plot_subfaults" title="Permalink to this definition">¶</a></dt>
 <dd><p>Plot each subfault projected onto the surface.</p>
 <p><em>axes</em> can be passed in to specify the <em>matplotlib.axes.AxesSubplot</em>
 on which to add this plot.  If <em>axes == None</em>, a new figure window
@@ -360,7 +374,7 @@ subfault that corresponds to the (longitude,latitude) and depth
 of the subfault.  See the documentation for 
 <em>SubFault.calculate_geometry</em>.</p>
 </li>
-<li><p class="first"><em>rupture_type</em> (str) either &#8220;static&#8221; or &#8220;dynamic&#8221;</p>
+<li><p class="first"><em>rupture_type</em> (str) either &#8220;static&#8221; or &#8220;kinematic&#8221;</p>
 </li>
 <li><p class="first"><em>skiprows</em> (int) number of header lines to skip before data</p>
 </li>
@@ -572,6 +586,24 @@ are at the bottom center of the fault plane, so values must be
 shifted or other specifications.</p>
 </dd></dl>
 
+<dl class="method">
+<dt id="clawpack.geoclaw.dtopotools.SubFault.calculate_geometry_triangles">
+<code class="descname">calculate_geometry_triangles</code><span class="sig-paren">(</span><em>rake=90.0</em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.geoclaw.dtopotools.SubFault.calculate_geometry_triangles" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate geometry for triangular subfaults</p>
+<ul class="simple">
+<li>it uses <em>corners</em> to calculate <em>centers</em>, <em>longitude</em>, <em>latitude</em>,</li>
+</ul>
+<div class="system-message">
+<p class="system-message-title">System Message: WARNING/2 (<tt class="docutils">/Users/rjl/git/clawpack/clawpack/geoclaw/dtopotools.py:docstring of clawpack.geoclaw.dtopotools.SubFault.calculate_geometry_triangles</tt>, line 4)</p>
+Bullet list ends without a blank line; unexpected unindent.</div>
+<p><em>depth</em>, <em>strike</em>, <em>dip</em>, <em>rake</em>, <em>length</em>, <em>width</em>.</p>
+<ul class="simple">
+<li>sets <em>coordinate_specification</em> as &#8220;triangular&#8221;</li>
+<li>Note that calculate_geometry() computes 
+long/lat/strik/dip/rake/length/width to calculate centers/corners</li>
+</ul>
+</dd></dl>
+
 <dl class="attribute">
 <dt id="clawpack.geoclaw.dtopotools.SubFault.centers">
 <code class="descname">centers</code><a class="headerlink" href="#clawpack.geoclaw.dtopotools.SubFault.centers" title="Permalink to this definition">¶</a></dt>
@@ -618,9 +650,16 @@ Assumes the following attributes are set:</p>
 <div><ul class="simple">
 <li><em>rupture_time</em></li>
 <li><em>rise_time</em></li>
-<li><em>rise_time_ending</em>: optional, defaults to <em>rise_time</em></li>
+<li><em>rise_time_starting</em>: optional, defaults to <em>rise_time/2</em></li>
+<li><em>rise_shape</em>: optional, defaults to <em>quadratic</em></li>
 </ul>
 </div></blockquote>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="clawpack.geoclaw.dtopotools.SubFault.gauss_pts">
+<code class="descname">gauss_pts</code><a class="headerlink" href="#clawpack.geoclaw.dtopotools.SubFault.gauss_pts" title="Permalink to this definition">¶</a></dt>
+<dd><p>Coordinates along the center-line of the fault plane.</p>
 </dd></dl>
 
 <dl class="attribute">
@@ -690,6 +729,43 @@ possible values <em>self.coordinate_specification</em> can take.</p>
 <dt id="clawpack.geoclaw.dtopotools.SubFault.rake">
 <code class="descname">rake</code><em class="property"> = None</em><a class="headerlink" href="#clawpack.geoclaw.dtopotools.SubFault.rake" title="Permalink to this definition">¶</a></dt>
 <dd><p>Rake of subfault movement in degrees.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="clawpack.geoclaw.dtopotools.SubFault.rise_shape">
+<code class="descname">rise_shape</code><em class="property"> = None</em><a class="headerlink" href="#clawpack.geoclaw.dtopotools.SubFault.rise_shape" title="Permalink to this definition">¶</a></dt>
+<dd><p>Shape of rise, &#8216;linear&#8217; or &#8216;quadratic&#8217; (piecewise)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="clawpack.geoclaw.dtopotools.SubFault.rise_time">
+<code class="descname">rise_time</code><em class="property"> = None</em><a class="headerlink" href="#clawpack.geoclaw.dtopotools.SubFault.rise_time" title="Permalink to this definition">¶</a></dt>
+<dd><p>Total rise time of subfault (sec)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="clawpack.geoclaw.dtopotools.SubFault.rise_time_starting">
+<code class="descname">rise_time_starting</code><em class="property"> = None</em><a class="headerlink" href="#clawpack.geoclaw.dtopotools.SubFault.rise_time_starting" title="Permalink to this definition">¶</a></dt>
+<dd><p>Optional time of first part of rise, before break in pw smooth rise</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="clawpack.geoclaw.dtopotools.SubFault.rupture_time">
+<code class="descname">rupture_time</code><em class="property"> = None</em><a class="headerlink" href="#clawpack.geoclaw.dtopotools.SubFault.rupture_time" title="Permalink to this definition">¶</a></dt>
+<dd><p>Time subfault starts to rupture (sec)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="clawpack.geoclaw.dtopotools.SubFault.rupture_type">
+<code class="descname">rupture_type</code><em class="property"> = None</em><a class="headerlink" href="#clawpack.geoclaw.dtopotools.SubFault.rupture_type" title="Permalink to this definition">¶</a></dt>
+<dd><p>Either &#8216;static&#8217; or &#8216;kinematic&#8217;</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="clawpack.geoclaw.dtopotools.SubFault.set_corners">
+<code class="descname">set_corners</code><span class="sig-paren">(</span><em>corners</em>, <em>rake=90.0</em>, <em>projection_zone=None</em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.geoclaw.dtopotools.SubFault.set_corners" title="Permalink to this definition">¶</a></dt>
+<dd><p>set three corners for a triangular fault.
+Input <em>corners</em> should be iterable of length 3.</p>
 </dd></dl>
 
 <dl class="attribute">
@@ -773,7 +849,8 @@ downloadable from:</p>
 <p>Creates a list of subfaults from the subfault specification file at
 <em>path</em>.</p>
 <p>Subfault format contains info for dynamic rupture, so can specify 
-rupture_type = &#8216;static&#8217; or &#8216;dynamic&#8217;</p>
+rupture_type = &#8216;static&#8217; or &#8216;kinematic&#8217; (or &#8216;dynamic&#8217; for backward 
+compatibility).</p>
 </dd></dl>
 
 </dd></dl>
@@ -791,7 +868,7 @@ If <em>direction==2</em>, <em>value</em> is in standard units and convert to <em
 
 <dl class="function">
 <dt id="clawpack.geoclaw.dtopotools.plot_dZ_colors">
-<code class="descclassname">clawpack.geoclaw.dtopotools.</code><code class="descname">plot_dZ_colors</code><span class="sig-paren">(</span><em>x</em>, <em>y</em>, <em>dZ</em>, <em>axes=None</em>, <em>cmax_dZ=None</em>, <em>dZ_interval=None</em>, <em>add_colorbar=True</em>, <em>verbose=False</em>, <em>fig_kwargs={}</em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.geoclaw.dtopotools.plot_dZ_colors" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">clawpack.geoclaw.dtopotools.</code><code class="descname">plot_dZ_colors</code><span class="sig-paren">(</span><em>x</em>, <em>y</em>, <em>dZ</em>, <em>axes=None</em>, <em>cmax_dZ=None</em>, <em>dZ_interval=None</em>, <em>add_colorbar=True</em>, <em>verbose=False</em>, <em>colorbar_labelsize=10</em>, <em>colorbar_ticksize=10</em>, <em>fig_kwargs={}</em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.geoclaw.dtopotools.plot_dZ_colors" title="Permalink to this definition">¶</a></dt>
 <dd><p>Plot sea floor deformation dZ as colormap with contours</p>
 </dd></dl>
 
@@ -803,19 +880,48 @@ If <em>direction==2</em>, <em>value</em> is in standard units and convert to <em
 
 <dl class="function">
 <dt id="clawpack.geoclaw.dtopotools.rise_fraction">
-<code class="descclassname">clawpack.geoclaw.dtopotools.</code><code class="descname">rise_fraction</code><span class="sig-paren">(</span><em>t</em>, <em>t0</em>, <em>t_rise</em>, <em>t_rise_ending=None</em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.geoclaw.dtopotools.rise_fraction" title="Permalink to this definition">¶</a></dt>
-<dd><p>A continuously differentiable piecewise quadratic function of t that is</p>
+<code class="descclassname">clawpack.geoclaw.dtopotools.</code><code class="descname">rise_fraction</code><span class="sig-paren">(</span><em>t</em>, <em>rupture_time</em>, <em>rise_time</em>, <em>rise_time_starting=None</em>, <em>rise_shape='quadratic'</em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.geoclaw.dtopotools.rise_fraction" title="Permalink to this definition">¶</a></dt>
+<dd><p>A continuous piecewise quadratic or linear function of t that is</p>
 <blockquote>
 <div><ul class="simple">
-<li>0 for t &lt;= t0,</li>
-<li>1 for t &gt;= t0 + t_rise + t_rise_ending</li>
+<li>0 for t &lt;= rupture_time,</li>
+<li>1 for t &gt;= rupture_time + rise_time</li>
 </ul>
 </div></blockquote>
-<p>with maximum slope at t0 + t_rise.
-For specifying dynamic fault ruptures:  Subfault files often contain these
-parameters for each subfault for an earthquake event.</p>
-<p><em>t</em> can be a scalar or a numpy array of times and the returned result
-will have the same type.  A list or tuple of times returns a numpy array.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Inputs:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+<ul class="simple">
+<li><em>t</em> (scalar, list, or np.array): times at which to evaluate the 
+rise function.</li>
+<li><em>rupture_time</em> (float): time (seconds) when rupture starts.</li>
+<li><em>rise_time</em> (float): duration of rupture (seconds).</li>
+<li><em>rise_time_starting</em> (float or None): If None, it is internally set to 
+<cite>rise_time/2</cite>.</li>
+<li><em>rise_shape</em> (str): 
+If <cite>rise_shape == &#8220;quadratic&#8221;</cite>, the rise time function is piecewise quadratic,
+continuously differentiable, with maximum slope at 
+<cite>t = rupture_time + rise_time_starting</cite>
+and zero slope at <cite>t = rupture_time</cite> and <cite>t = rupture_time + rise_time</cite>.
+If <cite>rise_shape == &#8220;linear&#8221;</cite>, the rise time function is piecewise linear,
+with value 0.5 at 
+<cite>t = rupture_time + rise_time_starting</cite>.</li>
+</ul>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Outputs:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+<p><em>rf</em> (float or np.array): The rise time function evaluated at <cite>t</cite>.
+If the input is a list or tuple of times, returns a numpy array.</p>
 </dd></dl>
 
 <dl class="function">
