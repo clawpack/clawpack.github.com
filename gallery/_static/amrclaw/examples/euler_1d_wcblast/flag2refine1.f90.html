@@ -15,7 +15,7 @@
            <font FACE="HELVETICA,ARIAL">
            
 <!-- Created from the file /Users/rjl/git/clawpack/amrclaw/examples/euler_1d_wcblast/flag2refine1.f90 -->
-<!-- Date: Sun Jun 25 2017 at 10:52:52 -->
+<!-- Date: Tue Aug 21 2018 at 13:15:53 -->
 
 <table bgcolor="#FFEE99"> <tr> <td>
 &nbsp;<font size=6> flag2refine1.f90.html </font> </td>
@@ -27,7 +27,7 @@
 </td></tr><tr><td>
 &nbsp;Directory:  &nbsp; /Users/rjl/git/clawpack/amrclaw/examples/euler_1d_wcblast 
 </td></tr><tr><td>
-&nbsp;Converted:  &nbsp; Sun Jun 25 2017 at 10:52:52 
+&nbsp;Converted:  &nbsp; Tue Aug 21 2018 at 13:15:53 
 &nbsp; using <a href="http://www.clawpack.org//doc/application_documentation.html#clawcode2html">clawcode2html</a>
 </td></tr><tr><td>
 <font color="#BB3300"> &nbsp;This documentation file will 
@@ -77,9 +77,10 @@ not reflect any later changes in the source file. </font>
 <font color="blue">!</font>
 <font color="blue">! ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::</font>
 subroutine flag2refine1(mx,mbc,mbuff,meqn,maux,xlower,dx,t,level, &
-                            tolsp,q,aux,amrflags,DONTFLAG,DOFLAG)
+                            tolsp,q,aux,amrflags)
 
     use regions_module
+    use amr_module, only : DOFLAG, UNSET
 
     implicit none
 
@@ -92,8 +93,6 @@ subroutine flag2refine1(mx,mbc,mbuff,meqn,maux,xlower,dx,t,level, &
     
     <font color="blue">! Flagging</font>
     real(kind=8),intent(inout) :: amrflags(1-mbuff:mx+mbuff)
-    real(kind=8), intent(in) :: DONTFLAG
-    real(kind=8), intent(in) :: DOFLAG
     
     logical :: allowflag
     external allowflag
@@ -101,8 +100,9 @@ subroutine flag2refine1(mx,mbc,mbuff,meqn,maux,xlower,dx,t,level, &
     <font color="blue">! Locals</font>
     integer :: i
 
-    <font color="blue">! Initialize flags</font>
-    amrflags = DONTFLAG
+    <font color="blue">! Don't initialize flags, since they were already </font>
+    <font color="blue">! flagged by flagregions2</font>
+    <font color="blue">! amrflags = DONTFLAG</font>
     
     <font color="blue">! Loop over interior points on this grid</font>
     <font color="blue">! (i) grid cell is [x_low,x_hi], cell center at (x_c)</font>

@@ -15,7 +15,7 @@
            <font FACE="HELVETICA,ARIAL">
            
 <!-- Created from the file /Users/rjl/git/clawpack/geoclaw/examples/multi-layer/plane_wave/setrun.py -->
-<!-- Date: Sun Jun 25 2017 at 11:04:47 -->
+<!-- Date: Sat Aug 25 2018 at 09:03:00 -->
 
 <table bgcolor="#FFEE99"> <tr> <td>
 &nbsp;<font size=6> setrun.py.html </font> </td>
@@ -27,7 +27,7 @@
 </td></tr><tr><td>
 &nbsp;Directory:  &nbsp; /Users/rjl/git/clawpack/geoclaw/examples/multi-layer/plane_wave 
 </td></tr><tr><td>
-&nbsp;Converted:  &nbsp; Sun Jun 25 2017 at 11:04:47 
+&nbsp;Converted:  &nbsp; Sat Aug 25 2018 at 09:03:00 
 &nbsp; using <a href="http://www.clawpack.org//doc/application_documentation.html#clawcode2html">clawcode2html</a>
 </td></tr><tr><td>
 <font color="#BB3300"> &nbsp;This documentation file will 
@@ -37,10 +37,8 @@ not reflect any later changes in the source file. </font>
 <pre> 
 """
 Module to set up run time parameters for Clawpack.
-
 The values set in the function setrun are then written out to data files
 that will be read in by the Fortran code.
-
 """
 
 from __future__ import absolute_import
@@ -65,7 +63,6 @@ def transform_p2c(x,y,x0,y0,theta):
 class QinitMultilayerData(clawpack.geoclaw.data.QinitData):
     r"""
     Modified Qinit data object for multiple layers
-
     """
 
     def __init__(self):
@@ -115,13 +112,10 @@ def setrun(claw_pkg='geoclaw'):
 
     """
     Define the parameters used for running Clawpack.
-
     INPUT:
         claw_pkg expected to be "geoclaw" for this setrun.
-
     OUTPUT:
         rundata - object of class ClawRunData
-
     """
 
     from clawpack.clawutil import data
@@ -147,7 +141,6 @@ def setrun(claw_pkg='geoclaw'):
     <font color="blue"># Set single grid parameters first.</font>
     <font color="blue"># See below for AMR parameters.</font>
 
-
     <font color="blue"># ---------------</font>
     <font color="blue"># Spatial domain:</font>
     <font color="blue"># ---------------</font>
@@ -156,17 +149,15 @@ def setrun(claw_pkg='geoclaw'):
     clawdata.num_dim = num_dim
 
     <font color="blue"># Lower and upper edge of computational domain:</font>
-    clawdata.lower[0] = -1      <font color="blue"># west longitude</font>
-    clawdata.upper[0] = 2.0       <font color="blue"># east longitude</font>
+    clawdata.lower[0] = -2      <font color="blue"># west longitude</font>
+    clawdata.upper[0] = 4.0       <font color="blue"># east longitude</font>
 
-    clawdata.lower[1] = -1.0       <font color="blue"># south latitude</font>
-    clawdata.upper[1] = 2.0         <font color="blue"># north latitude</font>
-
-
+    clawdata.lower[1] = -2.0       <font color="blue"># south latitude</font>
+    clawdata.upper[1] = 4.0         <font color="blue"># north latitude</font>
 
     <font color="blue"># Number of grid cells: Coarsest grid</font>
-    clawdata.num_cells[0] = 150
-    clawdata.num_cells[1] = 150
+    clawdata.num_cells[0] = 80
+    clawdata.num_cells[1] = 80
 
     <font color="blue"># ---------------</font>
     <font color="blue"># Size of system:</font>
@@ -176,23 +167,22 @@ def setrun(claw_pkg='geoclaw'):
     clawdata.num_eqn = 6
 
     <font color="blue"># Number of auxiliary variables in the aux array (initialized in setaux)</font>
-    clawdata.num_aux = 4 + rundata.multilayer_data.num_layers
+    <font color="blue"># bathy == 1</font>
+    <font color="blue"># layer-depths = 2:3</font>
+    clawdata.num_aux = 1 + rundata.multilayer_data.num_layers
 
     <font color="blue"># Index of aux array corresponding to capacity function, if there is one:</font>
     clawdata.capa_index = 0
 
-    
-    
     <font color="blue"># -------------</font>
     <font color="blue"># Initial time:</font>
     <font color="blue"># -------------</font>
 
     clawdata.t0 = 0.0
 
-
     <font color="blue"># Restart from checkpoint file of a previous run?</font>
     <font color="blue"># If restarting, t0 above should be from original run, and the</font>
-    <font color="blue"># restart_file 'fort.chkNNNNN' specified below should be in </font>
+    <font color="blue"># restart_file 'fort.chkNNNNN' specified below should be in</font>
     <font color="blue"># the OUTDIR indicated in Makefile.</font>
 
     clawdata.restart = False               <font color="blue"># True to restart from prior results</font>
@@ -210,8 +200,8 @@ def setrun(claw_pkg='geoclaw'):
 
     if clawdata.output_style==1:
         <font color="blue"># Output nout frames at equally spaced times up to tfinal:</font>
-        clawdata.num_output_times = 40
-        clawdata.tfinal = 1.0
+        clawdata.num_output_times = 10
+        clawdata.tfinal = 0.3
         clawdata.output_t0 = True  <font color="blue"># output at initial (or restart) time?</font>
 
     elif clawdata.output_style == 2:
@@ -367,12 +357,12 @@ def setrun(claw_pkg='geoclaw'):
     amrdata = rundata.amrdata
 
     <font color="blue"># max number of refinement levels:</font>
-    amrdata.amr_levels_max = 1
+    amrdata.amr_levels_max = 3
 
     <font color="blue"># List of refinement ratios at each level (length at least mxnest-1)</font>
-    amrdata.refinement_ratios_x = [2,6]
-    amrdata.refinement_ratios_y = [2,6]
-    amrdata.refinement_ratios_t = [2,6]
+    amrdata.refinement_ratios_x = [2,2]
+    amrdata.refinement_ratios_y = [2,2]
+    amrdata.refinement_ratios_t = [2,2]
 
 
     <font color="blue"># Specify type of each aux variable in amrdata.auxtype.</font>
@@ -460,7 +450,7 @@ def setgeo(rundata):
     except:
         print("*** Error, this rundata has no geo_data attribute")
         raise AttributeError("Missing geo_data attribute")
-       
+
     <font color="blue"># == Physics ==</font>
     geo_data.gravity = 9.81
     geo_data.coordinate_system = 1
@@ -471,7 +461,6 @@ def setgeo(rundata):
     geo_data.coriolis_forcing = False
 
     <font color="blue"># == Algorithm and Initial Conditions ==</font>
-    geo_data.sea_level = 0.0
     geo_data.dry_tolerance = 1.e-3
     geo_data.friction_forcing = True
     geo_data.manning_coefficient = 0.025
@@ -507,11 +496,14 @@ def set_multilayer(rundata):
     <font color="blue"># Physics parameters</font>
     data.num_layers = 2
     data.eta = [0.0, -0.6]
+    data.rho = [922.5, 1025.0]
 
     <font color="blue"># Algorithm parameters</font>
     data.eigen_method = 2
     data.inundation_method = 2
     data.richardson_tolerance = 0.95
+    data.wave_tolerance = [1e-3, 1e-2]
+    data.layer_index = 1
 
     rundata.replace_data('qinit_data', QinitMultilayerData())
     rundata.qinit_data.qinit_type = 6

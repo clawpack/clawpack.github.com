@@ -15,7 +15,7 @@
            <font FACE="HELVETICA,ARIAL">
            
 <!-- Created from the file /Users/rjl/git/clawpack/geoclaw/examples/multi-layer/plane_wave/Makefile -->
-<!-- Date: Sun Jun 25 2017 at 11:04:48 -->
+<!-- Date: Sat Aug 25 2018 at 09:03:01 -->
 
 <table bgcolor="#FFEE99"> <tr> <td>
 &nbsp;<font size=6> Makefile.html </font> </td>
@@ -27,7 +27,7 @@
 </td></tr><tr><td>
 &nbsp;Directory:  &nbsp; /Users/rjl/git/clawpack/geoclaw/examples/multi-layer/plane_wave 
 </td></tr><tr><td>
-&nbsp;Converted:  &nbsp; Sun Jun 25 2017 at 11:04:48 
+&nbsp;Converted:  &nbsp; Sat Aug 25 2018 at 09:03:01 
 &nbsp; using <a href="http://www.clawpack.org//doc/application_documentation.html#clawcode2html">clawcode2html</a>
 </td></tr><tr><td>
 <font color="#BB3300"> &nbsp;This documentation file will 
@@ -48,7 +48,7 @@ CLAWMAKE = $(CLAW)/clawutil/src/Makefile.common
 <font color="blue"># Adjust these variables if desired:</font>
 <font color="blue"># ----------------------------------</font>
 
-CLAW_PKG = geoclaw                  <font color="blue"># Clawpack package to use</font>
+CLAW_PKG = geoclaw             <font color="blue"># Clawpack package to use</font>
 EXE = xgeoclaw                 <font color="blue"># Executable to create</font>
 SETRUN_FILE = setrun.py        <font color="blue"># File containing function to make data</font>
 OUTDIR = _output               <font color="blue"># Directory for output</font>
@@ -60,41 +60,12 @@ PLOTDIR = _plots               <font color="blue"># Directory for plots</font>
 <font color="blue"># Compiler flags can be specified here or set as an environment variable</font>
 FFLAGS ?=
 
-<font color="blue"># Include flags for LAPACK linking</font>
-UNAME = $(shell uname)
-ifeq ($(UNAME), Darwin)
-	ifndef LFLAGS
-		LFLAGS = -framework accelerate $(FFLAGS)
-	else
-		LFLAGS += -framework accelerate $(FFLAGS)
-	endif
-else ifeq ($(UNAME), Linux)
-	ifeq ($(FC), ifort)
-		<font color="blue"># Created using Intel MKL Link Line Advisor</font>
-		<font color="blue"># Please refer to </font>
-		<font color="blue"># http://software.intel.com/en-us/articles/intel-mkl-link-line-advisor/</font>
-		<font color="blue"># for other installation types</font>
-		FFLAGS += -I$(MKLROOT)/include
-		ifndef LFLAGS                                                                                                                                    
-		    LFLAGS =  -Wl,--start-group $(MKLROOT)/lib/intel64/libmkl_intel_lp64.a $(MKLROOT)/lib/intel64/libmkl_core.a $(MKLROOT)/lib/intel64/libmkl_sequential.a -Wl,--end-group -lpthread -lm $(FFLAGS)
-		else
-		    LFLAGS +=  -Wl,--start-group $(MKLROOT)/lib/intel64/libmkl_intel_ilp64.a $(MKLROOT)/lib/intel64/libmkl_core.a $(MKLROOT)/lib/intel64/libmkl_sequential.a -Wl,--end-group -lpthread -lm $(FFLAGS)
-		endif
-	else ifeq ($(FC), gfortran)
-		ifndef LFLAGS
-			LFLAGS = -llapack $(FFLAGS)
-		else
-			LFLAGS += -llapack $(FFLAGS)
-		endif
-	endif
-endif
-
 <font color="blue"># ---------------------------------</font>
 <font color="blue"># package sources for this program:</font>
 <font color="blue"># ---------------------------------</font>
 
 GEOLIB = $(CLAW)/geoclaw/src/2d/shallow
-include $(GEOLIB)/Makefile.geoclaw
+include $(GEOLIB)/multilayer/Makefile.multilayer
 
 <font color="blue"># ---------------------------------------</font>
 <font color="blue"># package sources specifically to exclude</font>
@@ -111,17 +82,10 @@ EXCLUDE_SOURCES = \
 <font color="blue"># ----------------------------------------</font>
 
 MODULES = \
- $(GEOLIB)/multilayer/gauges_module.f90 \
  ./qinit_module.f90
 
 SOURCES = \
   ./qinit.f90 \
-  $(GEOLIB)/multilayer/setaux.f90 \
-  $(GEOLIB)/multilayer/b4step2.f90 \
-  $(GEOLIB)/multilayer/getmaxspeed.f90 \
-  $(GEOLIB)/multilayer/stepgrid.f \
-  $(GEOLIB)/multilayer/valout.f \
-  $(GEOLIB)/multilayer/src2.f90 \
   $(CLAW)/riemann/src/rpn2_layered_shallow_water.f90 \
   $(CLAW)/riemann/src/rpt2_layered_shallow_water.f90 \
   $(CLAW)/riemann/src/geoclaw_riemann_utils.f

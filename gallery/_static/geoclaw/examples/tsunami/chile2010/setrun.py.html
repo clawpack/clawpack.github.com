@@ -15,7 +15,7 @@
            <font FACE="HELVETICA,ARIAL">
            
 <!-- Created from the file /Users/rjl/git/clawpack/geoclaw/examples/tsunami/chile2010/setrun.py -->
-<!-- Date: Sun Jun 25 2017 at 11:08:04 -->
+<!-- Date: Sat Aug 25 2018 at 09:08:02 -->
 
 <table bgcolor="#FFEE99"> <tr> <td>
 &nbsp;<font size=6> setrun.py.html </font> </td>
@@ -27,7 +27,7 @@
 </td></tr><tr><td>
 &nbsp;Directory:  &nbsp; /Users/rjl/git/clawpack/geoclaw/examples/tsunami/chile2010 
 </td></tr><tr><td>
-&nbsp;Converted:  &nbsp; Sun Jun 25 2017 at 11:08:04 
+&nbsp;Converted:  &nbsp; Sat Aug 25 2018 at 09:08:02 
 &nbsp; using <a href="http://www.clawpack.org//doc/application_documentation.html#clawcode2html">clawcode2html</a>
 </td></tr><tr><td>
 <font color="#BB3300"> &nbsp;This documentation file will 
@@ -180,7 +180,7 @@ def setrun(claw_pkg='geoclaw'):
         clawdata.output_t0 = True
         
 
-    clawdata.output_format = 'ascii'      <font color="blue"># 'ascii' or 'netcdf' </font>
+    clawdata.output_format = 'ascii'      <font color="blue"># 'ascii' or 'binary' </font>
 
     clawdata.output_q_components = 'all'   <font color="blue"># need all</font>
     clawdata.output_aux_components = 'none'  <font color="blue"># eta=h+B is in q</font>
@@ -460,7 +460,10 @@ def setgeo(rundata):
 if __name__ == '__main__':
     <font color="blue"># Set up run-time parameters and write all data files.</font>
     import sys
+    from clawpack.geoclaw import kmltools
+
     rundata = setrun(*sys.argv[1:])
     rundata.write()
 
+    kmltools.make_input_data_kmls(rundata)
 </pre></html>

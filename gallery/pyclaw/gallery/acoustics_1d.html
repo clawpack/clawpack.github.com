@@ -87,7 +87,7 @@
 <h2>One-dimensional acoustics<a class="headerlink" href="#one-dimensional-acoustics" title="Permalink to this headline">¶</a></h2>
 <p>Solve the (linear) acoustics equations:</p>
 <div class="math">
-\[\begin{split}p_t + K u_x &amp; = 0 \\ 
+\[\begin{split}p_t + K u_x &amp; = 0 \\
 u_t + p_x / \rho &amp; = 0.\end{split}\]</div>
 <p>Here p is the pressure, u is the velocity, K is the bulk modulus,
 and <span class="math">\(\rho\)</span> is the density.</p>
@@ -112,8 +112,8 @@ crossed the domain exactly once.</p>
 
 <span class="sd">Solve the (linear) acoustics equations:</span>
 
-<span class="sd">.. math:: </span>
-<span class="sd">    p_t + K u_x &amp; = 0 \\ </span>
+<span class="sd">.. math::</span>
+<span class="sd">    p_t + K u_x &amp; = 0 \\</span>
 <span class="sd">    u_t + p_x / \rho &amp; = 0.</span>
 
 <span class="sd">Here p is the pressure, u is the velocity, K is the bulk modulus,</span>
@@ -126,9 +126,11 @@ crossed the domain exactly once.</p>
 <span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">absolute_import</span>
 <span class="kn">from</span> <span class="nn">numpy</span> <span class="k">import</span> <span class="n">sqrt</span><span class="p">,</span> <span class="n">exp</span><span class="p">,</span> <span class="n">cos</span>
 <span class="kn">from</span> <span class="nn">clawpack</span> <span class="k">import</span> <span class="n">riemann</span>
-    
-<span class="k">def</span> <span class="nf">setup</span><span class="p">(</span><span class="n">use_petsc</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">kernel_language</span><span class="o">=</span><span class="s1">&#39;Fortran&#39;</span><span class="p">,</span> <span class="n">solver_type</span><span class="o">=</span><span class="s1">&#39;classic&#39;</span><span class="p">,</span> <span class="n">outdir</span><span class="o">=</span><span class="s1">&#39;./_output&#39;</span><span class="p">,</span> <span class="n">ptwise</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> \
-        <span class="n">weno_order</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">time_integrator</span><span class="o">=</span><span class="s1">&#39;SSP104&#39;</span><span class="p">,</span> <span class="n">disable_output</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+
+
+<span class="k">def</span> <span class="nf">setup</span><span class="p">(</span><span class="n">use_petsc</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">kernel_language</span><span class="o">=</span><span class="s1">&#39;Fortran&#39;</span><span class="p">,</span> <span class="n">solver_type</span><span class="o">=</span><span class="s1">&#39;classic&#39;</span><span class="p">,</span>
+          <span class="n">outdir</span><span class="o">=</span><span class="s1">&#39;./_output&#39;</span><span class="p">,</span> <span class="n">ptwise</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">weno_order</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
+          <span class="n">time_integrator</span><span class="o">=</span><span class="s1">&#39;SSP104&#39;</span><span class="p">,</span> <span class="n">disable_output</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">output_style</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
 
     <span class="k">if</span> <span class="n">use_petsc</span><span class="p">:</span>
         <span class="kn">import</span> <span class="nn">clawpack.petclaw</span> <span class="k">as</span> <span class="nn">pyclaw</span>
@@ -141,65 +143,73 @@ crossed the domain exactly once.</p>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">riemann_solver</span> <span class="o">=</span> <span class="n">riemann</span><span class="o">.</span><span class="n">acoustics_1D</span>
 
-    <span class="k">elif</span> <span class="n">kernel_language</span><span class="o">==</span><span class="s1">&#39;Python&#39;</span><span class="p">:</span> 
+    <span class="k">elif</span> <span class="n">kernel_language</span> <span class="o">==</span> <span class="s1">&#39;Python&#39;</span><span class="p">:</span>
         <span class="n">riemann_solver</span> <span class="o">=</span> <span class="n">riemann</span><span class="o">.</span><span class="n">acoustics_1D_py</span><span class="o">.</span><span class="n">acoustics_1D</span>
 
-    <span class="k">if</span> <span class="n">solver_type</span><span class="o">==</span><span class="s1">&#39;classic&#39;</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">solver_type</span> <span class="o">==</span> <span class="s1">&#39;classic&#39;</span><span class="p">:</span>
         <span class="n">solver</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">ClawSolver1D</span><span class="p">(</span><span class="n">riemann_solver</span><span class="p">)</span>
         <span class="n">solver</span><span class="o">.</span><span class="n">limiters</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">limiters</span><span class="o">.</span><span class="n">tvd</span><span class="o">.</span><span class="n">MC</span>
-    <span class="k">elif</span> <span class="n">solver_type</span><span class="o">==</span><span class="s1">&#39;sharpclaw&#39;</span><span class="p">:</span>
+    <span class="k">elif</span> <span class="n">solver_type</span> <span class="o">==</span> <span class="s1">&#39;sharpclaw&#39;</span><span class="p">:</span>
         <span class="n">solver</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">SharpClawSolver1D</span><span class="p">(</span><span class="n">riemann_solver</span><span class="p">)</span>
-        <span class="n">solver</span><span class="o">.</span><span class="n">weno_order</span><span class="o">=</span><span class="n">weno_order</span>
-        <span class="n">solver</span><span class="o">.</span><span class="n">time_integrator</span><span class="o">=</span><span class="n">time_integrator</span>
+        <span class="n">solver</span><span class="o">.</span><span class="n">weno_order</span> <span class="o">=</span> <span class="n">weno_order</span>
+        <span class="n">solver</span><span class="o">.</span><span class="n">time_integrator</span> <span class="o">=</span> <span class="n">time_integrator</span>
         <span class="k">if</span> <span class="n">time_integrator</span> <span class="o">==</span> <span class="s1">&#39;SSPLMMk3&#39;</span><span class="p">:</span>
             <span class="n">solver</span><span class="o">.</span><span class="n">lmm_steps</span> <span class="o">=</span> <span class="mi">4</span>
-    <span class="k">else</span><span class="p">:</span> <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;Unrecognized value of solver_type.&#39;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;Unrecognized value of solver_type.&#39;</span><span class="p">)</span>
 
-    <span class="n">solver</span><span class="o">.</span><span class="n">kernel_language</span><span class="o">=</span><span class="n">kernel_language</span>
+    <span class="n">solver</span><span class="o">.</span><span class="n">kernel_language</span> <span class="o">=</span> <span class="n">kernel_language</span>
 
-    <span class="n">x</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">Dimension</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span><span class="mf">1.0</span><span class="p">,</span><span class="mi">100</span><span class="p">,</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;x&#39;</span><span class="p">)</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">Dimension</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;x&#39;</span><span class="p">)</span>
     <span class="n">domain</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">Domain</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
     <span class="n">num_eqn</span> <span class="o">=</span> <span class="mi">2</span>
-    <span class="n">state</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">State</span><span class="p">(</span><span class="n">domain</span><span class="p">,</span><span class="n">num_eqn</span><span class="p">)</span>
+    <span class="n">state</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">State</span><span class="p">(</span><span class="n">domain</span><span class="p">,</span> <span class="n">num_eqn</span><span class="p">)</span>
 
     <span class="n">solver</span><span class="o">.</span><span class="n">bc_lower</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">BC</span><span class="o">.</span><span class="n">periodic</span>
     <span class="n">solver</span><span class="o">.</span><span class="n">bc_upper</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">BC</span><span class="o">.</span><span class="n">periodic</span>
 
-    <span class="n">rho</span>  <span class="o">=</span> <span class="mf">1.0</span> <span class="c1"># Material density</span>
-    <span class="n">bulk</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="c1"># Material bulk modulus</span>
+    <span class="n">rho</span> <span class="o">=</span> <span class="mf">1.0</span>   <span class="c1"># Material density</span>
+    <span class="n">bulk</span> <span class="o">=</span> <span class="mf">1.0</span>  <span class="c1"># Material bulk modulus</span>
 
-    <span class="n">state</span><span class="o">.</span><span class="n">problem_data</span><span class="p">[</span><span class="s1">&#39;rho&#39;</span><span class="p">]</span><span class="o">=</span><span class="n">rho</span>
-    <span class="n">state</span><span class="o">.</span><span class="n">problem_data</span><span class="p">[</span><span class="s1">&#39;bulk&#39;</span><span class="p">]</span><span class="o">=</span><span class="n">bulk</span>
-    <span class="n">state</span><span class="o">.</span><span class="n">problem_data</span><span class="p">[</span><span class="s1">&#39;zz&#39;</span><span class="p">]</span><span class="o">=</span><span class="n">sqrt</span><span class="p">(</span><span class="n">rho</span><span class="o">*</span><span class="n">bulk</span><span class="p">)</span> <span class="c1"># Impedance</span>
-    <span class="n">state</span><span class="o">.</span><span class="n">problem_data</span><span class="p">[</span><span class="s1">&#39;cc&#39;</span><span class="p">]</span><span class="o">=</span><span class="n">sqrt</span><span class="p">(</span><span class="n">bulk</span><span class="o">/</span><span class="n">rho</span><span class="p">)</span> <span class="c1"># Sound speed</span>
- 
-    <span class="n">xc</span><span class="o">=</span><span class="n">domain</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">centers</span>
-    <span class="n">beta</span><span class="o">=</span><span class="mi">100</span><span class="p">;</span> <span class="n">gamma</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span> <span class="n">x0</span><span class="o">=</span><span class="mf">0.75</span>
-    <span class="n">state</span><span class="o">.</span><span class="n">q</span><span class="p">[</span><span class="mi">0</span><span class="p">,:]</span> <span class="o">=</span> <span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">beta</span> <span class="o">*</span> <span class="p">(</span><span class="n">xc</span><span class="o">-</span><span class="n">x0</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="n">cos</span><span class="p">(</span><span class="n">gamma</span> <span class="o">*</span> <span class="p">(</span><span class="n">xc</span> <span class="o">-</span> <span class="n">x0</span><span class="p">))</span>
-    <span class="n">state</span><span class="o">.</span><span class="n">q</span><span class="p">[</span><span class="mi">1</span><span class="p">,:]</span> <span class="o">=</span> <span class="mf">0.</span>
+    <span class="n">state</span><span class="o">.</span><span class="n">problem_data</span><span class="p">[</span><span class="s1">&#39;rho&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">rho</span>
+    <span class="n">state</span><span class="o">.</span><span class="n">problem_data</span><span class="p">[</span><span class="s1">&#39;bulk&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">bulk</span>
+    <span class="n">state</span><span class="o">.</span><span class="n">problem_data</span><span class="p">[</span><span class="s1">&#39;zz&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">sqrt</span><span class="p">(</span><span class="n">rho</span><span class="o">*</span><span class="n">bulk</span><span class="p">)</span>   <span class="c1"># Impedance</span>
+    <span class="n">state</span><span class="o">.</span><span class="n">problem_data</span><span class="p">[</span><span class="s1">&#39;cc&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">sqrt</span><span class="p">(</span><span class="n">bulk</span><span class="o">/</span><span class="n">rho</span><span class="p">)</span>   <span class="c1"># Sound speed</span>
 
-    <span class="n">solver</span><span class="o">.</span><span class="n">dt_initial</span><span class="o">=</span><span class="n">domain</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">delta</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">/</span><span class="n">state</span><span class="o">.</span><span class="n">problem_data</span><span class="p">[</span><span class="s1">&#39;cc&#39;</span><span class="p">]</span><span class="o">*</span><span class="mf">0.1</span>
+    <span class="n">xc</span> <span class="o">=</span> <span class="n">domain</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">centers</span>
+    <span class="n">beta</span> <span class="o">=</span> <span class="mi">100</span>
+    <span class="n">gamma</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">x0</span> <span class="o">=</span> <span class="mf">0.75</span>
+    <span class="n">state</span><span class="o">.</span><span class="n">q</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">beta</span> <span class="o">*</span> <span class="p">(</span><span class="n">xc</span><span class="o">-</span><span class="n">x0</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="n">cos</span><span class="p">(</span><span class="n">gamma</span> <span class="o">*</span> <span class="p">(</span><span class="n">xc</span> <span class="o">-</span> <span class="n">x0</span><span class="p">))</span>
+    <span class="n">state</span><span class="o">.</span><span class="n">q</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="mf">0.0</span>
+
+    <span class="n">solver</span><span class="o">.</span><span class="n">dt_initial</span> <span class="o">=</span> <span class="n">domain</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">delta</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="n">state</span><span class="o">.</span><span class="n">problem_data</span><span class="p">[</span><span class="s1">&#39;cc&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="mf">0.1</span>
 
     <span class="n">claw</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">Controller</span><span class="p">()</span>
-    <span class="n">claw</span><span class="o">.</span><span class="n">solution</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">Solution</span><span class="p">(</span><span class="n">state</span><span class="p">,</span><span class="n">domain</span><span class="p">)</span>
+    <span class="n">claw</span><span class="o">.</span><span class="n">solution</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">Solution</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">domain</span><span class="p">)</span>
     <span class="n">claw</span><span class="o">.</span><span class="n">solver</span> <span class="o">=</span> <span class="n">solver</span>
     <span class="n">claw</span><span class="o">.</span><span class="n">outdir</span> <span class="o">=</span> <span class="n">outdir</span>
+    <span class="n">claw</span><span class="o">.</span><span class="n">output_style</span> <span class="o">=</span> <span class="n">output_style</span>
+    <span class="k">if</span> <span class="n">output_style</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">claw</span><span class="o">.</span><span class="n">tfinal</span> <span class="o">=</span> <span class="mf">1.0</span>
+        <span class="n">claw</span><span class="o">.</span><span class="n">num_output_times</span> <span class="o">=</span> <span class="mi">10</span>
+    <span class="k">elif</span> <span class="n">output_style</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+        <span class="n">claw</span><span class="o">.</span><span class="n">nstep</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="n">claw</span><span class="o">.</span><span class="n">num_output_times</span> <span class="o">=</span> <span class="mi">1</span>
     <span class="n">claw</span><span class="o">.</span><span class="n">keep_copy</span> <span class="o">=</span> <span class="kc">True</span>
-    <span class="n">claw</span><span class="o">.</span><span class="n">num_output_times</span> <span class="o">=</span> <span class="mi">10</span>
     <span class="k">if</span> <span class="n">disable_output</span><span class="p">:</span>
         <span class="n">claw</span><span class="o">.</span><span class="n">output_format</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="n">claw</span><span class="o">.</span><span class="n">tfinal</span> <span class="o">=</span> <span class="mf">1.0</span>
     <span class="n">claw</span><span class="o">.</span><span class="n">setplot</span> <span class="o">=</span> <span class="n">setplot</span>
 
     <span class="k">return</span> <span class="n">claw</span>
 
 
 <span class="k">def</span> <span class="nf">setplot</span><span class="p">(</span><span class="n">plotdata</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; </span>
+    <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Specify what is to be plotted at each frame.</span>
 <span class="sd">    Input:  plotdata, an instance of visclaw.data.ClawPlotData.</span>
 <span class="sd">    Output: a modified version of plotdata.</span>
-<span class="sd">    &quot;&quot;&quot;</span> 
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">plotdata</span><span class="o">.</span><span class="n">clearfigures</span><span class="p">()</span>  <span class="c1"># clear any old figures,axes,items data</span>
 
     <span class="c1"># Figure for pressure</span>
@@ -208,7 +218,7 @@ crossed the domain exactly once.</p>
     <span class="c1"># Set up for axes in this figure:</span>
     <span class="n">plotaxes</span> <span class="o">=</span> <span class="n">plotfigure</span><span class="o">.</span><span class="n">new_plotaxes</span><span class="p">()</span>
     <span class="n">plotaxes</span><span class="o">.</span><span class="n">axescmd</span> <span class="o">=</span> <span class="s1">&#39;subplot(211)&#39;</span>
-    <span class="n">plotaxes</span><span class="o">.</span><span class="n">ylimits</span> <span class="o">=</span> <span class="p">[</span><span class="o">-.</span><span class="mi">2</span><span class="p">,</span><span class="mf">1.0</span><span class="p">]</span>
+    <span class="n">plotaxes</span><span class="o">.</span><span class="n">ylimits</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mf">0.2</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">]</span>
     <span class="n">plotaxes</span><span class="o">.</span><span class="n">title</span> <span class="o">=</span> <span class="s1">&#39;Pressure&#39;</span>
 
     <span class="c1"># Set up for item on these axes:</span>
@@ -216,13 +226,13 @@ crossed the domain exactly once.</p>
     <span class="n">plotitem</span><span class="o">.</span><span class="n">plot_var</span> <span class="o">=</span> <span class="mi">0</span>
     <span class="n">plotitem</span><span class="o">.</span><span class="n">plotstyle</span> <span class="o">=</span> <span class="s1">&#39;-o&#39;</span>
     <span class="n">plotitem</span><span class="o">.</span><span class="n">color</span> <span class="o">=</span> <span class="s1">&#39;b&#39;</span>
-    <span class="n">plotitem</span><span class="o">.</span><span class="n">kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;linewidth&#39;</span><span class="p">:</span><span class="mi">2</span><span class="p">,</span><span class="s1">&#39;markersize&#39;</span><span class="p">:</span><span class="mi">5</span><span class="p">}</span>
-    
+    <span class="n">plotitem</span><span class="o">.</span><span class="n">kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;linewidth&#39;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;markersize&#39;</span><span class="p">:</span> <span class="mi">5</span><span class="p">}</span>
+
     <span class="c1"># Set up for axes in this figure:</span>
     <span class="n">plotaxes</span> <span class="o">=</span> <span class="n">plotfigure</span><span class="o">.</span><span class="n">new_plotaxes</span><span class="p">()</span>
     <span class="n">plotaxes</span><span class="o">.</span><span class="n">axescmd</span> <span class="o">=</span> <span class="s1">&#39;subplot(212)&#39;</span>
     <span class="n">plotaxes</span><span class="o">.</span><span class="n">xlimits</span> <span class="o">=</span> <span class="s1">&#39;auto&#39;</span>
-    <span class="n">plotaxes</span><span class="o">.</span><span class="n">ylimits</span> <span class="o">=</span> <span class="p">[</span><span class="o">-.</span><span class="mi">5</span><span class="p">,</span><span class="mf">1.1</span><span class="p">]</span>
+    <span class="n">plotaxes</span><span class="o">.</span><span class="n">ylimits</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">1.1</span><span class="p">]</span>
     <span class="n">plotaxes</span><span class="o">.</span><span class="n">title</span> <span class="o">=</span> <span class="s1">&#39;Velocity&#39;</span>
 
     <span class="c1"># Set up for item on these axes:</span>
@@ -230,8 +240,8 @@ crossed the domain exactly once.</p>
     <span class="n">plotitem</span><span class="o">.</span><span class="n">plot_var</span> <span class="o">=</span> <span class="mi">1</span>
     <span class="n">plotitem</span><span class="o">.</span><span class="n">plotstyle</span> <span class="o">=</span> <span class="s1">&#39;-&#39;</span>
     <span class="n">plotitem</span><span class="o">.</span><span class="n">color</span> <span class="o">=</span> <span class="s1">&#39;b&#39;</span>
-    <span class="n">plotitem</span><span class="o">.</span><span class="n">kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;linewidth&#39;</span><span class="p">:</span><span class="mi">3</span><span class="p">,</span><span class="s1">&#39;markersize&#39;</span><span class="p">:</span><span class="mi">5</span><span class="p">}</span>
-    
+    <span class="n">plotitem</span><span class="o">.</span><span class="n">kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;linewidth&#39;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span> <span class="s1">&#39;markersize&#39;</span><span class="p">:</span> <span class="mi">5</span><span class="p">}</span>
+
     <span class="k">return</span> <span class="n">plotdata</span>
 
 
@@ -241,9 +251,9 @@ crossed the domain exactly once.</p>
     <span class="kn">from</span> <span class="nn">clawpack.pyclaw</span> <span class="k">import</span> <span class="n">plot</span>
     <span class="n">plot</span><span class="o">.</span><span class="n">interactive_plot</span><span class="p">(</span><span class="n">setplot</span><span class="o">=</span><span class="n">setplot</span><span class="p">)</span>
 
-<span class="k">if</span> <span class="vm">__name__</span><span class="o">==</span><span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
     <span class="kn">from</span> <span class="nn">clawpack.pyclaw.util</span> <span class="k">import</span> <span class="n">run_app_from_main</span>
-    <span class="n">output</span> <span class="o">=</span> <span class="n">run_app_from_main</span><span class="p">(</span><span class="n">setup</span><span class="p">,</span><span class="n">setplot</span><span class="p">)</span>
+    <span class="n">output</span> <span class="o">=</span> <span class="n">run_app_from_main</span><span class="p">(</span><span class="n">setup</span><span class="p">,</span> <span class="n">setplot</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>

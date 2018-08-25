@@ -15,7 +15,7 @@
            <font FACE="HELVETICA,ARIAL">
            
 <!-- Created from the file /Users/rjl/git/clawpack/geoclaw/examples/multi-layer/plane_wave/setplot.py -->
-<!-- Date: Sun Jun 25 2017 at 11:04:47 -->
+<!-- Date: Sat Aug 25 2018 at 09:03:00 -->
 
 <table bgcolor="#FFEE99"> <tr> <td>
 &nbsp;<font size=6> setplot.py.html </font> </td>
@@ -27,7 +27,7 @@
 </td></tr><tr><td>
 &nbsp;Directory:  &nbsp; /Users/rjl/git/clawpack/geoclaw/examples/multi-layer/plane_wave 
 </td></tr><tr><td>
-&nbsp;Converted:  &nbsp; Sun Jun 25 2017 at 11:04:47 
+&nbsp;Converted:  &nbsp; Sat Aug 25 2018 at 09:03:00 
 &nbsp; using <a href="http://www.clawpack.org//doc/application_documentation.html#clawcode2html">clawcode2html</a>
 </td></tr><tr><td>
 <font color="#BB3300"> &nbsp;This documentation file will 
@@ -113,6 +113,7 @@ def setplot(plotdata=None, bathy_location=0.15, bathy_angle=0.0,
 
     plotdata.clearfigures()
     plotdata.save_frames = False
+    plotdata.format = 'ascii'
 
     <font color="blue"># ========================================================================</font>
     <font color="blue">#  Generic helper functions</font>
@@ -141,6 +142,7 @@ def setplot(plotdata=None, bathy_location=0.15, bathy_angle=0.0,
 
     <font color="blue"># ========================================================================</font>
     <font color="blue"># Axis limits</font>
+
     xlimits = [-0.5, 0.5]
     ylimits = [-0.5, 0.5]
     eta = [multilayer_data.eta[0], multilayer_data.eta[1]]
@@ -163,20 +165,53 @@ def setplot(plotdata=None, bathy_location=0.15, bathy_angle=0.0,
     plotaxes.xlimits = xlimits
     plotaxes.ylimits = ylimits
     plotaxes.afteraxes = pcolor_afteraxes
-    ml_plot.add_surface_elevation(plotaxes, 1, bounds=top_surface_limits)
-    ml_plot.add_land(plotaxes)
-
+    ml_plot.add_surface_elevation(plotaxes,1,bounds=top_surface_limits)
+    <font color="blue"># ml_plot.add_surface_elevation(plotaxes,1,bounds=[-0.06,0.06])</font>
+    <font color="blue"># ml_plot.add_surface_elevation(plotaxes,1)</font>
+    ml_plot.add_land(plotaxes, 1)
+    
     <font color="blue"># Bottom surface</font>
     plotaxes = plotfigure.new_plotaxes()
     plotaxes.title = 'Internal Surface'
-    plotaxes.axescmd = 'subplot(1, 2, 2)'
+    plotaxes.axescmd = 'subplot(1,2,2)'
     plotaxes.scaled = True
     plotaxes.xlimits = xlimits
     plotaxes.ylimits = ylimits
     plotaxes.afteraxes = pcolor_afteraxes
-    ml_plot.add_surface_elevation(plotaxes, 2, bounds=internal_surface_limits)
-    ml_plot.add_land(plotaxes)
-
+    <font color="blue"># ml_plot.add_surface_elevation(plotaxes,2,bounds=[-300-0.5,-300+0.5])</font>
+    ml_plot.add_surface_elevation(plotaxes,2,bounds=internal_surface_limits)
+    <font color="blue"># ml_plot.add_surface_elevation(plotaxes,2)</font>
+    ml_plot.add_land(plotaxes, 2)
+    
+    <font color="blue"># ========================================================================</font>
+    <font color="blue">#  Depths</font>
+    <font color="blue"># ========================================================================</font>
+    plotfigure = plotdata.new_plotfigure(name='Depths', figno=42)
+    plotfigure.show = False
+    plotfigure.kwargs = {'figsize':(14,4)}
+    
+    <font color="blue"># Top surface</font>
+    plotaxes = plotfigure.new_plotaxes()
+    plotaxes.title = 'Top Layer Depth'
+    plotaxes.axescmd = 'subplot(1,2,1)'
+    plotaxes.scaled = True
+    plotaxes.xlimits = xlimits
+    plotaxes.ylimits = ylimits
+    plotaxes.afteraxes = pcolor_afteraxes
+    ml_plot.add_layer_depth(plotaxes,1,bounds=[-0.1,1.1])
+    ml_plot.add_land(plotaxes, 1)
+    
+    <font color="blue"># Bottom surface</font>
+    plotaxes = plotfigure.new_plotaxes()
+    plotaxes.title = 'Bottom Layer Depth'
+    plotaxes.axescmd = 'subplot(1,2,2)'
+    plotaxes.scaled = True
+    plotaxes.xlimits = xlimits
+    plotaxes.ylimits = ylimits
+    plotaxes.afteraxes = pcolor_afteraxes
+    ml_plot.add_layer_depth(plotaxes,2,bounds=[-0.1,0.7])
+    ml_plot.add_land(plotaxes, 2)
+    
     <font color="blue"># ========================================================================</font>
     <font color="blue">#  Water Speed</font>
     plotfigure = plotdata.new_plotfigure(name='speed')
@@ -192,7 +227,7 @@ def setplot(plotdata=None, bathy_location=0.15, bathy_angle=0.0,
     plotaxes.axescmd = 'subplot(1, 2, 1)'
     plotaxes.afteraxes = pcolor_afteraxes
     ml_plot.add_speed(plotaxes, 1, bounds=top_speed_limits)
-    ml_plot.add_land(plotaxes)
+    ml_plot.add_land(plotaxes, 1)
 
     <font color="blue"># Bottom layer speed</font>
     plotaxes = plotfigure.new_plotaxes()
@@ -200,11 +235,64 @@ def setplot(plotdata=None, bathy_location=0.15, bathy_angle=0.0,
     plotaxes.scaled = True
     plotaxes.xlimits = xlimits
     plotaxes.ylimits = ylimits
-    plotaxes.axescmd = 'subplot(1, 2, 2)'
+    plotaxes.axescmd = 'subplot(1,2,2)'
     plotaxes.afteraxes = pcolor_afteraxes
-    ml_plot.add_speed(plotaxes, 2, bounds=internal_speed_limits)
-    ml_plot.add_land(plotaxes)
+    <font color="blue"># add_speed(plotaxes,2,bounds=[0.0,1e-10])</font>
+    ml_plot.add_speed(plotaxes,2,bounds=internal_speed_limits)
+    <font color="blue"># add_speed(plotaxes,2)</font>
+    ml_plot.add_land(plotaxes, 2)
+    
+    <font color="blue"># Individual components</font>
+    plotfigure = plotdata.new_plotfigure(name='speed_components',figno=401)
+    plotfigure.show = False
+    plotfigure.kwargs = {'figsize':(14,14)}
+    
+    <font color="blue"># Top layer</font>
+    plotaxes = plotfigure.new_plotaxes()
+    plotaxes.title = "X-Velocity - Top Layer"
+    plotaxes.scaled = True
+    plotaxes.xlimits = xlimits
+    plotaxes.ylimits = ylimits
+    plotaxes.axescmd = 'subplot(2,2,1)'
+    plotaxes.afteraxes = pcolor_afteraxes
+    <font color="blue"># add_x_velocity(plotaxes,1,bounds=[-1e-10,1e-10])</font>
+    ml_plot.add_x_velocity(plotaxes,1)
+    ml_plot.add_land(plotaxes, 1)
+    
+    plotaxes = plotfigure.new_plotaxes()
+    plotaxes.title = "Y-Velocity - Top Layer"
+    plotaxes.scaled = True
+    plotaxes.xlimits = xlimits
+    plotaxes.ylimits = ylimits
+    plotaxes.axescmd = 'subplot(2,2,2)'
+    plotaxes.afteraxes = pcolor_afteraxes
+    <font color="blue"># add_y_velocity(plotaxes,1,bounds=[-0.000125,0.000125])</font>
+    ml_plot.add_y_velocity(plotaxes,1)
+    ml_plot.add_land(plotaxes, 1)
+    
+    <font color="blue"># Bottom layer</font>
+    plotaxes = plotfigure.new_plotaxes()
+    plotaxes.title = "X-Velocity - Bottom Layer"
+    plotaxes.scaled = True
+    plotaxes.xlimits = xlimits
+    plotaxes.ylimits = ylimits
+    plotaxes.axescmd = 'subplot(2,2,3)'
+    plotaxes.afteraxes = pcolor_afteraxes
+    <font color="blue"># add_x_velocity(plotaxes,2,bounds=[-1e-10,1e-10])</font>
+    ml_plot.add_x_velocity(plotaxes,2)
+    ml_plot.add_land(plotaxes, 2)
+    
+    plotaxes = plotfigure.new_plotaxes()
+    plotaxes.title = "Y-Velocity - Bottom Layer"
+    plotaxes.scaled = True
+    plotaxes.xlimits = xlimits
+    plotaxes.ylimits = ylimits
+    plotaxes.axescmd = 'subplot(2,2,4)'
+    plotaxes.afteraxes = pcolor_afteraxes
+    <font color="blue"># add_y_velocity(plotaxes,2,bounds=[-0.8e-6,.8e-6])</font>
+    ml_plot.add_y_velocity(plotaxes,2)
 
+    ml_plot.add_land(plotaxes, 2)
     <font color="blue"># ========================================================================</font>
     <font color="blue">#  Profile Plots</font>
     <font color="blue">#  Note that these are not currently plotted by default - set</font>
@@ -281,6 +369,156 @@ def setplot(plotdata=None, bathy_location=0.15, bathy_angle=0.0,
     plotitem.color = (0.2, 0.8, 1.0)
     plotitem.show = True
 
+    <font color="blue"># Set up for axes in this figure:</font>
+    plotaxes = plotfigure.new_plotaxes()
+    plotaxes.title = 'Y-Velocity'
+    plotaxes.scaled = True
+    plotaxes.xlimits = xlimits
+    plotaxes.ylimits = ylimits
+    plotaxes.afteraxes = pcolor_afteraxes
+    
+    <font color="blue"># Water</font>
+    <font color="blue"># plotitem = plotaxes.new_plotitem(plot_type='2d_pcolor')</font>
+    <font color="blue"># # plotitem.plot_var = geoplot.surface</font>
+    <font color="blue"># plotitem.plot_var = water_v</font>
+    <font color="blue"># plotitem.pcolor_cmap = colormaps.make_colormap({1.0:'r',0.5:'w',0.0:'b'})</font>
+    <font color="blue"># # plotitem.pcolor_cmin = -1.e-10</font>
+    <font color="blue"># # plotitem.pcolor_cmax = 1.e-10</font>
+    <font color="blue"># # plotitem.pcolor_cmin = -2.5 # -3.0</font>
+    <font color="blue"># # plotitem.pcolor_cmax = 2.5 # 3.0</font>
+    <font color="blue"># plotitem.add_colorbar = True</font>
+    <font color="blue"># plotitem.amr_celledges_show = [0,0,0]</font>
+    <font color="blue"># plotitem.amr_patchedges_show = [1,1,1]</font>
+
+    <font color="blue"># Land</font>
+    ml_plot.add_land(plotaxes, 1)
+    
+    <font color="blue"># ========================================================================</font>
+    <font color="blue">#  Contour plot for surface</font>
+    <font color="blue"># ========================================================================</font>
+    plotfigure = plotdata.new_plotfigure(name='contour_surface',figno=15)
+    plotfigure.show = False
+    plotfigure.kwargs = {'figsize':(14,4)}
+    
+    <font color="blue"># Set up for axes in this figure:</font>
+    
+    <font color="blue"># Top Surface</font>
+    plotaxes = plotfigure.new_plotaxes()
+    plotaxes.title = 'Top Surface'
+    plotaxes.axescmd = 'subplot(1,2,1)'
+    plotaxes.scaled = True
+    plotaxes.xlimits = xlimits
+    plotaxes.ylimits = ylimits
+    plotaxes.afteraxes = contour_afteraxes
+    ml_plot.add_surface_elevation(plotaxes,plot_type='contour',surface=1,bounds=[-2.5,-1.5,-0.5,0.5,1.5,2.5])
+    ml_plot.add_land(plotaxes, 1, plot_type='contour')
+    
+    <font color="blue"># Internal Surface</font>
+    plotaxes = plotfigure.new_plotaxes()
+    plotaxes.title = 'Internal Surface'
+    plotaxes.axescmd = 'subplot(1,2,2)'
+    plotaxes.scaled = True
+    plotaxes.xlimits = xlimits
+    plotaxes.ylimits = ylimits
+    plotaxes.afteraxes = contour_afteraxes
+    ml_plot.add_surface_elevation(plotaxes,plot_type='contour',surface=2,bounds=[-2.5,-1.5,-0.5,0.5,1.5,2.5])
+    ml_plot.add_land(plotaxes, 2, plot_type='contour')
+    
+    <font color="blue"># ========================================================================</font>
+    <font color="blue">#  Contour plot for speed</font>
+    <font color="blue"># ========================================================================</font>
+    plotfigure = plotdata.new_plotfigure(name='contour_speed',figno=16)
+    plotfigure.show = False
+    plotfigure.kwargs = {'figsize':(14,4)}
+    
+    <font color="blue"># Set up for axes in this figure:</font>
+    plotaxes = plotfigure.new_plotaxes()
+    plotaxes.title = 'Current'
+    plotaxes.scaled = True
+    plotaxes.xlimits = xlimits
+    plotaxes.ylimits = ylimits
+    plotaxes.afteraxes = contour_afteraxes
+    
+    <font color="blue"># Surface</font>
+    plotitem = plotaxes.new_plotitem(plot_type='2d_contour')
+    plotitem.plot_var = ml_plot.water_speed_depth_ave
+    plotitem.kwargs = {'linewidths':1}
+    <font color="blue"># plotitem.contour_levels = [1.0,2.0,3.0,4.0,5.0,6.0]</font>
+    plotitem.contour_levels = [0.5,1.5,3,4.5,6.0]
+    plotitem.amr_contour_show = [1,1,1]
+    plotitem.amr_celledges_show = [0,0,0]
+    plotitem.amr_patchedges_show = [1,1,1]
+    plotitem.amr_contour_colors = 'k'
+    <font color="blue"># plotitem.amr_contour_colors = ['r','k','b']  # color on each level</font>
+    <font color="blue"># plotitem.amr_grid_bgcolor = ['#ffeeee', '#eeeeff', '#eeffee']</font>
+    plotitem.show = True 
+    
+    <font color="blue"># Land</font>
+    plotitem = plotaxes.new_plotitem(plot_type='2d_contour')
+    plotitem.plot_var = geoplot.land
+    plotitem.contour_nlevels = 40
+    plotitem.contour_min = 0.0
+    plotitem.contour_max = 100.0
+    plotitem.amr_contour_colors = ['g']  <font color="blue"># color on each level</font>
+    plotitem.amr_patch_bgcolor = ['<font color="blue">#ffeeee', '#eeeeff', '#eeffee']</font>
+    plotitem.amr_celledges_show = 0
+    plotitem.amr_patchedges_show = 0
+    plotitem.show = True
+
+    <font color="blue"># ========================================================================</font>
+    <font color="blue">#  Grid Cells</font>
+    <font color="blue"># ========================================================================</font>
+    
+    <font color="blue"># Figure for grid cells</font>
+    plotfigure = plotdata.new_plotfigure(name='cells', figno=2)
+
+    <font color="blue"># Set up for axes in this figure:</font>
+    plotaxes = plotfigure.new_plotaxes()
+    plotaxes.xlimits = xlimits
+    plotaxes.ylimits = ylimits
+    plotaxes.title = 'Grid patches'
+    plotaxes.scaled = True
+
+    <font color="blue"># Set up for item on these axes:</font>
+    plotitem = plotaxes.new_plotitem(plot_type='2d_patch')
+    plotitem.amr_patch_bgcolor = ['<font color="blue">#ffeeee', '#eeeeff', '#eeffee']</font>
+    plotitem.amr_celledges_show = [0,0,0]
+    plotitem.amr_patchedges_show = [1,1,1]
+    
+    <font color="blue"># ========================================================================</font>
+    <font color="blue">#  Vorticity Plot</font>
+    <font color="blue"># ========================================================================</font>
+    <font color="blue"># plotfigure = plotdata.new_plotfigure(name='vorticity',figno=17)</font>
+    <font color="blue"># plotfigure.show = False</font>
+    <font color="blue"># plotaxes = plotfigure.new_plotaxes()</font>
+    <font color="blue"># plotaxes.title = "Vorticity"</font>
+    <font color="blue"># plotaxes.scaled = True</font>
+    <font color="blue"># plotaxes.xlimits = xlimits</font>
+    <font color="blue"># plotaxes.ylimits = ylimits</font>
+    <font color="blue"># plotaxes.afteraxes = pcolor_afteraxes</font>
+    <font color="blue"># </font>
+    <font color="blue"># # Vorticity</font>
+    <font color="blue"># plotitem = plotaxes.new_plotitem(plot_type='2d_imshow')</font>
+    <font color="blue"># plotitem.plot_var = 9</font>
+    <font color="blue"># plotitem.imshow_cmap = plt.get_cmap('PRGn')</font>
+    <font color="blue"># # plotitem.pcolor_cmap = plt.get_cmap('PuBu')</font>
+    <font color="blue"># # plotitem.pcolor_cmin = 0.0</font>
+    <font color="blue"># # plotitem.pcolor_cmax = 6.0</font>
+    <font color="blue"># plotitem.imshow_cmin = -1.e-2</font>
+    <font color="blue"># plotitem.imshow_cmax = 1.e-2</font>
+    <font color="blue"># plotitem.add_colorbar = True</font>
+    <font color="blue"># plotitem.amr_celledges_show = [0,0,0]</font>
+    <font color="blue"># plotitem.amr_patchedges_show = [1]</font>
+    <font color="blue"># </font>
+    <font color="blue"># # Land</font>
+    <font color="blue"># plotitem = plotaxes.new_plotitem(plot_type='2d_pcolor')</font>
+    <font color="blue"># plotitem.plot_var = geoplot.land</font>
+    <font color="blue"># plotitem.pcolor_cmap = geoplot.land_colors</font>
+    <font color="blue"># plotitem.pcolor_cmin = 0.0</font>
+    <font color="blue"># plotitem.pcolor_cmax = 80.0</font>
+    <font color="blue"># plotitem.add_colorbar = False</font>
+    <font color="blue"># plotitem.amr_celledges_show = [0,0,0]</font>
+
     <font color="blue"># ========================================================================</font>
     <font color="blue">#  Figures for gauges</font>
 
@@ -340,7 +578,7 @@ def setplot(plotdata=None, bathy_location=0.15, bathy_angle=0.0,
     plotaxes.ylimits = ylimits
     plotaxes.afteraxes = locations_afteraxes
     ml_plot.add_surface_elevation(plotaxes, 1, bounds=top_surface_limits)
-    ml_plot.add_land(plotaxes)
+    ml_plot.add_land(plotaxes, 1)
 
     <font color="blue"># Bottom surface</font>
     plotaxes = plotfigure.new_plotaxes()
@@ -351,7 +589,7 @@ def setplot(plotdata=None, bathy_location=0.15, bathy_angle=0.0,
     plotaxes.ylimits = ylimits
     plotaxes.afteraxes = locations_afteraxes
     ml_plot.add_surface_elevation(plotaxes, 2, bounds=internal_surface_limits)
-    ml_plot.add_land(plotaxes)
+    ml_plot.add_land(plotaxes, 2)
 
     <font color="blue"># -----------------------------------------</font>
     <font color="blue"># Parameters used only when creating html and/or latex hardcopy</font>
