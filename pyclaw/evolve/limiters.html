@@ -94,245 +94,27 @@
             
   <div class="section" id="pyclaw-limiters">
 <span id="id1"></span><h1>Pyclaw Limiters<a class="headerlink" href="#pyclaw-limiters" title="Permalink to this headline">¶</a></h1>
-<dl class="function">
-<dt id="clawpack.pyclaw.limiters.tvd.limit">
-<code class="descclassname">clawpack.pyclaw.limiters.tvd.</code><code class="descname">limit</code><span class="sig-paren">(</span><em>num_eqn</em>, <em>wave</em>, <em>s</em>, <em>limiter</em>, <em>dtdx</em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.pyclaw.limiters.tvd.limit" title="Permalink to this definition">¶</a></dt>
-<dd><p>Apply a limiter to the waves</p>
-<p>Function that limits the given waves using the methods contained
-in limiter.  This is the vectorized version of the function acting on a 
-row of waves at a time.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Input:</th><td class="field-body"><ul class="first simple">
-<li><em>wave</em> - (ndarray(:,num_eqn,num_waves)) The waves at each interface</li>
-<li><em>s</em> - (ndarray(:,num_waves)) Speeds for each wave</li>
-<li><dl class="first docutils">
-<dt><em>limiter</em> - (<code class="docutils literal"><span class="pre">int</span></code> list) Array of type <code class="docutils literal"><span class="pre">int</span></code> determining which </dt>
-<dd>limiter to use</dd>
-</dl>
-</li>
-<li><dl class="first docutils">
-<dt><em>dtdx</em> - (ndarray(:)) <span class="math">\(\Delta t / \Delta x\)</span> ratio, used for CFL </dt>
-<dd>dependent limiters</dd>
-</dl>
-</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Output:</th><td class="field-body"><ul class="first simple">
-<li>(ndarray(:,num_eqn,num_waves)) - Returns the limited waves</li>
-</ul>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Version:</th><td class="field-body"><p class="first last">1.1 (2009-07-05)</p>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<div class="section" id="module-clawpack.pyclaw.limiters.tvd">
-<span id="clawpack-pyclaw-limiters-tvd"></span><h2><a class="reference internal" href="#module-clawpack.pyclaw.limiters.tvd" title="clawpack.pyclaw.limiters.tvd"><code class="xref py py-mod docutils literal"><span class="pre">clawpack.pyclaw.limiters.tvd</span></code></a><a class="headerlink" href="#module-clawpack.pyclaw.limiters.tvd" title="Permalink to this headline">¶</a></h2>
-<p>Library of limiter functions to be applied to waves</p>
-<p>This module contains all of the standard limiters found in clawpack.  To
-use any of the limiters, use the function limit to limit the appropriate
-waves.  Refer to each limiter and the function limit&#8217;s doc strings.</p>
-<p>This is a list of the provided limiters and their corresponding method number,
-note that some of the limiters actually correspond to a more general function
-which can be controlled more directly.  Refer to the limiter function and its
-corresponding documentation for details.</p>
-<div class="section" id="cfl-independent-limiters">
-<h3>CFL Independent Limiters<a class="headerlink" href="#cfl-independent-limiters" title="Permalink to this headline">¶</a></h3>
-<ol class="arabic simple">
-<li>minmod - <a class="reference internal" href="#clawpack.pyclaw.limiters.tvd.minmod_limiter" title="clawpack.pyclaw.limiters.tvd.minmod_limiter"><code class="xref py py-func docutils literal"><span class="pre">minmod_limiter()</span></code></a></li>
-<li>superbee - <a class="reference internal" href="#clawpack.pyclaw.limiters.tvd.superbee_limiter" title="clawpack.pyclaw.limiters.tvd.superbee_limiter"><code class="xref py py-func docutils literal"><span class="pre">superbee_limiter()</span></code></a></li>
-<li>van leer - <span class="math">\((r + |r|) / (1 + |r|)\)</span></li>
-<li>mc - <a class="reference internal" href="#clawpack.pyclaw.limiters.tvd.mc_limiter" title="clawpack.pyclaw.limiters.tvd.mc_limiter"><code class="xref py py-func docutils literal"><span class="pre">mc_limiter()</span></code></a></li>
-<li>Beam-warming - <span class="math">\(r\)</span></li>
-<li>Frommm - <span class="math">\(1/2 (1 + r)\)</span></li>
-<li>Albada 2 - <span class="math">\((r^2 + r) / (1 + r^2)\)</span></li>
-<li>Albada 3 - <span class="math">\(1/2 (1+r) (1 - (|1-r|^3) / (1+|r|^3))\)</span></li>
-<li>van Leer with Klein sharpening, k=2 - 
-<a class="reference internal" href="#clawpack.pyclaw.limiters.tvd.van_leer_klein_sharpening_limiter" title="clawpack.pyclaw.limiters.tvd.van_leer_klein_sharpening_limiter"><code class="xref py py-func docutils literal"><span class="pre">van_leer_klein_sharpening_limiter()</span></code></a></li>
-</ol>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Need to provide short explanation of limiters here.</p>
 </div>
-<div class="section" id="cfl-dependent-limiters">
-<h3>CFL Dependent Limiters<a class="headerlink" href="#cfl-dependent-limiters" title="Permalink to this headline">¶</a></h3>
-<ol class="arabic simple" start="10">
-<li>Roe&#8217;s linear third order scheme - <span class="math">\(1 + (r-1) (1 + cfl) / 3\)</span></li>
-<li>Arora-Roe (= limited version of the linear third order scheme) - 
-<a class="reference internal" href="#clawpack.pyclaw.limiters.tvd.arora_roe" title="clawpack.pyclaw.limiters.tvd.arora_roe"><code class="xref py py-func docutils literal"><span class="pre">arora_roe()</span></code></a></li>
-<li>Theta Limiter, theta=0.95 (safety on nonlinear waves) - 
-<a class="reference internal" href="#clawpack.pyclaw.limiters.tvd.theta_limiter" title="clawpack.pyclaw.limiters.tvd.theta_limiter"><code class="xref py py-func docutils literal"><span class="pre">theta_limiter()</span></code></a></li>
-<li>Theta Limiter, theta=0.75 - <a class="reference internal" href="#clawpack.pyclaw.limiters.tvd.theta_limiter" title="clawpack.pyclaw.limiters.tvd.theta_limiter"><code class="xref py py-func docutils literal"><span class="pre">theta_limiter()</span></code></a></li>
-<li>Theta Limiter, theta=0.5 - <a class="reference internal" href="#clawpack.pyclaw.limiters.tvd.theta_limiter" title="clawpack.pyclaw.limiters.tvd.theta_limiter"><code class="xref py py-func docutils literal"><span class="pre">theta_limiter()</span></code></a></li>
-<li>CFL-Superbee (Roe&#8217;s Ultrabee)  - <a class="reference internal" href="#clawpack.pyclaw.limiters.tvd.cfl_superbee" title="clawpack.pyclaw.limiters.tvd.cfl_superbee"><code class="xref py py-func docutils literal"><span class="pre">cfl_superbee()</span></code></a></li>
-<li>CFL-Superbee (Roe&#8217;s Ultrabee) with theta=0.95 (nonlinear waves) - 
-<a class="reference internal" href="#clawpack.pyclaw.limiters.tvd.cfl_superbee_theta" title="clawpack.pyclaw.limiters.tvd.cfl_superbee_theta"><code class="xref py py-func docutils literal"><span class="pre">cfl_superbee_theta()</span></code></a></li>
-<li>beta=2/3 limiter - <a class="reference internal" href="#clawpack.pyclaw.limiters.tvd.beta_limiter" title="clawpack.pyclaw.limiters.tvd.beta_limiter"><code class="xref py py-func docutils literal"><span class="pre">beta_limiter()</span></code></a></li>
-<li>beta=2/3 limiter with theta=0.95 (nonlinear waves) - <a class="reference internal" href="#clawpack.pyclaw.limiters.tvd.beta_limiter" title="clawpack.pyclaw.limiters.tvd.beta_limiter"><code class="xref py py-func docutils literal"><span class="pre">beta_limiter()</span></code></a></li>
-<li>Hyperbee - <a class="reference internal" href="#clawpack.pyclaw.limiters.tvd.hyperbee_limiter" title="clawpack.pyclaw.limiters.tvd.hyperbee_limiter"><code class="xref py py-func docutils literal"><span class="pre">hyperbee_limiter()</span></code></a></li>
-<li>SuperPower - <a class="reference internal" href="#clawpack.pyclaw.limiters.tvd.superpower_limiter" title="clawpack.pyclaw.limiters.tvd.superpower_limiter"><code class="xref py py-func docutils literal"><span class="pre">superpower_limiter()</span></code></a></li>
-<li>Cada-Torrilhon modified - <a class="reference internal" href="#clawpack.pyclaw.limiters.tvd.cada_torrilhon_limiter" title="clawpack.pyclaw.limiters.tvd.cada_torrilhon_limiter"><code class="xref py py-func docutils literal"><span class="pre">cada_torrilhon_limiter()</span></code></a></li>
-<li>Cada-Torrilhon modified, version for nonlinear waves - 
-<a class="reference internal" href="#clawpack.pyclaw.limiters.tvd.cada_torrilhon_limiter_nonlinear" title="clawpack.pyclaw.limiters.tvd.cada_torrilhon_limiter_nonlinear"><code class="xref py py-func docutils literal"><span class="pre">cada_torrilhon_limiter_nonlinear()</span></code></a></li>
-<li>upper bound limiter (1st order) - <a class="reference internal" href="#clawpack.pyclaw.limiters.tvd.upper_bound_limiter" title="clawpack.pyclaw.limiters.tvd.upper_bound_limiter"><code class="xref py py-func docutils literal"><span class="pre">upper_bound_limiter()</span></code></a></li>
-</ol>
-<dl class="docutils">
-<dt>All limiters have the same function call signature:</dt>
-<dd><table class="first last docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Input:</th><td class="field-body"><ul class="first simple">
-<li><em>r</em> - (ndarray(:))</li>
-<li><em>cfl</em> - (ndarray(:)) Local CFL number</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Output:</th><td class="field-body"><ul class="first last simple">
-<li>(ndarray(:)) -</li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
-</dd>
-</dl>
-<p>Newer limiters are based on work done by Friedemann Kemm [kemm_2009], paper 
-in review.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Authors:</th><td class="field-body"><p class="first">Kyle Mandli and Randy LeVeque (2008-08-21) Initial version</p>
-<p class="last">Kyle Mandli (2009-07-05) Added CFL depdendent limiters</p>
-</td>
-</tr>
-</tbody>
-</table>
-<dl class="function">
-<dt id="clawpack.pyclaw.limiters.tvd.arora_roe">
-<code class="descclassname">clawpack.pyclaw.limiters.tvd.</code><code class="descname">arora_roe</code><span class="sig-paren">(</span><em>r</em>, <em>cfl</em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.pyclaw.limiters.tvd.arora_roe" title="Permalink to this definition">¶</a></dt>
-<dd><p>Arora-Roe limiter, limited version of the linear third order scheme</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="clawpack.pyclaw.limiters.tvd.beta_limiter">
-<code class="descclassname">clawpack.pyclaw.limiters.tvd.</code><code class="descname">beta_limiter</code><span class="sig-paren">(</span><em>r</em>, <em>cfl</em>, <em>theta=0.95</em>, <em>beta=0.6666666666666666</em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.pyclaw.limiters.tvd.beta_limiter" title="Permalink to this definition">¶</a></dt>
-<dd><p>Modification of CFL Superbee limiter with theta and beta parameters</p>
-<dl class="docutils">
-<dt>Additional Input:</dt>
-<dd><ul class="first last simple">
-<li><em>theta</em></li>
-<li><em>beta</em></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="function">
-<dt id="clawpack.pyclaw.limiters.tvd.cada_torrilhon_limiter">
-<code class="descclassname">clawpack.pyclaw.limiters.tvd.</code><code class="descname">cada_torrilhon_limiter</code><span class="sig-paren">(</span><em>r</em>, <em>cfl</em>, <em>epsilon=0.001</em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.pyclaw.limiters.tvd.cada_torrilhon_limiter" title="Permalink to this definition">¶</a></dt>
-<dd><p>Cada-Torrilhon modified</p>
-<dl class="docutils">
-<dt>Additional Input:</dt>
-<dd><ul class="first last simple">
-<li><em>epsilon</em> =</li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="function">
-<dt id="clawpack.pyclaw.limiters.tvd.cada_torrilhon_limiter_nonlinear">
-<code class="descclassname">clawpack.pyclaw.limiters.tvd.</code><code class="descname">cada_torrilhon_limiter_nonlinear</code><span class="sig-paren">(</span><em>r</em>, <em>cfl</em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.pyclaw.limiters.tvd.cada_torrilhon_limiter_nonlinear" title="Permalink to this definition">¶</a></dt>
-<dd><p>Cada-Torrilhon modified, version for nonlinear waves</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="clawpack.pyclaw.limiters.tvd.cfl_superbee">
-<code class="descclassname">clawpack.pyclaw.limiters.tvd.</code><code class="descname">cfl_superbee</code><span class="sig-paren">(</span><em>r</em>, <em>cfl</em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.pyclaw.limiters.tvd.cfl_superbee" title="Permalink to this definition">¶</a></dt>
-<dd><p>CFL-Superbee (Roe&#8217;s Ultrabee) without theta parameter</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="clawpack.pyclaw.limiters.tvd.cfl_superbee_theta">
-<code class="descclassname">clawpack.pyclaw.limiters.tvd.</code><code class="descname">cfl_superbee_theta</code><span class="sig-paren">(</span><em>r</em>, <em>cfl</em>, <em>theta=0.95</em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.pyclaw.limiters.tvd.cfl_superbee_theta" title="Permalink to this definition">¶</a></dt>
-<dd><p>CFL-Superbee (Roe&#8217;s Ultrabee) with theta parameter</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="clawpack.pyclaw.limiters.tvd.hyperbee_limiter">
-<code class="descclassname">clawpack.pyclaw.limiters.tvd.</code><code class="descname">hyperbee_limiter</code><span class="sig-paren">(</span><em>r</em>, <em>cfl</em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.pyclaw.limiters.tvd.hyperbee_limiter" title="Permalink to this definition">¶</a></dt>
-<dd><p>Hyperbee</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="clawpack.pyclaw.limiters.tvd.mc_limiter">
-<code class="descclassname">clawpack.pyclaw.limiters.tvd.</code><code class="descname">mc_limiter</code><span class="sig-paren">(</span><em>r</em>, <em>cfl</em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.pyclaw.limiters.tvd.mc_limiter" title="Permalink to this definition">¶</a></dt>
-<dd><p>MC vectorized limiter</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="clawpack.pyclaw.limiters.tvd.minmod_limiter">
-<code class="descclassname">clawpack.pyclaw.limiters.tvd.</code><code class="descname">minmod_limiter</code><span class="sig-paren">(</span><em>r</em>, <em>cfl</em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.pyclaw.limiters.tvd.minmod_limiter" title="Permalink to this definition">¶</a></dt>
-<dd><p>Minmod vectorized limiter</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="clawpack.pyclaw.limiters.tvd.superbee_limiter">
-<code class="descclassname">clawpack.pyclaw.limiters.tvd.</code><code class="descname">superbee_limiter</code><span class="sig-paren">(</span><em>r</em>, <em>cfl</em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.pyclaw.limiters.tvd.superbee_limiter" title="Permalink to this definition">¶</a></dt>
-<dd><p>Superbee vectorized limiter</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="clawpack.pyclaw.limiters.tvd.superpower_limiter">
-<code class="descclassname">clawpack.pyclaw.limiters.tvd.</code><code class="descname">superpower_limiter</code><span class="sig-paren">(</span><em>r</em>, <em>cfl</em>, <em>caut=1.0</em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.pyclaw.limiters.tvd.superpower_limiter" title="Permalink to this definition">¶</a></dt>
-<dd><p>SuperPower limiter</p>
-<dl class="docutils">
-<dt>Additional input:</dt>
-<dd><ul class="first last simple">
-<li><em>caut</em> = Limiter parameter</li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="function">
-<dt id="clawpack.pyclaw.limiters.tvd.theta_limiter">
-<code class="descclassname">clawpack.pyclaw.limiters.tvd.</code><code class="descname">theta_limiter</code><span class="sig-paren">(</span><em>r</em>, <em>cfl</em>, <em>theta=0.95</em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.pyclaw.limiters.tvd.theta_limiter" title="Permalink to this definition">¶</a></dt>
-<dd><p>Theta limiter</p>
-<dl class="docutils">
-<dt>Additional Input:</dt>
-<dd><ul class="first last simple">
-<li><em>theta</em> =</li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="function">
-<dt id="clawpack.pyclaw.limiters.tvd.upper_bound_limiter">
-<code class="descclassname">clawpack.pyclaw.limiters.tvd.</code><code class="descname">upper_bound_limiter</code><span class="sig-paren">(</span><em>r</em>, <em>cfl</em>, <em>theta=1.0</em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.pyclaw.limiters.tvd.upper_bound_limiter" title="Permalink to this definition">¶</a></dt>
-<dd><p>Upper bound limiter (1st order)</p>
-<dl class="docutils">
-<dt>Additional Input:</dt>
-<dd><ul class="first last simple">
-<li><em>theta</em> =</li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="function">
-<dt id="clawpack.pyclaw.limiters.tvd.van_leer_klein_sharpening_limiter">
-<code class="descclassname">clawpack.pyclaw.limiters.tvd.</code><code class="descname">van_leer_klein_sharpening_limiter</code><span class="sig-paren">(</span><em>r</em>, <em>cfl</em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.pyclaw.limiters.tvd.van_leer_klein_sharpening_limiter" title="Permalink to this definition">¶</a></dt>
-<dd><p>van Leer with Klein sharpening, k=2</p>
-</dd></dl>
-
+<div class="system-message">
+<p class="system-message-title">System Message: WARNING/2 (<tt class="docutils">/var/folders/_s/dx0xgftn3_x04rdx0_w5nq7w0000gn/T/tmpMRaGiysphinxcontrib_versioning/56744eeda50bfc1d8fec79d45060637228943b2f/doc/pyclaw/evolve/limiters.rst</tt>, line 10)</p>
+autodoc: failed to import function u&#8217;limit&#8217; from module u&#8217;pyclaw.limiters.tvd&#8217;; the following exception was raised:
+Traceback (most recent call last):
+  File &#8220;/usr/local/Cellar/python/2.7.12_2/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/sphinx/ext/autodoc.py&#8221;, line 551, in import_object
+    __import__(self.modname)
+ImportError: No module named pyclaw.limiters.tvd
+</div>
+<div class="section" id="pyclaw-limiters-tvd">
+<h2><code class="xref py py-mod docutils literal"><span class="pre">pyclaw.limiters.tvd</span></code><a class="headerlink" href="#pyclaw-limiters-tvd" title="Permalink to this headline">¶</a></h2>
+<div class="system-message">
+<p class="system-message-title">System Message: WARNING/2 (<tt class="docutils">/var/folders/_s/dx0xgftn3_x04rdx0_w5nq7w0000gn/T/tmpMRaGiysphinxcontrib_versioning/56744eeda50bfc1d8fec79d45060637228943b2f/doc/pyclaw/evolve/limiters.rst</tt>, line 15)</p>
+autodoc: failed to import module u&#8217;pyclaw.limiters.tvd&#8217;; the following exception was raised:
+Traceback (most recent call last):
+  File &#8220;/usr/local/Cellar/python/2.7.12_2/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/sphinx/ext/autodoc.py&#8221;, line 551, in import_object
+    __import__(self.modname)
+ImportError: No module named pyclaw.limiters.tvd
 </div>
 </div>
 </div>
@@ -351,11 +133,7 @@ in review.</p>
   <h3><a href="../../contents.html">Table Of Contents</a></h3>
   <ul>
 <li><a class="reference internal" href="#">Pyclaw Limiters</a><ul>
-<li><a class="reference internal" href="#module-clawpack.pyclaw.limiters.tvd"><code class="docutils literal"><span class="pre">clawpack.pyclaw.limiters.tvd</span></code></a><ul>
-<li><a class="reference internal" href="#cfl-independent-limiters">CFL Independent Limiters</a></li>
-<li><a class="reference internal" href="#cfl-dependent-limiters">CFL Dependent Limiters</a></li>
-</ul>
-</li>
+<li><a class="reference internal" href="#pyclaw-limiters-tvd"><code class="docutils literal"><span class="pre">pyclaw.limiters.tvd</span></code></a></li>
 </ul>
 </li>
 </ul>

@@ -90,6 +90,9 @@ each repository since the last release (v5.4.1) on February 17, 2017.</p>
 <p>These changes should appear in the next release.  If you need them now,
 see <a class="reference internal" href="developers.html#developers"><span class="std std-ref">Developers&#8217; Guide</span></a> for instructions on cloning and installing from the
 master branch.</p>
+<p>To see documentation that has already been developed to accompany any new
+features listed below, click on the &#8220;future&#8221; branch of the documentation, in
+the menu on the left hand side of this page.</p>
 <div class="section" id="changes-that-are-not-backward-compatible">
 <h2>Changes that are not backward compatible<a class="headerlink" href="#changes-that-are-not-backward-compatible" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
@@ -99,6 +102,13 @@ checkpoint files can not be used to restart with newer code.</li>
 the intended &#8220;grid registration&#8221;.
 This is not backward compatable for files with headers that specify
 <cite>xllower, yllower</cite>.  See below for more details.</li>
+<li>Many of the previous storm surge capabilies in GeoClaw have been enhanced and
+simplified in terms of handling storm input.  Some of these changes are not
+backwards compatible due to the way storm data is now specified and how
+time references to landfall are now specified.  The examples in GeoClaw now
+are updated to reflect these changes however and it is highly recommended
+that users look at these examples for how to change their own existing
+examples.</li>
 </ul>
 </div>
 <div class="section" id="general-changes">
@@ -106,6 +116,8 @@ This is not backward compatable for files with headers that specify
 <blockquote>
 <div><ul class="simple">
 <li><cite>LICENSE</cite> file added to all repositories, with BSD license</li>
+<li><cite>CODE_OF_CONDUCT.md</cite> has been added to the super repository so as to
+define a code of conduct for the community.</li>
 </ul>
 </div></blockquote>
 </div>
@@ -218,7 +230,8 @@ yllcenter</cite>) if you want the data to be interpreted in the old manner.</li>
 <li>The boundary condition routine <cite>geoclaw/src/2d/shallow/bc2amr.f</cite>
 have been replaced with a modernized version <cite>geoclaw/src/2d/shallow/bc2amr.f</cite>
 that should be easier to read and modify by users if necessary.
-(Similar to changes made in amrclaw.)</li>
+(Similar to changes made in amrclaw.)  In the case of extrapolation boundary
+conditions all aux variables are also copied rather than just bathymetry.</li>
 <li>The format of checkpoint files changed to include <cite>maxgr</cite>.
 <strong>This is not backward compatible &#8211; old checkpoint files can not be used
 to restart with the new code.</strong></li>
@@ -226,10 +239,31 @@ to restart with the new code.</strong></li>
 has been cleaned up as <cite>valout.f90</cite>, and now also prints out timing
 information to two files in the output directory.  See the notes
 for amrclaw above for more details.</li>
-<li>Many updates have been made to the storm surge code.
-<strong>&#64;mandli should update this section.</strong></li>
+<li>The storm surge capabilties have been significantly changed including:<ul>
+<li>A new storm format that GeoClaw now reads in directly.  There is also
+a new Python storm module that contains the capability of converting
+many common formats into the format that GeoClaw now expects.  These
+formats currently include ATCF, HURDAT, JMA, IBtRACS, and TCVITALS.</li>
+<li>Time reference is now specific to landfall or anything else that the
+use requests.  In other words you no longer need absolute values of
+start and stop times but everything is relative to landfall.</li>
+<li>The Fortran code for storms is now simplified following the above
+restricted format.  This is all handled via the Python module.</li>
+<li>Additional parameterized wind and pressure fields are now included
+in addition to the existing Holland 1980 field.</li>
+<li>Additional preliminary support for storm data beyond parameterized
+versions have been added.  This is primarily in the form of stubs
+so that an API can be establised for the different data sources that
+we intend to add in the future including HWRF and other formats.</li>
+<li>Changes to plotting storm surge applications have also been included
+that mimic the ones above.  Again please refer to the examples in
+GeoClaw to see how to adapt your application.</li>
+</ul>
+</li>
 <li>Multi-layer shallow water solvers have been extended to work with AMR.
 (This is still under development and may have some bugs.)</li>
+<li>There is a new Makefile.multilayer file that should be used for
+multilayer applications.</li>
 <li>Makefile.geoclaw changed to include the new files to initialize,
 restart, and resize the nodal arrays and boundary lists.</li>
 <li>New capabilities have been added to read topofiles in netCDF, and also to
