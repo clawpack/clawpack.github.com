@@ -1,0 +1,494 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Plotting hints and FAQ &#8212; Clawpack 5.5.0 documentation</title>
+    
+    <link rel="stylesheet" href="_static/flasky.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/base.css" type="text/css" />
+    <link rel="stylesheet" href="_static/layout.css" type="text/css" />
+    <link rel="stylesheet" href="_static/banner.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '5.5.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="shortcut icon" href="_static/clawicon.ico"/>
+    <link rel="author" title="About these documents" href="about.html" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="GeoClaw plotting tools" href="geoplot.html" />
+    <link rel="prev" title="Plotting examples" href="plotexamples.html" /> 
+  </head>
+  <body role="document">
+<div id="main-wrapper" class="sphinx">
+<div id="header-wrapper">
+  <section id="header">
+    <!-- <h1><a href="http://clawpack.org/">Clawpack</a></h1> -->
+    <h1><a href="http://clawpack.org/">Clawpack-5</a></h1> 
+    <nav>
+      <ul>
+        <li>
+          <a href="contents.html">Docs</a>
+        </li>
+        <li>
+          <a href="installing.html">Install</a>
+        </li>
+        <li>
+          <a class="" href="gallery/index.html">Gallery</a>
+        </li>
+        <li>
+          <a class="" href="community.html">Community</a>
+        </li>
+        <li>
+          <a class="active" href="http://github.com/clawpack">Source</a>
+        </li>
+        <li>
+          <a class="" href="developers.html">Develop</a>
+        </li>
+      </ul>
+    </nav>
+  </section>
+<div class="decoration"></div>
+</div>
+
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="geoplot.html" title="GeoClaw plotting tools"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="plotexamples.html" title="Plotting examples"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="contents.html">Clawpack 5.5.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="plotting.html" accesskey="U">Plotting with Visclaw</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="plotting-hints-and-faq">
+<span id="plotting-faq"></span><h1><a class="toc-backref" href="#id1">Plotting hints and FAQ</a><a class="headerlink" href="#plotting-hints-and-faq" title="Permalink to this headline">¶</a></h1>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference internal" href="plotting.html#plotting"><span class="std std-ref">Plotting with Visclaw</span></a>,
+<a class="reference internal" href="setplot.html#setplot"><span class="std std-ref">Using setplot.py to specify the desired plots</span></a>,
+<a class="reference internal" href="plotexamples.html#plotexamples"><span class="std std-ref">Plotting examples</span></a></p>
+</div>
+<div class="contents topic" id="contents">
+<p class="topic-title first">Contents</p>
+<ul class="simple">
+<li><a class="reference internal" href="#plotting-hints-and-faq" id="id1">Plotting hints and FAQ</a><ul>
+<li><a class="reference internal" href="#what-s-the-difference-between-make-plots-and-make-plots" id="id2">What&#8217;s the difference between <cite>make .plots</cite> and <cite>make plots</cite> ?</a></li>
+<li><a class="reference internal" href="#how-to-plot-a-something-other-than-a-component-of-q" id="id3">How to plot a something other than a component of q?</a></li>
+<li><a class="reference internal" href="#how-to-add-another-curve-to-a-plot-e-g-the-true-solution" id="id4">How to add another curve to a plot, e.g. the true solution?</a></li>
+<li><a class="reference internal" href="#how-to-change-the-title-in-a-plot" id="id5">How to change the title in a plot?</a></li>
+<li><a class="reference internal" href="#how-to-specify-outdir-the-directory-to-find-fort-files-for-plotting" id="id6">How to specify <code class="docutils literal"><span class="pre">outdir</span></code>, the directory to find <code class="docutils literal"><span class="pre">fort.*</span></code> files for plotting?</a></li>
+<li><a class="reference internal" href="#how-to-specify-a-different-outdir-for-some-plot-item" id="id7">How to specify a different <code class="docutils literal"><span class="pre">outdir</span></code> for some plot item?</a></li>
+<li><a class="reference internal" href="#how-to-set-plot-parameters-that-are-not-provided-as-attributes-of-clawplotitem" id="id8">How to set plot parameters that are not provided as attributes of <a class="reference internal" href="ClawPlotItem.html#clawplotitem"><span class="std std-ref">ClawPlotItem</span></a>?</a></li>
+<li><a class="reference internal" href="#how-to-change-the-size-or-background-color-of-a-figure" id="id9">How to change the size or background color of a figure?</a></li>
+<li><a class="reference internal" href="#specifying-colormaps-for-pcolor-or-contourf-plots" id="id10">Specifying colormaps for pcolor or contourf plots</a></li>
+<li><a class="reference internal" href="#how-to-debug-setplot-py" id="id11">How to debug setplot.py?</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<p>More to come!</p>
+<div class="section" id="what-s-the-difference-between-make-plots-and-make-plots">
+<h2><a class="toc-backref" href="#id2">What&#8217;s the difference between <cite>make .plots</cite> and <cite>make plots</cite> ?</a><a class="headerlink" href="#what-s-the-difference-between-make-plots-and-make-plots" title="Permalink to this headline">¶</a></h2>
+<p>The default Makefile configuration in Version 4.5.1 was changed to allow two
+different targets <code class="docutils literal"><span class="pre">.plots</span></code> and <code class="docutils literal"><span class="pre">plots</span></code>.  The former creates a
+hidden file <code class="docutils literal"><span class="pre">.plots</span></code> whose modification time is used to check dependencies.
+The plotting commands will be performed again only if the output of
+<code class="docutils literal"><span class="pre">setplot</span></code> file has been changed, and will also re-run the code if it appears
+that the output is out of date relative to the <code class="docutils literal"><span class="pre">setrun</span></code> file, for example.
+If you want to create the plots without checking dependencies (and perhaps
+accidentally re-running the code), use the <code class="docutils literal"><span class="pre">make</span> <span class="pre">plots</span></code> option.
+<code class="docutils literal"><span class="pre">plots</span></code> is a phony target in the default Makefile.</p>
+</div>
+<div class="section" id="how-to-plot-a-something-other-than-a-component-of-q">
+<h2><a class="toc-backref" href="#id3">How to plot a something other than a component of q?</a><a class="headerlink" href="#how-to-plot-a-something-other-than-a-component-of-q" title="Permalink to this headline">¶</a></h2>
+<p>Objects of class <a class="reference internal" href="ClawPlotItem.html#clawplotitem"><span class="std std-ref">ClawPlotItem</span></a> have an attribute <code class="docutils literal"><span class="pre">plot_var</span></code>.  If
+this is set to an integer than the corresponding component of q is plotted
+(remembering that Python indexing starts at 0, so <code class="docutils literal"><span class="pre">plot_var</span> <span class="pre">=</span> <span class="pre">0</span></code> will
+specify plotting the first component of q, for example).</p>
+<p>If plot_var is a function then this function is applied to applied to
+<a class="reference internal" href="current_data.html#current-data"><span class="std std-ref">current_data</span></a> and should return the array of values to be plotted.
+For an example, see <span class="xref std std-ref">plotexample-acou-1d-6</span>.</p>
+<p>Sometimes you want to plot something other than the solution on the patch,
+for example to add another feature to a plot of the solution. This can be
+done via an <code class="docutils literal"><span class="pre">afteraxes</span></code> command, for example, which is called after all
+items have been plotted on the current axes.  See <a class="reference internal" href="ClawPlotAxes.html#clawplotaxes"><span class="std std-ref">ClawPlotAxes</span></a> for
+details and an example.</p>
+</div>
+<div class="section" id="how-to-add-another-curve-to-a-plot-e-g-the-true-solution">
+<h2><a class="toc-backref" href="#id4">How to add another curve to a plot, e.g. the true solution?</a><a class="headerlink" href="#how-to-add-another-curve-to-a-plot-e-g-the-true-solution" title="Permalink to this headline">¶</a></h2>
+<p>The <code class="docutils literal"><span class="pre">afteraxes</span></code> attribute of a <span class="xref std std-ref">ClawPlotAxes`</span> object can be specified as
+either a string or a function.  The string is executed (using <code class="docutils literal"><span class="pre">exec(...)</span></code>) or
+the function is called after performing
+all plots on these axes (as specified by <span class="xref std std-ref">ClawPlotItem`</span> objects).
+This can be used to add a curve to a plot.</p>
+<p>For example, if the true solution to an advection equation
+is known to be <span class="math">\(q(x,t) = \sin(x+t)\)</span>, this could be added to a plot  as a
+red curve via:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">add_true_solution</span><span class="p">(</span><span class="n">current_data</span><span class="p">):</span>
+    <span class="kn">from</span> <span class="nn">pylab</span> <span class="k">import</span> <span class="n">sin</span><span class="p">,</span> <span class="n">plot</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">current_data</span><span class="o">.</span><span class="n">x</span>
+    <span class="n">t</span> <span class="o">=</span> <span class="n">current_data</span><span class="o">.</span><span class="n">t</span>
+    <span class="n">qtrue</span> <span class="o">=</span> <span class="n">sin</span><span class="p">(</span><span class="n">x</span><span class="o">+</span><span class="n">t</span><span class="p">)</span>
+    <span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">qtrue</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span>
+
+<span class="n">plotaxes</span><span class="o">.</span><span class="n">afteraxes</span> <span class="o">=</span> <span class="n">add_true_solution</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="how-to-change-the-title-in-a-plot">
+<h2><a class="toc-backref" href="#id5">How to change the title in a plot?</a><a class="headerlink" href="#how-to-change-the-title-in-a-plot" title="Permalink to this headline">¶</a></h2>
+<p>The <code class="docutils literal"><span class="pre">title</span></code> attribute of a <span class="xref std std-ref">ClawPlotAxes`</span> object determines the title that
+appears a the top of the plot.</p>
+<p>The <code class="docutils literal"><span class="pre">title_with_t</span></code> attributed determines if the time is included in this title.
+If True (the default value), then &#8220;at time t = ...&#8221; is appended to the title.
+The time is printed using format <code class="docutils literal"><span class="pre">14.8f</span></code> if <code class="docutils literal"><span class="pre">(t&gt;=0.001)</span> <span class="pre">&amp;</span> <span class="pre">(t&lt;1000.)</span></code>,
+or format <code class="docutils literal"><span class="pre">14.8e</span></code> more generally.</p>
+<p>It is also possible to change the title using and afteraxes function.  For
+example, to create a larger title with fontsize 20 and only 4 digits in t:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">add_title</span><span class="p">(</span><span class="n">current_data</span><span class="p">):</span>
+    <span class="kn">from</span> <span class="nn">pylab</span> <span class="k">import</span> <span class="n">title</span>
+    <span class="n">t</span> <span class="o">=</span> <span class="n">current_data</span><span class="o">.</span><span class="n">t</span>
+    <span class="n">title</span><span class="p">(</span><span class="s2">&quot;Solution at time t = </span><span class="si">%10.4e</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">t</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
+
+<span class="n">plotaxes</span><span class="o">.</span><span class="n">afteraxes</span> <span class="o">=</span> <span class="n">add_title</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="how-to-specify-outdir-the-directory-to-find-fort-files-for-plotting">
+<h2><a class="toc-backref" href="#id6">How to specify <code class="docutils literal"><span class="pre">outdir</span></code>, the directory to find <code class="docutils literal"><span class="pre">fort.*</span></code> files for plotting?</a><a class="headerlink" href="#how-to-specify-outdir-the-directory-to-find-fort-files-for-plotting" title="Permalink to this headline">¶</a></h2>
+<p>This is normally determined by the <code class="docutils literal"><span class="pre">outdir</span></code> attribute of
+the <a class="reference internal" href="ClawPlotData.html#clawplotdata"><span class="std std-ref">ClawPlotData</span></a> object directing the plotting.  But see the next FAQ
+for the option of using different directories for some plot items (e.g. to
+compare results of two computations).</p>
+<p>If you are making a set of hardcopy plots using:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ make .plots
+</pre></div>
+</div>
+<p>or</p>
+<blockquote>
+<div>$ make plots</div></blockquote>
+<p>then <code class="docutils literal"><span class="pre">outdir</span></code> is specified in the Makefile by setting the <code class="docutils literal"><span class="pre">CLAW_OUTDIR</span></code>
+variable.</p>
+<p>If you are making plots interactively using <a href="#id12"><span class="problematic" id="id13">Iplotclaw_</span></a>, then you can
+directly specify the <code class="docutils literal"><span class="pre">outdir</span></code> as a parameter, e.g.:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">In</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span> <span class="n">ip</span><span class="o">=</span><span class="n">Iplotclaw</span><span class="p">(</span><span class="n">outdir</span><span class="o">=</span><span class="s2">&quot;_output&quot;</span><span class="p">);</span>   <span class="n">ip</span><span class="o">.</span><span class="n">plotloop</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>If you don&#8217;t specify this parameter, <a href="#id14"><span class="problematic" id="id15">`Iplotclaw`_</span></a> will look for a file
+<code class="docutils literal"><span class="pre">.output</span></code> in the current directory.  If you created the <code class="docutils literal"><span class="pre">fort.*</span></code> files by
+the command:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ make .output
+</pre></div>
+</div>
+<p>then the output directory is set in the Makefile and the file <code class="docutils literal"><span class="pre">.output</span></code>
+contains the path to the output directory.</p>
+<p>Note: If you use</p>
+<blockquote>
+<div>$ make output</div></blockquote>
+<p>which does not check dependencies, this also
+does not create a target file <code class="docutils literal"><span class="pre">.output</span></code>.</p>
+<p>If the file <code class="docutils literal"><span class="pre">.output</span></code> does not exist,  <code class="docutils literal"><span class="pre">outdir</span> <span class="pre">=</span> <span class="pre">'.'</span></code> is used by
+default, the current directory.</p>
+<p>Note that if you stop a calculation mid-stream using <code class="docutils literal"><span class="pre">&lt;ctrl&gt;-C</span></code>, the file
+<code class="docutils literal"><span class="pre">.output</span></code> may not exist or be correct, since this file is written after
+the execution finishes.</p>
+</div>
+<div class="section" id="how-to-specify-a-different-outdir-for-some-plot-item">
+<h2><a class="toc-backref" href="#id7">How to specify a different <code class="docutils literal"><span class="pre">outdir</span></code> for some plot item?</a><a class="headerlink" href="#how-to-specify-a-different-outdir-for-some-plot-item" title="Permalink to this headline">¶</a></h2>
+<p>If you want one plot item on an axis to use the default <code class="docutils literal"><span class="pre">plotdata.outdir</span></code>
+while another to take data from a different directory (in order to compare
+two computations, for example), you can set the <code class="docutils literal"><span class="pre">outdir</span></code>
+attribute of a <a class="reference internal" href="ClawPlotItem.html#clawplotitem"><span class="std std-ref">ClawPlotItem</span></a> directly.  If you do not set it, by
+default it inherits from the <a class="reference internal" href="ClawPlotFigure.html#clawplotfigure"><span class="std std-ref">ClawPlotFigure</span></a> object this item belongs
+to.</p>
+<p>For example, you might have the following in your <code class="docutils literal"><span class="pre">setplot</span></code> function:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">plotfigure</span> <span class="o">=</span> <span class="n">plotdata</span><span class="o">.</span><span class="n">new_plotfigure</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;compare&#39;</span><span class="p">,</span> <span class="n">figno</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">plotaxes</span> <span class="o">=</span> <span class="n">plotfigure</span><span class="o">.</span><span class="n">new_plotaxes</span><span class="p">()</span>
+
+<span class="n">plotitem</span> <span class="o">=</span> <span class="n">plotaxes</span><span class="o">.</span><span class="n">new_plotitem</span><span class="p">(</span><span class="n">plot_type</span><span class="o">=</span><span class="s1">&#39;1d_plot&#39;</span><span class="p">)</span>
+<span class="n">plotitem</span><span class="o">.</span><span class="n">plot_var</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">plotitem</span><span class="o">.</span><span class="n">plotstyle</span> <span class="o">=</span> <span class="s1">&#39;-o&#39;</span>
+<span class="n">plotitem</span><span class="o">.</span><span class="n">color</span> <span class="o">=</span> <span class="s1">&#39;b&#39;</span>
+
+<span class="n">plotitem</span> <span class="o">=</span> <span class="n">plotaxes</span><span class="o">.</span><span class="n">new_plotitem</span><span class="p">(</span><span class="n">plot_type</span><span class="o">=</span><span class="s1">&#39;1d_plot&#39;</span><span class="p">)</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="n">plotitem</span><span class="o">.</span><span class="n">outdir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">(),</span> <span class="s1">&#39;_output2&#39;</span><span class="p">)</span>
+<span class="n">plotitem</span><span class="o">.</span><span class="n">plot_var</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">plotitem</span><span class="o">.</span><span class="n">plotstyle</span> <span class="o">=</span> <span class="s1">&#39;-+&#39;</span>
+<span class="n">plotitem</span><span class="o">.</span><span class="n">color</span> <span class="o">=</span> <span class="s1">&#39;r&#39;</span>
+</pre></div>
+</div>
+<p>This would plot results from <code class="docutils literal"><span class="pre">plotdata.outdir</span></code> as blue circles and results
+from <code class="docutils literal"><span class="pre">./_output2</span></code> as red plus signs.  It&#8217;s best to give the full path
+name, e.g. as done here using <code class="docutils literal"><span class="pre">os.path.join(os.getcwd(),</span> <span class="pre">'_output2')</span></code>.</p>
+</div>
+<div class="section" id="how-to-set-plot-parameters-that-are-not-provided-as-attributes-of-clawplotitem">
+<h2><a class="toc-backref" href="#id8">How to set plot parameters that are not provided as attributes of <a class="reference internal" href="ClawPlotItem.html#clawplotitem"><span class="std std-ref">ClawPlotItem</span></a>?</a><a class="headerlink" href="#how-to-set-plot-parameters-that-are-not-provided-as-attributes-of-clawplotitem" title="Permalink to this headline">¶</a></h2>
+<p>Some commonly used plotting parameters can be specified as an attribute of a
+<span class="xref std std-ref">ClawPlotItem`</span>, for example:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">plotitem</span> <span class="o">=</span> <span class="n">plotaxes</span><span class="o">.</span><span class="n">new_plotitem</span><span class="p">(</span><span class="n">plot_type</span><span class="o">=</span><span class="s1">&#39;1d_plot&#39;</span><span class="p">)</span>
+<span class="n">plotitem</span><span class="o">.</span><span class="n">plot_var</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">plotitem</span><span class="o">.</span><span class="n">plotstyle</span> <span class="o">=</span> <span class="s1">&#39;-&#39;</span>
+<span class="n">plotitem</span><span class="o">.</span><span class="n">color</span> <span class="o">=</span> <span class="s1">&#39;b&#39;</span>
+</pre></div>
+</div>
+<p>specifies plotting a blue line.  These attributes are used in the call to the
+matplotlib <code class="docutils literal"><span class="pre">plot</span></code> function.  The <code class="docutils literal"><span class="pre">plot</span></code> function has many other keyword
+parameters that are not all duplicated as attributes of <span class="xref std std-ref">ClawPlotItem`</span>.  To
+change these, the <code class="docutils literal"><span class="pre">kwargs</span></code> attribute can be used.</p>
+<p>For example, to plot as above, but with a wider blue line, append the following:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">plotitem</span><span class="o">.</span><span class="n">kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;linewidth&#39;</span><span class="p">:</span> <span class="mi">2</span><span class="p">}</span>
+</pre></div>
+</div>
+<p>If you try to specify the same keyword argument two different ways, e.g.:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">plotitem</span><span class="o">.</span><span class="n">color</span> <span class="o">=</span> <span class="s1">&#39;b&#39;</span>
+<span class="n">plotitem</span><span class="o">.</span><span class="n">kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;linewidth&#39;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;color&#39;</span><span class="p">:</span> <span class="s1">&#39;r&#39;</span><span class="p">}</span>
+</pre></div>
+</div>
+<p>the  value in <code class="docutils literal"><span class="pre">kwargs</span></code> takes precedence.  It is the <code class="docutils literal"><span class="pre">kwargs</span></code> dictionary that
+is actually used in the call, and the <code class="docutils literal"><span class="pre">color</span></code> attribute is checked only if it
+has not been defined by the user in the <code class="docutils literal"><span class="pre">kwargs</span></code> attribute.</p>
+</div>
+<div class="section" id="how-to-change-the-size-or-background-color-of-a-figure">
+<h2><a class="toc-backref" href="#id9">How to change the size or background color of a figure?</a><a class="headerlink" href="#how-to-change-the-size-or-background-color-of-a-figure" title="Permalink to this headline">¶</a></h2>
+<p>By default, a figure is created of the default matplotlib size, with a tan
+background.  Any desired
+keyword arguments to the matplotlib <a class="reference external" href="??">figure</a> command can
+be passed using the <code class="docutils literal"><span class="pre">kwargs</span></code> attributed of <span class="xref std std-ref">ClawPlotFigure`</span>.  For
+example, to create a figure that is 10 inches by 5 inches with a pink
+background:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">plotfigure</span> <span class="o">=</span> <span class="n">plotdata</span><span class="o">.</span><span class="n">new_plotfigure</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;pinkfig&#39;</span><span class="p">,</span> <span class="n">figno</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">plotfigure</span><span class="o">.</span><span class="n">kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;figsize&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">10</span><span class="p">,</span><span class="mi">5</span><span class="p">],</span>  <span class="s1">&#39;facecolor&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="o">.</span><span class="mi">7</span><span class="p">,</span> <span class="o">.</span><span class="mi">7</span><span class="p">]}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="specifying-colormaps-for-pcolor-or-contourf-plots">
+<h2><a class="toc-backref" href="#id10">Specifying colormaps for pcolor or contourf plots</a><a class="headerlink" href="#specifying-colormaps-for-pcolor-or-contourf-plots" title="Permalink to this headline">¶</a></h2>
+<p>The matplotlib module <cite>matplotlib.cm</cite> provides many colormaps that can be
+acquired as follows, for example:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">matplotlib</span> <span class="k">import</span> <span class="n">cm</span>
+<span class="n">cmap</span> <span class="o">=</span> <span class="n">cm</span><span class="o">.</span><span class="n">get_cmap</span><span class="p">(</span><span class="s1">&#39;Greens&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><cite>matplotlib.colors</cite> provides some tools for working with colormaps,
+and some additional colormaps and tools can be found in
+<cite>clawpack.visclaw.colormaps</cite>.</p>
+<p>In particular, the <cite>make_colormaps</cite> function simplifies the creation of new
+colormaps interpolating between specified colors.
+For example, a colormap fading from blue to yellow to red can be created
+with the command:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">clawpack.visclaw</span> <span class="k">import</span> <span class="n">colormaps</span>
+<span class="n">yellow_red_blue</span> <span class="o">=</span> <span class="n">colormaps</span><span class="o">.</span><span class="n">make_colormap</span><span class="p">({</span><span class="mf">0.</span><span class="p">:</span><span class="s1">&#39;#ffff00&#39;</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">:[</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span> <span class="mf">1.</span><span class="p">:</span><span class="s1">&#39;b&#39;</span><span class="p">})</span>
+</pre></div>
+</div>
+<p>The argument of <cite>make_colormaps</cite> is a dictionary that maps values to colors,
+with linear interpolation between the specified values.  Each color can be
+specified in various ways, e.g. in the example above blue is specified as
+the matlab style &#8216;b&#8217;, yellow with an html hex string, and red with an RGB
+tuple <cite>[1,0,0]</cite>.</p>
+<p>The colormap above is also predefined as
+<cite>clawpack.visclaw.colormaps.yellow_red_blue</cite> and is used in many Clawpack
+examples.</p>
+<p>The function
+<cite>clawpack.visclaw.colormaps.showcolors(cmap)</cite> can be used to display a
+colormap.
+`</p>
+</div>
+<div class="section" id="how-to-debug-setplot-py">
+<h2><a class="toc-backref" href="#id11">How to debug setplot.py?</a><a class="headerlink" href="#how-to-debug-setplot-py" title="Permalink to this headline">¶</a></h2>
+<p>Suppose you are working in an interactive Python shell such as ipython and
+encounter the following when trying to plot with <a href="#id16"><span class="problematic" id="id17">`Iplotclaw`_</span></a>:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>In [3]: ip=Iplotclaw(); ip.plotloop()
+*** Error in call_setplot: Problem executing function setplot
+*** Problem executing setplot in Iplotclaw
+    setplot =  setplot.py
+*** Either this file does not exist or
+    there is a problem executing the function setplot in this file.
+*** PLOT PARAMETERS MAY NOT BE SET! ***
+
+Interactive plotting for Clawpack output...
+
+Plotting data from outdir =  _output
+Type ? at PLOTCLAW prompt for list of commands
+
+    Start at which frame [default=0] ?
+</pre></div>
+</div>
+<p>This tells you that there was some problem importing <code class="docutils literal"><span class="pre">setplot.py</span></code>, but is not
+very informative and it is hard to debug from within the
+<code class="docutils literal"><span class="pre">Iplotclaw.plotloop</span></code>
+method. You may also run into this if you modify <code class="docutils literal"><span class="pre">setplot.py</span></code>
+(inadvertantly introducing a bug)
+and then use the <code class="docutils literal"><span class="pre">resetplot</span></code> option:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">PLOTCLAW</span> <span class="o">&gt;</span> <span class="n">resetplot</span>
+<span class="n">Executing</span> <span class="n">setplot</span> <span class="kn">from</span>  <span class="nn">setplot.py</span>
+<span class="o">***</span> <span class="n">Error</span> <span class="ow">in</span> <span class="n">call_setplot</span><span class="p">:</span> <span class="n">Problem</span> <span class="n">executing</span> <span class="n">function</span> <span class="n">setplot</span>
+<span class="o">***</span> <span class="n">Problem</span> <span class="n">re</span><span class="o">-</span><span class="n">executing</span> <span class="n">setplot</span>
+<span class="n">PLOTCLAW</span> <span class="o">&gt;</span>
+</pre></div>
+</div>
+<p>If you can&#8217;t spot the bug by examing <code class="docutils literal"><span class="pre">setplot.py</span></code>, it is easiest to debug
+by exiting the plotloop and doing:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">PLOTCLAW</span> <span class="o">&gt;</span> <span class="n">q</span>
+<span class="n">quitting</span><span class="o">...</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">4</span><span class="p">]:</span> <span class="kn">import</span> <span class="nn">setplot</span>
+<span class="n">In</span> <span class="p">[</span><span class="mi">5</span><span class="p">]:</span> <span class="n">pd</span> <span class="o">=</span> <span class="n">ip</span><span class="o">.</span><span class="n">plotdata</span>
+<span class="n">In</span> <span class="p">[</span><span class="mi">6</span><span class="p">]:</span> <span class="n">pd</span> <span class="o">=</span> <span class="n">setplot</span><span class="o">.</span><span class="n">setplot</span><span class="p">(</span><span class="n">pd</span><span class="p">)</span>
+<span class="o">---------------------------------------------------------------------------</span>
+<span class="ne">AttributeError</span>                            <span class="n">Traceback</span> <span class="p">(</span><span class="n">most</span> <span class="n">recent</span> <span class="n">call</span> <span class="n">last</span><span class="p">)</span>
+
+      <span class="mi">8</span>
+      <span class="mi">9</span>     <span class="c1"># Figure for q[0]</span>
+<span class="o">---&gt;</span> <span class="mi">10</span>     <span class="n">plotfigure</span> <span class="o">=</span> <span class="n">plotdata</span><span class="o">.</span><span class="n">new_plotfgure</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;q[0]&#39;</span><span class="p">,</span> <span class="n">figno</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+     <span class="mi">11</span>
+     <span class="mi">12</span>     <span class="c1"># Set up for axes in this figure:</span>
+
+<span class="ne">AttributeError</span><span class="p">:</span> <span class="s1">&#39;ClawPlotData&#39;</span> <span class="nb">object</span> <span class="n">has</span> <span class="n">no</span> <span class="n">attribute</span> <span class="s1">&#39;new_plotfgure&#39;</span>
+</pre></div>
+</div>
+<p>In this case, the error is that <code class="docutils literal"><span class="pre">new_plotfigure</span></code> is mis-spelled.</p>
+<p>In ipython you can also easily turn on the Python debugger pdb:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">In</span> <span class="p">[</span><span class="mi">9</span><span class="p">]:</span> <span class="n">pdb</span>
+<span class="n">Automatic</span> <span class="n">pdb</span> <span class="n">calling</span> <span class="n">has</span> <span class="n">been</span> <span class="n">turned</span> <span class="n">ON</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">10</span><span class="p">]:</span> <span class="n">pd</span> <span class="o">=</span> <span class="n">setplot</span><span class="o">.</span><span class="n">setplot</span><span class="p">(</span><span class="n">pd</span><span class="p">)</span>
+<span class="o">---------------------------------------------------------------------------</span>
+<span class="ne">AttributeError</span>                            <span class="n">Traceback</span> <span class="p">(</span><span class="n">most</span> <span class="n">recent</span> <span class="n">call</span> <span class="n">last</span><span class="p">)</span>
+      <span class="mi">8</span>
+      <span class="mi">9</span>     <span class="c1"># Figure for q[0]</span>
+<span class="o">---&gt;</span> <span class="mi">10</span>     <span class="n">plotfigure</span> <span class="o">=</span> <span class="n">plotdata</span><span class="o">.</span><span class="n">new_plotfgure</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;q[0]&#39;</span><span class="p">,</span> <span class="n">figno</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+     <span class="mi">11</span>
+     <span class="mi">12</span>     <span class="c1"># Set up for axes in this figure:</span>
+
+<span class="ne">AttributeError</span><span class="p">:</span> <span class="s1">&#39;ClawPlotData&#39;</span> <span class="nb">object</span> <span class="n">has</span> <span class="n">no</span> <span class="n">attribute</span> <span class="s1">&#39;new_plotfgure&#39;</span>
+
+<span class="n">ipdb</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+<p>For more complicated debugging you could now explore the current state using
+any pdb commands, described in the <a class="reference external" href="http://docs.python.org/library/pdb.html">documentation</a>.  See also
+the <a class="reference external" href="http://ipython.scipy.org/doc/manual/html/index.html">ipython documentation</a>.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<p><a href="http://clawpack.org/">
+    <img class="logo" src= "_static/clawlogo.jpg" alt="Logo"/>
+</a>
+<h2>Version 5.5.0</h2>
+</p>
+  <h3><a href="contents.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Plotting hints and FAQ</a><ul>
+<li><a class="reference internal" href="#what-s-the-difference-between-make-plots-and-make-plots">What&#8217;s the difference between <cite>make .plots</cite> and <cite>make plots</cite> ?</a></li>
+<li><a class="reference internal" href="#how-to-plot-a-something-other-than-a-component-of-q">How to plot a something other than a component of q?</a></li>
+<li><a class="reference internal" href="#how-to-add-another-curve-to-a-plot-e-g-the-true-solution">How to add another curve to a plot, e.g. the true solution?</a></li>
+<li><a class="reference internal" href="#how-to-change-the-title-in-a-plot">How to change the title in a plot?</a></li>
+<li><a class="reference internal" href="#how-to-specify-outdir-the-directory-to-find-fort-files-for-plotting">How to specify <code class="docutils literal"><span class="pre">outdir</span></code>, the directory to find <code class="docutils literal"><span class="pre">fort.*</span></code> files for plotting?</a></li>
+<li><a class="reference internal" href="#how-to-specify-a-different-outdir-for-some-plot-item">How to specify a different <code class="docutils literal"><span class="pre">outdir</span></code> for some plot item?</a></li>
+<li><a class="reference internal" href="#how-to-set-plot-parameters-that-are-not-provided-as-attributes-of-clawplotitem">How to set plot parameters that are not provided as attributes of <code class="docutils literal"><span class="pre">ClawPlotItem</span></code>?</a></li>
+<li><a class="reference internal" href="#how-to-change-the-size-or-background-color-of-a-figure">How to change the size or background color of a figure?</a></li>
+<li><a class="reference internal" href="#specifying-colormaps-for-pcolor-or-contourf-plots">Specifying colormaps for pcolor or contourf plots</a></li>
+<li><a class="reference internal" href="#how-to-debug-setplot-py">How to debug setplot.py?</a></li>
+</ul>
+</li>
+</ul>
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="contents.html">Documentation overview</a><ul>
+  <li><a href="plotting.html">Plotting with Visclaw</a><ul>
+      <li>Previous: <a href="plotexamples.html" title="previous chapter">Plotting examples</a></li>
+      <li>Next: <a href="geoplot.html" title="next chapter">GeoClaw plotting tools</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/plotting_faq.rst.txt"
+           rel="nofollow">Show Source</a></li>
+    <li><a href="https://github.com/clawpack/doc/blob/master/doc/plotting_faq.rst"
+           rel="nofollow">Show on GitHub</a></li>
+    <li><a href="https://github.com/clawpack/doc/edit/master/doc/plotting_faq.rst"
+           rel="nofollow">Edit on GitHub</a></li>
+  </ul>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+<h3>Versions</h3>
+<ul>
+    <li><a href="../v5.4.1/plotting_faq.html">v5.4.1</a></li>
+    <li><a href="../v5.4.0/plotting_faq.html">v5.4.0</a></li>
+    <li><a href="../v5.3.1/plotting_faq.html">v5.3.1</a></li>
+    <li><a href="../v5.3.0/plotting_faq.html">v5.3.0</a></li>
+    <li><a href="../v5.2.1/plotting_faq.html">v5.2.1</a></li>
+    <li><a href="../v5.2.0/plotting_faq.html">v5.2.0</a></li>
+    <li><a href="../v5.1.0/plotting_faq.html">v5.1.0</a></li>
+    <li><a href="plotting_faq.html">v5.5.0</a></li>
+    <li><a href="../dev/plotting_faq.html">dev</a></li>
+</ul>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+  <div class="footer">
+    &copy; Copyright CC-BY 2018, The Clawpack Development Team.
+    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
+  </div>
+  <script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-44811544-1', 'auto');
+  ga('send', 'pageview');
+
+  </script>
+  
+  </body>
+</html>

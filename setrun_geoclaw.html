@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Specifying GeoClaw parameters in setrun.py &#8212; Clawpack 5.4.1 documentation</title>
+    <title>Specifying GeoClaw parameters in setrun.py &#8212; Clawpack 5.5.0 documentation</title>
     
     <link rel="stylesheet" href="_static/flasky.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '5.4.1',
+        VERSION:     '5.5.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true,
@@ -82,7 +82,7 @@
         <li class="right" >
           <a href="kmltools_module.html" title="kmltools module of utility functions"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="contents.html">Clawpack 5.4.1 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="contents.html">Clawpack 5.5.0 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="geoclaw.html" accesskey="U">GeoClaw</a> &#187;</li> 
       </ul>
     </div>  
@@ -139,6 +139,17 @@ refinement is actually done depends also on how various AMR regions have
 been set (see Section <span class="xref std std-ref">regions</span>) and also on several other
 attributes described below that contain information on minimum and
 maximum refinement allowed in various regions.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="descname">rundata.refinement_data.speed_tolerance : list</code></dt>
+<dd><p>Cells are flagged for refinement at a level if the magnitude of the
+velocity is greater than the corresponding value in the list.  For
+instance if <cite>rundata.refinement_data.speed_tolerance = [1.0, 2.0, 3.0]</cite>
+then cells with a speed of 1.0 would refine to level 2, cells with a
+speed of 2.0 would refine to level 3, and cells with a speed of 3.0
+would refine to level 4.</p>
 </dd></dl>
 
 <dl class="attribute">
@@ -440,6 +451,105 @@ See <a class="reference internal" href="fgmax.html#fgmax"><span class="std std-r
 </dd></dl>
 
 </div>
+<div class="section" id="storm-specification-data">
+<span id="setrun-surge"></span><h2>Storm Specification Data<a class="headerlink" href="#storm-specification-data" title="Permalink to this headline">¶</a></h2>
+<dl class="attribute">
+<dt>
+<code class="descname">rundata.surge_data.wind_forcing : bool</code></dt>
+<dd><p>Includes the wind forcing term if <cite>True</cite>.  The drag coefficient is specified
+by <cite>rundata.surge_data.drag_law</cite>.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="descname">rundata.surge_data.drag_law : integer</code></dt>
+<dd><p>This specifies how to deterimine the wind drag coefficient.  Valid options
+include include <cite>0</cite> implying use no wind drag (effectively eliminates the
+wind source term but still computes the wind), <cite>1</cite> uses the Garret wind
+drag law, and <cite>2</cite> uses the Powell (2006) wind drag law.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="descname">rundata.surge_data.pressure_forcing : bool</code></dt>
+<dd><p>Includes the pressure forcing term if <cite>True</cite>.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="descname">rundata.surge_data.wind_index : int</code></dt>
+<dd><p>Specifies at what index into the <cite>aux</cite> array the wind velocities are stored.
+Note that this is Python indexed in the setrun but will be corrected in the
+FORTRAN code (1 is added to the index).</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="descname">rundata.surge_data.pressure_index : int</code></dt>
+<dd><p>Specifies at what index into the <cite>aux</cite> array the wind velocities are stored.
+Note that this is Python indexed in the setrun but will be corrected in the
+FORTRAN code (1 is added to the index).</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="descname">rundata.surge_data.display_landfall_time : bool</code></dt>
+<dd><p>Sets whether the console output displays time relative to land fall in days.
+In GeoClaw versions past 5.5 this only deterimines whether the time is
+displayed in seconds or days.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="descname">rundata.surge_data.wind_refine : list</code></dt>
+<dd><p>Similar to the <cite>speed_tolerance</cite> data, cells are flagged for refinement at
+a level if the magnitude of the wind velocity in m/s is greater than the
+corresponding value in the list.  For
+instance if <cite>wind_refine = [20.0, 30.0, 40.0]</cite>
+then cells with a wind speed of 20.0 would refine to level 2, cells with a
+wind speed of 30.0 would refine to level 3, and cells with a wind speed of
+40.0 would refine to level 4.  This can also be set to a boolean which if
+<cite>False</cite> disables wind based refinement.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="descname">rundata.surge_data.R_refine : list</code></dt>
+<dd><p>Similar to the <cite>wind_refine</cite> data, cells are flagged based on the radial
+distance to the storm&#8217;s center.  This can also be set to a boolean which if
+<cite>False</cite> disables storm radial based refinement.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="descname">rundata.surge_data.storm_specification_type : int</code></dt>
+<dd><p>Specifies the type of storm being used.  Positive options refer to a
+parameterized storm model where as negative integers refer to fully
+specified storms, for instance from HWRF, to be specified.</p>
+<p>Valid options</p>
+<blockquote>
+<div><ul class="simple">
+<li><cite>-1</cite>: The input data is specified in the HWRF format.</li>
+<li><cite>0</cite>: No storm specified</li>
+<li><cite>1</cite>: Parameterized storm requested using the Holland 1980 modeled storm.</li>
+<li><cite>2</cite>: Parameterized storm requested using the Holland 2010 modeled storm.</li>
+<li><cite>3</cite>: Parameterized storm requested using the Chava, Lin, Emmanuel modeled
+storm.</li>
+</ul>
+</div></blockquote>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="descname">rundata.surge_data.storm_file : string</code></dt>
+<dd><p>Specifies the path to the storm data.  IF <cite>storm_specification_type &gt; 0</cite> then
+this should point to a GeoClaw formatted storm file (see <a class="reference internal" href="storm_module.html#storm-module"><span class="std std-ref">Storm Specification Class and Tools</span></a> for
+details).  If <cite>storm_specification &lt; 0</cite> then this should either specify a path
+to files specifying the storm or a single file depending on the type of input
+data.</p>
+</dd></dl>
+
+</div>
 </div>
 
 
@@ -451,7 +561,7 @@ See <a class="reference internal" href="fgmax.html#fgmax"><span class="std std-r
 <p><a href="http://clawpack.org/">
     <img class="logo" src= "_static/clawlogo.jpg" alt="Logo"/>
 </a>
-<h2>Version 5.4.1</h2>
+<h2>Version 5.5.0</h2>
 </p>
   <h3><a href="contents.html">Table Of Contents</a></h3>
   <ul>
@@ -463,6 +573,7 @@ See <a class="reference internal" href="fgmax.html#fgmax"><span class="std std-r
 <li><a class="reference internal" href="#amr-refinement-region-parameters">AMR refinement region parameters</a></li>
 <li><a class="reference internal" href="#fixed-grid-output-parameters">Fixed grid output parameters</a></li>
 <li><a class="reference internal" href="#fixed-grid-maximum-monitoring-arrival-times">Fixed grid maximum monitoring / arrival times</a></li>
+<li><a class="reference internal" href="#storm-specification-data">Storm Specification Data</a></li>
 </ul>
 </li>
 </ul>
@@ -503,15 +614,15 @@ See <a class="reference internal" href="fgmax.html#fgmax"><span class="std std-r
     <li><a href="v5.2.1/setrun_geoclaw.html">v5.2.1</a></li>
     <li><a href="v5.2.0/setrun_geoclaw.html">v5.2.0</a></li>
     <li><a href="v5.1.0/setrun_geoclaw.html">v5.1.0</a></li>
-    <li><a href="v5.5.0_future/setrun_geoclaw.html">v5.5.0_future</a></li>
-    <li><a href="master/setrun_geoclaw.html">master</a></li>
+    <li><a href="v5.5.0/setrun_geoclaw.html">v5.5.0</a></li>
+    <li><a href="dev/setrun_geoclaw.html">dev</a></li>
 </ul>
         </div>
       </div>
       <div class="clearer"></div>
     </div>
   <div class="footer">
-    &copy; Copyright 2017, The Clawpack Development Team.
+    &copy; Copyright CC-BY 2018, The Clawpack Development Team.
     Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
   </div>
   <script>

@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Shallow water Riemann solvers in Clawpack &#8212; Clawpack 5.4.1 documentation</title>
+    <title>Shallow water Riemann solvers in Clawpack &#8212; Clawpack 5.5.0 documentation</title>
     
     <link rel="stylesheet" href="../_static/flasky.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '5.4.1',
+        VERSION:     '5.5.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true,
@@ -82,7 +82,7 @@
         <li class="right" >
           <a href="../riemann.html" title="Riemann solvers"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../contents.html">Clawpack 5.4.1 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="../contents.html">Clawpack 5.5.0 documentation</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -381,12 +381,12 @@ included.</p>
 <span></span>In [1]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython2"><div class="highlight"><pre>
+<div class="input_area highlight-ipython3"><div class="highlight"><pre>
 <span></span><span class="o">%</span><span class="k">matplotlib</span> inline
-<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">as</span> <span class="nn">plt</span>
-<span class="kn">from</span> <span class="nn">clawpack</span> <span class="kn">import</span> <span class="n">riemann</span>
-<span class="kn">from</span> <span class="nn">clawpack.riemann</span> <span class="kn">import</span> <span class="n">riemann_tools</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">from</span> <span class="nn">clawpack</span> <span class="k">import</span> <span class="n">riemann</span>
+<span class="kn">from</span> <span class="nn">clawpack.riemann</span> <span class="k">import</span> <span class="n">riemann_tools</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 </pre></div>
 </div>
 </div>
@@ -395,11 +395,11 @@ included.</p>
 <span></span>In [2]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython2"><div class="highlight"><pre>
+<div class="input_area highlight-ipython3"><div class="highlight"><pre>
 <span></span><span class="n">h_l</span> <span class="o">=</span> <span class="mf">1.</span><span class="p">;</span> <span class="n">h_r</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">;</span>
 <span class="n">u_l</span> <span class="o">=</span> <span class="mf">0.</span><span class="p">;</span> <span class="n">u_r</span> <span class="o">=</span> <span class="mf">0.</span><span class="p">;</span>
 <span class="n">q_l</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">h_l</span><span class="p">,</span><span class="n">u_l</span><span class="p">]);</span> <span class="n">q_r</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">h_r</span><span class="p">,</span><span class="n">u_r</span><span class="p">])</span>
-<span class="n">problem_data</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;grav&#39;</span><span class="p">:</span><span class="mf">1.0</span><span class="p">,</span><span class="s1">&#39;efix&#39;</span><span class="p">:</span><span class="bp">False</span><span class="p">}</span>
+<span class="n">problem_data</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;grav&#39;</span><span class="p">:</span><span class="mf">1.0</span><span class="p">,</span><span class="s1">&#39;efix&#39;</span><span class="p">:</span><span class="kc">False</span><span class="p">}</span>
 </pre></div>
 </div>
 </div>
@@ -410,7 +410,7 @@ included.</p>
 <span></span>In [3]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython2"><div class="highlight"><pre>
+<div class="input_area highlight-ipython3"><div class="highlight"><pre>
 <span></span><span class="n">states</span><span class="p">,</span> <span class="n">speeds</span><span class="p">,</span> <span class="n">reval</span> <span class="o">=</span> <span class="n">riemann_tools</span><span class="o">.</span><span class="n">riemann_solution</span><span class="p">(</span><span class="n">riemann</span><span class="o">.</span><span class="n">shallow_1D_py</span><span class="o">.</span><span class="n">shallow_roe_1D</span><span class="p">,</span><span class="n">q_l</span><span class="p">,</span><span class="n">q_r</span><span class="p">,</span>
                                                        <span class="n">problem_data</span><span class="o">=</span><span class="n">problem_data</span><span class="p">)</span>
 <span class="n">riemann_tools</span><span class="o">.</span><span class="n">plot_phase</span><span class="p">(</span><span class="n">states</span><span class="p">)</span>
@@ -432,7 +432,7 @@ included.</p>
 <span></span>In [4]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython2"><div class="highlight"><pre>
+<div class="input_area highlight-ipython3"><div class="highlight"><pre>
 <span></span><span class="n">states</span><span class="p">,</span> <span class="n">speeds</span><span class="p">,</span> <span class="n">reval</span> <span class="o">=</span> <span class="n">riemann_tools</span><span class="o">.</span><span class="n">riemann_solution</span><span class="p">(</span><span class="n">riemann</span><span class="o">.</span><span class="n">shallow_1D_py</span><span class="o">.</span><span class="n">shallow_hll_1D</span><span class="p">,</span><span class="n">q_l</span><span class="p">,</span><span class="n">q_r</span><span class="p">,</span>
                                                        <span class="n">problem_data</span><span class="o">=</span><span class="n">problem_data</span><span class="p">)</span>
 <span class="n">riemann_tools</span><span class="o">.</span><span class="n">plot_phase</span><span class="p">(</span><span class="n">states</span><span class="p">)</span>
@@ -459,7 +459,7 @@ included.</p>
 <p><a href="http://clawpack.org/">
     <img class="logo" src= "../_static/clawlogo.jpg" alt="Logo"/>
 </a>
-<h2>Version 5.4.1</h2>
+<h2>Version 5.5.0</h2>
 </p>
   <h3><a href="../contents.html">Table Of Contents</a></h3>
   <ul>
@@ -511,15 +511,15 @@ included.</p>
     <li><a href="../v5.2.1/contents.html">v5.2.1</a></li>
     <li><a href="../v5.2.0/contents.html">v5.2.0</a></li>
     <li><a href="../v5.1.0/contents.html">v5.1.0</a></li>
-    <li><a href="../v5.5.0_future/riemann/Shallow_water_Riemann_solvers.html">v5.5.0_future</a></li>
-    <li><a href="../master/riemann/Shallow_water_Riemann_solvers.html">master</a></li>
+    <li><a href="../v5.5.0/riemann/Shallow_water_Riemann_solvers.html">v5.5.0</a></li>
+    <li><a href="../dev/riemann/Shallow_water_Riemann_solvers.html">dev</a></li>
 </ul>
         </div>
       </div>
       <div class="clearer"></div>
     </div>
   <div class="footer">
-    &copy; Copyright 2017, The Clawpack Development Team.
+    &copy; Copyright CC-BY 2018, The Clawpack Development Team.
     Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
   </div>
   <script>

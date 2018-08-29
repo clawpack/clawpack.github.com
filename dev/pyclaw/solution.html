@@ -1,0 +1,431 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>PyClaw Solutions &#8212; Clawpack dev documentation</title>
+    
+    <link rel="stylesheet" href="../_static/flasky.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/base.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/layout.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/banner.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     'dev',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="shortcut icon" href="../_static/clawicon.ico"/>
+    <link rel="author" title="About these documents" href="../about.html" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="PyClaw State" href="state.html" />
+    <link rel="prev" title="Pyclaw Input/Output Package" href="io.html" /> 
+  </head>
+  <body role="document">
+<div id="main-wrapper" class="sphinx">
+<div id="header-wrapper">
+  <section id="header">
+    <!-- <h1><a href="http://clawpack.org/">Clawpack</a></h1> -->
+    <h1><a href="http://clawpack.org/">Clawpack-5</a></h1> 
+    <nav>
+      <ul>
+        <li>
+          <a href="../contents.html">Docs</a>
+        </li>
+        <li>
+          <a href="../installing.html">Install</a>
+        </li>
+        <li>
+          <a class="" href="../gallery/index.html">Gallery</a>
+        </li>
+        <li>
+          <a class="" href="../community.html">Community</a>
+        </li>
+        <li>
+          <a class="active" href="http://github.com/clawpack">Source</a>
+        </li>
+        <li>
+          <a class="" href="../developers.html">Develop</a>
+        </li>
+      </ul>
+    </nav>
+  </section>
+<div class="decoration"></div>
+</div>
+
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="state.html" title="PyClaw State"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="io.html" title="Pyclaw Input/Output Package"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../contents.html">Clawpack dev documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">Pyclaw</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="pyclaw-solutions">
+<span id="pyclaw-solution"></span><h1>PyClaw Solutions<a class="headerlink" href="#pyclaw-solutions" title="Permalink to this headline">¶</a></h1>
+<p>PyClaw <code class="xref py py-class docutils literal"><span class="pre">Solution</span></code> objects are containers for
+<code class="xref py py-class docutils literal"><span class="pre">State</span></code> and <code class="xref py py-class docutils literal"><span class="pre">Domain</span></code> objects
+that define an entire solution.
+The <code class="xref py py-class docutils literal"><span class="pre">State</span></code> class is responsible for containing all
+the data of the solution on the given <code class="xref py py-class docutils literal"><span class="pre">Domain</span></code>.
+The <code class="xref py py-class docutils literal"><span class="pre">Domain</span></code> is responsible for containing
+the geometry of the <code class="xref py py-class docutils literal"><span class="pre">Solution</span></code>.  The structure of a
+solution may look something like the <a class="reference internal" href="#pyclaw-solution-structure"><span class="std std-ref">figure</span></a>.</p>
+<div class="figure align-center" id="id1">
+<span id="pyclaw-solution-structure"></span><img alt="../_images/pyclaw_solution_structure.png" src="../_images/pyclaw_solution_structure.png" />
+<p class="caption"><span class="caption-text">Pyclaw solution structure including a <code class="xref py py-class docutils literal"><span class="pre">Domain</span></code>,
+a set of <code class="xref py py-class docutils literal"><span class="pre">Patch</span></code> objects and corresponding
+<code class="xref py py-class docutils literal"><span class="pre">Dimension</span></code> objects defining the solution&#8217;s
+geometry and three <code class="xref py py-class docutils literal"><span class="pre">State</span></code> objects pointing to
+the appropriate <code class="xref py py-class docutils literal"><span class="pre">Patch</span></code> with varying fields.</span></p>
+</div>
+<p>List of serial and parallel objects in a <code class="xref py py-class docutils literal"><span class="pre">Solution</span></code> class:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="49%" />
+<col width="51%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Serial</th>
+<th class="head">Parallel</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><code class="xref py py-class docutils literal"><span class="pre">pyclaw.state.State</span></code></td>
+<td><code class="xref py py-class docutils literal"><span class="pre">petclaw.state.State</span></code></td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-class docutils literal"><span class="pre">pyclaw.geometry.Domain</span></code></td>
+<td><code class="xref py py-class docutils literal"><span class="pre">petclaw.geometry.Domain</span></code></td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-class docutils literal"><span class="pre">pyclaw.geometry.Patch</span></code></td>
+<td><code class="xref py py-class docutils literal"><span class="pre">petclaw.geometry.Patch</span></code></td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-class docutils literal"><span class="pre">pyclaw.geometry.Grid</span></code></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-class docutils literal"><span class="pre">pyclaw.geometry.Dimension</span></code></td>
+<td>&#160;</td>
+</tr>
+</tbody>
+</table>
+<div class="section" id="pyclaw-solution-solution">
+<span id="solution"></span><h2><code class="xref py py-class docutils literal"><span class="pre">pyclaw.solution.Solution</span></code><a class="headerlink" href="#pyclaw-solution-solution" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="clawpack.pyclaw.solution.Solution">
+<em class="property">class </em><code class="descclassname">clawpack.pyclaw.solution.</code><code class="descname">Solution</code><span class="sig-paren">(</span><em>*arg</em>, <em>**kargs</em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.pyclaw.solution.Solution" title="Permalink to this definition">¶</a></dt>
+<dd><p>Pyclaw patch container class</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name" colspan="2">Input and Output:</th></tr>
+<tr class="field-odd field"><td>&#160;</td><td class="field-body"><p class="first">Input and output of solution objects is handle via the io package.
+Solution contains the generic methods <code class="xref py py-meth docutils literal"><span class="pre">write()</span></code>, <code class="xref py py-meth docutils literal"><span class="pre">read()</span></code> and
+<code class="xref py py-meth docutils literal"><span class="pre">plot()</span></code> which then figure out the correct method to call.  Please
+see the io package for the particulars of each format and method and 
+the methods in this class for general input and output information.</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Properties:</th><td class="field-body"><p class="first">If there is only one state and patch belonging to this solution, 
+the solution will appear to have many of the attributes assigned to its
+one state and patch.  Some parameters that have in the past been
+parameters for all patch,s are also reachable although Solution does not
+check to see if these parameters are truly universal.</p>
+<dl class="docutils">
+<dt>Patch Attributes:</dt>
+<dd><p class="first last">&#8216;dimensions&#8217;</p>
+</dd>
+<dt>State Attributes:</dt>
+<dd><p class="first last">&#8216;t&#8217;,&#8217;num_eqn&#8217;,&#8217;q&#8217;,&#8217;aux&#8217;,&#8217;capa&#8217;,&#8217;problem_data&#8217;</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Initialization:</th><td class="field-body"><p class="first">The initialization of a Solution can happen one of these ways</p>
+<blockquote>
+<div><ol class="arabic">
+<li><p class="first"><cite>args</cite> is empty and an empty Solution is created</p>
+</li>
+<li><p class="first"><cite>args</cite> is an integer (the number of components of q), a single
+State, or a list of States and is followed
+by the appropriate <a class="reference internal" href="geometry.html#pyclaw-geometry"><span class="std std-ref">geometry</span></a> object
+which can be one of:</p>
+<blockquote>
+<div><ul class="simple">
+<li>(<code class="xref py py-class docutils literal"><span class="pre">Domain</span></code>)</li>
+<li>(<code class="xref py py-class docutils literal"><span class="pre">Patch</span></code>) - A domain is created
+with the patch or list of patches provided.</li>
+<li>(<code class="xref py py-class docutils literal"><span class="pre">Dimension</span></code>) - A domain and 
+patch is created with the dimensions or list of 
+dimensions provided.</li>
+</ul>
+</div></blockquote>
+</li>
+<li><p class="first"><cite>args</cite> is a variable number of arguments that describes the 
+location of a file to be read in to initialize the object</p>
+</li>
+</ol>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Examples:</th><td class="field-body"><div class="first last highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">clawpack.pyclaw</span> <span class="k">as</span> <span class="nn">pyclaw</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">Dimension</span><span class="p">(</span><span class="s1">&#39;x&#39;</span><span class="p">,</span><span class="mf">0.</span><span class="p">,</span><span class="mf">1.</span><span class="p">,</span><span class="mi">100</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">domain</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">Domain</span><span class="p">((</span><span class="n">x</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">state</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">State</span><span class="p">(</span><span class="n">domain</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">solution</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">Solution</span><span class="p">(</span><span class="n">state</span><span class="p">,</span><span class="n">domain</span><span class="p">)</span>
+</pre></div>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="clawpack.pyclaw.solution.Solution.is_valid">
+<code class="descname">is_valid</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.pyclaw.solution.Solution.is_valid" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks to see if this solution is valid</p>
+<p>The Solution checks to make sure it is valid by checking each of its
+states.  If an invalid state is found, a message is logged what
+specifically made this solution invalid.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Output:</th><td class="field-body"><ul class="first last simple">
+<li>(bool) - True if valid, false otherwise</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="clawpack.pyclaw.solution.Solution.plot">
+<code class="descname">plot</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.pyclaw.solution.Solution.plot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plot the solution</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="clawpack.pyclaw.solution.Solution.read">
+<code class="descname">read</code><span class="sig-paren">(</span><em>frame</em>, <em>path='./_output'</em>, <em>file_format='ascii'</em>, <em>file_prefix=None</em>, <em>read_aux=True</em>, <em>options={}</em>, <em>**kargs</em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.pyclaw.solution.Solution.read" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reads in a Solution object from a file</p>
+<p>Reads in and initializes this Solution with the data specified.  This 
+function will raise an IOError if it was unsuccessful.</p>
+<p>Any format must conform to the following call signiture and return
+True if the file has been successfully read into the given solution or
+False otherwise.  Options is a dictionary of parameters that each
+format can specify.  See the ascii module for an example.:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">read_</span><span class="o">&lt;</span><span class="nb">format</span><span class="o">&gt;</span><span class="p">(</span><span class="n">solution</span><span class="p">,</span><span class="n">path</span><span class="p">,</span><span class="n">frame</span><span class="p">,</span><span class="n">file_prefix</span><span class="p">,</span><span class="n">options</span><span class="o">=</span><span class="p">{})</span>
+</pre></div>
+</div>
+<p><code class="docutils literal"><span class="pre">&lt;format&gt;</span></code> is the name of the format in question.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Input:</th><td class="field-body"><ul class="first simple">
+<li><em>frame</em> - (int) Frame number to be read in</li>
+<li><em>path</em> - (string) Base path to the files to be read. 
+<code class="docutils literal"><span class="pre">default</span> <span class="pre">=</span> <span class="pre">'./_output'</span></code></li>
+<li><em>file_format</em> - (string) Format of the file, should match on of the 
+modules inside of the io package.  <code class="docutils literal"><span class="pre">default</span> <span class="pre">=</span> <span class="pre">'ascii'</span></code></li>
+<li><em>file_prefix</em> - (string) Name prefix in front of all the files, 
+defaults to whatever the format defaults to, e.g. fort for ascii</li>
+<li><em>options</em> - (dict) Dictionary of optional arguments dependent on 
+the format being read in.  <code class="docutils literal"><span class="pre">default</span> <span class="pre">=</span> <span class="pre">{}</span></code></li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Output:</th><td class="field-body"><ul class="first last simple">
+<li>(bool) - True if read was successful, False otherwise</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="clawpack.pyclaw.solution.Solution.set_all_states">
+<code class="descname">set_all_states</code><span class="sig-paren">(</span><em>attr</em>, <em>value</em>, <em>overwrite=True</em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.pyclaw.solution.Solution.set_all_states" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets all member states attribute &#8216;attr&#8217; to value</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Input:</th><td class="field-body"><ul class="first last simple">
+<li><em>attr</em> - (string) Attribute name to be set</li>
+<li><em>value</em> - (id) Value for attribute</li>
+<li><em>overwrite</em> - (bool) Whether to overwrite the attribute if it 
+already exists.  <code class="docutils literal"><span class="pre">default</span> <span class="pre">=</span> <span class="pre">True</span></code></li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="clawpack.pyclaw.solution.Solution.write">
+<code class="descname">write</code><span class="sig-paren">(</span><em>frame</em>, <em>path='./'</em>, <em>file_format='ascii'</em>, <em>file_prefix=None</em>, <em>write_aux=False</em>, <em>options={}</em>, <em>write_p=False</em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.pyclaw.solution.Solution.write" title="Permalink to this definition">¶</a></dt>
+<dd><p>Write out a representation of the solution</p>
+<p>Writes out a suitable representation of this solution object based on
+the format requested.  The path is built from the optional path and
+file_prefix arguments.  Will raise an IOError if unsuccessful.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Input:</th><td class="field-body"><ul class="first last simple">
+<li><em>frame</em> - (int) Frame number to append to the file output</li>
+<li><em>path</em> - (string) Root path, will try and create the path if it 
+does not already exist. <code class="docutils literal"><span class="pre">default</span> <span class="pre">=</span> <span class="pre">'./'</span></code></li>
+<li><em>format</em> - (string or list of strings) a string or list of strings 
+containing the desired output formats. <code class="docutils literal"><span class="pre">default</span> <span class="pre">=</span> <span class="pre">'ascii'</span></code></li>
+<li><em>file_prefix</em> - (string) Prefix for the file name.  Defaults to
+the particular io modules default.</li>
+<li><em>write_aux</em> - (book) Write the auxillary array out as well if 
+present. <code class="docutils literal"><span class="pre">default</span> <span class="pre">=</span> <span class="pre">False</span></code></li>
+<li><em>options</em> - (dict) Dictionary of optional arguments dependent on 
+which format is being used. <code class="docutils literal"><span class="pre">default</span> <span class="pre">=</span> <span class="pre">{}</span></code></li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="clawpack.pyclaw.solution.Solution.patch">
+<code class="descname">patch</code><a class="headerlink" href="#clawpack.pyclaw.solution.Solution.patch" title="Permalink to this definition">¶</a></dt>
+<dd><p>(<code class="xref py py-class docutils literal"><span class="pre">Patch</span></code>) - Base state&#8217;s patch is returned</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="clawpack.pyclaw.solution.Solution.start_frame">
+<code class="descname">start_frame</code><a class="headerlink" href="#clawpack.pyclaw.solution.Solution.start_frame" title="Permalink to this definition">¶</a></dt>
+<dd><p>(int) - : Solution start frame number in case the <cite>Solution</cite>
+object is initialized by loading frame from file</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="clawpack.pyclaw.solution.Solution.state">
+<code class="descname">state</code><a class="headerlink" href="#clawpack.pyclaw.solution.Solution.state" title="Permalink to this definition">¶</a></dt>
+<dd><p>(<code class="xref py py-class docutils literal"><span class="pre">State</span></code>) - Base state is returned</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<p><a href="http://clawpack.org/">
+    <img class="logo" src= "../_static/clawlogo.jpg" alt="Logo"/>
+</a>
+<h2>Version dev</h2>
+</p>
+  <h3><a href="../contents.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">PyClaw Solutions</a><ul>
+<li><a class="reference internal" href="#pyclaw-solution-solution"><code class="docutils literal"><span class="pre">pyclaw.solution.Solution</span></code></a></li>
+</ul>
+</li>
+</ul>
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../contents.html">Documentation overview</a><ul>
+  <li><a href="index.html">Pyclaw</a><ul>
+      <li>Previous: <a href="io.html" title="previous chapter">Pyclaw Input/Output Package</a></li>
+      <li>Next: <a href="state.html" title="next chapter">PyClaw State</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../_sources/pyclaw/solution.rst.txt"
+           rel="nofollow">Show Source</a></li>
+    <li><a href="https://github.com/clawpack/doc/blob/master/doc/pyclaw/solution.rst"
+           rel="nofollow">Show on GitHub</a></li>
+    <li><a href="https://github.com/clawpack/doc/edit/master/doc/pyclaw/solution.rst"
+           rel="nofollow">Edit on GitHub</a></li>
+  </ul>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+<h3>Versions</h3>
+<ul>
+    <li><a href="../../v5.4.1/pyclaw/solution.html">v5.4.1</a></li>
+    <li><a href="../../v5.4.0/pyclaw/solution.html">v5.4.0</a></li>
+    <li><a href="../../v5.3.1/pyclaw/solution.html">v5.3.1</a></li>
+    <li><a href="../../v5.3.0/pyclaw/solution.html">v5.3.0</a></li>
+    <li><a href="../../v5.2.1/pyclaw/solution.html">v5.2.1</a></li>
+    <li><a href="../../v5.2.0/pyclaw/solution.html">v5.2.0</a></li>
+    <li><a href="../../v5.1.0/pyclaw/solution.html">v5.1.0</a></li>
+    <li><a href="../../v5.5.0/pyclaw/solution.html">v5.5.0</a></li>
+    <li><a href="solution.html">dev</a></li>
+</ul>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+  <div class="footer">
+    &copy; Copyright CC-BY 2018, The Clawpack Development Team.
+    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
+  </div>
+  <script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-44811544-1', 'auto');
+  ga('send', 'pageview');
+
+  </script>
+  
+  </body>
+</html>
