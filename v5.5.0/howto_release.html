@@ -148,7 +148,7 @@ gzip clawpack-v5.x.x.tar
 </pre></div>
 </div>
 <p>(Note: best to use v5.x.x rather than just 5.x.x to be consistent with the
-directory name created if following <a class="reference internal" href="installing_pip.html#installing-pip"><span class="std std-ref">Installation instructions (pip)</span></a>.)</p>
+directory name created if following <a class="reference internal" href="installing_pip.html#installing-pip"><span class="std std-ref">pip install instructions</span></a>.)</p>
 <p>Draft a new release on the webpage
 <a class="reference external" href="https://github.com/clawpack/clawpack/releases">https://github.com/clawpack/clawpack/releases</a>.
 Indicate that it is pre-release if desired.</p>
@@ -184,6 +184,45 @@ riemann).</p>
 <p>Note these tags are used in the documentation for pages like
 <a class="reference internal" href="changes_to_master.html#changes-to-master"><span class="std std-ref">Changes to master since v5.5.0</span></a> which generate diffs between the latest version and
 the current master branch of each resposity.</p>
+</div>
+<div class="section" id="pypi">
+<h2>Pypi<a class="headerlink" href="#pypi" title="Permalink to this headline">¶</a></h2>
+<p>To release on the pypi server (for installation via pip) we have to do a bit
+of trickery.  We can&#8217;t just follow the directions at <a class="reference external" href="https://packaging.python.org/tutorials/packaging-projects/">https://packaging.python.org/tutorials/packaging-projects/</a>
+because we have a very non-Pythonic directory structure; in particular,
+the subdirectories <cite>clawpack/x/</cite> do not have an <cite>__init__.py</cite>.</p>
+<p>Here&#8217;s what to do:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>cd $CLAW
+git-archive-all --prefix clawpack-x.x.x/ clawpack-x.x.x.tar
+</pre></div>
+</div>
+<p>Then unpack the resulting tarball in another location.  Next:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>cd $CLAW
+python setup.py sdist
+cd dist
+</pre></div>
+</div>
+<p>Now extract that resulting tarball.  Then copy the file PKG-INFO from this second tarball
+to the first one.  Finally, repack the first tarball and put it in <cite>$CLAW/dist</cite>:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>tar  -cvf clawpack-x.x.x.tar clawpack-x.x.x
+gzip clawpack-x.x.x.tar
+mv clawpack-x.x.x.tar $CLAW/dist
+</pre></div>
+</div>
+<p>Upload to the testpypi server for testing (you will need to have created an account there):</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">cd</span> <span class="o">..</span>
+<span class="n">twine</span> <span class="n">upload</span> <span class="o">--</span><span class="n">repository</span><span class="o">-</span><span class="n">url</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">test</span><span class="o">.</span><span class="n">pypi</span><span class="o">.</span><span class="n">org</span><span class="o">/</span><span class="n">legacy</span><span class="o">/</span> <span class="n">dist</span><span class="o">/*</span>
+</pre></div>
+</div>
+<p>Test it:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>pip3 uninstall clawpack
+pip3 install —no-cache—dir —index-url https://test.pypi.org/simple/ clawpack
+</pre></div>
+</div>
+<p>Once that works, do the real upload to pypi:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">twine</span> <span class="n">upload</span> <span class="n">dist</span><span class="o">/*</span>
+</pre></div>
+</div>
 </div>
 <div class="section" id="zenodo">
 <h2>Zenodo<a class="headerlink" href="#zenodo" title="Permalink to this headline">¶</a></h2>
@@ -276,6 +315,7 @@ image and pushing it to dockerhub (which requires push permission).</li>
 <li><a class="reference internal" href="#release-candidates">Release candidates</a></li>
 <li><a class="reference internal" href="#create-a-tar-file-and-a-github-release">Create a tar file and a Github release</a></li>
 <li><a class="reference internal" href="#final-release">Final release</a></li>
+<li><a class="reference internal" href="#pypi">Pypi</a></li>
 <li><a class="reference internal" href="#zenodo">Zenodo</a></li>
 <li><a class="reference internal" href="#updating-the-documentation">Updating the documentation</a></li>
 <li><a class="reference internal" href="#updating-the-apps-repository">Updating the apps repository</a></li>
@@ -326,7 +366,7 @@ image and pushing it to dockerhub (which requires push permission).</li>
       <div class="clearer"></div>
     </div>
   <div class="footer">
-    &copy; Copyright CC-BY 2018, The Clawpack Development Team.
+    &copy; Copyright CC-BY 2019, The Clawpack Development Team.
     Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
   </div>
   <script>

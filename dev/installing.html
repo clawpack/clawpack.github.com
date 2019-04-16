@@ -32,7 +32,7 @@
     <link rel="author" title="About these documents" href="about.html" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Installation instructions (pip)" href="installing_pip.html" />
+    <link rel="next" title="pip install instructions" href="installing_pip.html" />
     <link rel="prev" title="Which Clawpack solver should I use?" href="packages.html" /> 
   </head>
   <body role="document">
@@ -77,7 +77,7 @@
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="installing_pip.html" title="Installation instructions (pip)"
+          <a href="installing_pip.html" title="pip install instructions"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="packages.html" title="Which Clawpack solver should I use?"
@@ -100,26 +100,86 @@
 <li><a class="reference internal" href="previous.html#previous"><span class="std std-ref">Previous versions of Clawpack</span></a></li>
 <li><a class="reference internal" href="trouble.html#trouble-installation"><span class="std std-ref">Troubleshooting Installation</span></a></li>
 </ul>
-<p><strong>Register:</strong> Please <a class="reference external" href="http://depts.washington.edu/clawpack/register/index.html">register</a>
-if you have not already done so.  This is very useful in helping
-us track the extent of usage, and important to the <a class="reference internal" href="about.html#funding"><span class="std std-ref">Funding</span></a> agencies
-who support this work.  Please also see <a class="reference internal" href="about.html#citing"><span class="std std-ref">Citing this work</span></a>.</p>
 <p><strong>Prerequisites:</strong> Before installing, check that you have the <a class="reference internal" href="prereqs.html#prereqs"><span class="std std-ref">Installation Prerequisites</span></a>.</p>
-<p><strong>Environment variables:</strong>
-If you are using the Fortran versions in Classic, AMRClaw, or GeoClaw
-then after installing you also need to set the <cite>CLAW</cite> environment variable,
-and perhaps also the Fortran compiler variable <cite>FC</cite>.
-For example (in a bash shell):</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">export</span> <span class="n">CLAW</span><span class="o">=/</span><span class="n">full</span><span class="o">/</span><span class="n">path</span><span class="o">/</span><span class="n">to</span><span class="o">/</span><span class="n">clawpack</span>  <span class="c1"># to top level clawpack directory</span>
-<span class="n">export</span> <span class="n">FC</span><span class="o">=</span><span class="n">gfortran</span>                  <span class="c1"># or other preferred Fortran compiler</span>
+<div class="section" id="pip-install">
+<span id="installing-pipintro"></span><h2>pip install<a class="headerlink" href="#pip-install" title="Permalink to this headline">¶</a></h2>
+<p>The recommended approach is to use <cite>pip install</cite>.
+It is also possible to have multiple versions of Clawpack installed and
+switch between them (i.e., modify your Python path) using <cite>pip</cite>.
+(see <a class="reference internal" href="installing_pip.html#installing-pip"><span class="std std-ref">pip install instructions</span></a>)
+If you plan to do this, or if you also wish to directly use the Fortran
+variants of Clawpack (classic, AMRClaw, and/or GeoClaw), then we recommend
+using the following version of the <cite>pip install</cite> command
+<strong>(you might want to first read the notes below to see if you
+want to change anything in this command)</strong>:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>pip install --src=$HOME/clawpack_src --user -e \
+    git+https://github.com/clawpack/clawpack.git@v5.5.0#egg=clawpack-v5.5.0
+</pre></div>
+</div>
+<p>This will download Clawpack (via a git clone) into the directory
+<cite>$HOME/clawpack_src/clawpack-v5.5.0</cite>.  The top
+installation directory can be changed by modifying the <code class="docutils literal"><span class="pre">--src</span></code> target
+(or omit this part to put it in your current working directory).
+If you have already downloaded Clawpack via a different mechanism then
+see <a class="reference internal" href="installing_pip.html#pip-switch-version"><span class="std std-ref">Using pip to install a different version</span></a> rather than using the above command.</p>
+<p>See <a class="reference internal" href="clawpack_components.html#clawpack-components"><span class="std std-ref">Clawpack components</span></a> for a list of what&#8217;s included in this top
+level directory.</p>
+<p><strong>Note:</strong> Using pip to install will also check some python
+<a class="reference internal" href="prereqs.html#prereqs"><span class="std std-ref">Installation Prerequisites</span></a> and may update these on your system, and will use f2py to
+convert Fortran Riemann solvers to Python versions.  See
+<a class="reference internal" href="#installing-options"><span class="std std-ref">Other Installation Options</span></a> if you want more control.</p>
+<p>The <code class="docutils literal"><span class="pre">--user</span></code> flag is necessary if you are installing on a shared computer
+where you do not have root access.  If you do have root access and want it
+to be available to all users, you can omit this flag.</p>
+<p>The <code class="docutils literal"><span class="pre">-e</span></code> flag makes it an &#8220;editable&#8221; install, leaving the source code in
+place and allowing you to modify it if desired.
+(Otherwise, by default, pip would move the python code to some
+<cite>site-packages</cite> directory and delete everything else.)</p>
+<p>In order to use the Fortran codes within Clawpack,
+you should then set the environment
+variable <cite>CLAW</cite> to point to the <cite>clawpack-v5.5.0</cite> directory within
+the installation directory <cite>$HOME/clawpack_src</cite>, and <cite>FC</cite> to point
+to the desired Fortran compiler, e.g. in the bash shell:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>export CLAW=$HOME/clawpack_src/clawpack-v5.5.0
+export FC=gfortran
 </pre></div>
 </div>
 <p>See <a class="reference internal" href="setenv.html#setenv"><span class="std std-ref">Set environment variables</span></a> for more information.</p>
+<p>For more discussion of <cite>pip</cite> installation, and troubleshooting hints, see
+<a class="reference internal" href="installing_pip.html#installing-pip"><span class="std std-ref">pip install instructions</span></a>.</p>
+<div class="section" id="other-installation-options">
+<span id="installing-options"></span><h3>Other Installation Options<a class="headerlink" href="#other-installation-options" title="Permalink to this headline">¶</a></h3>
+<p>In general, <em>installing</em> Clawpack requires downloading some version
+and then setting
+paths so that Python import statements (and possibly Fortran Makefiles) find
+the desired version.  Switching between versions already on your computer
+simply requires resetting paths.  For hints and troubleshooting, see:</p>
+<blockquote>
+<div><ul class="simple">
+<li><a class="reference internal" href="setenv.html#setenv"><span class="std std-ref">Set environment variables</span></a></li>
+<li><a class="reference internal" href="python_path.html#python-path"><span class="std std-ref">Python path</span></a></li>
+<li><a class="reference internal" href="installing_pip.html#installing-pip"><span class="std std-ref">pip install instructions</span></a></li>
+</ul>
+</div></blockquote>
+<p>Rather than using <cite>pip</cite>, there are several other options for using
+Clawpack that may be useful depending on your needs.  These are summarized
+in <a class="reference internal" href="installing_more_options.html#installing-more-options"><span class="std std-ref">Additional options for installing Clawpack</span></a>, including:</p>
+<blockquote>
+<div><ul class="simple">
+<li><a class="reference internal" href="installing_more_options.html#installing-tarfile"><span class="std std-ref">tar file</span></a></li>
+<li><a class="reference internal" href="installing_more_options.html#install-dev"><span class="std std-ref">git clone</span></a></li>
+<li><a class="reference internal" href="installing_more_options.html#installing-conda"><span class="std std-ref">Using conda (does not require a Fortran compiler)</span></a></li>
+<li><a class="reference internal" href="installing_more_options.html#installing-docker"><span class="std std-ref">Docker</span></a></li>
+<li><a class="reference internal" href="installing_more_options.html#installing-aws"><span class="std std-ref">Launching an AWS instance with Clawpack installed</span></a></li>
+<li><a class="reference internal" href="installing_more_options.html#install-pyclaw-parallel"><span class="std std-ref">Installing PyClaw for parallel processing with PETSc</span></a></li>
+</ul>
+</div></blockquote>
 <p><strong>Python path:</strong>
-Below we suggest using <cite>pip install</cite> to set up your Python path to point to
-the desired version of Clawpack.  As long as the top level <cite>clawpack</cite>
-directory is on your path, you should be able to import the necessary
-modules in Python.  Instead of pip, you can also set the <cite>PYTHONPATH</cite>
+If you download a tarfile or use <cite>git clone</cite> to download a version, you can
+still use <cite>pip install</cite> to set the Python path appropriately.
+See <a class="reference internal" href="installing_pip.html#installing-pip"><span class="std std-ref">pip install instructions</span></a> for details.</p>
+<p>If you are <em>not</em> using <cite>pip</cite> to set paths, then you will need to set
+the <cite>PYTHONPATH</cite>
 environment variable to point to a particular version of Clawpack,
 but this is <a class="reference external" href="https://orbifold.xyz/pythonpath.html">not recommended</a>.
 See <a class="reference internal" href="python_path.html#python-path"><span class="std std-ref">Python path</span></a> for more details and tips on sorting out your path.</p>
@@ -127,106 +187,16 @@ See <a class="reference internal" href="python_path.html#python-path"><span clas
 See <a class="reference internal" href="clawpack_components.html#clawpack-components"><span class="std std-ref">Clawpack components</span></a> for a list of what is generally included
 under the top level <cite>clawpack</cite> directory when using any of the approaches below.
 (And what is not included, e.g. the <a class="reference internal" href="apps.html#apps"><span class="std std-ref">Clawpack Applications repository</span></a>.)</p>
-<div class="section" id="installation-options">
-<span id="installing-options"></span><h2>Installation Options<a class="headerlink" href="#installation-options" title="Permalink to this headline">¶</a></h2>
-<p><em>Installing</em> Clawpack requires downloading some version and then setting
-paths so that Python import statements (and possibly Fortran Makefiles) find
-the desired version.  Before installing, read about environment
-variables and Python path above if you haven&#8217;t already.</p>
-<p>Installing with <cite>pip</cite> also compiles Riemann solvers written in Fortran for
-use in PyClaw.  If you get a Fortran error message when installing, see
-<a class="reference internal" href="trouble.html#trouble-f2py"><span class="std std-ref">Setting the Fortran compiler to be used by f2py (pip)</span></a>.  See also <a class="reference internal" href="prereqs.html#prereqs-fortran"><span class="std std-ref">Fortran</span></a>.</p>
-<div class="section" id="pip-install">
-<span id="installing-pipintro"></span><h3>pip install<a class="headerlink" href="#pip-install" title="Permalink to this headline">¶</a></h3>
-<p>The recommended approach is to use <cite>pip install</cite>.  You can download
-and install with a single command, and you can also use <cite>pip</cite> to
-switch to a different version of Clawpack (i.e. to modify your
-Python path) if you have reason to have multiple versions on your
-computer.</p>
-<p>Depending on your needs, if you only want to use PyClaw it may be as simple as:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="n">clawpack</span>
-</pre></div>
-</div>
-<p>but first see <a class="reference internal" href="installing_pip.html#installing-pip"><span class="std std-ref">Installation instructions (pip)</span></a> for more discussion and instructions,
-since we recommend a more complicated version of this command for most purposes.</p>
-</div>
-<div class="section" id="tar-file">
-<span id="installing-tarfile"></span><h3>tar file<a class="headerlink" href="#tar-file" title="Permalink to this headline">¶</a></h3>
-<p>You can download the most recent (or certain previous versions) of Clawpack
-as a tar file. After untarring this, you can use <cite>pip install</cite> (and set <cite>CLAW</cite>
-if necessary) to point to this version.</p>
-<blockquote>
-<div><ul class="simple">
-<li>Most recent: <a class="reference external" href="https://github.com/clawpack/clawpack/files/2330639/clawpack-v5.5.0.tar.gz">https://github.com/clawpack/clawpack/files/2330639/clawpack-v5.5.0.tar.gz</a></li>
-<li><a class="reference internal" href="previous.html#previous"><span class="std std-ref">Previous versions of Clawpack</span></a>  (also lists DOIs for recent versions, useful for
-<a class="reference internal" href="about.html#citing"><span class="std std-ref">Citing this work</span></a>)</li>
-</ul>
-</div></blockquote>
-<p>After downloading a tar file you can do, e.g.</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">tar</span> <span class="o">-</span><span class="n">xzf</span> <span class="n">clawpack</span><span class="o">-</span><span class="n">v5</span><span class="o">.</span><span class="mf">5.0</span><span class="o">.</span><span class="n">tar</span><span class="o">.</span><span class="n">gz</span>
-<span class="n">cd</span> <span class="n">clawpack</span><span class="o">-</span><span class="n">v5</span><span class="o">.</span><span class="mf">5.0</span>
-<span class="n">pip</span> <span class="n">install</span> <span class="o">--</span><span class="n">user</span> <span class="o">-</span><span class="n">e</span> <span class="o">.</span>   <span class="c1"># note trailing dot indicating &quot;this directory&quot;</span>
-<span class="n">export</span> <span class="n">CLAW</span><span class="o">=/</span><span class="n">full</span><span class="o">/</span><span class="n">path</span><span class="o">/</span><span class="n">to</span><span class="o">/</span><span class="n">clawpack</span><span class="o">-</span><span class="n">v5</span><span class="o">.</span><span class="mf">5.0</span>
-</pre></div>
-</div>
-</div>
-<div class="section" id="git-clone">
-<span id="install-dev"></span><h3>git clone<a class="headerlink" href="#git-clone" title="Permalink to this headline">¶</a></h3>
-<p>You can clone the git repositories from <a class="reference external" href="https://github.com/clawpack">https://github.com/clawpack</a>.
-This is particularly useful if you
-want the latest development version or a branch that is not in a release yet,
-and/or if you plan to contribute to the code yourself via a pull request.
-See <a class="reference internal" href="developers.html#developers"><span class="std std-ref">Developers&#8217; Guide</span></a> for more details, but the basic commands are:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">git</span> <span class="n">clone</span> <span class="n">git</span><span class="p">:</span><span class="o">//</span><span class="n">github</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">clawpack</span><span class="o">/</span><span class="n">clawpack</span><span class="o">.</span><span class="n">git</span>
-<span class="n">cd</span> <span class="n">clawpack</span>
-<span class="n">git</span> <span class="n">submodule</span> <span class="n">init</span>      <span class="c1"># for repositories pyclaw, clawutil, visclaw, etc.</span>
-<span class="n">git</span> <span class="n">submodule</span> <span class="n">update</span>    <span class="c1"># clones all the submodule repositories</span>
-<span class="n">pip</span> <span class="n">install</span> <span class="o">--</span><span class="n">user</span> <span class="o">-</span><span class="n">e</span> <span class="o">.</span> <span class="c1"># note trailing dot indicating &quot;this directory&quot;</span>
-<span class="n">export</span> <span class="n">CLAW</span><span class="o">=/</span><span class="n">full</span><span class="o">/</span><span class="n">path</span><span class="o">/</span><span class="n">to</span><span class="o">/</span><span class="n">clawpack</span>
-</pre></div>
-</div>
-</div>
-<div class="section" id="using-conda-does-not-require-a-fortran-compiler">
-<span id="installing-conda"></span><h3>Using conda (does not require a Fortran compiler)<a class="headerlink" href="#using-conda-does-not-require-a-fortran-compiler" title="Permalink to this headline">¶</a></h3>
-<p>You can install PyClaw and VisClaw only (without AMRClaw, GeoClaw, or Classic)
-via the <a class="reference external" href="http://conda.pydata.org/docs/index.html">conda package manager</a>.
-Conda binaries are available for Mac OS X and Ubuntu Linux
-(may work on other flavors of Linux), using Python 2.7 or 3.6.
-See <a class="reference external" href="https://github.com/clawpack/conda-recipes">https://github.com/clawpack/conda-recipes</a>.</p>
-<p>From a terminal, simply do:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">conda</span> <span class="n">install</span> <span class="o">-</span><span class="n">c</span> <span class="n">clawpack</span> <span class="o">-</span><span class="n">c</span> <span class="n">conda</span><span class="o">-</span><span class="n">forge</span> <span class="n">clawpack</span>
-</pre></div>
-</div>
-<p>You might want to consider first creating a separate <a class="reference external" href="http://conda.pydata.org/docs/using/envs.html">conda environment</a> if you want to separate
-Clawpack and its dependencies from other versions of Python code.</p>
-</div>
-<div class="section" id="docker">
-<span id="installing-docker"></span><h3>Docker<a class="headerlink" href="#docker" title="Permalink to this headline">¶</a></h3>
-<p>Instead of installing Clawpack and all its dependencies, another alternative
-is <a class="reference internal" href="docker_image.html#docker-image"><span class="std std-ref">Docker for Clawpack</span></a>.  The Docker image already contains not only Clawpack
-but also all the <a class="reference internal" href="prereqs.html#prereqs"><span class="std std-ref">Installation Prerequisites</span></a>.</p>
-</div>
-<div class="section" id="installing-pyclaw-for-parallel-processing-with-petsc">
-<span id="install-pyclaw-parallel"></span><h3>Installing PyClaw for parallel processing with PETSc<a class="headerlink" href="#installing-pyclaw-for-parallel-processing-with-petsc" title="Permalink to this headline">¶</a></h3>
-<p>First, install Clawpack.  Then see the install instructions for <a class="reference internal" href="pyclaw/parallel.html#parallel"><span class="std std-ref">Running in parallel</span></a>.</p>
-<p>Alternatively, you may use the following shell scripts (assembled by Damian San Roman)
-to install everything:</p>
-<blockquote>
-<div><ul class="simple">
-<li>Linux machine or Beowulf Cluster: <a class="reference external" href="https://gist.github.com/sanromd/9112666">https://gist.github.com/sanromd/9112666</a></li>
-<li>Mac OS X: <a class="reference external" href="https://gist.github.com/sanromd/10374134">https://gist.github.com/sanromd/10374134</a></li>
-</ul>
-</div></blockquote>
-</div>
 </div>
 <div class="section" id="next-steps">
-<h2>Next steps:<a class="headerlink" href="#next-steps" title="Permalink to this headline">¶</a></h2>
+<h3>Next steps:<a class="headerlink" href="#next-steps" title="Permalink to this headline">¶</a></h3>
 <p>Once Clawpack is installed, you can go to one of the following pages to get
 started:</p>
 <ul class="simple">
 <li><a class="reference internal" href="first_run_pyclaw.html#first-run-pyclaw"><span class="std std-ref">Testing a PyClaw installation and running an example</span></a></li>
 <li><a class="reference internal" href="first_run_fortran.html#first-run-fortran"><span class="std std-ref">Testing your Fortran installation and running an example</span></a></li>
 </ul>
+</div>
 </div>
 </div>
 
@@ -244,16 +214,11 @@ started:</p>
   <h3><a href="contents.html">Table Of Contents</a></h3>
   <ul>
 <li><a class="reference internal" href="#">Installing Clawpack</a><ul>
-<li><a class="reference internal" href="#installation-options">Installation Options</a><ul>
-<li><a class="reference internal" href="#pip-install">pip install</a></li>
-<li><a class="reference internal" href="#tar-file">tar file</a></li>
-<li><a class="reference internal" href="#git-clone">git clone</a></li>
-<li><a class="reference internal" href="#using-conda-does-not-require-a-fortran-compiler">Using conda (does not require a Fortran compiler)</a></li>
-<li><a class="reference internal" href="#docker">Docker</a></li>
-<li><a class="reference internal" href="#installing-pyclaw-for-parallel-processing-with-petsc">Installing PyClaw for parallel processing with PETSc</a></li>
+<li><a class="reference internal" href="#pip-install">pip install</a><ul>
+<li><a class="reference internal" href="#other-installation-options">Other Installation Options</a></li>
+<li><a class="reference internal" href="#next-steps">Next steps:</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#next-steps">Next steps:</a></li>
 </ul>
 </li>
 </ul>
@@ -261,7 +226,7 @@ started:</p>
 <ul>
   <li><a href="contents.html">Documentation overview</a><ul>
       <li>Previous: <a href="packages.html" title="previous chapter">Which Clawpack solver should I use?</a></li>
-      <li>Next: <a href="installing_pip.html" title="next chapter">Installation instructions (pip)</a></li>
+      <li>Next: <a href="installing_pip.html" title="next chapter">pip install instructions</a></li>
   </ul></li>
 </ul>
   <h3>This Page</h3>
