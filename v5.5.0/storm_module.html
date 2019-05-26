@@ -319,36 +319,59 @@ value error is risen.</li>
 
 <dl class="method">
 <dt id="clawpack.geoclaw.surge.storm.Storm.read_ibtracs">
-<code class="descname">read_ibtracs</code><span class="sig-paren">(</span><em>path</em>, <em>storm_name</em>, <em>year</em>, <em>start_date=None</em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.geoclaw.surge.storm.Storm.read_ibtracs" title="Permalink to this definition">¶</a></dt>
+<code class="descname">read_ibtracs</code><span class="sig-paren">(</span><em>path, sid=None, storm_name=None, year=None, start_date=None, agency_pref=['wmo', 'usa', 'tokyo', 'newdelhi', 'reunion', 'bom', 'nadi', 'wellington', 'cma', 'hko', 'ds824', 'td9636', 'td9635', 'neumann', 'mlc']</em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.geoclaw.surge.storm.Storm.read_ibtracs" title="Permalink to this definition">¶</a></dt>
 <dd><p>Read in IBTrACS formatted storm file</p>
-<p>This reads in the netcdf-formatted IBTrACS v4 BETA data (current release
-as of 10/8/2018). The .nc file passed as <em>path</em> must contain a storm 
-matching <em>storm_name</em> and <em>year</em>. This function will be updated,
-if needed, once the BETA version becomes an operational release.</p>
-<p>NOTE: Thus far, only the reading of hurdat/atcf-based best tracks (i.e. USA
-tracks) is supported.</p>
-<p>TODO: account for data formats from other reporting agencies</p>
-<p>For more details on the IBTrACS v4 BETA format and getting data see</p>
-<p><a class="reference external" href="ftp://filsrv.cicsnc.org/kknapp/ibtracs/testing/hotel1/provisional/">ftp://filsrv.cicsnc.org/kknapp/ibtracs/testing/hotel1/provisional/</a></p>
+<p>This reads in the netcdf-formatted IBTrACS v4 data. You must either pass
+the <em>sid</em> of the storm (a unique identifier supplied by IBTrACS) OR
+<em>storm_name</em> and <em>year</em>. The latter will not be unique for unnamed storms,
+so you may optionally pass <em>start_date</em> as well. The <cite>wmo_*</cite> variable is
+used when non-missing, with missing values filled in by the corresponding
+variable of the agency specified in <cite>wmo_agency</cite> and/or <cite>usa_agency</cite>. If
+still missing, the other agencies are checked in order of <em>agency_pref</em> to
+see if any more non-missing values are available.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Input:</th><td class="field-body"><ul class="first simple">
 <li><em>path</em> (string) Path to the file to be read.</li>
-<li><em>storm_name</em> (string) name of storm of interest (NAME field in IBTrACS).</li>
-<li><em>year</em> (int) year of storm of interest.</li>
 <li><dl class="first docutils">
-<dt><em>start_date</em> (<code class="xref py py-class docutils literal"><span class="pre">datetime.datetime</span></code>) If storm is not named, will</dt>
-<dd>find closest unnamed storm to this start date.</dd>
+<dt><em>sid</em> (string, optional) IBTrACS-supplied unique track identifier.</dt>
+<dd>Either <em>sid</em> OR <em>storm_name</em> and <em>year</em> must not be None.</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt><em>storm_name</em> (string, optional) name of storm of interest</dt>
+<dd>(NAME field in IBTrACS). Either <em>sid</em> OR <em>storm_name</em> and
+<em>year</em> must not be None.</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt><em>year</em> (int, optional) year of storm of interest.</dt>
+<dd>Either <em>sid</em> OR <em>storm_name</em> and <em>year</em> must not be None.</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt><em>start_date</em> (<code class="xref py py-class docutils literal"><span class="pre">datetime.datetime</span></code>, optional) If storm is not</dt>
+<dd>named, will find closest unnamed storm to this start date. Only
+used for unnamed storms when specifying <em>storm_name</em> and <em>year</em>
+does not uniquely identify storm.</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt><em>agency_pref</em> (list, optional) Preference order to use if <cite>wmo_*</cite> variable</dt>
+<dd>is missing and <cite>wmo_agency</cite> and <cite>usa_agency</cite> are also missing.</dd>
 </dl>
 </li>
 </ul>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><ul class="first last simple">
-<li><em>ValueError</em> If the method cannot find the name/year matching the
-storm then a value error is risen.</li>
+<li><dl class="first docutils">
+<dt><em>ValueError</em> If the method cannot find the matching storm then a</dt>
+<dd>value error is risen.</dd>
+</dl>
+</li>
 </ul>
 </td>
 </tr>
@@ -590,6 +613,90 @@ and not be written</li>
 <dt id="clawpack.geoclaw.surge.storm.available_models">
 <code class="descclassname">clawpack.geoclaw.surge.storm.</code><code class="descname">available_models</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.geoclaw.surge.storm.available_models" title="Permalink to this definition">¶</a></dt>
 <dd><p>Construct a string suitable for listing available storm models.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="clawpack.geoclaw.surge.storm.fill_rad_w_other_source">
+<code class="descclassname">clawpack.geoclaw.surge.storm.</code><code class="descname">fill_rad_w_other_source</code><span class="sig-paren">(</span><em>t</em>, <em>storm_targ</em>, <em>storm_fill</em>, <em>var</em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.geoclaw.surge.storm.fill_rad_w_other_source" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fill in storm radius variable (<em>max_wind_radius</em> or <em>storm_radius</em>) with values from another source. i.e.
+if you have missing radii in IBTrACS, you can fill with ATCF.
+This function will assume <em>storm_fill</em> has more non-missing
+values than <em>storm_targ</em> for this particular radius variable.
+Thus, it first attempts to interpolate the variable in <em>storm_fill</em>
+to the desired timestep. If that is missing, it tries to interpolate
+the non-missing values of the variable in <em>storm_targ</em>. If that
+also fails, it simply returns -1. The proper usage of this
+function is to wrap it such that you can pass a function
+with (<em>t</em>, <em>storm</em>) arguments to <em>max_wind_radius_fill</em> or
+<em>storm_radius_fill</em> when calling <em>write_geoclaw</em>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Input:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+<div class="system-message">
+<p class="system-message-title">System Message: WARNING/2 (<tt class="docutils">/Users/rjl/git/clawpack/clawpack/geoclaw/surge/storm.py:docstring of clawpack.geoclaw.surge.storm.fill_rad_w_other_source</tt>, line 15)</p>
+Field list ends without a blank line; unexpected unindent.</div>
+<ul class="simple">
+<li><dl class="first docutils">
+<dt><em>t</em> (<code class="xref py py-class docutils literal"><span class="pre">datetime.datetime</span></code>) the time corresponding to</dt>
+<dd>a missing value of <em>max_wind_radius</em> or <em>storm_radius</em></dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt><em>storm_targ</em> (<code class="xref py py-class docutils literal"><span class="pre">clawpack.geoclaw.storm.Storm</span></code>) storm</dt>
+<dd>that has missing values you want to fill</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt><em>storm_fill</em> (<code class="xref py py-class docutils literal"><span class="pre">clawpack.geoclaw.storm.Storm</span></code>) storm</dt>
+<dd>that has non-missing values you want to use to fill <em>storm_targ</em></dd>
+</dl>
+</li>
+<li><em>var</em> (str) Either &#8216;max_wind_radius&#8217; or &#8216;storm_radius&#8217;</li>
+</ul>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+<div class="system-message">
+<p class="system-message-title">System Message: WARNING/2 (<tt class="docutils">/Users/rjl/git/clawpack/clawpack/geoclaw/surge/storm.py:docstring of clawpack.geoclaw.surge.storm.fill_rad_w_other_source</tt>, line 24)</p>
+Field list ends without a blank line; unexpected unindent.</div>
+<ul class="simple">
+<li><dl class="first docutils">
+<dt>(float) value to use to fill this time point in <em>storm_targ</em>. -1</dt>
+<dd>if still missing after using <em>storm_fill</em> to fill.</dd>
+</dl>
+</li>
+</ul>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Examples:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">storm_ibtracs</span> <span class="o">=</span> <span class="n">Storm</span><span class="p">(</span><span class="n">file_format</span><span class="o">=</span><span class="s1">&#39;IBTrACS&#39;</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="s1">&#39;path_to_ibtracs.nc&#39;</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">sid</span><span class="o">=</span><span class="s1">&#39;2018300N26315&#39;</span><span class="p">)</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">storm_atcf</span> <span class="o">=</span> <span class="n">Storm</span><span class="p">(</span><span class="n">file_format</span><span class="o">=</span><span class="s1">&#39;ATCF&#39;</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="s1">&#39;path_to_atcf.dat&#39;</span><span class="p">)</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">fill_mwr</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">storm</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="k">return</span> <span class="n">fill_rad_w_other_source</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">storm</span><span class="p">,</span> <span class="n">storm_atcf</span><span class="p">,</span> <span class="s1">&#39;max_wind_radius&#39;</span><span class="p">)</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">storm_ibtracs</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">file_format</span> <span class="o">=</span> <span class="s1">&#39;geoclaw&#39;</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">path</span> <span class="o">=</span> <span class="s1">&#39;out_path.storm&#39;</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">max_wind_radius_fill</span> <span class="o">=</span> <span class="n">fill_mwr</span><span class="p">)</span>
+</pre></div>
+</div>
 </dd></dl>
 
 </div>
