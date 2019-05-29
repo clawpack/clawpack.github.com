@@ -97,7 +97,14 @@ the menu on the left hand side of this page.</p>
 <h2>Changes that are not backward compatible<a class="headerlink" href="#changes-that-are-not-backward-compatible" title="Permalink to this headline">¶</a></h2>
 <blockquote>
 <div><ul class="simple">
-<li>None so far.</li>
+<li>A new approach to flagging cells for AMR refinement was added in 1d and
+2d amrclaw and in geoclaw (see notes below).  This led to the addition
+of a new <cite>adjoint.data</cite> file created by running <cite>setrun.py</cite>.
+If adjoint error flagging is not being used then this file is still
+expected by the Fortran code.</li>
+<li>Many Fortran routines changes for adjoint flagging and some new modules
+were added, resulting in changes to the Makefiles used in amrclaw and
+geoclaw (see below).</li>
 </ul>
 </div></blockquote>
 </div>
@@ -111,26 +118,91 @@ the menu on the left hand side of this page.</p>
 </div>
 <div class="section" id="changes-to-classic">
 <h2>Changes to classic<a class="headerlink" href="#changes-to-classic" title="Permalink to this headline">¶</a></h2>
+<p>Nothing major.</p>
 <p>See <a class="reference external" href="https://github.com/clawpack/classic/compare/v5.5.0...master">classic diffs</a></p>
 </div>
 <div class="section" id="changes-to-clawutil">
 <h2>Changes to clawutil<a class="headerlink" href="#changes-to-clawutil" title="Permalink to this headline">¶</a></h2>
+<blockquote>
+<div><ul class="simple">
+<li>A new attribute <cite>data.ClawRunData.adjointdata</cite> was added, which points to
+an object of class <cite>amrclaw.data.AdjointData</cite> containing information
+about inputs needed for adjoint flagging.</li>
+</ul>
+</div></blockquote>
 <p>See <a class="reference external" href="https://github.com/clawpack/clawutil/compare/v5.5.0...master">clawutil diffs</a></p>
 </div>
 <div class="section" id="changes-to-visclaw">
 <h2>Changes to visclaw<a class="headerlink" href="#changes-to-visclaw" title="Permalink to this headline">¶</a></h2>
+<blockquote>
+<div><ul class="simple">
+<li>Numerous minor improvements.</li>
+</ul>
+</div></blockquote>
 <p>See <a class="reference external" href="https://github.com/clawpack/visclaw/compare/v5.5.0...master">visclaw diffs</a></p>
 </div>
 <div class="section" id="changes-to-riemann">
 <h2>Changes to riemann<a class="headerlink" href="#changes-to-riemann" title="Permalink to this headline">¶</a></h2>
+<blockquote>
+<div><ul class="simple">
+<li>HLLE solvers added for the Euler equations and 1d and 2d shallow water.</li>
+<li>Riemann solvers added for the adjoint of the linearized shallow water
+equations in non-conservative form, as needed for adjoint flagging.</li>
+<li>Note that other adjoint Riemann solvers for amrclaw examples had already
+been added in v5.5.0.</li>
+</ul>
+</div></blockquote>
 <p>See <a class="reference external" href="https://github.com/clawpack/riemann/compare/v5.5.0...master">riemann diffs</a></p>
 </div>
 <div class="section" id="changes-to-amrclaw">
 <h2>Changes to amrclaw<a class="headerlink" href="#changes-to-amrclaw" title="Permalink to this headline">¶</a></h2>
+<blockquote>
+<div><ul class="simple">
+<li>A new approach to flagging cells for AMR refinement was added in 1d and
+2d (not yet in 3d), based on
+first solving an adjoint equation and then taking inner products of the
+forward solution at each regridding time with snapshots of the adjoint
+solution.  This is described in <a class="reference external" href="http://www.clawpack.org/dev/adjoint.html">http://www.clawpack.org/dev/adjoint.html</a>
+and <a class="reference external" href="http://www.clawpack.org/dev/refinement.html">http://www.clawpack.org/dev/refinement.html</a>.  This was developed
+over the past several years, primarily by
+<a class="reference external" href="https://github.com/BrisaDavis/">&#64;BrisaDavis</a>, and required
+refactoring several routines.  Some of these changes were already
+included in version 5.5.0.</li>
+<li>In <cite>amrclaw/src/1d</cite>, new the Fortran module <cite>adjoint_module.f90</cite>
+was to support adjoint flagging, and <cite>Makefile.amr_1d</cite> updated.</li>
+<li>In <cite>amrclaw/src/2d</cite>, new Fortran modules <cite>adjoint_module.f90</cite> and
+<cite>adjointsup_module.f90</cite> were added to support adjoint flagging,
+and <cite>Makefile.amr_2d</cite> updated.</li>
+<li>class <cite>amrclaw.data.AdjointData</cite> added, to contain information
+about adjoint error flagging.</li>
+<li><cite>moment.f</cite> was refactored as <cite>moment.f90</cite>.</li>
+</ul>
+</div></blockquote>
 <p>See <a class="reference external" href="https://github.com/clawpack/amrclaw/compare/v5.5.0...master">amrclaw diffs</a></p>
 </div>
 <div class="section" id="changes-to-geoclaw">
 <h2>Changes to geoclaw<a class="headerlink" href="#changes-to-geoclaw" title="Permalink to this headline">¶</a></h2>
+<blockquote>
+<div><ul class="simple">
+<li>The adjoint flagging option was also added to GeoClaw, resulting in
+many changes to geoclaw routines.</li>
+<li>In <cite>geoclaw/src/2d/shallow</cite>, new Fortran modules <cite>adjoint_module.f90</cite> and
+<cite>adjointsup_module.f90</cite> were added to support adjoint flagging,
+and <cite>Makefile.geoclaw</cite> updated.</li>
+<li>These modules were also added to
+<cite>src/2d/shallow/multilayer/Makefile.multilayer</cite>, although adjoint
+flagging has not been implemented yet for the multilayer equations.</li>
+<li>New capabilities were added to <cite>src/python/geoclaw/surge/storm.py</cite> for
+reading storm tracks.</li>
+<li><cite>topotools.read_netcdf</cite> was improved to more robustly handle <cite>coarsen == 1</cite></li>
+<li>The url was fixed in <cite>examples/tsunami/chile2010/maketopo.py</cite> that caused
+a webpage to be downloaded instead of the topofile needed for this
+example, caused by incorrect url resolution of <cite>geoclaw.org</cite>.</li>
+<li>A typo was fixed in <cite>dtopotools.SubFault.dynamic_slip</cite> that caused
+failure.</li>
+<li>Numerous other minor fixes and improvements.</li>
+</ul>
+</div></blockquote>
 <p>See <a class="reference external" href="https://github.com/clawpack/geoclaw/compare/v5.5.0...master">geoclaw diffs</a></p>
 </div>
 <div class="section" id="changes-to-pyclaw">
