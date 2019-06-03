@@ -6,6 +6,8 @@ that will be read in by the Fortran code.
 
 """
 
+from __future__ import absolute_import
+from __future__ import print_function
 import os
 import numpy as np
 
@@ -92,8 +94,6 @@ def setrun(claw_pkg='geoclaw'):
 
 
     # Restart from checkpoint file of a previous run?
-    # Note: If restarting, you must also change the Makefile to set:
-    #    RESTART = True
     # If restarting, t0 above should be from original run, and the
     # restart_file 'fort.chkNNNNN' specified below should be in 
     # the OUTDIR indicated in Makefile.
@@ -128,7 +128,7 @@ def setrun(claw_pkg='geoclaw'):
         clawdata.output_t0 = True
         
 
-    clawdata.output_format = 'ascii'      # 'ascii' or 'netcdf' 
+    clawdata.output_format = 'ascii'      # 'ascii' or 'binary' 
 
     clawdata.output_q_components = 'all'   # could be list such as [True,True]
     clawdata.output_aux_components = 'none'  # could be list
@@ -239,15 +239,15 @@ def setrun(claw_pkg='geoclaw'):
         # Do not checkpoint at all
         pass
 
-    elif clawdata.checkpt_style == 1:
+    elif np.abs(clawdata.checkpt_style) == 1:
         # Checkpoint only at tfinal.
         pass
 
-    elif clawdata.checkpt_style == 2:
+    elif np.abs(clawdata.checkpt_style) == 2:
         # Specify a list of checkpoint times.  
         clawdata.checkpt_times = [0.1,0.15]
 
-    elif clawdata.checkpt_style == 3:
+    elif np.abs(clawdata.checkpt_style) == 3:
         # Checkpoint every checkpt_interval timesteps (on Level 1)
         # and at the final time.
         clawdata.checkpt_interval = 5
@@ -355,7 +355,7 @@ def setgeo(rundata):
     try:
         geo_data = rundata.geo_data
     except:
-        print "*** Error, this rundata has no geo_data attribute"
+        print("*** Error, this rundata has no geo_data attribute")
         raise AttributeError("Missing geo_data attribute")
 
        

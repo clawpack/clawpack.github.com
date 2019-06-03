@@ -8,27 +8,27 @@
 
 
           <head>
-           <link rel="icon" href="http://clawpack.github.io//clawicon.ico" />
+           <link rel="icon" href="http://www.clawpack.org//clawicon.ico" />
           </head> 
            <BODY TEXT="#000000" BGCOLOR="#FFFFFF" LINK="#0000FF" 
                  VLINK="#5500DD" ALINK="#FF0000">
            <font FACE="HELVETICA,ARIAL">
            
-<!-- Created from the file /Users/rjl/git/clawpack/apps/tsunami/chile2010_fgmax/make_fgmax.py -->
-<!-- Date: Wed Jan  4 2017 at 21:41:26 -->
+<!-- Created from the file /Users/rjl/Downloads/clawpack-v5.6.0_test/clawpack-v5.6.0_galleries/apps/tsunami/chile2010_fgmax/make_fgmax.py -->
+<!-- Date: Sat Jun  1 2019 at 13:06:01 -->
 
 <table bgcolor="#FFEE99"> <tr> <td>
 &nbsp;<font size=6> make_fgmax.py.html </font> </td>
 
-            <td><a href="http://clawpack.github.io/doc/index.html"><img
-            src="http://clawpack.github.io//clawlogo.jpg"
+            <td><a href="http://www.clawpack.org/index.html"><img
+            src="http://www.clawpack.org//clawlogo.jpg"
             width=100 alt="CLAWPACK"></a>&nbsp;&nbsp; </td> </tr> <tr> <td>
 &nbsp;Source file: &nbsp;&nbsp;<a href="make_fgmax.py">make_fgmax.py </a>
 </td></tr><tr><td>
-&nbsp;Directory:  &nbsp; /Users/rjl/git/clawpack/apps/tsunami/chile2010_fgmax 
+&nbsp;Directory:  &nbsp; /Users/rjl/Downloads/clawpack-v5.6.0_test/clawpack-v5.6.0_galleries/apps/tsunami/chile2010_fgmax 
 </td></tr><tr><td>
-&nbsp;Converted:  &nbsp; Wed Jan  4 2017 at 21:41:26 
-&nbsp; using <a href="http://clawpack.github.io//doc/application_documentation.html#clawcode2html">clawcode2html</a>
+&nbsp;Converted:  &nbsp; Sat Jun  1 2019 at 13:06:01 
+&nbsp; using <a href="http://www.clawpack.org//doc/application_documentation.html#clawcode2html">clawcode2html</a>
 </td></tr><tr><td>
 <font color="#BB3300"> &nbsp;This documentation file will 
 not reflect any later changes in the source file. </font>
@@ -37,33 +37,34 @@ not reflect any later changes in the source file. </font>
 <pre> 
 """
 Create fgmax_grid.txt input files 
-"""
 
+Set up to make fgmax points at cell centers of finest grid level,
+as specified in setrun.py.  Assumes coarse grid has 2 degree resolution
+and refinement by factors 3 and 4.  If you change setrun.py, you need to 
+adjust things here too.
+
+"""
 
 from clawpack.geoclaw import fgmax_tools
 
 
-def make_fgmax_grid():
-    fg = fgmax_tools.FGmaxGrid()
-    fg.point_style = 2       <font color="blue"># will specify a 2d grid of points</font>
-    fg.x1 = -120.
-    fg.x2 = -60.
-    fg.y1 = -60.
-    fg.y2 = 0.
-    fg.dx = 0.2 
-    fg.tstart_max =  10.     <font color="blue"># when to start monitoring max values</font>
-    fg.tend_max = 1.e10       <font color="blue"># when to stop monitoring max values</font>
-    fg.dt_check = 60.         <font color="blue"># target time (sec) increment between updating </font>
-                               <font color="blue"># max values</font>
-    fg.min_level_check = 3    <font color="blue"># which levels to monitor max on</font>
-    fg.arrival_tol = 1.e-2    <font color="blue"># tolerance for flagging arrival</font>
+dx_fine = 2./(3.*4.)  <font color="blue"># grid resolution at finest level</font>
 
-    fg.input_file_name = 'fgmax_grid.txt'
-    fg.write_input_data()
+fg = fgmax_tools.FGmaxGrid()
+fg.point_style = 2       <font color="blue"># will specify a 2d grid of points</font>
+fg.x1 = -120. + dx_fine/2.
+fg.x2 = -60. - dx_fine/2.
+fg.y1 = -60. + dx_fine/2.
+fg.y2 = 0. - dx_fine/2.
+fg.dx = dx_fine
+fg.tstart_max =  10.     <font color="blue"># when to start monitoring max values</font>
+fg.tend_max = 1.e10       <font color="blue"># when to stop monitoring max values</font>
+fg.dt_check = 60.         <font color="blue"># target time (sec) increment between updating </font>
+                           <font color="blue"># max values</font>
+fg.min_level_check = 3    <font color="blue"># which levels to monitor max on</font>
+fg.arrival_tol = 1.e-2    <font color="blue"># tolerance for flagging arrival</font>
 
-
-if __name__ == "__main__":
-    make_fgmax_grid()
-
+fg.input_file_name = 'fgmax_grid.txt'
+fg.write_input_data()
 
 </pre></html>

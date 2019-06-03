@@ -3,6 +3,9 @@ Plot fgmax output from GeoClaw run.
 
 """
 
+from __future__ import absolute_import
+from __future__ import print_function
+
 import matplotlib.pyplot as plt
 import numpy
 from clawpack.geoclaw import fgmax_tools, geoplot
@@ -45,4 +48,4 @@ if __name__=="__main__":
         os.mkdir(plotdir)
     fname = os.path.join(plotdir, "amplitude_times.png")
     plt.savefig(fname)
-    print "Created ",fname
+    print("Created ",fname)

@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>2-dimensional Euler equations &#8212; Clawpack 5.4.1 documentation</title>
+    <title>2-dimensional Euler equations &#8212; Clawpack 5.6.0 documentation</title>
     
     <link rel="stylesheet" href="../../_static/flasky.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -16,7 +16,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '5.4.1',
+        VERSION:     '5.6.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true,
@@ -72,7 +72,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">Clawpack 5.4.1 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="../../index.html">Clawpack 5.6.0 documentation</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -141,36 +141,18 @@ aligned with the grid.</p>
 
 <span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">absolute_import</span>
 <span class="kn">from</span> <span class="nn">six.moves</span> <span class="k">import</span> <span class="nb">range</span>
-<span class="kn">import</span> <span class="nn">os</span>
 
 <span class="n">gamma</span> <span class="o">=</span> <span class="mf">1.4</span> <span class="c1"># Ratio of specific heats</span>
-
-<span class="k">try</span><span class="p">:</span>
-    <span class="kn">from</span> <span class="nn">clawpack.pyclaw.examples.euler_2d</span> <span class="k">import</span> <span class="n">euler_with_boundaries</span>
-<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
-    <span class="n">this_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">this_dir</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span><span class="p">:</span>
-        <span class="n">this_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)</span>
-    <span class="kn">import</span> <span class="nn">subprocess</span>
-    <span class="n">cmd</span> <span class="o">=</span> <span class="s2">&quot;make -C &quot;</span><span class="o">+</span><span class="n">this_dir</span>
-    <span class="n">proc</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">(</span><span class="s2">&quot;make -C &quot;</span><span class="o">+</span><span class="n">this_dir</span><span class="o">+</span><span class="s2">&quot;/&quot;</span><span class="p">,</span> <span class="n">shell</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">stdout</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">)</span><span class="c1">#, stdout=subprocess.PIPE)</span>
-    <span class="n">proc</span><span class="o">.</span><span class="n">wait</span><span class="p">()</span>
-    <span class="k">try</span><span class="p">:</span>
-        <span class="c1"># Now try to import again</span>
-        <span class="kn">from</span> <span class="nn">clawpack.pyclaw.examples.euler_2d</span> <span class="k">import</span> <span class="n">euler_with_boundaries</span>
-    <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
-        <span class="k">raise</span>
-
 
 <span class="k">def</span> <span class="nf">incoming_shock</span><span class="p">(</span><span class="n">state</span><span class="p">,</span><span class="n">dim</span><span class="p">,</span><span class="n">t</span><span class="p">,</span><span class="n">qbc</span><span class="p">,</span><span class="n">auxbc</span><span class="p">,</span><span class="n">num_ghost</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Incoming shock at left boundary.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">rho</span> <span class="o">=</span> <span class="mf">1.4</span><span class="p">;</span>
-    <span class="n">u</span>   <span class="o">=</span> <span class="mf">3.0</span><span class="p">;</span>
-    <span class="n">v</span>   <span class="o">=</span> <span class="mf">0.0</span><span class="p">;</span>
-    <span class="n">p</span>   <span class="o">=</span> <span class="mf">1.0</span><span class="p">;</span>
-    <span class="n">T</span>   <span class="o">=</span> <span class="mi">2</span><span class="o">*</span><span class="n">p</span><span class="o">/</span><span class="n">rho</span><span class="p">;</span>
+    <span class="n">rho</span> <span class="o">=</span> <span class="mf">1.4</span>
+    <span class="n">u</span>   <span class="o">=</span> <span class="mf">3.0</span>
+    <span class="n">v</span>   <span class="o">=</span> <span class="mf">0.0</span>
+    <span class="n">p</span>   <span class="o">=</span> <span class="mf">1.0</span>
+    <span class="n">T</span>   <span class="o">=</span> <span class="mi">2</span><span class="o">*</span><span class="n">p</span><span class="o">/</span><span class="n">rho</span>
 
     <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_ghost</span><span class="p">):</span>
         <span class="n">qbc</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="n">i</span><span class="p">,</span><span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="n">rho</span>
@@ -187,13 +169,13 @@ aligned with the grid.</p>
     <span class="k">else</span><span class="p">:</span>
         <span class="kn">from</span> <span class="nn">clawpack</span> <span class="k">import</span> <span class="n">pyclaw</span>
 
-    <span class="kn">import</span> <span class="nn">euler_with_boundaries</span>
+    <span class="kn">from</span> <span class="nn">clawpack</span> <span class="k">import</span> <span class="n">riemann</span>
 
     <span class="k">if</span> <span class="n">solver_type</span><span class="o">==</span><span class="s1">&#39;sharpclaw&#39;</span><span class="p">:</span>
         <span class="c1">#solver = pyclaw.SharpClawSolver2D(euler_with_boundaries)</span>
         <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;This problem does not currently work with SharpClaw&#39;</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">solver</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">ClawSolver2D</span><span class="p">(</span><span class="n">euler_with_boundaries</span><span class="p">)</span>
+        <span class="n">solver</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">ClawSolver2D</span><span class="p">(</span><span class="n">riemann</span><span class="o">.</span><span class="n">euler_hlle_with_walls_2D</span><span class="p">)</span>
         <span class="n">solver</span><span class="o">.</span><span class="n">dimensional_split</span> <span class="o">=</span> <span class="kc">True</span>
 
     <span class="n">solver</span><span class="o">.</span><span class="n">num_eqn</span> <span class="o">=</span> <span class="mi">4</span>
@@ -219,16 +201,16 @@ aligned with the grid.</p>
     <span class="n">solver</span><span class="o">.</span><span class="n">aux_bc_lower</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">=</span><span class="n">pyclaw</span><span class="o">.</span><span class="n">BC</span><span class="o">.</span><span class="n">wall</span>
     <span class="n">solver</span><span class="o">.</span><span class="n">aux_bc_upper</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">=</span><span class="n">pyclaw</span><span class="o">.</span><span class="n">BC</span><span class="o">.</span><span class="n">wall</span>
 
-    <span class="n">rho</span> <span class="o">=</span> <span class="mf">1.4</span><span class="p">;</span>
-    <span class="n">u</span> <span class="o">=</span> <span class="mf">3.0</span><span class="p">;</span>
-    <span class="n">v</span> <span class="o">=</span> <span class="mf">0.</span><span class="p">;</span>
-    <span class="n">p</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">;</span>
-    <span class="n">T</span> <span class="o">=</span> <span class="mi">2</span><span class="o">*</span><span class="n">p</span><span class="o">/</span><span class="n">rho</span><span class="p">;</span>
+    <span class="n">rho</span> <span class="o">=</span> <span class="mf">1.4</span>
+    <span class="n">u</span> <span class="o">=</span> <span class="mf">3.0</span>
+    <span class="n">v</span> <span class="o">=</span> <span class="mf">0.</span>
+    <span class="n">p</span> <span class="o">=</span> <span class="mf">1.0</span>
+    <span class="n">T</span> <span class="o">=</span> <span class="mi">2</span><span class="o">*</span><span class="n">p</span><span class="o">/</span><span class="n">rho</span>
 
-    <span class="n">state</span><span class="o">.</span><span class="n">q</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="n">rho</span><span class="p">;</span>
-    <span class="n">state</span><span class="o">.</span><span class="n">q</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="n">rho</span><span class="o">*</span><span class="n">u</span><span class="p">;</span>
-    <span class="n">state</span><span class="o">.</span><span class="n">q</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="n">rho</span><span class="o">*</span><span class="n">v</span><span class="p">;</span>
-    <span class="n">state</span><span class="o">.</span><span class="n">q</span><span class="p">[</span><span class="mi">3</span><span class="p">,</span><span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="n">rho</span><span class="o">*</span><span class="p">(</span><span class="mf">5.0</span><span class="o">/</span><span class="mi">4</span> <span class="o">*</span> <span class="n">T</span> <span class="o">+</span> <span class="p">(</span><span class="n">u</span><span class="o">**</span><span class="mi">2</span><span class="o">+</span><span class="n">v</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">/</span><span class="mf">2.</span><span class="p">);</span>
+    <span class="n">state</span><span class="o">.</span><span class="n">q</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="n">rho</span>
+    <span class="n">state</span><span class="o">.</span><span class="n">q</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="n">rho</span><span class="o">*</span><span class="n">u</span>
+    <span class="n">state</span><span class="o">.</span><span class="n">q</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="n">rho</span><span class="o">*</span><span class="n">v</span>
+    <span class="n">state</span><span class="o">.</span><span class="n">q</span><span class="p">[</span><span class="mi">3</span><span class="p">,</span><span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="n">rho</span><span class="o">*</span><span class="p">(</span><span class="mf">5.0</span><span class="o">/</span><span class="mi">4</span> <span class="o">*</span> <span class="n">T</span> <span class="o">+</span> <span class="p">(</span><span class="n">u</span><span class="o">**</span><span class="mi">2</span><span class="o">+</span><span class="n">v</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">/</span><span class="mf">2.</span><span class="p">)</span>
 
     <span class="n">x</span><span class="p">,</span><span class="n">y</span> <span class="o">=</span> <span class="n">domain</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">p_centers</span>
 
@@ -256,14 +238,13 @@ aligned with the grid.</p>
 
     <span class="n">plotdata</span><span class="o">.</span><span class="n">clearfigures</span><span class="p">()</span>  <span class="c1"># clear any old figures,axes,items data</span>
     
-    <span class="c1"># Pressure plot</span>
+    <span class="c1"># Density plot</span>
     <span class="n">plotfigure</span> <span class="o">=</span> <span class="n">plotdata</span><span class="o">.</span><span class="n">new_plotfigure</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;Density&#39;</span><span class="p">,</span> <span class="n">figno</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
 
     <span class="n">plotaxes</span> <span class="o">=</span> <span class="n">plotfigure</span><span class="o">.</span><span class="n">new_plotaxes</span><span class="p">()</span>
     <span class="n">plotaxes</span><span class="o">.</span><span class="n">title</span> <span class="o">=</span> <span class="s1">&#39;Density&#39;</span>
     <span class="n">plotaxes</span><span class="o">.</span><span class="n">scaled</span> <span class="o">=</span> <span class="kc">True</span>      <span class="c1"># so aspect ratio is 1</span>
     <span class="n">plotaxes</span><span class="o">.</span><span class="n">afteraxes</span> <span class="o">=</span> <span class="n">fill_step</span>
-    <span class="c1">#plotitem = plotaxes.new_plotitem(plot_type=&#39;2d_schlieren&#39;)</span>
     <span class="n">plotitem</span> <span class="o">=</span> <span class="n">plotaxes</span><span class="o">.</span><span class="n">new_plotitem</span><span class="p">(</span><span class="n">plot_type</span><span class="o">=</span><span class="s1">&#39;2d_pcolor&#39;</span><span class="p">)</span>
     <span class="n">plotitem</span><span class="o">.</span><span class="n">plot_var</span> <span class="o">=</span> <span class="mi">0</span>
     <span class="n">plotitem</span><span class="o">.</span><span class="n">pcolor_cmin</span> <span class="o">=</span> <span class="mi">1</span>
@@ -271,30 +252,27 @@ aligned with the grid.</p>
     <span class="n">plotitem</span><span class="o">.</span><span class="n">add_colorbar</span> <span class="o">=</span> <span class="kc">True</span>
     
 
-    <span class="c1"># Energy plot</span>
-    <span class="n">plotfigure</span> <span class="o">=</span> <span class="n">plotdata</span><span class="o">.</span><span class="n">new_plotfigure</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;Energy&#39;</span><span class="p">,</span> <span class="n">figno</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+    <span class="c1"># Schlieren plot of density</span>
+    <span class="n">plotfigure</span> <span class="o">=</span> <span class="n">plotdata</span><span class="o">.</span><span class="n">new_plotfigure</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;Schlieren&#39;</span><span class="p">,</span> <span class="n">figno</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 
     <span class="n">plotaxes</span> <span class="o">=</span> <span class="n">plotfigure</span><span class="o">.</span><span class="n">new_plotaxes</span><span class="p">()</span>
-    <span class="n">plotaxes</span><span class="o">.</span><span class="n">title</span> <span class="o">=</span> <span class="s1">&#39;Energy&#39;</span>
+    <span class="n">plotaxes</span><span class="o">.</span><span class="n">title</span> <span class="o">=</span> <span class="s1">&#39;Density (Schlieren)&#39;</span>
     <span class="n">plotaxes</span><span class="o">.</span><span class="n">scaled</span> <span class="o">=</span> <span class="kc">True</span>      <span class="c1"># so aspect ratio is 1</span>
     
     <span class="n">plotaxes</span><span class="o">.</span><span class="n">afteraxes</span> <span class="o">=</span> <span class="n">fill_step</span>
-    <span class="n">plotitem</span> <span class="o">=</span> <span class="n">plotaxes</span><span class="o">.</span><span class="n">new_plotitem</span><span class="p">(</span><span class="n">plot_type</span><span class="o">=</span><span class="s1">&#39;2d_pcolor&#39;</span><span class="p">)</span>
-    <span class="n">plotitem</span><span class="o">.</span><span class="n">pcolor_cmin</span> <span class="o">=</span> <span class="mf">2.</span>
-    <span class="n">plotitem</span><span class="o">.</span><span class="n">pcolor_cmax</span><span class="o">=</span><span class="mf">18.0</span>
-    <span class="n">plotitem</span><span class="o">.</span><span class="n">plot_var</span> <span class="o">=</span> <span class="mi">3</span>
-    <span class="n">plotitem</span><span class="o">.</span><span class="n">pcolor_cmap</span> <span class="o">=</span> <span class="n">colormaps</span><span class="o">.</span><span class="n">yellow_red_blue</span>
-    <span class="n">plotitem</span><span class="o">.</span><span class="n">add_colorbar</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">plotitem</span> <span class="o">=</span> <span class="n">plotaxes</span><span class="o">.</span><span class="n">new_plotitem</span><span class="p">(</span><span class="n">plot_type</span><span class="o">=</span><span class="s1">&#39;2d_schlieren&#39;</span><span class="p">)</span>
+    <span class="n">plotitem</span><span class="o">.</span><span class="n">schlieren_cmin</span> <span class="o">=</span> <span class="mf">0.</span>
+    <span class="n">plotitem</span><span class="o">.</span><span class="n">schlieren_cmax</span> <span class="o">=</span> <span class="mf">3.</span>
+    <span class="n">plotitem</span><span class="o">.</span><span class="n">plot_var</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">plotitem</span><span class="o">.</span><span class="n">add_colorbar</span> <span class="o">=</span> <span class="kc">False</span>
     
     <span class="k">return</span> <span class="n">plotdata</span>
    
-<span class="k">def</span> <span class="nf">fill_step</span><span class="p">(</span><span class="n">currentdata</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">fill_step</span><span class="p">(</span><span class="n">_</span><span class="p">):</span>
     <span class="s2">&quot;Fill the step area with a black rectangle.&quot;</span>
     <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">hold</span><span class="p">(</span><span class="kc">True</span><span class="p">);</span>
     <span class="n">rectangle</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">Rectangle</span><span class="p">((</span><span class="mf">0.6</span><span class="p">,</span><span class="mf">0.0</span><span class="p">),</span><span class="mf">2.4</span><span class="p">,</span><span class="mf">0.2</span><span class="p">,</span><span class="n">color</span><span class="o">=</span><span class="s2">&quot;k&quot;</span><span class="p">,</span><span class="n">fill</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span><span class="o">.</span><span class="n">add_patch</span><span class="p">(</span><span class="n">rectangle</span><span class="p">)</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">hold</span><span class="p">(</span><span class="kc">False</span><span class="p">);</span>
 
 
 <span class="k">if</span> <span class="vm">__name__</span><span class="o">==</span><span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
@@ -314,7 +292,7 @@ aligned with the grid.</p>
 <p><a href="http://clawpack.org/">
     <img class="logo" src= "../../_static/clawlogo.jpg" alt="Logo"/>
 </a>
-<h2>Version 5.4.1</h2>
+<h2>Version 5.6.0</h2>
 </p>
   <h3><a href="../../index.html">Table Of Contents</a></h3>
   <ul>
@@ -354,7 +332,7 @@ aligned with the grid.</p>
       <div class="clearer"></div>
     </div>
   <div class="footer">
-    &copy; Copyright 2017, The Clawpack Development Team.
+    &copy; Copyright 2019, The Clawpack Development Team.
     Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
   </div>
   <script>

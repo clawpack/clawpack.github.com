@@ -14,8 +14,8 @@
                  VLINK="#5500DD" ALINK="#FF0000">
            <font FACE="HELVETICA,ARIAL">
            
-<!-- Created from the file /Users/rjl/git/clawpack/geoclaw/examples/storm-surge/ike/setrun.py -->
-<!-- Date: Sat Aug 25 2018 at 09:04:41 -->
+<!-- Created from the file /Users/rjl/Downloads/clawpack-v5.6.0_test/clawpack-v5.6.0_galleries/geoclaw/examples/storm-surge/ike/setrun.py -->
+<!-- Date: Sat Jun  1 2019 at 11:00:01 -->
 
 <table bgcolor="#FFEE99"> <tr> <td>
 &nbsp;<font size=6> setrun.py.html </font> </td>
@@ -25,9 +25,9 @@
             width=100 alt="CLAWPACK"></a>&nbsp;&nbsp; </td> </tr> <tr> <td>
 &nbsp;Source file: &nbsp;&nbsp;<a href="setrun.py">setrun.py </a>
 </td></tr><tr><td>
-&nbsp;Directory:  &nbsp; /Users/rjl/git/clawpack/geoclaw/examples/storm-surge/ike 
+&nbsp;Directory:  &nbsp; /Users/rjl/Downloads/clawpack-v5.6.0_test/clawpack-v5.6.0_galleries/geoclaw/examples/storm-surge/ike 
 </td></tr><tr><td>
-&nbsp;Converted:  &nbsp; Sat Aug 25 2018 at 09:04:41 
+&nbsp;Converted:  &nbsp; Sat Jun  1 2019 at 11:00:01 
 &nbsp; using <a href="http://www.clawpack.org//doc/application_documentation.html#clawcode2html">clawcode2html</a>
 </td></tr><tr><td>
 <font color="#BB3300"> &nbsp;This documentation file will 
@@ -175,7 +175,7 @@ def setrun(claw_pkg='geoclaw'):
         clawdata.total_steps = 1
         clawdata.output_t0 = True
 
-    clawdata.output_format = 'ascii'      <font color="blue"># 'ascii' or 'netcdf'</font>
+    clawdata.output_format = 'ascii'      <font color="blue"># 'ascii' or 'binary'</font>
     clawdata.output_q_components = 'all'   <font color="blue"># could be list such as [True,True]</font>
     clawdata.output_aux_components = 'all'
     clawdata.output_aux_onlyonce = False    <font color="blue"># output aux arrays only at t0</font>
@@ -280,15 +280,15 @@ def setrun(claw_pkg='geoclaw'):
         <font color="blue"># Do not checkpoint at all</font>
         pass
 
-    elif clawdata.checkpt_style == 1:
+    elif np.abs(clawdata.checkpt_style) == 1:
         <font color="blue"># Checkpoint only at tfinal.</font>
         pass
 
-    elif clawdata.checkpt_style == 2:
+    elif np.abs(clawdata.checkpt_style) == 2:
         <font color="blue"># Specify a list of checkpoint times.</font>
         clawdata.checkpt_times = [0.1, 0.15]
 
-    elif clawdata.checkpt_style == 3:
+    elif np.abs(clawdata.checkpt_style) == 3:
         <font color="blue"># Checkpoint every checkpt_interval timesteps (on Level 1)</font>
         <font color="blue"># and at the final time.</font>
         clawdata.checkpt_interval = 5
@@ -311,7 +311,7 @@ def setrun(claw_pkg='geoclaw'):
     <font color="blue">#   'center',  'capacity', 'xleft', or 'yleft'  (see documentation).</font>
 
     amrdata.aux_type = ['center', 'capacity', 'yleft', 'center', 'center',
-                        'center', 'center', 'center', 'center']
+                        'center', 'center']
 
     <font color="blue"># Flag using refinement routine flag2refine rather than richardson error</font>
     amrdata.flag_richardson = False    <font color="blue"># use Richardson?</font>

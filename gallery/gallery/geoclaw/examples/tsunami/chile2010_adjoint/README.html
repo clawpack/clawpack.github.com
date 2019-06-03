@@ -1,0 +1,232 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Tsunami arising offshore Maule, Chile, Feb. 27, 2010 &#8212; Clawpack 5.6.0 documentation</title>
+    
+    <link rel="stylesheet" href="../../../../../_static/flasky.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../../_static/base.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../../_static/layout.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../../../',
+        VERSION:     '5.6.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../../../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="shortcut icon" href="../../../../../_static/clawicon.ico"/>
+    <link rel="index" title="Index" href="../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../search.html" /> 
+  </head>
+  <body role="document">
+<div id="main-wrapper" class="sphinx">
+<div id="header-wrapper">
+  <section id="header">
+    <!-- <h1><a href="http://clawpack.org/">Clawpack</a></h1> -->
+    <h1><a href="http://clawpack.org/">Clawpack-5</a></h1> 
+    <nav>
+      <ul>
+        <li>
+          <a href="../../../../../../contents.html">Docs</a>
+        </li>
+        <li>
+          <a href="../../../../../../installing.html">Install</a>
+        </li>
+        <li>
+          <a class="" href="/index.html">Gallery</a>
+        </li>
+        <li>
+          <a class="" href="../../../../../../community.html">Community</a>
+        </li>
+        <li>
+          <a class="active" href="http://github.com/clawpack">Source</a>
+        </li>
+        <li>
+          <a class="" href="../../../../../../developers.html">Develop</a>
+        </li>
+      </ul>
+    </nav>
+  </section>
+<div class="decoration"></div>
+</div>
+
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../../../index.html">Clawpack 5.6.0 documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="tsunami-arising-offshore-maule-chile-feb-27-2010">
+<span id="geoclaw-examples-tsunami-chile2010-adjoint"></span><h1>Tsunami arising offshore Maule, Chile, Feb. 27, 2010<a class="headerlink" href="#tsunami-arising-offshore-maule-chile-feb-27-2010" title="Permalink to this headline">¶</a></h1>
+<p>This is a modified version of <cite>$CLAW/geoclaw/examples/tsunami/chile2010</cite>.
+See that directory and README for more information about the problem and data.</p>
+<div class="section" id="adjoint-flagging">
+<h2>Adjoint flagging<a class="headerlink" href="#adjoint-flagging" title="Permalink to this headline">¶</a></h2>
+<p>The adjoint method is used to flag cells needing refinement, as described in
+the papers:</p>
+<ul class="simple">
+<li>Adjoint Methods for Guiding Adaptive Mesh Refinement in Tsunami Modeling
+by Brisa N. Davis and R. J. LeVeque, Pure Appl. Geophys. 173 (2016), pp.
+4055-4074.
+<a class="reference external" href="http://faculty.washington.edu/rjl/pubs/adjoint2016">http://faculty.washington.edu/rjl/pubs/adjoint2016</a></li>
+<li>Analysis and Performance Evaluation of Adjoint-Guided Adaptive Mesh
+Refinement for Linear Hyperbolic PDEs Using Clawpack, by
+B. N. Davis and R. J. LeVeque, 2018.
+<a class="reference external" href="http://faculty.washington.edu/rjl/pubs/adjoint2018">http://faculty.washington.edu/rjl/pubs/adjoint2018</a></li>
+</ul>
+</div>
+<div class="section" id="folder-organization">
+<h2>Folder Organization<a class="headerlink" href="#folder-organization" title="Permalink to this headline">¶</a></h2>
+<ul>
+<li><p class="first"><strong>adjoint:</strong></p>
+<p>Contains code to solve the adjoint problem.</p>
+<p>The output times specified in this directory should to at least as
+far out in time as the forward solution is desired, with sufficiently
+dense outputs to properly capture the evolving adjoint solution.</p>
+</li>
+</ul>
+</div>
+<div class="section" id="running-the-code">
+<h2>Running the Code<a class="headerlink" href="#running-the-code" title="Permalink to this headline">¶</a></h2>
+<p>Go to the folder <cite>adjoint</cite> and run in a terminal:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">make</span> <span class="n">topo</span>  <span class="c1"># downloads topo data and creates adjoint initial hump</span>
+<span class="n">make</span> <span class="n">new</span>   <span class="c1"># compile everything</span>
+<span class="n">make</span> <span class="o">.</span><span class="n">plots</span>
+</pre></div>
+</div>
+<p>The code will produce two new folders: _output and _plots.
+The first one contains all the output files, while the latter one contains
+the plots and interactive visualization apps.</p>
+<p>Then return to this directory and</p>
+<blockquote>
+<div>make topo  # created dtopo file modeling earthquake
+make new
+make .plots</div></blockquote>
+<p>to run the forward solution and make plots that also show the inner product
+of the forward and adjoint solution on levels 1 and 2 (not on level 3 since
+there is no need to flag further in this 3-level run).</p>
+<p>Alternatively, to run first the adjoint and then the forward problem a
+single script can be invoked.</p>
+</div>
+<div class="section" id="running-variations">
+<h2>Running Variations<a class="headerlink" href="#running-variations" title="Permalink to this headline">¶</a></h2>
+<p>In <cite>setrun.py</cite>, the following flags are currently set (in various places):</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">adjointdata</span><span class="o">.</span><span class="n">use_adjoint</span> <span class="o">=</span> <span class="kc">True</span>
+
+<span class="c1"># Flag for refinement using routine flag2refine:</span>
+<span class="n">amrdata</span><span class="o">.</span><span class="n">flag2refine</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="n">rundata</span><span class="o">.</span><span class="n">amrdata</span><span class="o">.</span><span class="n">flag2refine_tol</span> <span class="o">=</span> <span class="mf">0.0005</span>
+
+<span class="c1"># time period of interest:</span>
+<span class="n">adjointdata</span><span class="o">.</span><span class="n">t1</span> <span class="o">=</span> <span class="n">rundata</span><span class="o">.</span><span class="n">clawdata</span><span class="o">.</span><span class="n">t0</span>
+<span class="n">adjointdata</span><span class="o">.</span><span class="n">t2</span> <span class="o">=</span> <span class="n">rundata</span><span class="o">.</span><span class="n">clawdata</span><span class="o">.</span><span class="n">tfinal</span>
+</pre></div>
+</div>
+<p>Setting <cite>adjointdata.use_adjoint</cite> to <cite>False</cite> will go back to using standard
+flagging based on the magnitude of undivided differences or an estimate of
+the one-step error.  Flagging based on Richardson estimate of the 1-step
+error does not generally work well in GeoClaw (with or without the adjoint
+inner product), so using <cite>flag2refine</cite> is recommended.</p>
+<p>The refinement tolerance is set appropriate for the adjoint flagging. Note
+that waves are no longer refined after passing the DART gauge.
+The location of interest is specified in <cite>adjoint/maketopo.py</cite>, where
+the functional used as initial data (at the final time) in the adjoint
+problem is set to be a Gaussian hump centered at the DART gauge location.</p>
+<p>The time period of interest can be changed to some subset of the full run
+time.  Try changing this to see how the AMR adapts to only capture waves
+reaching the gauge over a shorter specified time period, e.g. try <cite>t1 =
+3*3600.</cite> and <cite>t2 = 4.5*3600.</cite> to capture only the leading wave at the gauge.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<p><a href="http://clawpack.org/">
+    <img class="logo" src= "../../../../../_static/clawlogo.jpg" alt="Logo"/>
+</a>
+<h2>Version 5.6.0</h2>
+</p>
+  <h3><a href="../../../../../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Tsunami arising offshore Maule, Chile, Feb. 27, 2010</a><ul>
+<li><a class="reference internal" href="#adjoint-flagging">Adjoint flagging</a></li>
+<li><a class="reference internal" href="#folder-organization">Folder Organization</a></li>
+<li><a class="reference internal" href="#running-the-code">Running the Code</a></li>
+<li><a class="reference internal" href="#running-variations">Running Variations</a></li>
+</ul>
+</li>
+</ul>
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../../../index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../../../../../_sources/gallery/geoclaw/examples/tsunami/chile2010_adjoint/README.rst.txt"
+           rel="nofollow">Show Source</a></li>
+    <li><a href="https://github.com/clawpack/doc/blob/master/doc/gallery/geoclaw/examples/tsunami/chile2010_adjoint/README.rst"
+           rel="nofollow">Show on GitHub</a></li>
+    <li><a href="https://github.com/clawpack/doc/edit/master/doc/gallery/geoclaw/examples/tsunami/chile2010_adjoint/README.rst"
+           rel="nofollow">Edit on GitHub</a></li>
+  </ul>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../../../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+  <div class="footer">
+    &copy; Copyright 2019, The Clawpack Development Team.
+    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
+  </div>
+  <script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-44811544-1', 'auto');
+  ga('send', 'pageview');
+
+  </script>
+  
+  </body>
+</html>

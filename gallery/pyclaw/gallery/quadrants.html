@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>2-dimensional Euler equations &#8212; Clawpack 5.4.1 documentation</title>
+    <title>2-dimensional Euler equations &#8212; Clawpack 5.6.0 documentation</title>
     
     <link rel="stylesheet" href="../../_static/flasky.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -16,7 +16,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '5.4.1',
+        VERSION:     '5.6.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true,
@@ -72,7 +72,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">Clawpack 5.4.1 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="../../index.html">Clawpack 5.6.0 documentation</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -176,21 +176,26 @@ Liska and Wendroff.</p>
     <span class="k">return</span> <span class="n">plotdata</span>
 
 
-<span class="k">def</span> <span class="nf">setup</span><span class="p">(</span><span class="n">use_petsc</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">setup</span><span class="p">(</span><span class="n">use_petsc</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">riemann_solver</span><span class="o">=</span><span class="s1">&#39;roe&#39;</span><span class="p">):</span>
     <span class="k">if</span> <span class="n">use_petsc</span><span class="p">:</span>
         <span class="kn">import</span> <span class="nn">clawpack.petclaw</span> <span class="k">as</span> <span class="nn">pyclaw</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="kn">from</span> <span class="nn">clawpack</span> <span class="k">import</span> <span class="n">pyclaw</span>
 
-    <span class="n">solver</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">ClawSolver2D</span><span class="p">(</span><span class="n">riemann</span><span class="o">.</span><span class="n">euler_4wave_2D</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">riemann_solver</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;roe&#39;</span><span class="p">:</span>
+        <span class="n">solver</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">ClawSolver2D</span><span class="p">(</span><span class="n">riemann</span><span class="o">.</span><span class="n">euler_4wave_2D</span><span class="p">)</span>
+        <span class="n">solver</span><span class="o">.</span><span class="n">transverse_waves</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="k">elif</span> <span class="n">riemann_solver</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;hlle&#39;</span><span class="p">:</span>
+        <span class="n">solver</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">ClawSolver2D</span><span class="p">(</span><span class="n">riemann</span><span class="o">.</span><span class="n">euler_hlle_2D</span><span class="p">)</span>
+        <span class="n">solver</span><span class="o">.</span><span class="n">transverse_waves</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">solver</span><span class="o">.</span><span class="n">cfl_desired</span> <span class="o">=</span> <span class="mf">0.4</span>
+        <span class="n">solver</span><span class="o">.</span><span class="n">cfl_max</span> <span class="o">=</span> <span class="mf">0.5</span>
     <span class="n">solver</span><span class="o">.</span><span class="n">all_bcs</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">BC</span><span class="o">.</span><span class="n">extrap</span>
 
     <span class="n">domain</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">Domain</span><span class="p">([</span><span class="mf">0.</span><span class="p">,</span><span class="mf">0.</span><span class="p">],[</span><span class="mf">1.</span><span class="p">,</span><span class="mf">1.</span><span class="p">],[</span><span class="mi">100</span><span class="p">,</span><span class="mi">100</span><span class="p">])</span>
     <span class="n">solution</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">Solution</span><span class="p">(</span><span class="n">num_eqn</span><span class="p">,</span><span class="n">domain</span><span class="p">)</span>
     <span class="n">gamma</span> <span class="o">=</span> <span class="mf">1.4</span>
     <span class="n">solution</span><span class="o">.</span><span class="n">problem_data</span><span class="p">[</span><span class="s1">&#39;gamma&#39;</span><span class="p">]</span>  <span class="o">=</span> <span class="n">gamma</span>
-    <span class="n">solver</span><span class="o">.</span><span class="n">dimensional_split</span> <span class="o">=</span> <span class="kc">False</span>
-    <span class="n">solver</span><span class="o">.</span><span class="n">transverse_waves</span> <span class="o">=</span> <span class="mi">2</span>
 
     <span class="c1"># Set initial data</span>
     <span class="n">xx</span><span class="p">,</span> <span class="n">yy</span> <span class="o">=</span> <span class="n">domain</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">p_centers</span>
@@ -214,6 +219,7 @@ Liska and Wendroff.</p>
 
     <span class="n">claw</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">Controller</span><span class="p">()</span>
     <span class="n">claw</span><span class="o">.</span><span class="n">tfinal</span> <span class="o">=</span> <span class="mf">0.8</span>
+    <span class="n">claw</span><span class="o">.</span><span class="n">num_output_times</span> <span class="o">=</span> <span class="mi">10</span>
     <span class="n">claw</span><span class="o">.</span><span class="n">solution</span> <span class="o">=</span> <span class="n">solution</span>
     <span class="n">claw</span><span class="o">.</span><span class="n">solver</span> <span class="o">=</span> <span class="n">solver</span>
 
@@ -240,7 +246,7 @@ Liska and Wendroff.</p>
 <p><a href="http://clawpack.org/">
     <img class="logo" src= "../../_static/clawlogo.jpg" alt="Logo"/>
 </a>
-<h2>Version 5.4.1</h2>
+<h2>Version 5.6.0</h2>
 </p>
   <h3><a href="../../index.html">Table Of Contents</a></h3>
   <ul>
@@ -280,7 +286,7 @@ Liska and Wendroff.</p>
       <div class="clearer"></div>
     </div>
   <div class="footer">
-    &copy; Copyright 2017, The Clawpack Development Team.
+    &copy; Copyright 2019, The Clawpack Development Team.
     Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
   </div>
   <script>
