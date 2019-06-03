@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>AMR refinement criteria &#8212; Clawpack 5.5.0 documentation</title>
+    <title>AMR refinement criteria &#8212; Clawpack 5.6.0 documentation</title>
     
     <link rel="stylesheet" href="_static/flasky.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '5.5.0',
+        VERSION:     '5.6.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true,
@@ -32,7 +32,7 @@
     <link rel="author" title="About these documents" href="about.html" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Gauges" href="gauges.html" />
+    <link rel="next" title="Guiding AMR with adjoint flagging" href="adjoint.html" />
     <link rel="prev" title="Adaptive mesh refinement (AMR) algorithms" href="amr_algorithm.html" /> 
   </head>
   <body role="document">
@@ -77,12 +77,12 @@
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="gauges.html" title="Gauges"
+          <a href="adjoint.html" title="Guiding AMR with adjoint flagging"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="amr_algorithm.html" title="Adaptive mesh refinement (AMR) algorithms"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="contents.html">Clawpack 5.5.0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="contents.html">Clawpack 5.6.0 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="amrclaw.html" accesskey="U">AMRClaw</a> &#187;</li> 
       </ul>
     </div>  
@@ -132,6 +132,8 @@ clustering_cutoff = 0.7 is usually reasonable.</p>
 cells for refinement (based on the behavior of the solution) are built into
 AMRClaw.  (A different default approach is used in GeoClaw, see
 <a class="reference internal" href="#refinement-geoclaw"><span class="std std-ref">Flagging criteria in GeoClaw</span></a>).</p>
+<p><strong>Note:</strong> Starting in v5.6.0, a new approach is also available, see
+<a class="reference internal" href="adjoint.html#adjoint"><span class="std std-ref">Guiding AMR with adjoint flagging</span></a>.</p>
 <div class="section" id="flag2refine">
 <span id="refinement-flag2refine"></span><h3>flag2refine<a class="headerlink" href="#flag2refine" title="Permalink to this headline">¶</a></h3>
 <p>One approach to flagging cells for refinement (the default used in
@@ -228,31 +230,76 @@ determined by <a class="reference internal" href="#refinement-richardson"><span 
 <p>Points that are not covered by either region are not constrained by the
 regions at all.   With <cite>amr_levels_max = 6</cite> then they might
 be refined to any level from 1 to 6 depending on the error flagging criteria.</p>
-<p>It is easiest to explain how this works by summarizing the implementation:</p>
-<p>The regridding algorithm from level L to L+1 loops over all grid cells
-at Level L and flags them or not based on the following criteria, where
-<cite>(xc,yc)</cite> represents the cell center and <cite>t</cite> is the current regridding time:</p>
-<ul class="simple">
-<li>Initialize the flag by applying the error flagging criteria
-specified by Richardson extrapolation and/or the default or user-supplied
-routine <cite>flag2refine</cite> to determine whether this cell should be flagged.</li>
-<li>Loop over all regions (if any) for which <cite>(xc,yc,t)</cite> lies in the region
-specified.</li>
-</ul>
-<p>TODO:  This might be wrong!!!</p>
+</div>
+<div class="section" id="implementation">
+<h2>Implementation<a class="headerlink" href="#implementation" title="Permalink to this headline">¶</a></h2>
+<p>It is perhaps easiest to understand how this works by summarizing
+the implementation.  Note the order in which different flagging
+criteria are checked was modified in Version 5.5.0 in order to avoid
+the more expensive options for grid cells that are either forbidden
+from being refined or forced to be refined based on <cite>regions</cite> they
+lie in.</p>
+<p>The regridding algorithm from level L to L+1 loops over all grid patches
+(in parallel when OpenMP is used with
+more than one thread).  The cells on each patch are initially marked with
+<cite>amrflags(i,j) = UNSET</cite>, a special value (set in <cite>amr_module.f90</cite>).</p>
+<p>In flagging based on regions:</p>
 <blockquote>
 <div><ul class="simple">
-<li>If <cite>L &gt;= maxlevel</cite> for <em>any</em> such region, set <cite>flag = False</cite> for this
-cell and go on to the next cell.</li>
-<li>If <cite>L &lt; minlevel</cite> for <em>every</em> such region, set <cite>flag = True</cite> and
-go on to the next grid cell.</li>
+<li>If the current level is less than the
+maximum of all <cite>minlevel</cite> values for regions that contain the cell, then it
+is marked with <cite>amrflags(i,j) = DOFLAG</cite>.</li>
+<li>If the current level is greater than or equal to the
+maximum of all <cite>maxlevel</cite> values for regions that contain the cell, then it
+is marked with <cite>amrflags(i,j) = DONTFLAG</cite>.</li>
 </ul>
 </div></blockquote>
+<p>If there are any cells in the patch that are still marked as <cite>UNSET</cite> after
+checking all the regions, then if the <cite>setrun</cite> parameter <cite>flag2refine</cite> is
+True, then the routine <cite>flag2refine</cite> is called.
+The user may wish to create their own version of this routine.
+The default library version was modified with the addition of the adjoint
+option in Version 5.6.0 (see <a class="reference internal" href="adjoint.html#adjoint"><span class="std std-ref">Guiding AMR with adjoint flagging</span></a>), and does one of two things:</p>
+<blockquote>
+<div><ul class="simple">
+<li>If <cite>adjoint_flagging</cite> then it checks the inner product of the forward
+solution with all adjoints over the specified time period and if the
+magnitude is greater than <cite>tolsp</cite> the cell is marked <cite>DOFLAG</cite>.</li>
+<li>Otherwise, the undivided difference of all components of <cite>q</cite> in each
+coordinate direction is computed, e.g. <cite>abs(q(:,i+1,j) - q(:,i-1,j))</cite> and
+<cite>abs(q(:,i,j+1) - q(:,i,j-1))</cite> in 2d, and if the maximum of these is
+greater than <cite>tolsp</cite> the cell is marked <cite>DOFLAG</cite>.</li>
+</ul>
+</div></blockquote>
+<p>If there are still any cells in the patch that are still marked as <cite>UNSET</cite>,
+then if the <cite>setrun</cite> parameter <cite>flag_richardson</cite> is
+True, then the routine <cite>errest</cite> is called. This does flagging based on
+estimates of the one-step error produced by Richardson extrapolation using
+the solution on the current grid and on a coarsened grid.  If
+<cite>adjoint_flagging</cite> then these estimates are applied to the inner product of
+the error estimate with the adjoint solutions over the relevant time period.
+In either case, the setrun parameter <cite>flag_richardson_tol</cite> is used as the
+tolerance.</p>
 </div>
 <div class="section" id="flagging-criteria-in-geoclaw">
 <span id="refinement-geoclaw"></span><h2>Flagging criteria in GeoClaw<a class="headerlink" href="#flagging-criteria-in-geoclaw" title="Permalink to this headline">¶</a></h2>
-<p>In GeoClaw, a special <cite>flag2refine</cite> subroutine is defined.</p>
-<p>TODO: need to describe geoclaw flag2refine.</p>
+<p>In GeoClaw, a special <cite>flag2refine</cite> subroutine is defined.
+A standard approach for modeling tsunamis propagating across the ocean
+is to refine anywhere that the surface elevation of the ocean <span class="math">\(\eta =
+h+B\)</span> is greater in absolute value than some specified <cite>wave_tolerance</cite>, e.g.
+0.1 meter as set, for example, in the <cite>setrun.py</cite> file of
+<cite>$CLAW/geoclaw/examples/tsunami/chile2010</cite>.
+This <cite>wave_tolerance</cite> parameter can be set for any GeoClaw application.</p>
+<p>Often this ends up refining the entire ocean when in fact only some waves
+are of interest.  In this case one can use <cite>regions</cite> as described in
+<a class="reference internal" href="#refinement-regions"><span class="std std-ref">Specifying AMR regions</span></a> to limit refinement to certain space-time regions.</p>
+<p>Alternatively, starting in Version 5.6.0 one can use adjoint flagging (see
+<a class="reference internal" href="adjoint.html#adjoint"><span class="std std-ref">Guiding AMR with adjoint flagging</span></a>) to better select the waves that will reach a particular
+location over a specified time range, including those that might reflect off
+distant shores.</p>
+<p>Generally one must also use <cite>regions</cite> to allow (or force) much higher levels of
+refinement over small regions along the coast if one is doing detailed
+inundation modeling of a particular community.</p>
 </div>
 </div>
 
@@ -265,7 +312,7 @@ go on to the next grid cell.</li>
 <p><a href="http://clawpack.org/">
     <img class="logo" src= "_static/clawlogo.jpg" alt="Logo"/>
 </a>
-<h2>Version 5.5.0</h2>
+<h2>Version 5.6.0</h2>
 </p>
   <h3><a href="contents.html">Table Of Contents</a></h3>
   <ul>
@@ -276,6 +323,7 @@ go on to the next grid cell.</li>
 </ul>
 </li>
 <li><a class="reference internal" href="#specifying-amr-regions">Specifying AMR regions</a></li>
+<li><a class="reference internal" href="#implementation">Implementation</a></li>
 <li><a class="reference internal" href="#flagging-criteria-in-geoclaw">Flagging criteria in GeoClaw</a></li>
 </ul>
 </li>
@@ -285,7 +333,7 @@ go on to the next grid cell.</li>
   <li><a href="contents.html">Documentation overview</a><ul>
   <li><a href="amrclaw.html">AMRClaw</a><ul>
       <li>Previous: <a href="amr_algorithm.html" title="previous chapter">Adaptive mesh refinement (AMR) algorithms</a></li>
-      <li>Next: <a href="gauges.html" title="next chapter">Gauges</a></li>
+      <li>Next: <a href="adjoint.html" title="next chapter">Guiding AMR with adjoint flagging</a></li>
   </ul></li>
   </ul></li>
 </ul>
@@ -317,6 +365,7 @@ go on to the next grid cell.</li>
     <li><a href="v5.2.1/refinement.html">v5.2.1</a></li>
     <li><a href="v5.2.0/refinement.html">v5.2.0</a></li>
     <li><a href="v5.1.0/refinement.html">v5.1.0</a></li>
+    <li><a href="v5.6.0/refinement.html">v5.6.0</a></li>
     <li><a href="v5.5.0/refinement.html">v5.5.0</a></li>
     <li><a href="dev/refinement.html">dev</a></li>
 </ul>

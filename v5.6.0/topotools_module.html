@@ -1,0 +1,854 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>topotools module for working with topography data &#8212; Clawpack 5.6.0 documentation</title>
+    
+    <link rel="stylesheet" href="_static/flasky.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/base.css" type="text/css" />
+    <link rel="stylesheet" href="_static/layout.css" type="text/css" />
+    <link rel="stylesheet" href="_static/banner.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '5.6.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="shortcut icon" href="_static/clawicon.ico"/>
+    <link rel="author" title="About these documents" href="about.html" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="dtopotools module for moving topography" href="dtopotools_module.html" />
+    <link rel="prev" title="Python tools for working with topo and dtopo" href="topotools.html" /> 
+  </head>
+  <body role="document">
+<div id="main-wrapper" class="sphinx">
+<div id="header-wrapper">
+  <section id="header">
+    <!-- <h1><a href="http://clawpack.org/">Clawpack</a></h1> -->
+    <h1><a href="http://clawpack.org/">Clawpack-5</a></h1> 
+    <nav>
+      <ul>
+        <li>
+          <a href="contents.html">Docs</a>
+        </li>
+        <li>
+          <a href="installing.html">Install</a>
+        </li>
+        <li>
+          <a class="" href="gallery/index.html">Gallery</a>
+        </li>
+        <li>
+          <a class="" href="community.html">Community</a>
+        </li>
+        <li>
+          <a class="active" href="http://github.com/clawpack">Source</a>
+        </li>
+        <li>
+          <a class="" href="developers.html">Develop</a>
+        </li>
+      </ul>
+    </nav>
+  </section>
+<div class="decoration"></div>
+</div>
+
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="dtopotools_module.html" title="dtopotools module for moving topography"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="topotools.html" title="Python tools for working with topo and dtopo"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="contents.html">Clawpack 5.6.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="geoclaw.html" >GeoClaw</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="topotools.html" accesskey="U">Python tools for working with topo and dtopo</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="topotools-module-for-working-with-topography-data">
+<span id="topotools-module"></span><h1>topotools module for working with topography data<a class="headerlink" href="#topotools-module-for-working-with-topography-data" title="Permalink to this headline">¶</a></h1>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<ul class="last simple">
+<li><a class="reference internal" href="topo.html#topo"><span class="std std-ref">Topography data</span></a></li>
+<li><a class="reference internal" href="topotools.html#topotools"><span class="std std-ref">Python tools for working with topo and dtopo</span></a></li>
+</ul>
+</div>
+<p><span class="xref std std-ref">geoclaw/topotools_examples.ipynb</span> illustrates how to use some of the tools.</p>
+<p>The file <cite>$CLAW/geoclaw/tests/test_topotools.py</cite> contains some tests of these
+tools.  Looking at these test routines may also give some ideas on
+how to use them.</p>
+<div class="section" id="module-clawpack.geoclaw.topotools">
+<span id="documentation-auto-generated-from-the-module-docstrings"></span><h2>Documentation auto-generated from the module docstrings<a class="headerlink" href="#module-clawpack.geoclaw.topotools" title="Permalink to this headline">¶</a></h2>
+<p>GeoClaw topotools Module  <cite>$CLAW/geoclaw/src/python/geoclaw/topotools.py</cite></p>
+<p>Module provides several functions for reading, writing and manipulating
+topography (bathymetry) files.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Classes:</th><td class="field-body"><ul class="first simple">
+<li>Topography</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Functions:</th><td class="field-body"><ul class="first simple">
+<li>determine_topo_type</li>
+<li>create_topo_func</li>
+<li>topo1writer</li>
+<li>topo2writer</li>
+<li>topo3writer</li>
+<li>swapheader</li>
+</ul>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">TODO:</th><td class="field-body"><ul class="first last simple">
+<li>Add sub and super sampling capababilities</li>
+<li>Add functions for creating topography based off a topo function, incorporate
+the create_topo_func into Topography class, maybe allow more broad 
+initialization ability to the class to handle this?</li>
+<li>Fix <cite>in_poly</cite> function</li>
+<li>Add remove/fill no data value</li>
+<li>Add more robust plotting capabilities</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="class">
+<dt id="clawpack.geoclaw.topotools.Topography">
+<em class="property">class </em><code class="descclassname">clawpack.geoclaw.topotools.</code><code class="descname">Topography</code><span class="sig-paren">(</span><em>path=None</em>, <em>topo_func=None</em>, <em>topo_type=None</em>, <em>unstructured=False</em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.geoclaw.topotools.Topography" title="Permalink to this definition">¶</a></dt>
+<dd><p>Base topography class.</p>
+<p>A class representing a single topography file.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Properties:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+<p>Note: Modified to check the <cite>grid_registration</cite> when reading or writing
+topo files and properly deal with <cite>llcorner</cite> registration in which case
+the x,y data should be offset by dx/2, dy/2 from the lower left corner 
+specified in the header of a DEM file.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Initialization:</th><td class="field-body"><ul class="first simple">
+<li></li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Examples:</th><td class="field-body"><div class="first last highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">clawpack.geoclaw.topotools</span> <span class="k">as</span> <span class="nn">topo</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">topo_file</span> <span class="o">=</span> <span class="n">topo</span><span class="o">.</span><span class="n">Topography</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">topo_file</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;./topo.tt3&#39;</span><span class="p">,</span> <span class="n">topo_type</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">topo_file</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+</pre></div>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="attribute">
+<dt id="clawpack.geoclaw.topotools.Topography.X">
+<code class="descname">X</code><a class="headerlink" href="#clawpack.geoclaw.topotools.Topography.X" title="Permalink to this definition">¶</a></dt>
+<dd><p>Two dimensional coordinate array in x direction.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="clawpack.geoclaw.topotools.Topography.Y">
+<code class="descname">Y</code><a class="headerlink" href="#clawpack.geoclaw.topotools.Topography.Y" title="Permalink to this definition">¶</a></dt>
+<dd><p>Two dimensional coordinate array in y direction.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="clawpack.geoclaw.topotools.Topography.Z">
+<code class="descname">Z</code><a class="headerlink" href="#clawpack.geoclaw.topotools.Topography.Z" title="Permalink to this definition">¶</a></dt>
+<dd><p>A representation of the data as a 2d array.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="clawpack.geoclaw.topotools.Topography.crop">
+<code class="descname">crop</code><span class="sig-paren">(</span><em>filter_region=None</em>, <em>coarsen=1</em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.geoclaw.topotools.Topography.crop" title="Permalink to this definition">¶</a></dt>
+<dd><p>Crop region to <em>filter_region</em></p>
+<p>Create a new Topography object that is identical to this one but cropped
+to the region specified by filter_region</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">TODO:</th><td class="field-body"><ul class="first last simple">
+<li>Currently this does not work for unstructured data, could in principle</li>
+<li>This could be a special case of in_poly although that routine could
+leave the resulting topography as unstructured effectively.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="clawpack.geoclaw.topotools.Topography.delta">
+<code class="descname">delta</code><a class="headerlink" href="#clawpack.geoclaw.topotools.Topography.delta" title="Permalink to this definition">¶</a></dt>
+<dd><p>Spacing of data points.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="clawpack.geoclaw.topotools.Topography.extent">
+<code class="descname">extent</code><a class="headerlink" href="#clawpack.geoclaw.topotools.Topography.extent" title="Permalink to this definition">¶</a></dt>
+<dd><p>Extent of the topography.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="clawpack.geoclaw.topotools.Topography.generate_2d_coordinates">
+<code class="descname">generate_2d_coordinates</code><span class="sig-paren">(</span><em>mask=False</em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.geoclaw.topotools.Topography.generate_2d_coordinates" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate 2d coordinate arrays.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="clawpack.geoclaw.topotools.Topography.generate_2d_topo">
+<code class="descname">generate_2d_topo</code><span class="sig-paren">(</span><em>mask=False</em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.geoclaw.topotools.Topography.generate_2d_topo" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate a 2d array of the topo.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="clawpack.geoclaw.topotools.Topography.in_poly">
+<code class="descname">in_poly</code><span class="sig-paren">(</span><em>polygon</em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.geoclaw.topotools.Topography.in_poly" title="Permalink to this definition">¶</a></dt>
+<dd><p>Mask points (x,y) that are not in the specified polygon.</p>
+<p>Uses simple ray casting algorithm for speed so beware of corner cases!</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Input:</th><td class="field-body"><ul class="first simple">
+<li><em>polygon</em> (list) List of points that comprise the polygon.  Note that
+order of the points will effect if this works (positive versus negative
+winding order).  Points should be in counter-clockwise arrangement.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><ul class="first last simple">
+<li><em>X_mask</em> (numpy.ma.MaskedArray) Masked array of X coordinates where those
+points outside of the polygon have been masked.</li>
+<li><em>Y</em> (numpy.ndarray) Coordinates in y direction in a meshgrid type of
+configuration.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="clawpack.geoclaw.topotools.Topography.interp_unstructured">
+<code class="descname">interp_unstructured</code><span class="sig-paren">(</span><em>fill_topo</em>, <em>extent=None</em>, <em>method='nearest'</em>, <em>delta=None</em>, <em>delta_limit=20.0</em>, <em>no_data_value=-9999</em>, <em>buffer_length=100.0</em>, <em>proximity_radius=100.0</em>, <em>resolution_limit=2000</em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.geoclaw.topotools.Topography.interp_unstructured" title="Permalink to this definition">¶</a></dt>
+<dd><p>Interpolate unstructured data on to regular grid.</p>
+<p>Function to interpolate the unstructured data in the topo object onto a
+structured grid.  Utilizes a bounding box plus a buffer of size 
+<em>buffer_length</em> (meters) containing all data unless <em>extent is not None</em>
+is <em>True</em>.  Then uses the fill topography <em>fill_topo</em> to fill in the
+gaps in the unstructured data.  By default this is done by masking the 
+fill data with the extents, the value <em>no_data_value</em> and if 
+<em>proximity_radius</em> (meters) is not 0, by a radius of <em>proximity_radius</em> 
+from all grid points in the object.  Stores the 
+result in the <em>self.X</em>, <em>self.Y</em> and <em>self.Z</em> object attributes.  The
+resolution of the final grid is determined by calculating the minimum
+distance between all <em>x</em> and <em>y</em> data with a hard lower limit of 
+<em>delta_limit</em> (meters).</p>
+<p>Note that the function <em>scipy.interpolate.griddata</em> does not respect
+masks so a call to <em>numpy.ma.MaskedArray.compressed()</em> must be made to 
+remove the masked data.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Input:</th><td class="field-body"><ul class="first last simple">
+<li><em>fill_topo</em> (list) - List of Topography objects to use as fill data
+in the projection.</li>
+<li><em>extent</em> (tuple) - A tuple defining the rectangle of the sub-section.  
+Must be in the form (x lower,x upper,y lower, y upper).</li>
+<li><em>method</em> (string) - Method used for interpolation, valid methods are
+found in <em>scipy.interpolate.griddata</em>.  Default is <em>nearest</em>.</li>
+<li><em>delta</em> (tuple) - Directly set the grid spacing of the interpolation
+rather than determining it from the data itself.  Defaults to <em>None</em>
+which causes the method to determine this value itself.
+Should be a 2-tuple of floats (delta_x, delta_y).</li>
+<li><em>delta_limit</em> (float) - Limit of finest horizontal resolution, 
+default is 20 meters.</li>
+<li><em>no_data_value</em> (float) - Value to use if no data was found to fill in a 
+missing value, ignored if <cite>method = &#8216;nearest&#8217;</cite>. Default is <cite>-9999</cite>.</li>
+<li><em>buffer_length</em> (float) - Buffer around bounding box, only applicable
+when <em>extent</em> is None.  Default is <cite>100.0</cite> meters.</li>
+<li><em>proximity_radius</em> (float) - Radius every unstructured data point
+used to mask the fill data with.  Default is <cite>100.0</cite> meters.</li>
+<li><em>resolution_limit</em> (int) - Limit the number of grid points in a
+single dimension.  Raises a <em>ValueError</em> if the limit is violated.
+Default value is <cite>2000</cite>.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p>Sets this object&#8217;s <em>unstructured</em> attribute to <em>False</em> if successful.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="clawpack.geoclaw.topotools.Topography.make_shoreline_xy">
+<code class="descname">make_shoreline_xy</code><span class="sig-paren">(</span><em>sea_level=0</em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.geoclaw.topotools.Topography.make_shoreline_xy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns an array <em>shoreline_xy</em> with 2 columns containing x and y values
+for all segements of the shoreline (defined to be the contour 
+where self.z = sea_level) separated by [nan,nan] pairs.  
+This allows all shorelines to be quickly plotted via:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">plot</span><span class="p">(</span><span class="n">shoreline_xy</span><span class="p">[:,</span><span class="mi">0</span><span class="p">],</span> <span class="n">shoreline_xy</span><span class="p">[:,</span><span class="mi">1</span><span class="p">])</span>
+</pre></div>
+</div>
+<p>The shoreline can be saved as a binary <em>.npy</em> file via:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">numpy</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">shoreline_xy</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>which is much smaller than the original topography file. 
+Reload via:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">shoreline_xy</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="clawpack.geoclaw.topotools.Topography.plot">
+<code class="descname">plot</code><span class="sig-paren">(</span><em>axes=None</em>, <em>contour_levels=None</em>, <em>contour_kwargs={}</em>, <em>limits=None</em>, <em>cmap=None</em>, <em>add_colorbar=True</em>, <em>plot_box=False</em>, <em>fig_kwargs={}</em>, <em>data_break=0.0</em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.geoclaw.topotools.Topography.plot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plot the topography.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Input:</th><td class="field-body"><ul class="first simple">
+<li><em>axes</em> (matplotlib.pyplot.axes) - If passed in, plot will be
+added to this axes.  Otherwise a new plot figure will be created
+(using <em>fig_kwargs</em>) and a new <em>axes</em> object created and returned.</li>
+<li><em>contour_levels</em> (list) - levels for contour lines if these are 
+to be added (default <em>None</em>).  Set to [0.] to plot shoreline.</li>
+<li><em>contour_kwargs</em> (dict) - keyword arguments to be passed to
+contour command, e.g. {&#8216;colors&#8217;:&#8217;r&#8217;, &#8216;linestyles&#8217;: &#8216;-&#8216;}.
+Default is empty dict.</li>
+<li><em>limits</em> (list) - (min, max) of topo values for color map.  
+Defaults to None, in which case (self.Z.min(), self.Z.max()) used.</li>
+<li><em>cmap</em> (matplotlib.colors.Colormap) - colormap, defaults to
+specialized map with blues for bathymetry and green/browns for topo.</li>
+<li><em>fig_kwargs</em> (dict) - keyword arguments to be passed to figure.</li>
+<li><em>plot_box</em> (bool or color specifier) - If evaluates to True, plot
+a box around limits of this topo.</li>
+<li><em>data_break</em> (float) - when default cmap is used, the value to use
+to break between water and land colormaps.
+Defaults to 0., but for some topo files may need to use e.g. 0.01
+Or may want to show plots at different tide stage.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Output:</th><td class="field-body"><ul class="first last simple">
+<li><em>axes</em> (matplotlib.pyplot.axes) - the axes on which plot created.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="docutils">
+<dt>Note that:</dt>
+<dd><ul class="first last simple">
+<li>if <em>type(self.Z)</em> is <em>numpy.ma.MaskedArray</em> then <em>pcolor</em> is used,</li>
+<li>if <em>type(self.Z)</em> is <em>numpy.ndarray</em> then <em>imshow</em> is used.
+(This is faster for large files)</li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="clawpack.geoclaw.topotools.Topography.read">
+<code class="descname">read</code><span class="sig-paren">(</span><em>path=None, topo_type=None, unstructured=False, mask=False, filter_region=None, force=False, stride=[1, 1], nc_params={}</em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.geoclaw.topotools.Topography.read" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read in the data from the object&#8217;s <em>path</em> attribute.</p>
+<p>Stores the resulting data in one of the sets of <em>x</em>, <em>y</em>, and <em>z</em> or 
+<em>X</em>, <em>Y</em>, and <em>Z</em>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Input:</th><td class="field-body"><ul class="first last simple">
+<li><em>path</em> (str)  file to read</li>
+<li><em>topo_type</em> (int) - GeoClaw format topo_type</li>
+<li><em>unstructured</em> (bool) - default is False for lat-long grids.</li>
+<li><em>mask</em> (bool) - whether to store as masked array for missing
+values (default if False)</li>
+<li><em>filter_region</em> (tuple)</li>
+<li><em>stride</em> (list) - List of strides for the x and y dimensions
+respectively.  Default is <em>[1, 1]</em>.  Note that this is only
+implemented for NetCDF reading currently.</li>
+<li><em>nc_params</em> (dict) -</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p>The first three might have already been set when instatiating object.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="clawpack.geoclaw.topotools.Topography.read_header">
+<code class="descname">read_header</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.geoclaw.topotools.Topography.read_header" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read in header of topography file at path.</p>
+<p>If a value returns numpy.nan then the value was not retrievable.  Note
+that this routine can read in headers whose values and labels are 
+swapped.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="clawpack.geoclaw.topotools.Topography.replace_no_data_values">
+<code class="descname">replace_no_data_values</code><span class="sig-paren">(</span><em>method='fill'</em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.geoclaw.topotools.Topography.replace_no_data_values" title="Permalink to this definition">¶</a></dt>
+<dd><p>Replace <em>no_data_value</em> with other values as specified by <em>method</em>.</p>
+<p>self.no_data_value</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Input:</th><td class="field-body"><ul class="first last">
+<li><p class="first"><em>method</em> can be one of:</p>
+<blockquote>
+<div><ul class="simple">
+<li><em>fill</em> - Fill in all <em>no_data_value</em> locations with <em>value</em></li>
+<li><em>nearest</em> - Fill in <em>no_data_value</em> locations with 
+average of nearest neighbors.</li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="clawpack.geoclaw.topotools.Topography.replace_values">
+<code class="descname">replace_values</code><span class="sig-paren">(</span><em>indices</em>, <em>value=nan</em>, <em>method='fill'</em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.geoclaw.topotools.Topography.replace_values" title="Permalink to this definition">¶</a></dt>
+<dd><p>Replace the values at <em>indices</em> by the specified method</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Methods:</th><td class="field-body"><ul class="first last simple">
+<li>&#8220;fill&#8221;</li>
+<li>&#8220;nearest&#8221;</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="clawpack.geoclaw.topotools.Topography.smooth_data">
+<code class="descname">smooth_data</code><span class="sig-paren">(</span><em>indices</em>, <em>r=1</em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.geoclaw.topotools.Topography.smooth_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Filter topo data at <em>indices</em> by averaging surrounding data.</p>
+<p>Surrounding data is considered within the ball of radius <em>r</em> in the 
+inf-norm.  Acts as a low-band pass filter and removes oscillatory data.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Input:</th><td class="field-body"><ul class="first simple">
+<li><em>indices</em> (list)</li>
+<li><em>r</em> (int)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Output:</th><td class="field-body"><p class="first last">None</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="clawpack.geoclaw.topotools.Topography.write">
+<code class="descname">write</code><span class="sig-paren">(</span><em>path</em>, <em>topo_type=None</em>, <em>no_data_value=None</em>, <em>masked=True</em>, <em>header_style='geoclaw'</em>, <em>Z_format='%15.7e'</em>, <em>grid_registration=None</em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.geoclaw.topotools.Topography.write" title="Permalink to this definition">¶</a></dt>
+<dd><p>Write out a topography file to path of type <em>topo_type</em>.</p>
+<p>Writes out a topography file of topo type specified with <em>topo_type</em> or
+inferred from the output file&#8217;s extension, defaulting to 3, to path
+from data in Z.  The rest of the arguments are used to write the header
+data.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Input:</th><td class="field-body"><ul class="first last simple">
+<li><em>path</em> (str)  - file to write</li>
+<li><em>topo_type</em> (int) - GeoClaw format topo_type 
+<strong>Note:</strong> this is second positional argument, agreeing with
+the read function in this class.  It was the third argument in
+GeoClaw version 5.3.1 and earlier.</li>
+<li><em>no_data_value</em> - values used to indicate missing data</li>
+<li><em>masked</em> (bool) - unused??</li>
+<li><dl class="first docutils">
+<dt><em>header_style</em> (str) - indicates format of header lines</dt>
+<dd><dl class="first last docutils">
+<dt>&#8216;geoclaw&#8217; or &#8216;default&#8217;  ==&gt; write value then label </dt>
+<dd>with grid_registration == &#8216;lower&#8217; as default</dd>
+<dt>&#8216;arcgis&#8217; or &#8216;asc&#8217; ==&gt; write label then value  </dt>
+<dd>with grid_registration == &#8216;llcorner&#8217; as default
+(needed for .asc files in ArcGIS)</dd>
+</dl>
+</dd>
+</dl>
+</li>
+<li><em>Z_format</em> (str) - string format to use for Z values
+The default format &#8220;%15.7e&#8221; gives at least millimeter precision
+for topography with abs(Z) &lt; 10000 and results in
+smaller files than the previous default of &#8220;%22.15e&#8221; used in
+GeoClaw version 5.3.1 and earlier.  A shorter format can be used
+if the user knows there are fewer significant digits, e.g.
+etopo1 data is integers and so has a resolution of 1 meter.
+In this case a cropped or coarsened version might be written
+with <cite>Z_format = &#8220;%7i&#8221;</cite>, for example.</li>
+<li><dl class="first docutils">
+<dt><em>grid_registration</em> (str) - &#8216;lower&#8217;, &#8216;llcorner&#8217;, &#8216;llcenter&#8217; </dt>
+<dd>or None for defaults described above.</dd>
+</dl>
+</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="clawpack.geoclaw.topotools.Topography.x">
+<code class="descname">x</code><a class="headerlink" href="#clawpack.geoclaw.topotools.Topography.x" title="Permalink to this definition">¶</a></dt>
+<dd><p>One dimensional coorindate array in x direction.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="clawpack.geoclaw.topotools.Topography.y">
+<code class="descname">y</code><a class="headerlink" href="#clawpack.geoclaw.topotools.Topography.y" title="Permalink to this definition">¶</a></dt>
+<dd><p>One dimensional coordinate array in y direction.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="clawpack.geoclaw.topotools.Topography.z">
+<code class="descname">z</code><a class="headerlink" href="#clawpack.geoclaw.topotools.Topography.z" title="Permalink to this definition">¶</a></dt>
+<dd><p>A representation of the data as an 1d array.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="clawpack.geoclaw.topotools.create_topo_func">
+<code class="descclassname">clawpack.geoclaw.topotools.</code><code class="descname">create_topo_func</code><span class="sig-paren">(</span><em>loc</em>, <em>verbose=False</em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.geoclaw.topotools.create_topo_func" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given a 1-dimensional topography profile specfied by a set of (x,z) 
+values, create a lambda function that when evaluated will give the 
+topgraphy at the point (x,y).  (The resulting function is constant in y.)</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Example:</th><td class="field-body"><div class="first highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="n">create_topo_func</span><span class="p">(</span><span class="n">loc</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">b</span> <span class="o">=</span> <span class="n">f</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+</pre></div>
+</div>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Input:</th><td class="field-body"><ul class="first last">
+<li><p class="first"><em>loc</em> (list) - Create a topography file with the profile denoted by the
+tuples inside of loc.  A sample set of points are shown below.  Note 
+that the first value of the list is the x location and the second is 
+the height of the topography.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">z</span> <span class="p">(</span><span class="n">m</span><span class="p">)</span>
+<span class="o">^</span>                                                  <span class="n">o</span> <span class="n">loc</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span>  <span class="n">o</span>
+<span class="o">|</span>                                                    
+<span class="o">|</span>                                          <span class="n">loc</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span>   
+<span class="o">|--------------------------------------------</span><span class="n">o</span><span class="o">-----&gt;</span> <span class="n">x</span> <span class="p">(</span><span class="n">m</span><span class="p">)</span> <span class="p">(</span><span class="n">sea</span> <span class="n">level</span><span class="p">)</span>
+<span class="o">|</span>                                            
+<span class="o">|</span>                                <span class="n">o</span> <span class="n">loc</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="n">o</span> <span class="n">loc</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
+<span class="o">|</span>                         
+<span class="o">|</span>                         
+<span class="o">|</span>                           <span class="n">o</span> <span class="n">loc</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+<span class="o">|</span>           
+<span class="o">|</span>                               
+<span class="o">|</span><span class="n">__________________o</span> <span class="n">loc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="mf">0.0</span>               
+</pre></div>
+</div>
+</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="clawpack.geoclaw.topotools.determine_topo_type">
+<code class="descclassname">clawpack.geoclaw.topotools.</code><code class="descname">determine_topo_type</code><span class="sig-paren">(</span><em>path</em>, <em>default=None</em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.geoclaw.topotools.determine_topo_type" title="Permalink to this definition">¶</a></dt>
+<dd><p>Using the file suffix of path, attempt to deterimine the topo type.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Input:</th><td class="field-body"><ul class="first last simple">
+<li><em>path</em> (string) - Path to the file.  Can include archive extensions (they
+will be stripped off).</li>
+<li><em>default</em> (object) - Value returned if no suitable topo type was 
+determined.  Default is <em>None</em>.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p>returns integer between 1-3 or <em>default</em> if nothing matches.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="clawpack.geoclaw.topotools.fetch_topo_url">
+<code class="descclassname">clawpack.geoclaw.topotools.</code><code class="descname">fetch_topo_url</code><span class="sig-paren">(</span><em>url</em>, <em>local_fname=None</em>, <em>force=None</em>, <em>verbose=False</em>, <em>ask_user=False</em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.geoclaw.topotools.fetch_topo_url" title="Permalink to this definition">¶</a></dt>
+<dd><p>DEPRECATED:  Use <em>clawpack.clawutil.data.get_remote_file</em> instead (see note below).</p>
+<p>Replaces get_topo function.</p>
+<p>Download a topo file from the web, provided the file does not
+already exist locally.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Input:</th><td class="field-body"><ul class="first last simple">
+<li><em>url</em> (str) URL including file name</li>
+<li><em>local_fname</em> (str) name of local file to create.  
+If <em>local_fname == None</em>, take file name from URL</li>
+<li><em>force</em> (bool) If False, prompt user before downloading.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p>For GeoClaw examples, some topo files can be found in
+<a href="#id1"><span class="problematic" id="id2">`http://www.geoclaw.org/topo`_</span></a>
+See that website for a list of archived topo datasets.</p>
+<p>If force==False then prompt the user to make sure it&#8217;s ok to download,</p>
+<p>If force==None then check for environment variable CLAW_TOPO_DOWNLOAD
+and if this exists use its value.  This is useful for the script
+python/run_examples.py that runs all examples so it won&#8217;t stop to prompt.</p>
+<p>This routine has been deprecated in favor of 
+<em>clawpack.clawutil.data.get_remote_file</em>.  All the functionality should be 
+the same but calls the other routine internally.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="clawpack.geoclaw.topotools.get_topo">
+<code class="descclassname">clawpack.geoclaw.topotools.</code><code class="descname">get_topo</code><span class="sig-paren">(</span><em>topo_fname</em>, <em>remote_directory</em>, <em>force=None</em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.geoclaw.topotools.get_topo" title="Permalink to this definition">¶</a></dt>
+<dd><p>DEPRECATED:  Use <em>clawpack.geoclaw.util.get_remote_file</em> instead</p>
+<p>Download a topo file from the web, provided the file does not
+already exist locally.</p>
+<p>remote_directory should be a URL.  For GeoClaw data it may be a
+subdirectory of  <a class="reference external" href="http://www.clawpack.org/geoclaw/topo">http://www.clawpack.org/geoclaw/topo</a>
+See that website for a list of archived topo datasets.</p>
+<p>If force==False then prompt the user to make sure it&#8217;s ok to download,
+with option to first get small file of metadata.</p>
+<p>If force==None then check for environment variable CLAW_TOPO_DOWNLOAD
+and if this exists use its value.  This is useful for the script
+python/run_examples.py that runs all examples so it won&#8217;t stop to prompt.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="clawpack.geoclaw.topotools.read_netcdf">
+<code class="descclassname">clawpack.geoclaw.topotools.</code><code class="descname">read_netcdf</code><span class="sig-paren">(</span><em>path</em>, <em>zvar=None</em>, <em>extent='all'</em>, <em>coarsen=1</em>, <em>return_topo=True</em>, <em>return_xarray=False</em>, <em>verbose=False</em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.geoclaw.topotools.read_netcdf" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Input:</th><td class="field-body"><ul class="first simple">
+<li><em>path</em> (str) - Path to the file to read, or url to remote file,
+or a key into the topotools.remote_topo_urls dictionary.</li>
+<li><em>zvar</em> (str) - variable to read as Z=elevation. 
+if None, will try &#8216;Band1&#8217;, &#8216;z&#8217;, &#8216;elevation&#8217;.</li>
+<li><em>extent</em> - [x1,x2,y1,y2] for desired subset, or &#8216;all&#8217; for entire file</li>
+<li><em>coarsen</em> (int) - factor to coarsen by, 1 by default.</li>
+<li><em>return_topo</em> (bool) - if True, return a topotools.Topography object.
+default is True</li>
+<li><em>return_xarray</em> (bool) - if True, return an xarray.Dataset object.
+default is False</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Output:</th><td class="field-body"><ul class="first last simple">
+<li>topo and/or xarray_ds depending on what was requested.
+(either a single object or a tuple of two objects.)</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p>If <cite>return_xarray == True</cite> then <cite>xarray</cite> is used to read the data,
+otherwise <cite>netCDF4</cite> is used directly.</p>
+<p>Sample usage:</p>
+<blockquote>
+<div><p>from clawpack.geoclaw import topotools
+extent = [-126,-122,46,49]
+path = &#8216;etopo1&#8217;
+topo = topotools.read_netcdf(path, extent=extent, coarsen=2,                                      verbose=True)</p>
+<p># to plot:
+topo.plot()</p>
+<p># to save topofile for input to GeoClaw:
+topo.write(&#8216;etopo_sample_2min.tt3&#8217;, topo_type=3, Z_format=&#8217;%.0f&#8217;)</p>
+</div></blockquote>
+<p>This should give a 2-minute resolution DEM of the Western Washington coast.
+Note that etopo1 Z values are integers (vertical resolution is 1 meter)
+and using <cite>Z_format=&#8217;%.0f&#8217;</cite> will save as integers to minimize file size.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="clawpack.geoclaw.topotools.swapheader">
+<code class="descclassname">clawpack.geoclaw.topotools.</code><code class="descname">swapheader</code><span class="sig-paren">(</span><em>inputfile</em>, <em>outputfile</em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.geoclaw.topotools.swapheader" title="Permalink to this definition">¶</a></dt>
+<dd><p>Swap the order of key and value in header to value first.</p>
+<p>Note that this is a wrapper around functionality in the Topography class.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="clawpack.geoclaw.topotools.topo1writer">
+<code class="descclassname">clawpack.geoclaw.topotools.</code><code class="descname">topo1writer</code><span class="sig-paren">(</span><em>outfile</em>, <em>topo</em>, <em>xlower</em>, <em>xupper</em>, <em>ylower</em>, <em>yupper</em>, <em>nxpoints</em>, <em>nypoints</em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.geoclaw.topotools.topo1writer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function topo1writer will write out the topofiles by evaluating the
+function topo on the grid specified by the other parameters.</p>
+<p>Assumes topo can be called on arrays X,Y produced by numpy.meshgrid.</p>
+<p>Output file is of &#8220;topotype1,&#8221; which we use to refer to a file with
+(x,y,z) values on each line, progressing from upper left corner across
+rows, then down.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="clawpack.geoclaw.topotools.topo2writer">
+<code class="descclassname">clawpack.geoclaw.topotools.</code><code class="descname">topo2writer</code><span class="sig-paren">(</span><em>outfile</em>, <em>topo</em>, <em>xlower</em>, <em>xupper</em>, <em>ylower</em>, <em>yupper</em>, <em>nxpoints</em>, <em>nypoints</em>, <em>nodata_value=-99999</em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.geoclaw.topotools.topo2writer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Write out a topo type 2 file by evaluating the function <em>topo</em>.</p>
+<p>This routine is here for backwards compatibility and simply creates a new
+topography object and writes it out.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="clawpack.geoclaw.topotools.topo3writer">
+<code class="descclassname">clawpack.geoclaw.topotools.</code><code class="descname">topo3writer</code><span class="sig-paren">(</span><em>outfile</em>, <em>topo</em>, <em>xlower</em>, <em>xupper</em>, <em>ylower</em>, <em>yupper</em>, <em>nxpoints</em>, <em>nypoints</em>, <em>nodata_value=-99999</em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.geoclaw.topotools.topo3writer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Write out a topo type 3 file by evaluating the function <em>topo</em>.</p>
+<p>This routine is here for backwards compatibility and simply creates a new
+topography object and writes it out.</p>
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<p><a href="http://clawpack.org/">
+    <img class="logo" src= "_static/clawlogo.jpg" alt="Logo"/>
+</a>
+<h2>Version 5.6.0</h2>
+</p>
+  <h3><a href="contents.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">topotools module for working with topography data</a><ul>
+<li><a class="reference internal" href="#module-clawpack.geoclaw.topotools">Documentation auto-generated from the module docstrings</a></li>
+</ul>
+</li>
+</ul>
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="contents.html">Documentation overview</a><ul>
+  <li><a href="geoclaw.html">GeoClaw</a><ul>
+  <li><a href="topotools.html">Python tools for working with topo and dtopo</a><ul>
+      <li>Previous: <a href="topotools.html" title="previous chapter">Python tools for working with topo and dtopo</a></li>
+      <li>Next: <a href="dtopotools_module.html" title="next chapter">dtopotools module for moving topography</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/topotools_module.rst.txt"
+           rel="nofollow">Show Source</a></li>
+    <li><a href="https://github.com/clawpack/doc/blob/master/doc/topotools_module.rst"
+           rel="nofollow">Show on GitHub</a></li>
+    <li><a href="https://github.com/clawpack/doc/edit/master/doc/topotools_module.rst"
+           rel="nofollow">Edit on GitHub</a></li>
+  </ul>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+<h3>Versions</h3>
+<ul>
+    <li><a href="../v5.4.1/topotools_module.html">v5.4.1</a></li>
+    <li><a href="../v5.4.0/topotools_module.html">v5.4.0</a></li>
+    <li><a href="../v5.3.1/topotools_module.html">v5.3.1</a></li>
+    <li><a href="../v5.3.0/topotools_module.html">v5.3.0</a></li>
+    <li><a href="../v5.2.1/topotools_module.html">v5.2.1</a></li>
+    <li><a href="../v5.2.0/contents.html">v5.2.0</a></li>
+    <li><a href="../v5.1.0/contents.html">v5.1.0</a></li>
+    <li><a href="topotools_module.html">v5.6.0</a></li>
+    <li><a href="../v5.5.0/topotools_module.html">v5.5.0</a></li>
+    <li><a href="../dev/topotools_module.html">dev</a></li>
+</ul>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+  <div class="footer">
+    &copy; Copyright CC-BY 2019, The Clawpack Development Team.
+    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
+  </div>
+  <script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-44811544-1', 'auto');
+  ga('send', 'pageview');
+
+  </script>
+  
+  </body>
+</html>
