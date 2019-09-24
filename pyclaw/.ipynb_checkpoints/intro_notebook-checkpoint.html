@@ -1,0 +1,623 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>A quick introduction to PyClaw &#8212; Clawpack dev documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/flasky.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/base.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/layout.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     'dev',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="shortcut icon" href="../../_static/clawicon.ico"/>
+    <link rel="author" title="About these documents" href="../../about.html" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+  </head>
+  <body role="document">
+<div id="main-wrapper" class="sphinx">
+<div id="header-wrapper">
+  <section id="header">
+    <!-- <h1><a href="http://clawpack.org/">Clawpack</a></h1> -->
+    <h1><a href="http://clawpack.org/">Clawpack-5</a></h1> 
+    <nav>
+      <ul>
+        <li>
+          <a href="../../contents.html">Docs</a>
+        </li>
+        <li>
+          <a href="../../installing.html">Install</a>
+        </li>
+        <li>
+          <a class="" href="../../../../../gallery/_build/html/index.html">Gallery</a>
+        </li>
+        <li>
+          <a class="" href="../../community.html">Community</a>
+        </li>
+        <li>
+          <a class="active" href="http://github.com/clawpack">Source</a>
+        </li>
+        <li>
+          <a class="" href="../../developers.html">Develop</a>
+        </li>
+      </ul>
+    </nav>
+  </section>
+<div class="decoration"></div>
+</div>
+
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../contents.html">Clawpack dev documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  
+<style>
+/* CSS for nbsphinx extension */
+
+/* remove conflicting styling from Sphinx themes */
+div.nbinput,
+div.nbinput div.prompt,
+div.nbinput div.input_area,
+div.nbinput div[class*=highlight],
+div.nbinput div[class*=highlight] pre,
+div.nboutput,
+div.nbinput div.prompt,
+div.nbinput div.output_area,
+div.nboutput div[class*=highlight],
+div.nboutput div[class*=highlight] pre {
+    background: none;
+    border: none;
+    padding: 0 0;
+    margin: 0;
+    box-shadow: none;
+}
+
+/* avoid gaps between output lines */
+div.nboutput div[class*=highlight] pre {
+    line-height: normal;
+}
+
+/* input/output containers */
+div.nbinput,
+div.nboutput {
+    display: -webkit-flex;
+    display: flex;
+    align-items: flex-start;
+    margin: 0;
+    width: 100%;
+}
+@media (max-width: 540px) {
+    div.nbinput,
+    div.nboutput {
+        flex-direction: column;
+    }
+}
+
+/* input container */
+div.nbinput {
+    padding-top: 5px;
+}
+
+/* last container */
+div.nblast {
+    padding-bottom: 5px;
+}
+
+/* input prompt */
+div.nbinput div.prompt pre {
+    color: #303F9F;
+}
+
+/* output prompt */
+div.nboutput div.prompt pre {
+    color: #D84315;
+}
+
+/* all prompts */
+div.nbinput div.prompt,
+div.nboutput div.prompt {
+    min-width: 9ex;
+    padding-top: 0.4em;
+    padding-right: 0.4em;
+    text-align: right;
+    flex: 0;
+}
+@media (max-width: 540px) {
+    div.nbinput div.prompt,
+    div.nboutput div.prompt {
+        text-align: left;
+        padding: 0.4em;
+    }
+    div.nboutput div.prompt.empty {
+        padding: 0;
+    }
+}
+
+/* disable scrollbars on prompts */
+div.nbinput div.prompt pre,
+div.nboutput div.prompt pre {
+    overflow: hidden;
+}
+
+/* input/output area */
+div.nbinput div.input_area,
+div.nboutput div.output_area {
+    padding: 0.4em;
+    -webkit-flex: 1;
+    flex: 1;
+    overflow: auto;
+}
+@media (max-width: 540px) {
+    div.nbinput div.input_area,
+    div.nboutput div.output_area {
+        width: 100%;
+    }
+}
+
+/* input area */
+div.nbinput div.input_area {
+    border: 1px solid #cfcfcf;
+    border-radius: 2px;
+    background: #f7f7f7;
+}
+
+/* override MathJax center alignment in output cells */
+div.nboutput div[class*=MathJax] {
+    text-align: left !important;
+}
+
+/* override sphinx.ext.pngmath center alignment in output cells */
+div.nboutput div.math p {
+    text-align: left;
+}
+
+/* standard error */
+div.nboutput div.output_area.stderr {
+    background: #fdd;
+}
+
+/* ANSI colors */
+.ansi-black-fg { color: #3E424D; }
+.ansi-black-bg { background-color: #3E424D; }
+.ansi-black-intense-fg { color: #282C36; }
+.ansi-black-intense-bg { background-color: #282C36; }
+.ansi-red-fg { color: #E75C58; }
+.ansi-red-bg { background-color: #E75C58; }
+.ansi-red-intense-fg { color: #B22B31; }
+.ansi-red-intense-bg { background-color: #B22B31; }
+.ansi-green-fg { color: #00A250; }
+.ansi-green-bg { background-color: #00A250; }
+.ansi-green-intense-fg { color: #007427; }
+.ansi-green-intense-bg { background-color: #007427; }
+.ansi-yellow-fg { color: #DDB62B; }
+.ansi-yellow-bg { background-color: #DDB62B; }
+.ansi-yellow-intense-fg { color: #B27D12; }
+.ansi-yellow-intense-bg { background-color: #B27D12; }
+.ansi-blue-fg { color: #208FFB; }
+.ansi-blue-bg { background-color: #208FFB; }
+.ansi-blue-intense-fg { color: #0065CA; }
+.ansi-blue-intense-bg { background-color: #0065CA; }
+.ansi-magenta-fg { color: #D160C4; }
+.ansi-magenta-bg { background-color: #D160C4; }
+.ansi-magenta-intense-fg { color: #A03196; }
+.ansi-magenta-intense-bg { background-color: #A03196; }
+.ansi-cyan-fg { color: #60C6C8; }
+.ansi-cyan-bg { background-color: #60C6C8; }
+.ansi-cyan-intense-fg { color: #258F8F; }
+.ansi-cyan-intense-bg { background-color: #258F8F; }
+.ansi-white-fg { color: #C5C1B4; }
+.ansi-white-bg { background-color: #C5C1B4; }
+.ansi-white-intense-fg { color: #A1A6B2; }
+.ansi-white-intense-bg { background-color: #A1A6B2; }
+
+.ansi-bold { font-weight: bold; }
+</style>
+<div class="section" id="A-quick-introduction-to-PyClaw">
+<h1>A quick introduction to PyClaw<a class="headerlink" href="#A-quick-introduction-to-PyClaw" title="Permalink to this headline">¶</a></h1>
+<p>PyClaw is a solver for hyperbolic PDEs, based on
+<a class="reference external" href="www.clawpack.org">Clawpack</a>. You can read more about PyClaw in <a class="reference external" href="http://epubs.siam.org/doi/abs/10.1137/110856976">this
+paper</a> (free version
+<a class="reference external" href="http://arxiv.org/abs/1111.6583">here</a>.</p>
+<p>In this notebook, we explore some basic PyClaw functionality. Before
+running the notebook, you should <a class="reference external" href="http://clawpack.github.io/doc/installing.html">install
+Clawpack</a>. The quick
+way is to just</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="n">clawpack</span>
+</pre></div>
+</div>
+<p>If you are viewing this notebook online, you can download it and run it
+<a class="reference external" href="https://github.com/clawpack/doc/blob/master/doc/pyclaw/intro_notebook.ipynb">from
+here</a>.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [1]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<span></span><span class="o">%</span><span class="k">matplotlib</span> inline
+<span class="kn">import</span> <span class="nn">matplotlib</span>
+<span class="kn">from</span> <span class="nn">clawpack</span> <span class="k">import</span> <span class="n">pyclaw</span>
+<span class="kn">from</span> <span class="nn">clawpack</span> <span class="k">import</span> <span class="n">riemann</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="Setting-up-a-problem">
+<h2>Setting up a problem<a class="headerlink" href="#Setting-up-a-problem" title="Permalink to this headline">¶</a></h2>
+<p>To solve a problem, we&#8217;ll need to create the following:</p>
+<ul class="simple">
+<li>A controller, which handles the running, output, and can be used for
+plotting (you don&#8217;t absolutely need a controller, but it makes life
+simpler)</li>
+<li>A solver, which is responsible for actually evolving the solution in
+time. Here we&#8217;ll need to specify the equations to be solved and the
+boundary conditions.</li>
+<li>A domain over which to solve the problem</li>
+<li>A solution, where we will provide the initial data. After running,
+the solution will contain &#8211; you guessed it! &#8211; the solution.</li>
+</ul>
+<p>Let&#8217;s start by creating a controller and specifying the simulation end
+time:</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [2]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<span></span><span class="n">claw</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">Controller</span><span class="p">()</span>
+<span class="n">claw</span><span class="o">.</span><span class="n">tfinal</span> <span class="o">=</span> <span class="mf">1.0</span>
+
+<span class="n">claw</span><span class="o">.</span><span class="n">keep_copy</span> <span class="o">=</span> <span class="kc">True</span>       <span class="c1"># Keep solution data in memory for plotting</span>
+<span class="n">claw</span><span class="o">.</span><span class="n">output_format</span> <span class="o">=</span> <span class="kc">None</span>   <span class="c1"># Don&#39;t write solution data to file</span>
+<span class="n">claw</span><span class="o">.</span><span class="n">num_output_times</span> <span class="o">=</span> <span class="mi">50</span>  <span class="c1"># Write 50 output frames</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="Riemann-solvers">
+<h2>Riemann solvers<a class="headerlink" href="#Riemann-solvers" title="Permalink to this headline">¶</a></h2>
+<p>Like many solvers for nonlinear hyperbolic PDEs, PyClaw uses Riemann
+solvers. By specifying a Riemann solver, we will specify the system of
+PDEs that we want to solve.</p>
+<p>Place your cursor at the end of the line in the box below and hit &#8216;Tab&#8217;
+(for autocompletion). You&#8217;ll see a dropdown list of all the Riemann
+solvers currently available in PyClaw. The ones with &#8216;py&#8217; at the end of
+the name are written in pure Python; the others are Fortran, wrapped
+with f2py.</p>
+<p>Note that this won&#8217;t work if you&#8217;re viewing the notebook online as HTML;
+you need to actually be running it.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<span></span><span class="n">riemann</span><span class="o">.</span>
+</pre></div>
+</div>
+</div>
+<p>We&#8217;ll solve the one-dimensional acoustics equations:</p>
+<div class="math">
+\[ \begin{align}\begin{aligned}\begin{split}  \begin{align}
+  p_t + K u_x &amp; = 0 \\
+  u_t + \frac{1}{\rho} p_x &amp; = 0.
+  \end{align}\end{split}\\Here :math:`p, u` are the pressure and velocity as functions of\end{aligned}\end{align} \]</div>
+<div class="system-message">
+<p class="system-message-title">System Message: WARNING/2 (<tt class="docutils">/Users/rjl/git/clawpack/doc/doc/pyclaw/.ipynb_checkpoints/intro_notebook-checkpoint.ipynb</tt>, line 121)</p>
+Explicit markup ends without a blank line; unexpected unindent.</div>
+<p><span class="math">\(x,t\)</span>, while <span class="math">\(\rho, K\)</span> are constants representing the
+density and bulk modulus of the material transmitting the waves. We&#8217;ll
+specify these constants later.</p>
+<p>We can do this using the first solver in the list. Notice that the
+solver we create here belongs to the controller that we created above.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [3]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<span></span><span class="n">riemann_solver</span> <span class="o">=</span> <span class="n">riemann</span><span class="o">.</span><span class="n">acoustics_1D</span>
+<span class="n">claw</span><span class="o">.</span><span class="n">solver</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">ClawSolver1D</span><span class="p">(</span><span class="n">riemann_solver</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<p>We also need to specify boundary conditions. We&#8217;ll use periodic BCs, so
+that waves that go off one side of the domain come back in at the other:</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [4]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<span></span><span class="n">claw</span><span class="o">.</span><span class="n">solver</span><span class="o">.</span><span class="n">all_bcs</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">BC</span><span class="o">.</span><span class="n">periodic</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="The-problem-domain">
+<h2>The problem domain<a class="headerlink" href="#The-problem-domain" title="Permalink to this headline">¶</a></h2>
+<p>Next we need to specify the domain and the grid. We&#8217;ll solve on the unit
+line <span class="math">\([0,1]\)</span> using 100 grid cells. Note that each argument to the
+Domain constructor must be a tuple:</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [5]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<span></span><span class="n">domain</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">Domain</span><span class="p">(</span> <span class="p">(</span><span class="mf">0.</span><span class="p">,),</span> <span class="p">(</span><span class="mf">1.</span><span class="p">,),</span> <span class="p">(</span><span class="mi">100</span><span class="p">,))</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="The-initial-solution">
+<h2>The initial solution<a class="headerlink" href="#The-initial-solution" title="Permalink to this headline">¶</a></h2>
+<p>Next we create a solution object that belongs to the controller and
+extends over the domain we specified:</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [6]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<span></span><span class="n">claw</span><span class="o">.</span><span class="n">solution</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">Solution</span><span class="p">(</span><span class="n">claw</span><span class="o">.</span><span class="n">solver</span><span class="o">.</span><span class="n">num_eqn</span><span class="p">,</span><span class="n">domain</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<p>The initial data is specified in an array named <span class="math">\(q\)</span>. The pressure
+is contained in <code class="docutils literal"><span class="pre">q[0,:]</span></code> and the velocity in <code class="docutils literal"><span class="pre">q[1,:]</span></code>. We&#8217;ll specify
+a wavepacket for the pressure and zero velocity.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [7]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<span></span><span class="n">x</span><span class="o">=</span><span class="n">domain</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">centers</span>
+<span class="n">bet</span><span class="o">=</span><span class="mi">100</span><span class="p">;</span> <span class="n">gam</span><span class="o">=</span><span class="mi">5</span><span class="p">;</span> <span class="n">x0</span><span class="o">=</span><span class="mf">0.75</span>
+<span class="n">claw</span><span class="o">.</span><span class="n">solution</span><span class="o">.</span><span class="n">q</span><span class="p">[</span><span class="mi">0</span><span class="p">,:]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">bet</span> <span class="o">*</span> <span class="p">(</span><span class="n">x</span><span class="o">-</span><span class="n">x0</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">gam</span> <span class="o">*</span> <span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="n">x0</span><span class="p">))</span>
+<span class="n">claw</span><span class="o">.</span><span class="n">solution</span><span class="o">.</span><span class="n">q</span><span class="p">[</span><span class="mi">1</span><span class="p">,:]</span> <span class="o">=</span> <span class="mf">0.</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">claw</span><span class="o">.</span><span class="n">solution</span><span class="o">.</span><span class="n">q</span><span class="p">[</span><span class="mi">0</span><span class="p">,:],</span><span class="s1">&#39;-o&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
+<span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
+<span class="ansi-green-fg">&lt;ipython-input-7-89e22e0027eb&gt;</span> in <span class="ansi-cyan-fg">&lt;module&gt;</span><span class="ansi-blue-fg">()</span>
+<span class="ansi-green-intense-fg ansi-bold">      1</span> x<span class="ansi-blue-fg">=</span>domain<span class="ansi-blue-fg">.</span>grid<span class="ansi-blue-fg">.</span>x<span class="ansi-blue-fg">.</span>centers
+<span class="ansi-green-intense-fg ansi-bold">      2</span> bet<span class="ansi-blue-fg">=</span><span class="ansi-cyan-fg">100</span><span class="ansi-blue-fg">;</span> gam<span class="ansi-blue-fg">=</span><span class="ansi-cyan-fg">5</span><span class="ansi-blue-fg">;</span> x0<span class="ansi-blue-fg">=</span><span class="ansi-cyan-fg">0.75</span>
+<span class="ansi-green-fg">----&gt; 3</span><span class="ansi-red-fg"> </span>claw<span class="ansi-blue-fg">.</span>solution<span class="ansi-blue-fg">.</span>q<span class="ansi-blue-fg">[</span><span class="ansi-cyan-fg">0</span><span class="ansi-blue-fg">,</span><span class="ansi-blue-fg">:</span><span class="ansi-blue-fg">]</span> <span class="ansi-blue-fg">=</span> np<span class="ansi-blue-fg">.</span>exp<span class="ansi-blue-fg">(</span><span class="ansi-blue-fg">-</span>bet <span class="ansi-blue-fg">*</span> <span class="ansi-blue-fg">(</span>x<span class="ansi-blue-fg">-</span>x0<span class="ansi-blue-fg">)</span><span class="ansi-blue-fg">**</span><span class="ansi-cyan-fg">2</span><span class="ansi-blue-fg">)</span> <span class="ansi-blue-fg">*</span> np<span class="ansi-blue-fg">.</span>cos<span class="ansi-blue-fg">(</span>gam <span class="ansi-blue-fg">*</span> <span class="ansi-blue-fg">(</span>x <span class="ansi-blue-fg">-</span> x0<span class="ansi-blue-fg">)</span><span class="ansi-blue-fg">)</span>
+<span class="ansi-green-intense-fg ansi-bold">      4</span> claw<span class="ansi-blue-fg">.</span>solution<span class="ansi-blue-fg">.</span>q<span class="ansi-blue-fg">[</span><span class="ansi-cyan-fg">1</span><span class="ansi-blue-fg">,</span><span class="ansi-blue-fg">:</span><span class="ansi-blue-fg">]</span> <span class="ansi-blue-fg">=</span> <span class="ansi-cyan-fg">0.</span>
+<span class="ansi-green-intense-fg ansi-bold">      5</span>
+
+<span class="ansi-red-fg">NameError</span>: name &#39;np&#39; is not defined
+</pre></div></div>
+</div>
+</div>
+<div class="section" id="Problem-specific-parameters">
+<h2>Problem-specific parameters<a class="headerlink" href="#Problem-specific-parameters" title="Permalink to this headline">¶</a></h2>
+<p>The Riemann solver we&#8217;ve chosen requires some physical parameters to be
+specified. Press &#8216;Tab&#8217; in the box below and you&#8217;ll see what they are.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<span></span><span class="n">riemann_solver</span><span class="o">.</span><span class="n">cparam</span><span class="o">.</span>
+</pre></div>
+</div>
+</div>
+<p>Two of these parameters are <span class="math">\(\rho\)</span> and <span class="math">\(K\)</span> in the equations
+above. The other two are the impedance <span class="math">\(Z = \sqrt{\rho K}\)</span> and
+sound speed <span class="math">\(c = \sqrt{K/\rho}\)</span>. We specify these parameters in a
+dictionary that belongs to the solution object:</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="n">density</span> <span class="o">=</span> <span class="mf">1.0</span>
+<span class="n">bulk_modulus</span> <span class="o">=</span> <span class="mf">1.0</span>
+<span class="n">impedance</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">density</span><span class="o">*</span><span class="n">bulk_modulus</span><span class="p">)</span>
+<span class="n">sound_speed</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">density</span><span class="o">/</span><span class="n">bulk_modulus</span><span class="p">)</span>
+
+<span class="n">claw</span><span class="o">.</span><span class="n">solution</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">problem_data</span> <span class="o">=</span> <span class="p">{</span>
+                              <span class="s1">&#39;rho&#39;</span> <span class="p">:</span> <span class="n">density</span><span class="p">,</span>
+                              <span class="s1">&#39;bulk&#39;</span><span class="p">:</span> <span class="n">bulk_modulus</span><span class="p">,</span>
+                              <span class="s1">&#39;zz&#39;</span>  <span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">density</span><span class="o">*</span><span class="n">bulk_modulus</span><span class="p">),</span>
+                              <span class="s1">&#39;cc&#39;</span>  <span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">bulk_modulus</span><span class="o">/</span><span class="n">density</span><span class="p">)</span>
+                              <span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<p>Finally, let&#8217;s run the simulation.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<span></span><span class="n">status</span> <span class="o">=</span> <span class="n">claw</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="Plotting">
+<h2>Plotting<a class="headerlink" href="#Plotting" title="Permalink to this headline">¶</a></h2>
+<p>Now we&#8217;ll plot the results, which are contained in <code class="docutils literal"><span class="pre">claw.frames[:]</span></code>.
+It&#8217;s simple to plot a single frame with matplotlib:</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<span></span><span class="n">pressure</span> <span class="o">=</span> <span class="n">claw</span><span class="o">.</span><span class="n">frames</span><span class="p">[</span><span class="mi">50</span><span class="p">]</span><span class="o">.</span><span class="n">q</span><span class="p">[</span><span class="mi">0</span><span class="p">,:]</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">pressure</span><span class="p">,</span><span class="s1">&#39;-o&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<p>To examine the evolution more thoroughly, it&#8217;s nice to see all the
+frames in sequence. We can do this as follows.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">matplotlib</span> <span class="k">import</span> <span class="n">animation</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">from</span> <span class="nn">clawpack.visclaw.JSAnimation</span> <span class="k">import</span> <span class="n">IPython_display</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+<span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">axes</span><span class="p">(</span><span class="n">xlim</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">ylim</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="mf">0.2</span><span class="p">,</span> <span class="mf">1.2</span><span class="p">))</span>
+
+<span class="n">frame</span> <span class="o">=</span> <span class="n">claw</span><span class="o">.</span><span class="n">frames</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">pressure</span> <span class="o">=</span> <span class="n">frame</span><span class="o">.</span><span class="n">q</span><span class="p">[</span><span class="mi">0</span><span class="p">,:]</span>
+<span class="n">line</span><span class="p">,</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">([],</span> <span class="p">[],</span> <span class="n">lw</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">fplot</span><span class="p">(</span><span class="n">frame_number</span><span class="p">):</span>
+    <span class="n">frame</span> <span class="o">=</span> <span class="n">claw</span><span class="o">.</span><span class="n">frames</span><span class="p">[</span><span class="n">frame_number</span><span class="p">]</span>
+    <span class="n">pressure</span> <span class="o">=</span> <span class="n">frame</span><span class="o">.</span><span class="n">q</span><span class="p">[</span><span class="mi">0</span><span class="p">,:]</span>
+    <span class="n">line</span><span class="o">.</span><span class="n">set_data</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">pressure</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">line</span><span class="p">,</span>
+
+<span class="n">animation</span><span class="o">.</span><span class="n">FuncAnimation</span><span class="p">(</span><span class="n">fig</span><span class="p">,</span> <span class="n">fplot</span><span class="p">,</span> <span class="n">frames</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">claw</span><span class="o">.</span><span class="n">frames</span><span class="p">),</span> <span class="n">interval</span><span class="o">=</span><span class="mi">30</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<p>That&#8217;s it! Here are some things you might try for fun:</p>
+<ul class="simple">
+<li>Change the boundary conditions to reflecting or outflow (hint: type
+<code class="docutils literal"><span class="pre">pyclaw.BC.</span></code>+[Tab] to get a list of boundary conditions
+available).</li>
+<li>Change the grid to use a larger or smaller number of grid cells. How
+does this affect the final solution?</li>
+<li>Use higher-order methods by instantiating a <code class="docutils literal"><span class="pre">SharpClawSolver1D</span></code>
+instead of a <code class="docutils literal"><span class="pre">ClawSolver1D</span></code>. How does this affect the final
+solution? You can read more about the methods in SharpClaw in <a class="reference external" href="http://epubs.siam.org/doi/abs/10.1137/110830320">this
+paper</a>.</li>
+</ul>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<span></span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<p><a href="http://clawpack.org/">
+    <img class="logo" src= "../../_static/clawlogo.jpg" alt="Logo"/>
+</a>
+<h2>Version dev</h2>
+</p>
+  <h3><a href="../../contents.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">A quick introduction to PyClaw</a><ul>
+<li><a class="reference internal" href="#Setting-up-a-problem">Setting up a problem</a></li>
+<li><a class="reference internal" href="#Riemann-solvers">Riemann solvers</a></li>
+<li><a class="reference internal" href="#The-problem-domain">The problem domain</a></li>
+<li><a class="reference internal" href="#The-initial-solution">The initial solution</a></li>
+<li><a class="reference internal" href="#Problem-specific-parameters">Problem-specific parameters</a></li>
+<li><a class="reference internal" href="#Plotting">Plotting</a></li>
+</ul>
+</li>
+</ul>
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../contents.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../../_sources/pyclaw/.ipynb_checkpoints/intro_notebook-checkpoint.ipynb.txt"
+           rel="nofollow">Show Source</a></li>
+    <li><a href="https://github.com/clawpack/doc/blob/master/doc/pyclaw/.ipynb_checkpoints/intro_notebook-checkpoint.ipynb"
+           rel="nofollow">Show on GitHub</a></li>
+    <li><a href="https://github.com/clawpack/doc/edit/master/doc/pyclaw/.ipynb_checkpoints/intro_notebook-checkpoint.ipynb"
+           rel="nofollow">Edit on GitHub</a></li>
+  </ul>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+  <div class="footer">
+    &copy; Copyright CC-BY 2019, The Clawpack Development Team.
+    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
+  </div>
+  <script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-44811544-1', 'auto');
+  ga('send', 'pageview');
+
+  </script>
+  
+  </body>
+</html>
