@@ -1,0 +1,414 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Specifying AMRClaw run-time parameters in setrun.py &#8212; Clawpack 5.6.1 documentation</title>
+    
+    <link rel="stylesheet" href="_static/flasky.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/base.css" type="text/css" />
+    <link rel="stylesheet" href="_static/layout.css" type="text/css" />
+    <link rel="stylesheet" href="_static/banner.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '5.6.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="shortcut icon" href="_static/clawicon.ico"/>
+    <link rel="author" title="About these documents" href="about.html" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Sample setrun.py module for AMRClaw" href="setrun_amrclaw_sample.html" />
+    <link rel="prev" title="AMRClaw for 1d problems" href="amrclaw1d.html" /> 
+  </head>
+  <body role="document">
+<div id="main-wrapper" class="sphinx">
+<div id="header-wrapper">
+  <section id="header">
+    <!-- <h1><a href="http://clawpack.org/">Clawpack</a></h1> -->
+    <h1><a href="http://clawpack.org/">Clawpack-5</a></h1> 
+    <nav>
+      <ul>
+        <li>
+          <a href="contents.html">Docs</a>
+        </li>
+        <li>
+          <a href="installing.html">Install</a>
+        </li>
+        <li>
+          <a class="" href="gallery/index.html">Gallery</a>
+        </li>
+        <li>
+          <a class="" href="community.html">Community</a>
+        </li>
+        <li>
+          <a class="active" href="http://github.com/clawpack">Source</a>
+        </li>
+        <li>
+          <a class="" href="developers.html">Develop</a>
+        </li>
+      </ul>
+    </nav>
+  </section>
+<div class="decoration"></div>
+</div>
+
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="setrun_amrclaw_sample.html" title="Sample setrun.py module for AMRClaw"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="amrclaw1d.html" title="AMRClaw for 1d problems"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="contents.html">Clawpack 5.6.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="amrclaw.html" accesskey="U">AMRClaw</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="specifying-amrclaw-run-time-parameters-in-setrun-py">
+<span id="setrun-amrclaw"></span><h1>Specifying AMRClaw run-time parameters in <cite>setrun.py</cite><a class="headerlink" href="#specifying-amrclaw-run-time-parameters-in-setrun-py" title="Permalink to this headline">¶</a></h1>
+<p>It may be useful to look at a specific example, e.g.
+<a class="reference internal" href="setrun_amrclaw_sample.html#setrun-amrclaw-sample"><span class="std std-ref">Sample setrun.py module for AMRClaw</span></a>.</p>
+<p><strong>Note:</strong> Many parameters have changed name since Version 4.X and some new
+ones have been added.  See <a class="reference internal" href="clawpack5.html#setrun-changes"><span class="std std-ref">Changes to input parameters in setrun.py from 4.x to 5.0</span></a> for a summary.</p>
+<p>To convert a Version 4.x <cite>setrun.py</cite> file to Version 5.0, see <a class="reference internal" href="claw46to50.html#claw46to50"><span class="std std-ref">Converting from Clawpack 4.6 to 5.0</span></a>.</p>
+<div class="section" id="input">
+<h2>Input<a class="headerlink" href="#input" title="Permalink to this headline">¶</a></h2>
+<p><cite>setrun</cite> takes a single argument <cite>claw_pkg</cite> that should be set to <cite>amrclaw</cite>.</p>
+</div>
+<div class="section" id="output">
+<h2>Output<a class="headerlink" href="#output" title="Permalink to this headline">¶</a></h2>
+<p><cite>rundata</cite>, an object of class <cite>ClawRunData</cite>, created in the
+setrun file with the commands:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">clawpack.clawutil</span> <span class="k">import</span> <span class="n">clawdata</span>
+<span class="n">rundata</span> <span class="o">=</span> <span class="n">clawdata</span><span class="o">.</span><span class="n">ClawRunData</span><span class="p">(</span><span class="n">claw_pkg</span><span class="p">,</span> <span class="n">num_dim</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The <cite>rundata</cite> object has an attribute <cite>rundata.clawdata</cite> whose
+attributes are described in <a class="reference internal" href="setrun.html#setrun"><span class="std std-ref">Specifying classic run-time parameters in setrun.py</span></a>.</p>
+<p>In addition, for AMRClaw <cite>rundata</cite> has an attribute <cite>rundata.amrdata</cite>
+whose attributes are described below.</p>
+</div>
+<div class="section" id="run-time-parameters">
+<h2>Run-time parameters<a class="headerlink" href="#run-time-parameters" title="Permalink to this headline">¶</a></h2>
+<p>The parameters needed in 2 space dimensions (<em>ndim=2</em>) are described.  In 3d
+there are analogous parameters in z required, as mentioned below.</p>
+<p>In addition to the parameters in <cite>rundata.clawdata</cite> (see <a class="reference internal" href="setrun.html#setrun"><span class="std std-ref">Specifying classic run-time parameters in setrun.py</span></a>),
+the AMR parameters that can be set are the following attributes of
+<cite>rundata.amrdata</cite>:</p>
+</div>
+<div class="section" id="special-amr-parameters">
+<h2>Special AMR parameters<a class="headerlink" href="#special-amr-parameters" title="Permalink to this headline">¶</a></h2>
+<dl class="attribute">
+<dt>
+<code class="descname">amr_levels_max : int</code></dt>
+<dd><p>Maximum levels of refinement to use.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="descname">refinement_ratios_x : list of int</code></dt>
+<dd><p>Refinement ratios to use in the <cite>x</cite> direction.</p>
+<p><em>Example:</em>  If <cite>num_cells[0] = 10</cite> and <cite>refinement_ratios_x = [2,4]</cite>
+then the Level 1 grid will have 10 cells in the x-direction,
+Level 2 patches will be refined by a factor of 2,
+and Level 3 will be refined by 4 relative to Level 2
+(by 8 relative to Level 1).</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="descname">refinement_ratios_y : list of int</code></dt>
+<dd><p>Refinement ratios to use in the <cite>y</cite> direction.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="descname">refinement_ratios_t : list of int</code></dt>
+<dd><p>Refinement ratios to use in time.  For an explicit method, maintaining
+the Courant number usually requires refining in time by the same factor as
+in space (or the maximum of the refinement ratio in the different space
+directions).</p>
+<p><strong>Note:</strong> Rather than specifying this list, in GeoClaw it is possible to set
+to set <cite>variable_dt_refinement_ratios = True</cite> so refinement ratios in
+time are chosen automatically.  This might be ported to AMRClaw?</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="descname">aux_type : list of str, of length num_aux</code></dt>
+<dd><p>Specifies the type of variable stored in each aux variable.
+These are used when coarsening aux arrays.  Each
+element can be one of the following (but at most one can be &#8216;capacity&#8217;):</p>
+<blockquote>
+<div><ul class="simple">
+<li>&#8216;center&#8217; for cell-centered values (e.g. density)</li>
+<li>&#8216;capacity&#8217; for a cell-centered capacity function (e.g. cell volume)</li>
+<li>&#8216;xleft&#8217; for a value centered on the left edge in x (e.g. normal velocity u)</li>
+<li>&#8216;yleft&#8217; for a value centered on the left edge in y (e.g. normal velocity v)</li>
+</ul>
+</div></blockquote>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="descname">flag_richardson : boolean</code></dt>
+<dd><p>Determines whether Richardson extrapolation will be used as an error
+estimator.  If <cite>True</cite>, patches will be coarsened by a factor of 2 each
+time regridding is done and  the result from a single step on the
+coarsened patch with double the time step will be compared to the
+solution after 2 steps on the original patch in order to estimate the error.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="descname">flag_richardson_tol : float</code></dt>
+<dd><p>When <cite>flag_richardson == True</cite>, cells will be flagged for refinement
+if the absolute value of the estimated error exceeds this value.</p>
+<p>When <cite>flag_richardson == False</cite>, this value is not used.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="descname">flag2refine : boolean</code></dt>
+<dd><p>Determines whether the subroutine <cite>flag2refine</cite> is used to flag cells
+for refinement.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="descname">flag2refine_tol : float</code></dt>
+<dd><p>When <cite>flag2refine == True</cite>, the default library version <cite>flag2refine.f</cite>
+checks the maximum absolute value of the difference between any component
+of q in this cell with the corresponding component in any of the
+neighboring cells.  The cell is flagged for refinement if the maximum
+value is greater than this tolerance.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="descname">regrid_interval : int</code></dt>
+<dd><p>The number of time steps to take on each level between regridding to the
+next finer level.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="descname">regrid_buffer_width : int</code></dt>
+<dd><p>The number of points to flag for refining around any point flagged by
+error estimation or <cite>flag2refine</cite>.  This buffer zone is to insure that
+waves do not leave the refined region before the next regridding and so
+is generally chosen based on the value of <cite>regrid_interval</cite>, typically to
+be the same value since waves can travel at most one grid cell per time
+step.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="descname">clustering_cutoff  : float between 0 and 1</code></dt>
+<dd><p>Cut-off used in clustering flagged points into rectangular patches for
+refinement.  Clusters are chosen to minimize the number of patches
+subject to the constraint:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="p">(</span><span class="c1"># flagged pts) / (total # of cells refined) &lt; clustering_cutoff</span>
+</pre></div>
+</div>
+<p>If <cite>clustering_cutoff</cite> is close to 1, only flagged cells will be refined,
+which could lead to many <cite>1 x 1</cite> patches.</p>
+<p>The default value 0.7 usually works well.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="descname">verbosity_regrid : int</code></dt>
+<dd><p>Additional information is printed to the terminal each time regridding is
+done at this level or coarser.  Set to 0 to suppress regridding output.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="descname">regions : list</code></dt>
+<dd><p>List of lists of the form
+<cite>[minlevel,maxlevel,t1,t2,x1,x2,y1,y2]</cite>.
+See <a class="reference internal" href="refinement.html#refinement-regions"><span class="std std-ref">Specifying AMR regions</span></a></p>
+</dd></dl>
+
+</div>
+<div class="section" id="debugging-flags-for-additional-printing">
+<h2>Debugging flags for additional printing<a class="headerlink" href="#debugging-flags-for-additional-printing" title="Permalink to this headline">¶</a></h2>
+<p>Setting one or more of these to <cite>True</cite> will cause additional information to
+be written to the file <cite>fort.amr</cite> in the output directory.</p>
+<dl class="attribute">
+<dt>
+<code class="descname">dprint : boolean</code></dt>
+<dd><p>Print domain flags</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="descname">eprint : boolean</code></dt>
+<dd><p>Print error estimation flags</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="descname">edebug : boolean</code></dt>
+<dd><p>Print even more error estimation flags</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="descname">gprint : boolean</code></dt>
+<dd><p>Print grid bisection and clustering information</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="descname">nprint : boolean</code></dt>
+<dd><p>Print proper nesting output</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="descname">pprint : boolean</code></dt>
+<dd><p>Print projection of tagged points</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="descname">rprint : boolean</code></dt>
+<dd><p>Print regridding summary</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="descname">sprint : boolean</code></dt>
+<dd><p>Print space/memory output</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="descname">tprint : boolean</code></dt>
+<dd><p>Print time step info on each level</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="descname">uprint : boolean</code></dt>
+<dd><p>Print update/upbnd information</p>
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<p><a href="http://clawpack.org/">
+    <img class="logo" src= "_static/clawlogo.jpg" alt="Logo"/>
+</a>
+<h2>Version 5.6.1</h2>
+</p>
+  <h3><a href="contents.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Specifying AMRClaw run-time parameters in <cite>setrun.py</cite></a><ul>
+<li><a class="reference internal" href="#input">Input</a></li>
+<li><a class="reference internal" href="#output">Output</a></li>
+<li><a class="reference internal" href="#run-time-parameters">Run-time parameters</a></li>
+<li><a class="reference internal" href="#special-amr-parameters">Special AMR parameters</a></li>
+<li><a class="reference internal" href="#debugging-flags-for-additional-printing">Debugging flags for additional printing</a></li>
+</ul>
+</li>
+</ul>
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="contents.html">Documentation overview</a><ul>
+  <li><a href="amrclaw.html">AMRClaw</a><ul>
+      <li>Previous: <a href="amrclaw1d.html" title="previous chapter">AMRClaw for 1d problems</a></li>
+      <li>Next: <a href="setrun_amrclaw_sample.html" title="next chapter">Sample <cite>setrun.py</cite> module for AMRClaw</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/setrun_amrclaw.rst.txt"
+           rel="nofollow">Show Source</a></li>
+    <li><a href="https://github.com/clawpack/doc/blob/master/doc/setrun_amrclaw.rst"
+           rel="nofollow">Show on GitHub</a></li>
+    <li><a href="https://github.com/clawpack/doc/edit/master/doc/setrun_amrclaw.rst"
+           rel="nofollow">Edit on GitHub</a></li>
+  </ul>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+<h3>Versions</h3>
+<ul>
+    <li><a href="../v5.4.1/setrun_amrclaw.html">v5.4.1</a></li>
+    <li><a href="../v5.4.0/setrun_amrclaw.html">v5.4.0</a></li>
+    <li><a href="../v5.3.1/setrun_amrclaw.html">v5.3.1</a></li>
+    <li><a href="../v5.3.0/setrun_amrclaw.html">v5.3.0</a></li>
+    <li><a href="../v5.2.1/setrun_amrclaw.html">v5.2.1</a></li>
+    <li><a href="../v5.2.0/setrun_amrclaw.html">v5.2.0</a></li>
+    <li><a href="../v5.1.0/setrun_amrclaw.html">v5.1.0</a></li>
+    <li><a href="setrun_amrclaw.html">v5.6.1</a></li>
+    <li><a href="../v5.6.0/setrun_amrclaw.html">v5.6.0</a></li>
+    <li><a href="../v5.5.0/setrun_amrclaw.html">v5.5.0</a></li>
+    <li><a href="../dev/setrun_amrclaw.html">dev</a></li>
+</ul>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+  <div class="footer">
+    &copy; Copyright CC-BY 2019, The Clawpack Development Team.
+    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
+  </div>
+  <script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-44811544-1', 'auto');
+  ga('send', 'pageview');
+
+  </script>
+  
+  </body>
+</html>
