@@ -1,41 +1,28 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
+<!DOCTYPE html>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
+    <meta charset="utf-8" />
     <title>Using OpenMP &#8212; Clawpack 5.4.0 documentation</title>
-    
     <link rel="stylesheet" href="_static/flasky.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="stylesheet" href="_static/base.css" type="text/css" />
     <link rel="stylesheet" href="_static/layout.css" type="text/css" />
-    <link rel="stylesheet" href="_static/banner.css" type="text/css" />
-    
-    <script type="text/javascript">
-      var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    './',
-        VERSION:     '5.4.0',
-        COLLAPSE_INDEX: false,
-        FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true,
-        SOURCELINK_SUFFIX: '.txt'
-      };
-    </script>
-    <script type="text/javascript" src="_static/jquery.js"></script>
-    <script type="text/javascript" src="_static/underscore.js"></script>
-    <script type="text/javascript" src="_static/doctools.js"></script>
-    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="stylesheet" type="text/css" href="_static/graphviz.css" />
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <script async="async" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="shortcut icon" href="_static/clawicon.ico"/>
     <link rel="author" title="About these documents" href="about.html" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Timing Statistics" href="timing.html" />
     <link rel="prev" title="User files required for the Fortran code" href="user_routines.html" /> 
-  </head>
-  <body role="document">
+  </head><body>
 <div id="main-wrapper" class="sphinx">
 <div id="header-wrapper">
   <section id="header">
@@ -50,7 +37,7 @@
           <a href="installing.html">Install</a>
         </li>
         <li>
-          <a class="" href="galleries.html">Gallery</a>
+          <a class="" href="http://clawpack.org/gallery">Gallery</a>
         </li>
         <li>
           <a class="" href="community.html">Community</a>
@@ -102,7 +89,7 @@ OpenMP.</p>
 <p>To invoke OpenMP you need to compile the entire code with appropriate
 compiler flags (see <a class="reference internal" href="fortran_compilers.html#fortran-compilers"><span class="std std-ref">Fortran Compilers</span></a>).  For example, with gfortran
 and the bash shell you could do:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">export</span> <span class="n">FFLAGS</span><span class="o">=</span><span class="s1">&#39;-O2 -fopenmp&#39;</span>  <span class="c1"># or hardwire FFLAGS in the Makefile</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">export</span> <span class="n">FFLAGS</span><span class="o">=</span><span class="s1">&#39;-O2 -fopenmp&#39;</span>  <span class="c1"># or hardwire FFLAGS in the Makefile</span>
 <span class="n">make</span> <span class="n">new</span>
 </pre></div>
 </div>
@@ -110,26 +97,26 @@ and the bash shell you could do:</p>
 routines as well.</p>
 <p>Then you may want to specify how many threads OpenMP should split the work
 between, e.g.</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">export</span> <span class="n">OMP_NUM_THREADS</span><span class="o">=</span><span class="mi">2</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">export</span> <span class="n">OMP_NUM_THREADS</span><span class="o">=</span><span class="mi">2</span>
 </pre></div>
 </div>
 <p>If you do not set this environment variable some default for your system
 will be used.</p>
 <p>You may also need to increase the stack size if the code bombs for no
 apparent reason (and no useful error message):</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">export</span> <span class="n">OMP_STACKSIZE</span><span class="o">=</span><span class="mi">16</span><span class="n">M</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">export</span> <span class="n">OMP_STACKSIZE</span><span class="o">=</span><span class="mi">16</span><span class="n">M</span>
 </pre></div>
 </div>
 <p>and also:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">ulimit</span> <span class="o">-</span><span class="n">s</span> <span class="n">unlimited</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ulimit</span> <span class="o">-</span><span class="n">s</span> <span class="n">unlimited</span>
 </pre></div>
 </div>
-<p>On a Mac this isn&#8217;t allowed and the best you can do is</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">ulimit</span> <span class="o">-</span><span class="n">s</span> <span class="n">hard</span>
+<p>On a Mac this isn’t allowed and the best you can do is</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ulimit</span> <span class="o">-</span><span class="n">s</span> <span class="n">hard</span>
 </pre></div>
 </div>
 <p>To stop using OpenMP you could do:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">export</span> <span class="n">FFLAGS</span><span class="o">=-</span><span class="n">O2</span>   <span class="c1"># or hardwire FFLAGS in the Makefile</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">export</span> <span class="n">FFLAGS</span><span class="o">=-</span><span class="n">O2</span>   <span class="c1"># or hardwire FFLAGS in the Makefile</span>
 <span class="n">make</span> <span class="n">new</span>
 </pre></div>
 </div>
@@ -142,8 +129,8 @@ be seen only when there are a sufficiently large number of patches at each
 level relative to the number of threads.  For this reason it is recommended
 that the parameter <cite>max1d</cite> be set to 60 in the modules</p>
 <ul class="simple">
-<li><cite>$CLAW/amrclaw/src/2d/amr_module.f90</cite></li>
-<li><cite>$CLAW/amrclaw/src/3d/amr_module.f90</cite></li>
+<li><p><cite>$CLAW/amrclaw/src/2d/amr_module.f90</cite></p></li>
+<li><p><cite>$CLAW/amrclaw/src/3d/amr_module.f90</cite></p></li>
 </ul>
 <p>when OpenMP is used.  This limits the size of any patch to have at most
 <cite>max1d</cite> grid cells in each direction.  If OpenMP is not used, a larger value
@@ -152,7 +139,7 @@ overhead associated with passing boundary values in ghost cells and other
 per-patch work.  However, this is generally negligible and <cite>max1d=60</cite> is the
 default value set in the code.   If you do change this value, remember to
 recompile everything via:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">make</span> <span class="n">new</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">make</span> <span class="n">new</span>
 </pre></div>
 </div>
 </div>
@@ -176,7 +163,7 @@ thread safe, see <a class="reference internal" href="fgmax.html#fgmax"><span cla
 </a>
 <h2>Version 5.4.0</h2>
 </p>
-  <h3><a href="contents.html">Table Of Contents</a></h3>
+  <h3><a href="contents.html">Table of Contents</a></h3>
   <ul>
 <li><a class="reference internal" href="#">Using OpenMP</a><ul>
 <li><a class="reference internal" href="#using-openmp-with-amr">Using OpenMP with AMR</a></li>
@@ -191,43 +178,46 @@ thread safe, see <a class="reference internal" href="fgmax.html#fgmax"><span cla
       <li>Next: <a href="timing.html" title="next chapter">Timing Statistics</a></li>
   </ul></li>
 </ul>
-  <div role="note" aria-label="source link">
-    <h3>This Page</h3>
-    <ul class="this-page-menu">
-      <li><a href="_sources/openmp.rst.txt"
-            rel="nofollow">Show Source</a></li>
-    </ul>
-   </div>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/openmp.rst.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
 <div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
     <form class="search" action="search.html" method="get">
-      <div><input type="text" name="q" /></div>
-      <div><input type="submit" value="Go" /></div>
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
     </form>
+    </div>
 </div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
-<h3>Versions</h3>
+<script>$('#searchbox').show(0);</script>
+<h4>Latest Version</h4>
 <ul>
-    <li><a href="../v5.4.1/openmp.html">v5.4.1</a></li>
-    <li><a href="openmp.html">v5.4.0</a></li>
-    <li><a href="../v5.3.1/openmp.html">v5.3.1</a></li>
-    <li><a href="../v5.3.0/openmp.html">v5.3.0</a></li>
-    <li><a href="../v5.2.1/openmp.html">v5.2.1</a></li>
-    <li><a href="../v5.2.0/openmp.html">v5.2.0</a></li>
-    <li><a href="../v5.1.0/openmp.html">v5.1.0</a></li>
-    <li><a href="../v5.6.1/openmp.html">v5.6.1</a></li>
-    <li><a href="../v5.6.0/openmp.html">v5.6.0</a></li>
-    <li><a href="../v5.5.0/openmp.html">v5.5.0</a></li>
-    <li><a href="../dev/openmp.html">dev</a></li>
+  <li><a href="../dev/openmp.html">dev</a></li>
+  <li><a href="../v5.7.0/openmp.html">v5.7.0</a></li>
 </ul>
+<h4>Older Versions</h4>
+<ul>
+  <li><a href="../v5.1.0/openmp.html">v5.1.0</a></li>
+  <li><a href="../v5.2.0/openmp.html">v5.2.0</a></li>
+  <li><a href="../v5.2.1/openmp.html">v5.2.1</a></li>
+  <li><a href="../v5.3.0/openmp.html">v5.3.0</a></li>
+  <li><a href="../v5.3.1/openmp.html">v5.3.1</a></li>
+  <li><a href="openmp.html">v5.4.0</a></li>
+  <li><a href="../v5.4.1/openmp.html">v5.4.1</a></li>
+  <li><a href="../v5.5.0/openmp.html">v5.5.0</a></li>
+  <li><a href="../v5.6.0/openmp.html">v5.6.0</a></li>
+  <li><a href="../v5.6.1/openmp.html">v5.6.1</a></li>
+</ul>
+
         </div>
       </div>
       <div class="clearer"></div>
     </div>
   <div class="footer">
-    &copy; Copyright 2017, The Clawpack Development Team.
+    &copy; Copyright CC-BY 2020, The Clawpack Development Team.
     Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
   </div>
   <script>

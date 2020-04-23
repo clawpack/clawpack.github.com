@@ -1,0 +1,371 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>Earthquake sources: Fault slip and the Okada model &#8212; Clawpack 5.7.0 documentation</title>
+    <link rel="stylesheet" href="_static/flasky.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/base.css" type="text/css" />
+    <link rel="stylesheet" href="_static/layout.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/graphviz.css" />
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <script async="async" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="shortcut icon" href="_static/clawicon.ico"/>
+    <link rel="author" title="About these documents" href="about.html" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Setting sealevel" href="sealevel.html" />
+    <link rel="prev" title="Quick start guide for storm surge modeling" href="quick_surge.html" /> 
+  </head><body>
+<div id="main-wrapper" class="sphinx">
+<div id="header-wrapper">
+  <section id="header">
+    <!-- <h1><a href="http://clawpack.org/">Clawpack</a></h1> -->
+    <h1><a href="http://clawpack.org/">Clawpack-5</a></h1> 
+    <nav>
+      <ul>
+        <li>
+          <a href="contents.html">Docs</a>
+        </li>
+        <li>
+          <a href="installing.html">Install</a>
+        </li>
+        <li>
+          <a class="" href="http://clawpack.org/gallery">Gallery</a>
+        </li>
+        <li>
+          <a class="" href="community.html">Community</a>
+        </li>
+        <li>
+          <a class="active" href="http://github.com/clawpack">Source</a>
+        </li>
+        <li>
+          <a class="" href="developers.html">Develop</a>
+        </li>
+      </ul>
+    </nav>
+  </section>
+<div class="decoration"></div>
+</div>
+
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="sealevel.html" title="Setting sealevel"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="quick_surge.html" title="Quick start guide for storm surge modeling"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="contents.html">Clawpack 5.7.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="geoclaw.html" accesskey="U">GeoClaw Description and Detailed Contents</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="earthquake-sources-fault-slip-and-the-okada-model">
+<span id="okada"></span><h1>Earthquake sources: Fault slip and the Okada model<a class="headerlink" href="#earthquake-sources-fault-slip-and-the-okada-model" title="Permalink to this headline">¶</a></h1>
+<p>To initiate a tsunami from an earthquake, it is necessary to generate a model of
+how the seafloor moves, which is generally specified in a <em>dtopo</em> file as
+described in <a class="reference internal" href="topo.html#topo-dtopo"><span class="std std-ref">Topography displacement files</span></a>.  This is often done by starting with a
+description of an earthquake fault, broken up into a collection of
+subfaults, with various parameters defined on each subfault.  A seismic
+modeling code would take these parameters and compute the elastic waves
+generated in the earth as a result.  However, for tsunami modeling all we need
+to know is the motion of the seafloor, which is one boundary of the seismic
+domain.  Moreover the high-frequency ground motions during the earthquake
+have little impact on the resulting tsunami.  For these reasons it is often
+sufficient to use the “Okada model” described below, which gives the final
+deformation of the sea floor due to specified slip on each subfault.</p>
+<p>The Jupyter notebook <cite>$CLAW/apps/notebooks/geoclaw/Okada.ipynb</cite>
+illustrates how the Okada model works and how to generate the seafloor
+deformation needed in GeoClaw using this model.</p>
+<p>The Python module <cite>$CLAW/geoclaw/src/python/geoclaw/dtopotools.py</cite>
+provides tools to convert a file specifying a collection of subfaults
+into a <em>dtopofile</em> by applying the Okada model to each subfault and adding
+the results together (valid by linear superposition of the solutions to the
+linear elastic halfspace problems).
+See <a class="reference internal" href="dtopotools_module.html#dtopotools-module"><span class="std std-ref">dtopotools module for moving topography</span></a> for more documentation and illustrations.</p>
+<div class="section" id="fault-slip-on-rectangular-subfaults">
+<span id="okada-slip"></span><h2>Fault slip on rectangular subfaults<a class="headerlink" href="#fault-slip-on-rectangular-subfaults" title="Permalink to this headline">¶</a></h2>
+<p>For historic earthquakes, it is generally possible to find many different
+models for the distribution of slip on one or more fault planes,
+see for example the pointers at <a class="reference internal" href="tsunamidata.html#tsunamidata-sources"><span class="std std-ref">Earthquake source models</span></a>.</p>
+<p>An earthquake subfault model is typically given in the form of a set of
+<em>rectangular patches</em> on the fault plane.
+Each patch has a set of parameters defining the relative slip of rock on one
+side of the planar patch to slip on the other side.  The minimum set of
+parameters required is:</p>
+<ul class="simple">
+<li><p><em>length</em> and <em>width</em> of the fault plane (typically in m or km),</p></li>
+<li><p><em>latitude</em> and <em>longitude</em> of some point on the fault plane, typically
+either the centroid or the center of the top (shallowest edge),</p></li>
+<li><p><em>depth</em> of the specified point below the sea floor,</p></li>
+<li><p><em>strike</em>, the orientation of the top edge, measured in degrees
+clockwise from North.  Between 0 and 360.  The fault plane dips downward
+to the right when moving along the top edge in the strike direction.</p></li>
+<li><p><em>dip</em>, angle at which the plane dips downward from the top edge, a
+positive angle between 0 and 90 degrees.</p></li>
+<li><p><em>rake</em>, the angle in the fault plane in which the slip occurs,
+measured in degrees counterclockwise from the strike direction.
+Between -180 and 180.</p></li>
+<li><p><em>slip &gt; 0</em>, the distance (typically in cm or m) the hanging block moves
+relative to the foot block, in the direction specified by the rake.
+The “hanging block” is the one above the dipping fault plane (or to the
+right if you move in the strike direction).</p></li>
+</ul>
+<p>Note that for a strike-slip earthquake, <em>rake</em> is near 0 or 180.
+For a subduction earthquake, the rake is usually closer to 90 degrees.</p>
+<p>For kinematic (time-dependent) rupture, it is also necessary to specify the
+<cite>rupture_time</cite> and <cite>rise_time</cite> of each subfault, as discussed below.</p>
+<p>A fault can be specified in GeoClaw as an instance of the
+<cite>dtopotools.Fault</cite> class, instatiated e.g. by:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">clawpack.geoclaw</span> <span class="kn">import</span> <span class="n">dtopotools</span>
+<span class="n">fault</span> <span class="o">=</span> <span class="n">dtopotools</span><span class="o">.</span><span class="n">Fault</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>Then set <cite>fault.subfaults</cite> to a list of subfaults as instances of the class
+<cite>dtopotools.SubFault</cite>. Each subfault has attributes corresponding to the
+parameters listed above.  In addition, <cite>coordinate_specification</cite> should be
+set for each subfault to one of:</p>
+<ul class="simple">
+<li><p>“bottom center”: (longitude,latitude) and depth at bottom center</p></li>
+<li><p>“top center”: (longitude,latitude) and depth at top center</p></li>
+<li><p>“centroid”: (longitude,latitude) and depth at centroid of plane</p></li>
+<li><p>“noaa sift”: (longitude,latitude) at bottom center, depth at top,
+This mixed convention is used by the NOAA SIFT
+database and “unit sources”, see:
+<a class="reference external" href="http://nctr.pmel.noaa.gov/propagation-database.html">http://nctr.pmel.noaa.gov/propagation-database.html</a>.</p></li>
+<li><p>“top upstrike corner”: (longitude,latitude) and depth at
+corner of fault that is both updip and upstrike.</p></li>
+</ul>
+<p>For example, a simple single-subfault model of the 2010 Chile event can be
+specified by:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">subfault</span> <span class="o">=</span> <span class="n">dtopotools</span><span class="o">.</span><span class="n">SubFault</span><span class="p">()</span>
+<span class="n">subfault</span><span class="o">.</span><span class="n">length</span> <span class="o">=</span> <span class="mf">450.e3</span>             <span class="c1"># meters</span>
+<span class="n">subfault</span><span class="o">.</span><span class="n">width</span> <span class="o">=</span> <span class="mf">100.e3</span>              <span class="c1"># meters</span>
+<span class="n">subfault</span><span class="o">.</span><span class="n">depth</span> <span class="o">=</span> <span class="mf">35.e3</span>               <span class="c1"># meters</span>
+<span class="n">subfault</span><span class="o">.</span><span class="n">strike</span> <span class="o">=</span> <span class="mf">16.</span>                <span class="c1"># degrees</span>
+<span class="n">subfault</span><span class="o">.</span><span class="n">slip</span> <span class="o">=</span> <span class="mf">15.</span>                  <span class="c1"># degrees</span>
+<span class="n">subfault</span><span class="o">.</span><span class="n">rake</span> <span class="o">=</span> <span class="mf">104.</span>                 <span class="c1"># degrees</span>
+<span class="n">subfault</span><span class="o">.</span><span class="n">dip</span> <span class="o">=</span> <span class="mf">14.</span>                   <span class="c1"># degrees</span>
+<span class="n">subfault</span><span class="o">.</span><span class="n">longitude</span> <span class="o">=</span> <span class="o">-</span><span class="mf">72.668</span>         <span class="c1"># degrees</span>
+<span class="n">subfault</span><span class="o">.</span><span class="n">latitude</span> <span class="o">=</span> <span class="o">-</span><span class="mf">35.826</span>          <span class="c1"># degrees</span>
+<span class="n">subfault</span><span class="o">.</span><span class="n">coordinate_specification</span> <span class="o">=</span> <span class="s2">&quot;top center&quot;</span>
+
+<span class="n">fault</span> <span class="o">=</span> <span class="n">dtopotools</span><span class="o">.</span><span class="n">Fault</span><span class="p">()</span>
+<span class="n">fault</span><span class="o">.</span><span class="n">subfaults</span> <span class="o">=</span> <span class="p">[</span><span class="n">subfault</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>Starting in Version 5.5.0, it is also possible to specify a set of
+<em>triangular</em> subfault patches rather than rectangles.  Doing so requires
+a different set of parameters, as described below in
+<a class="reference internal" href="#okada-triangular"><span class="std std-ref">Fault slip on triangular subfaults</span></a>.</p>
+<p>Once the subfaults have been specified, the function
+<cite>fault.create_dtopography</cite> can be used to create a
+<cite>dtopotools.DTopography</cite> object, and then written out as a dtopofile for use
+in GeoClaw, e.g.:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">x</span><span class="p">,</span><span class="n">y</span> <span class="o">=</span> <span class="n">fault</span><span class="o">.</span><span class="n">create_dtopo_xy</span><span class="p">(</span><span class="n">dx</span><span class="o">=</span><span class="mi">1</span><span class="o">/</span><span class="mf">60.</span><span class="p">,</span> <span class="n">buffer_size</span><span class="o">=</span><span class="mf">2.0</span><span class="p">)</span>
+<span class="n">fault</span><span class="o">.</span><span class="n">create_dtopography</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">times</span><span class="o">=</span><span class="p">[</span><span class="mf">1.</span><span class="p">])</span>
+<span class="n">dtopo</span> <span class="o">=</span> <span class="n">fault</span><span class="o">.</span><span class="n">dtopo</span>
+<span class="n">fault</span><span class="o">.</span><span class="n">rupture_type</span> <span class="o">=</span> <span class="s1">&#39;static&#39;</span>
+<span class="n">dtopo</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;chile_dtopo.tt3&#39;</span><span class="p">,</span> <span class="n">dtopo_type</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>This will create a file <cite>chile_dtopo.tt3</cite> that can be used as a
+dtopofile in GeoClaw.  It will cover a region <cite>buffer_size = 2.0</cite>
+degrees larger on each side than the surface projection of the
+rectangular fault, with a resolution of one arcminute (<cite>dx = 1/60.</cite> degree).</p>
+<p>In addition to <cite>dtopotools.Fault</cite>, the <cite>dtopotools</cite> has several other
+derived classes that simplify setting up a fault from a specified set of
+subfaults:</p>
+<ul class="simple">
+<li><p><cite>CSVFault</cite>: reads in subfaults from a csv file with header,</p></li>
+<li><p><cite>SiftFault</cite>: sets up a fault based on the NOAA SIFT unit sources, see
+<a class="reference external" href="http://nctr.pmel.noaa.gov/propagation-database.html">http://nctr.pmel.noaa.gov/propagation-database.html</a>,</p></li>
+<li><p><cite>UCSBFault</cite>: reads in subfaults in UCSB format,</p></li>
+<li><p><cite>SegmentedPlaneFault</cite>: Take a single fault plane and subdivides it into
+recangles, to allow specifying different subfault parameters on each.</p></li>
+</ul>
+<p>See <a class="reference internal" href="dtopotools_module.html#dtopotools-module"><span class="std std-ref">dtopotools module for moving topography</span></a> for more details, and the Jupyter notebook
+<cite>$CLAW/apps/notebooks/geoclaw/dtopotools_examples.ipynb</cite> for more examples.</p>
+</div>
+<div class="section" id="okada-model">
+<span id="id1"></span><h2>Okada model<a class="headerlink" href="#okada-model" title="Permalink to this headline">¶</a></h2>
+<p>The slip on the fault plane(s) must be translated into seafloor deformation.
+This is often done using the “Okada model”, which is derived from
+a Green’s function solution to the elastic half space problem, following
+<a class="reference internal" href="biblio.html#okada85" id="id2"><span>[Okada85]</span></a>.  Uniform
+displacement of the solid over a finite rectangular patch specified
+using the parameters described above, when inserted in a homogeneous
+elastic half space a distance <em>depth</em> below the free surface, leads
+to a steady state solution in which the free surface is deformed.  This
+deformation is used as the seafloor deformation.  Of course this is only an
+approximation since the actual seafloor in rarely flat, and the actual earth
+is not a homogeneous isotropic elastic material as assumed in this model.
+However, it is often assumed to be a reasonable approximation for tsunami
+modeling, particularly since the fault slip parameters are generally not
+known very well even for historical earthquakes and so a more accurate
+modeling of the resulting seafloor deformation may not be justified.</p>
+<p>In addition to the parameters above, the Okada model also requires an elastic
+parameter, the Poisson ratio, which is usually taken to be 0.25.</p>
+</div>
+<div class="section" id="kinematic-rupture">
+<h2>Kinematic rupture<a class="headerlink" href="#kinematic-rupture" title="Permalink to this headline">¶</a></h2>
+<p>It is also possible to set a <cite>rupture_time</cite> and a <cite>rise_time</cite> for each
+subfault in order to model a time-dependent rupture process.  This is called
+a “kinematic rupture” since the these values are specified.</p>
+<p>To specify a kinematic rupture, create a <cite>dtopotools.Fault</cite> object <cite>fault</cite>
+with <cite>fault.rupture_type = ‘kinematic’</cite>.
+(For backward compatibility, you can also specify this as <cite>‘dynamic’</cite>.
+However, the term “dynamic rupture” often refers to modeling the
+rupture process itself.)</p>
+<p>A kinematic rupture is <strong>not</strong> modeled by via modeling the seismic
+waves that would be generated by the specified subfault motions.
+There are seismic codes that do this, based on the same set of fault
+parameters, but this is not supported directly in GeoClaw. If
+desired, output from such a code could be converted by the user
+into a dtopo file for use in GeoClaw.</p>
+<p>Once a <cite>dtopotools.Fault</cite> object has been created with the desired
+subfaults, a <cite>dtopotools.DTopography</cite> object can be computed using
+the <cite>dtopotools.Fault.create_dtopography</cite> function in GeoClaw (and
+written out as a dtopo file using its <cite>write</cite> function.) The moving
+dtopo generated in this manner is the sum of the Okada solutions
+generated by each subfault, sampled at a set of specified times
+<cite>t</cite>.  For subfaults with <cite>subfault.rupture_time &gt; t</cite>, no displacement
+is included, while if <cite>subfault.rupture_time + subfault.rise_time
+&lt;= t</cite> the entire deformation due to this subfault is included, with
+linear interpolation between these at intermediate times.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Starting in Version 5.5.0, the subfault parameter <cite>rise_time</cite>
+now refers to the total rise time of a subfault, while <cite>rise_time_starting</cite>
+is the rise time up to the break in the piecewise quadratic
+function defining the rise. By default <cite>rise_time_ending</cite> is set equal to
+<cite>rise_time_starting</cite>.
+(In earlier versions, <cite>rise_time</cite> read in from csv
+files, for example, was erroneously interpreted as <cite>rise_time_starting</cite>
+is now.) See the module function <cite>rise_fraction</cite> in
+<a class="reference internal" href="dtopotools_module.html#dtopotools-module"><span class="std std-ref">dtopotools module for moving topography</span></a> for more details.</p>
+</div>
+</div>
+<div class="section" id="fault-slip-on-triangular-subfaults">
+<span id="okada-triangular"></span><h2>Fault slip on triangular subfaults<a class="headerlink" href="#fault-slip-on-triangular-subfaults" title="Permalink to this headline">¶</a></h2>
+<p>Starting in Version 5.5.0, it is also possible to specify a set of
+<em>triangular</em> subfault patches rather than rectangles.</p>
+<p>Specifying a subfault as a triangular patch rather than as a rectangle can
+be done by setting <cite>subfault.coordinate_specification = ‘triangular’</cite> and
+specifying <cite>subfault.corners</cite> as a list of three <cite>(x,y,depth)</cite> tuples, along
+with the <cite>slip</cite> and <cite>rake</cite>. In this case you do not set the attributes
+<cite>length</cite>, <cite>width</cite>, <cite>depth</cite>, <cite>strike</cite>, or <cite>dip</cite>, since the corners of the
+triangle are sufficient to determine this geometry.
+Internally a strike direction is calculated by intersecting the plane
+defined by the triangle with the ground surface, and choosing the direction
+so that the plane of the triangle dips at an angle between 0 and 90 degrees
+relative to the strike direction.  The specified <cite>rake</cite> is again
+interpreted as degrees counterclockwise from this strike direction.</p>
+<p>For an example see [need to add a notebook].</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<p><a href="http://clawpack.org/">
+    <img class="logo" src= "_static/clawlogo.jpg" alt="Logo"/>
+</a>
+<h2>Version 5.7.0</h2>
+</p>
+  <h3><a href="contents.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Earthquake sources: Fault slip and the Okada model</a><ul>
+<li><a class="reference internal" href="#fault-slip-on-rectangular-subfaults">Fault slip on rectangular subfaults</a></li>
+<li><a class="reference internal" href="#okada-model">Okada model</a></li>
+<li><a class="reference internal" href="#kinematic-rupture">Kinematic rupture</a></li>
+<li><a class="reference internal" href="#fault-slip-on-triangular-subfaults">Fault slip on triangular subfaults</a></li>
+</ul>
+</li>
+</ul>
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="contents.html">Documentation overview</a><ul>
+  <li><a href="geoclaw.html">GeoClaw Description and Detailed Contents</a><ul>
+      <li>Previous: <a href="quick_surge.html" title="previous chapter">Quick start guide for storm surge modeling</a></li>
+      <li>Next: <a href="sealevel.html" title="next chapter">Setting sealevel</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/okada.rst.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+<h4>Latest Version</h4>
+<ul>
+  <li><a href="../dev/okada.html">dev</a></li>
+  <li><a href="okada.html">v5.7.0</a></li>
+</ul>
+<h4>Older Versions</h4>
+<ul>
+  <li><a href="../v5.1.0/okada.html">v5.1.0</a></li>
+  <li><a href="../v5.2.0/okada.html">v5.2.0</a></li>
+  <li><a href="../v5.2.1/okada.html">v5.2.1</a></li>
+  <li><a href="../v5.3.0/okada.html">v5.3.0</a></li>
+  <li><a href="../v5.3.1/okada.html">v5.3.1</a></li>
+  <li><a href="../v5.4.0/okada.html">v5.4.0</a></li>
+  <li><a href="../v5.4.1/okada.html">v5.4.1</a></li>
+  <li><a href="../v5.5.0/okada.html">v5.5.0</a></li>
+  <li><a href="../v5.6.0/okada.html">v5.6.0</a></li>
+  <li><a href="../v5.6.1/okada.html">v5.6.1</a></li>
+</ul>
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+  <div class="footer">
+    &copy; Copyright CC-BY 2020, The Clawpack Development Team.
+    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
+  </div>
+  <script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-44811544-1', 'auto');
+  ga('send', 'pageview');
+
+  </script>
+  
+  </body>
+</html>

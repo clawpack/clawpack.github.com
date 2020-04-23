@@ -1,41 +1,28 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
+<!DOCTYPE html>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
+    <meta charset="utf-8" />
     <title>Shallow water Riemann solvers in Clawpack &#8212; Clawpack dev documentation</title>
-    
     <link rel="stylesheet" href="../_static/flasky.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" href="../_static/base.css" type="text/css" />
     <link rel="stylesheet" href="../_static/layout.css" type="text/css" />
-    <link rel="stylesheet" href="../_static/banner.css" type="text/css" />
-    
-    <script type="text/javascript">
-      var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    '../',
-        VERSION:     'dev',
-        COLLAPSE_INDEX: false,
-        FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true,
-        SOURCELINK_SUFFIX: '.txt'
-      };
-    </script>
-    <script type="text/javascript" src="../_static/jquery.js"></script>
-    <script type="text/javascript" src="../_static/underscore.js"></script>
-    <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script async="async" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="shortcut icon" href="../_static/clawicon.ico"/>
     <link rel="author" title="About these documents" href="../about.html" />
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Plotting with Visclaw" href="../plotting.html" />
     <link rel="prev" title="Riemann solvers" href="../riemann.html" /> 
-  </head>
-  <body role="document">
+  </head><body>
 <div id="main-wrapper" class="sphinx">
 <div id="header-wrapper">
   <section id="header">
@@ -50,7 +37,7 @@
           <a href="../installing.html">Install</a>
         </li>
         <li>
-          <a class="" href="../gallery/index.html">Gallery</a>
+          <a class="" href="http://clawpack.org/gallery">Gallery</a>
         </li>
         <li>
           <a class="" href="../community.html">Community</a>
@@ -91,361 +78,189 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  
-<style>
-/* CSS for nbsphinx extension */
-
-/* remove conflicting styling from Sphinx themes */
-div.nbinput,
-div.nbinput div.prompt,
-div.nbinput div.input_area,
-div.nbinput div[class*=highlight],
-div.nbinput div[class*=highlight] pre,
-div.nboutput,
-div.nbinput div.prompt,
-div.nbinput div.output_area,
-div.nboutput div[class*=highlight],
-div.nboutput div[class*=highlight] pre {
-    background: none;
-    border: none;
-    padding: 0 0;
-    margin: 0;
-    box-shadow: none;
-}
-
-/* avoid gaps between output lines */
-div.nboutput div[class*=highlight] pre {
-    line-height: normal;
-}
-
-/* input/output containers */
-div.nbinput,
-div.nboutput {
-    display: -webkit-flex;
-    display: flex;
-    align-items: flex-start;
-    margin: 0;
-    width: 100%;
-}
-@media (max-width: 540px) {
-    div.nbinput,
-    div.nboutput {
-        flex-direction: column;
-    }
-}
-
-/* input container */
-div.nbinput {
-    padding-top: 5px;
-}
-
-/* last container */
-div.nblast {
-    padding-bottom: 5px;
-}
-
-/* input prompt */
-div.nbinput div.prompt pre {
-    color: #303F9F;
-}
-
-/* output prompt */
-div.nboutput div.prompt pre {
-    color: #D84315;
-}
-
-/* all prompts */
-div.nbinput div.prompt,
-div.nboutput div.prompt {
-    min-width: 9ex;
-    padding-top: 0.4em;
-    padding-right: 0.4em;
-    text-align: right;
-    flex: 0;
-}
-@media (max-width: 540px) {
-    div.nbinput div.prompt,
-    div.nboutput div.prompt {
-        text-align: left;
-        padding: 0.4em;
-    }
-    div.nboutput div.prompt.empty {
-        padding: 0;
-    }
-}
-
-/* disable scrollbars on prompts */
-div.nbinput div.prompt pre,
-div.nboutput div.prompt pre {
-    overflow: hidden;
-}
-
-/* input/output area */
-div.nbinput div.input_area,
-div.nboutput div.output_area {
-    padding: 0.4em;
-    -webkit-flex: 1;
-    flex: 1;
-    overflow: auto;
-}
-@media (max-width: 540px) {
-    div.nbinput div.input_area,
-    div.nboutput div.output_area {
-        width: 100%;
-    }
-}
-
-/* input area */
-div.nbinput div.input_area {
-    border: 1px solid #cfcfcf;
-    border-radius: 2px;
-    background: #f7f7f7;
-}
-
-/* override MathJax center alignment in output cells */
-div.nboutput div[class*=MathJax] {
-    text-align: left !important;
-}
-
-/* override sphinx.ext.pngmath center alignment in output cells */
-div.nboutput div.math p {
-    text-align: left;
-}
-
-/* standard error */
-div.nboutput div.output_area.stderr {
-    background: #fdd;
-}
-
-/* ANSI colors */
-.ansi-black-fg { color: #3E424D; }
-.ansi-black-bg { background-color: #3E424D; }
-.ansi-black-intense-fg { color: #282C36; }
-.ansi-black-intense-bg { background-color: #282C36; }
-.ansi-red-fg { color: #E75C58; }
-.ansi-red-bg { background-color: #E75C58; }
-.ansi-red-intense-fg { color: #B22B31; }
-.ansi-red-intense-bg { background-color: #B22B31; }
-.ansi-green-fg { color: #00A250; }
-.ansi-green-bg { background-color: #00A250; }
-.ansi-green-intense-fg { color: #007427; }
-.ansi-green-intense-bg { background-color: #007427; }
-.ansi-yellow-fg { color: #DDB62B; }
-.ansi-yellow-bg { background-color: #DDB62B; }
-.ansi-yellow-intense-fg { color: #B27D12; }
-.ansi-yellow-intense-bg { background-color: #B27D12; }
-.ansi-blue-fg { color: #208FFB; }
-.ansi-blue-bg { background-color: #208FFB; }
-.ansi-blue-intense-fg { color: #0065CA; }
-.ansi-blue-intense-bg { background-color: #0065CA; }
-.ansi-magenta-fg { color: #D160C4; }
-.ansi-magenta-bg { background-color: #D160C4; }
-.ansi-magenta-intense-fg { color: #A03196; }
-.ansi-magenta-intense-bg { background-color: #A03196; }
-.ansi-cyan-fg { color: #60C6C8; }
-.ansi-cyan-bg { background-color: #60C6C8; }
-.ansi-cyan-intense-fg { color: #258F8F; }
-.ansi-cyan-intense-bg { background-color: #258F8F; }
-.ansi-white-fg { color: #C5C1B4; }
-.ansi-white-bg { background-color: #C5C1B4; }
-.ansi-white-intense-fg { color: #A1A6B2; }
-.ansi-white-intense-bg { background-color: #A1A6B2; }
-
-.ansi-bold { font-weight: bold; }
-</style>
-<div class="section" id="Shallow-water-Riemann-solvers-in-Clawpack">
-<h1>Shallow water Riemann solvers in Clawpack<a class="headerlink" href="#Shallow-water-Riemann-solvers-in-Clawpack" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="shallow-water-riemann-solvers-in-clawpack">
+<span id="shallow-water-riemann-solvers"></span><h1>Shallow water Riemann solvers in Clawpack<a class="headerlink" href="#shallow-water-riemann-solvers-in-clawpack" title="Permalink to this headline">¶</a></h1>
 <p>A wide range of shallow water (SW) solvers are available in
-<code class="docutils literal"><span class="pre">clawpack.riemann</span></code>. Here&#8217;s a brief description of each. For each one,
-we have indicated (after &#8220;Fortran:&#8221;) the files you should compile to use
-it in the Fortran codes, and after &#8220;PyClaw&#8221; where you should import it
+<cite>clawpack.riemann</cite>. Here’s a brief description of each. For each one,
+we have indicated (after “Fortran:”) the files you should compile to use
+it in the Fortran codes, and after “PyClaw” where you should import it
 from to use it in Python. If a pure-Python implementation is available,
 we also indicate that. Finally, we include links to examples that use
 each solver.</p>
-<div class="section" id="One-dimension">
-<h2>One dimension<a class="headerlink" href="#One-dimension" title="Permalink to this headline">¶</a></h2>
-<p>For most 1D solvers, the vector <code class="docutils literal"><span class="pre">q</span></code> of conserved quantities is</p>
-<div class="math">
+<div class="section" id="one-dimension">
+<h2>One dimension<a class="headerlink" href="#one-dimension" title="Permalink to this headline">¶</a></h2>
+<p>For most 1D solvers, the vector <cite>q</cite> of conserved quantities is</p>
+<div class="math notranslate nohighlight">
 \[\begin{split}q = \begin{bmatrix} h \\ hu \end{bmatrix},\end{split}\]</div>
-<p>where <span class="math">\(h\)</span> is depth and <span class="math">\(hu\)</span> is momentum. Solvers with a
+<p>where <span class="math notranslate nohighlight">\(h\)</span> is depth and <span class="math notranslate nohighlight">\(hu\)</span> is momentum. Solvers with a
 tracer include that as a 3rd component. For solvers with bathymetry, the
-bathymetry is the first (and only) component of <code class="docutils literal"><span class="pre">aux</span></code>. All solvers
-require setting a constant parameter <code class="docutils literal"><span class="pre">grav</span></code>, which controls the force
+bathymetry is the first (and only) component of <cite>aux</cite>. All solvers
+require setting a constant parameter <cite>grav</cite>, which controls the force
 of gravity.</p>
 <ul class="simple">
-<li><strong>Basic Roe solver</strong>: The most basic solver. Uses Roe&#8217;s
-linearization, with an entropy fix.</li>
-<li>Fortran code:
-<a class="reference external" href="https://github.com/clawpack/riemann/blob/master/src/rp1_shallow_roe_with_efix.f90">rp1_shallow_roe_with_efix.f90</a></li>
-<li>PyClaw import: <code class="docutils literal"><span class="pre">riemann.shallow_roe_with_efix_1D</span></code></li>
-<li>Pure Python code: <code class="docutils literal"><span class="pre">riemann.shallow_1D_py.shallow_roe_1D</span></code></li>
-<li>Examples:<ul>
-<li><a class="reference external" href="https://github.com/clawpack/pyclaw/blob/master/examples/shallow_1d/dam_break.py">https://github.com/clawpack/pyclaw/blob/master/examples/shallow_1d/dam_break.py</a></li>
+<li><p><strong>Basic Roe solver</strong>: The most basic solver. Uses Roe’s
+linearization, with an entropy fix.</p>
+<ul>
+<li><p>Fortran code:
+<a class="reference external" href="https://github.com/clawpack/riemann/blob/master/src/rp1_shallow_roe_with_efix.f90">rp1_shallow_roe_with_efix.f90</a></p></li>
+<li><p>PyClaw import: <cite>riemann.shallow_roe_with_efix_1D</cite></p></li>
+<li><p>Pure Python code: <cite>riemann.shallow_1D_py.shallow_roe_1D</cite></p></li>
+<li><p>Examples:</p>
+<ul>
+<li><p><a class="reference external" href="https://github.com/clawpack/pyclaw/blob/master/examples/shallow_1d/dam_break.py">https://github.com/clawpack/pyclaw/blob/master/examples/shallow_1d/dam_break.py</a></p></li>
 </ul>
 </li>
-<li><strong>HLL solver</strong>: Also basic; uses HLL instead of Roe.</li>
-<li>Pure Python <code class="docutils literal"><span class="pre">riemann.shallow_1D_py.shallow_hll_1D</span></code></li>
-<li><strong>Roe solver with a tracer</strong>: Uses Roe&#8217;s linearization and add a 3rd
+</ul>
+</li>
+<li><p><strong>HLL solver</strong>: Also basic; uses HLL instead of Roe.</p>
+<ul>
+<li><p>Pure Python <cite>riemann.shallow_1D_py.shallow_hll_1D</cite></p></li>
+</ul>
+</li>
+<li><p><strong>Roe solver with a tracer</strong>: Uses Roe’s linearization and add a 3rd
 equation to advect a passive tracer. Useful if you want to track
-which bit of water went where.</li>
-<li>Fortran code:
-<a class="reference external" href="https://github.com/clawpack/riemann/blob/master/src/rp1_shallow_roe_tracer.f90">rp1_shallow_roe_tracer.f90</a></li>
-<li>PyClaw import: <code class="docutils literal"><span class="pre">riemann.shallow_roe_tracer_1D</span></code></li>
-<li>Examples:<ul>
-<li><a class="reference external" href="https://github.com/clawpack/riemann_book/blob/master/Shallow_tracer.ipynb">https://github.com/clawpack/riemann_book/blob/master/Shallow_tracer.ipynb</a></li>
+which bit of water went where.</p>
+<ul>
+<li><p>Fortran code:
+<a class="reference external" href="https://github.com/clawpack/riemann/blob/master/src/rp1_shallow_roe_tracer.f90">rp1_shallow_roe_tracer.f90</a></p></li>
+<li><p>PyClaw import: <cite>riemann.shallow_roe_tracer_1D</cite></p></li>
+<li><p>Examples:</p>
+<ul>
+<li><p><a class="reference external" href="https://github.com/clawpack/riemann_book/blob/master/Shallow_tracer.ipynb">https://github.com/clawpack/riemann_book/blob/master/Shallow_tracer.ipynb</a></p></li>
 </ul>
 </li>
-<li><strong>F-wave solver with bathymetry</strong>: Use this one if you have varying
-bathymetry. Uses the <span class="math">\(f\)</span>-wave approach to incorporate source
-terms from bathymetry. Well-balanced.</li>
-<li>Fortran: <code class="docutils literal"><span class="pre">rp1_shallow_bathymetry_fwave.f90</span></code></li>
-<li>PyClaw: <code class="docutils literal"><span class="pre">riemann.shallow_bathymetry_fwave_1D</span></code></li>
-<li>Pure Python: <code class="docutils literal"><span class="pre">riemann.shallow_1D_py.shallow_fwave_1D</span></code></li>
-<li>Examples:<ul>
-<li><a class="reference external" href="https://github.com/clawpack/pyclaw/blob/master/examples/shallow_1d/sill.py">https://github.com/clawpack/pyclaw/blob/master/examples/shallow_1d/sill.py</a></li>
+</ul>
+</li>
+<li><p><strong>F-wave solver with bathymetry</strong>: Use this one if you have varying
+bathymetry. Uses the <span class="math notranslate nohighlight">\(f\)</span>-wave approach to incorporate source
+terms from bathymetry. Well-balanced.</p>
+<ul>
+<li><p>Fortran: <cite>rp1_shallow_bathymetry_fwave.f90</cite></p></li>
+<li><p>PyClaw: <cite>riemann.shallow_bathymetry_fwave_1D</cite></p></li>
+<li><p>Pure Python: <cite>riemann.shallow_1D_py.shallow_fwave_1D</cite></p></li>
+<li><p>Examples:</p>
+<ul>
+<li><p><a class="reference external" href="https://github.com/clawpack/pyclaw/blob/master/examples/shallow_1d/sill.py">https://github.com/clawpack/pyclaw/blob/master/examples/shallow_1d/sill.py</a></p></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
 </div>
-<div class="section" id="Two-dimensions">
-<h2>Two dimensions<a class="headerlink" href="#Two-dimensions" title="Permalink to this headline">¶</a></h2>
-<p>For most 2D solvers, the vector <code class="docutils literal"><span class="pre">q</span></code> of conserved quantities is</p>
-<div class="math">
+<div class="section" id="two-dimensions">
+<h2>Two dimensions<a class="headerlink" href="#two-dimensions" title="Permalink to this headline">¶</a></h2>
+<p>For most 2D solvers, the vector <cite>q</cite> of conserved quantities is</p>
+<div class="math notranslate nohighlight">
 \[\begin{split}q = \begin{bmatrix} h \\ hu \\ hv \end{bmatrix},\end{split}\]</div>
-<p>where <span class="math">\(h\)</span> is depth and <span class="math">\(hu, hv\)</span> are the <span class="math">\(x\)</span>- and
-<span class="math">\(y\)</span>-components of momentum. For solvers with bathymetry, the
-bathymetry is the first (and only) component of <code class="docutils literal"><span class="pre">aux</span></code>. For the mapped
-solver, see the implementation for a description of <code class="docutils literal"><span class="pre">aux</span></code>. As in 1D,
-all solvers require setting a constant parameter <code class="docutils literal"><span class="pre">grav</span></code>, which
+<p>where <span class="math notranslate nohighlight">\(h\)</span> is depth and <span class="math notranslate nohighlight">\(hu, hv\)</span> are the <span class="math notranslate nohighlight">\(x\)</span>- and
+<span class="math notranslate nohighlight">\(y\)</span>-components of momentum. For solvers with bathymetry, the
+bathymetry is the first (and only) component of <cite>aux</cite>. For the mapped
+solver, see the implementation for a description of <cite>aux</cite>. As in 1D,
+all solvers require setting a constant parameter <cite>grav</cite>, which
 controls the force of gravity.</p>
 <ul class="simple">
-<li><strong>Basic Roe solver</strong>: The most basic solver. Uses Roe&#8217;s
+<li><p><strong>Basic Roe solver</strong>: The most basic solver. Uses Roe’s
 linearization, with an entropy fix. Normal and transverse solvers
-available.</li>
-<li>Fortran code:
+available.</p>
+<ul>
+<li><p>Fortran code:
 <a class="reference external" href="https://github.com/clawpack/riemann/blob/master/src/rpn2_shallow_roe_with_efix.f90">rpn2_shallow_roe_with_efix.f90</a>,
-<a class="reference external" href="https://github.com/clawpack/riemann/blob/master/src/rpt2_shallow_roe_with_efix.f90">rpt2_shallow_roe_with_efix.f90</a></li>
-<li>PyClaw import: <code class="docutils literal"><span class="pre">riemann.shallow_roe_with_efix_2D</span></code>.</li>
-<li>Examples:<ul>
-<li><a class="reference external" href="https://github.com/clawpack/pyclaw/blob/master/examples/shallow_2d/radial_dam_break.py">https://github.com/clawpack/pyclaw/blob/master/examples/shallow_2d/radial_dam_break.py</a></li>
+<a class="reference external" href="https://github.com/clawpack/riemann/blob/master/src/rpt2_shallow_roe_with_efix.f90">rpt2_shallow_roe_with_efix.f90</a></p></li>
+<li><p>PyClaw import: <cite>riemann.shallow_roe_with_efix_2D</cite>.</p></li>
+<li><p>Examples:</p>
+<ul>
+<li><p><a class="reference external" href="https://github.com/clawpack/pyclaw/blob/master/examples/shallow_2d/radial_dam_break.py">https://github.com/clawpack/pyclaw/blob/master/examples/shallow_2d/radial_dam_break.py</a></p></li>
 </ul>
 </li>
-<li><strong>F-wave solver with bathymetry</strong>: Use this one if you have varying
-bathymetry but no dry states. Uses the <span class="math">\(f\)</span>-wave approach to
+</ul>
+</li>
+<li><p><strong>F-wave solver with bathymetry</strong>: Use this one if you have varying
+bathymetry but no dry states. Uses the <span class="math notranslate nohighlight">\(f\)</span>-wave approach to
 incorporate source terms from bathymetry. Well-balanced. Normal
-solver only.</li>
-<li>Fortran: <code class="docutils literal"><span class="pre">rpn2_shallow_bathymetry_fwave.f90</span></code>.</li>
-<li>PyClaw: <code class="docutils literal"><span class="pre">riemann.shallow_bathymetry_fwave_2D</span></code>.</li>
-<li><strong>Mapped solver for the sphere</strong>: Uses grid mapping to solve the
-shallow water equations on the sphere. Does not include bathymetry.
-Both normal and transverse solvers available.</li>
-<li>Fortran:
-<a class="reference external" href="https://github.com/clawpack/riemann/blob/master/src/rpn2_shallow_sphere.f90">rpn2_shallow_sphere.f90</a>,
-<a class="reference external" href="https://github.com/clawpack/riemann/blob/master/src/rpt2_shallow_sphere.f90">rpt2_shallow_sphere.f90</a></li>
-<li>PyClaw: <code class="docutils literal"><span class="pre">riemann.shallow_sphere_2D</span></code></li>
-<li>Examples:<ul>
-<li><a class="reference external" href="https://github.com/clawpack/pyclaw/blob/master/examples/shallow_sphere/Rossby_wave.py">https://github.com/clawpack/pyclaw/blob/master/examples/shallow_sphere/Rossby_wave.py</a></li>
+solver only.</p>
+<ul>
+<li><p>Fortran: <cite>rpn2_shallow_bathymetry_fwave.f90</cite>.</p></li>
+<li><p>PyClaw: <cite>riemann.shallow_bathymetry_fwave_2D</cite>.</p></li>
 </ul>
 </li>
-<li><strong>GeoClaw &#8220;augmented&#8221; solver</strong>: This is the most robust (but also the
+<li><p><strong>Mapped solver for the sphere</strong>: Uses grid mapping to solve the
+shallow water equations on the sphere. Does not include bathymetry.
+Both normal and transverse solvers available.</p>
+<ul>
+<li><p>Fortran:
+<a class="reference external" href="https://github.com/clawpack/riemann/blob/master/src/rpn2_shallow_sphere.f90">rpn2_shallow_sphere.f90</a>,
+<a class="reference external" href="https://github.com/clawpack/riemann/blob/master/src/rpt2_shallow_sphere.f90">rpt2_shallow_sphere.f90</a></p></li>
+<li><p>PyClaw: <cite>riemann.shallow_sphere_2D</cite></p></li>
+<li><p>Examples:</p>
+<ul>
+<li><p><a class="reference external" href="https://github.com/clawpack/pyclaw/blob/master/examples/shallow_sphere/Rossby_wave.py">https://github.com/clawpack/pyclaw/blob/master/examples/shallow_sphere/Rossby_wave.py</a></p></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p><strong>GeoClaw “augmented” solver</strong>: This is the most robust (but also the
 most costly) solver. Used in GeoClaw. Augmented solver (with extra
 waves) to handle bathymetry, and dry states. Both normal and
-transverse solvers available.</li>
-<li>Fortran:
+transverse solvers available.</p>
+<ul>
+<li><p>Fortran:
 <a class="reference external" href="https://github.com/clawpack/riemann/blob/master/src/rpn2_geoclaw.f">rpn2_geoclaw.f</a>,
-<a class="reference external" href="https://github.com/clawpack/riemann/blob/master/src/rpn2_geoclaw.f">rpt2_geoclaw.f</a></li>
-<li>PyClaw import: (normal solver only) <code class="docutils literal"><span class="pre">riemann.sw_aug_2d</span></code></li>
-<li>Examples:<ul>
-<li><a class="reference external" href="https://github.com/clawpack/apps/blob/master/notebooks/pyclaw/beach.ipynb">https://github.com/clawpack/apps/blob/master/notebooks/pyclaw/beach.ipynb</a></li>
+<a class="reference external" href="https://github.com/clawpack/riemann/blob/master/src/rpn2_geoclaw.f">rpt2_geoclaw.f</a></p></li>
+<li><p>PyClaw import: (normal solver only) <cite>riemann.sw_aug_2d</cite></p></li>
+<li><p>Examples:</p>
+<ul>
+<li><p><a class="reference external" href="https://github.com/clawpack/apps/blob/master/notebooks/pyclaw/beach.ipynb">https://github.com/clawpack/apps/blob/master/notebooks/pyclaw/beach.ipynb</a></p></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
 </div>
-<div class="section" id="Layered-shallow-water-equations">
-<h2>Layered shallow water equations<a class="headerlink" href="#Layered-shallow-water-equations" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="layered-shallow-water-equations">
+<h2>Layered shallow water equations<a class="headerlink" href="#layered-shallow-water-equations" title="Permalink to this headline">¶</a></h2>
 <p>1D and 2D solvers for the layered shallow water equations are also
 included.</p>
 </div>
-<div class="section" id="Potentially-useful-contributions-(what's-missing)">
-<h2>Potentially useful contributions (what&#8217;s missing)<a class="headerlink" href="#Potentially-useful-contributions-(what's-missing)" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="potentially-useful-contributions-whats-missing">
+<h2>Potentially useful contributions (what’s missing)<a class="headerlink" href="#potentially-useful-contributions-whats-missing" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
-<li>2D mapped grid solvers (for a planar grid)</li>
-<li>Transverse versions of <code class="docutils literal"><span class="pre">rpn2_shallow_bathymetry_fwave.f90</span></code>,
-<code class="docutils literal"><span class="pre">rpn2_sw_aug.f90</span></code>.</li>
+<li><p>2D mapped grid solvers (for a planar grid)</p></li>
+<li><p>Transverse versions of <cite>rpn2_shallow_bathymetry_fwave.f90</cite>,
+<cite>rpn2_sw_aug.f90</cite>.</p></li>
 </ul>
 </div>
-<div class="section" id="Demonstrations">
-<h2>Demonstrations<a class="headerlink" href="#Demonstrations" title="Permalink to this headline">¶</a></h2>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none"><div class="highlight"><pre>
-<span></span>In [1]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3"><div class="highlight"><pre>
-<span></span><span class="o">%</span><span class="k">matplotlib</span> inline
+<div class="section" id="demonstrations">
+<h2>Demonstrations<a class="headerlink" href="#demonstrations" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%</span><span class="k">matplotlib</span> inline
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
-<span class="kn">from</span> <span class="nn">clawpack</span> <span class="k">import</span> <span class="n">riemann</span>
-<span class="kn">from</span> <span class="nn">clawpack.riemann</span> <span class="k">import</span> <span class="n">riemann_tools</span>
+<span class="kn">from</span> <span class="nn">clawpack</span> <span class="kn">import</span> <span class="n">riemann</span>
+<span class="kn">from</span> <span class="nn">clawpack.riemann</span> <span class="kn">import</span> <span class="n">riemann_tools</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 </pre></div>
 </div>
-</div>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none"><div class="highlight"><pre>
-<span></span>In [2]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3"><div class="highlight"><pre>
-<span></span><span class="n">h_l</span> <span class="o">=</span> <span class="mf">1.</span><span class="p">;</span> <span class="n">h_r</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">;</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">h_l</span> <span class="o">=</span> <span class="mf">1.</span><span class="p">;</span> <span class="n">h_r</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">;</span>
 <span class="n">u_l</span> <span class="o">=</span> <span class="mf">0.</span><span class="p">;</span> <span class="n">u_r</span> <span class="o">=</span> <span class="mf">0.</span><span class="p">;</span>
 <span class="n">q_l</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">h_l</span><span class="p">,</span><span class="n">u_l</span><span class="p">]);</span> <span class="n">q_r</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">h_r</span><span class="p">,</span><span class="n">u_r</span><span class="p">])</span>
 <span class="n">problem_data</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;grav&#39;</span><span class="p">:</span><span class="mf">1.0</span><span class="p">,</span><span class="s1">&#39;efix&#39;</span><span class="p">:</span><span class="kc">False</span><span class="p">}</span>
 </pre></div>
 </div>
-</div>
-<div class="section" id="Roe">
-<h3>Roe<a class="headerlink" href="#Roe" title="Permalink to this headline">¶</a></h3>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none"><div class="highlight"><pre>
-<span></span>In [3]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3"><div class="highlight"><pre>
-<span></span><span class="n">states</span><span class="p">,</span> <span class="n">speeds</span><span class="p">,</span> <span class="n">reval</span> <span class="o">=</span> <span class="n">riemann_tools</span><span class="o">.</span><span class="n">riemann_solution</span><span class="p">(</span><span class="n">riemann</span><span class="o">.</span><span class="n">shallow_1D_py</span><span class="o">.</span><span class="n">shallow_roe_1D</span><span class="p">,</span><span class="n">q_l</span><span class="p">,</span><span class="n">q_r</span><span class="p">,</span>
+<div class="section" id="roe">
+<h3>Roe<a class="headerlink" href="#roe" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">states</span><span class="p">,</span> <span class="n">speeds</span><span class="p">,</span> <span class="n">reval</span> <span class="o">=</span> <span class="n">riemann_tools</span><span class="o">.</span><span class="n">riemann_solution</span><span class="p">(</span><span class="n">riemann</span><span class="o">.</span><span class="n">shallow_1D_py</span><span class="o">.</span><span class="n">shallow_roe_1D</span><span class="p">,</span><span class="n">q_l</span><span class="p">,</span><span class="n">q_r</span><span class="p">,</span>
                                                        <span class="n">problem_data</span><span class="o">=</span><span class="n">problem_data</span><span class="p">)</span>
 <span class="n">riemann_tools</span><span class="o">.</span><span class="n">plot_phase</span><span class="p">(</span><span class="n">states</span><span class="p">)</span>
 </pre></div>
 </div>
+<img alt="../_images/output_9_01.png" src="../_images/output_9_01.png" />
 </div>
-<div class="nboutput nblast docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area docutils container">
-<img alt="riemann/../../../../../../../../../Users/rjl/git/clawpack/doc/doc/_build/html/dev/.doctrees/nbsphinx/riemann_Shallow_water_Riemann_solvers_9_0.png" src="riemann/../../../../../../../../../Users/rjl/git/clawpack/doc/doc/_build/html/dev/.doctrees/nbsphinx/riemann_Shallow_water_Riemann_solvers_9_0.png" />
-</div>
-</div>
-</div>
-<div class="section" id="HLL">
-<h3>HLL<a class="headerlink" href="#HLL" title="Permalink to this headline">¶</a></h3>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none"><div class="highlight"><pre>
-<span></span>In [4]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3"><div class="highlight"><pre>
-<span></span><span class="n">states</span><span class="p">,</span> <span class="n">speeds</span><span class="p">,</span> <span class="n">reval</span> <span class="o">=</span> <span class="n">riemann_tools</span><span class="o">.</span><span class="n">riemann_solution</span><span class="p">(</span><span class="n">riemann</span><span class="o">.</span><span class="n">shallow_1D_py</span><span class="o">.</span><span class="n">shallow_hll_1D</span><span class="p">,</span><span class="n">q_l</span><span class="p">,</span><span class="n">q_r</span><span class="p">,</span>
+<div class="section" id="hll">
+<h3>HLL<a class="headerlink" href="#hll" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">states</span><span class="p">,</span> <span class="n">speeds</span><span class="p">,</span> <span class="n">reval</span> <span class="o">=</span> <span class="n">riemann_tools</span><span class="o">.</span><span class="n">riemann_solution</span><span class="p">(</span><span class="n">riemann</span><span class="o">.</span><span class="n">shallow_1D_py</span><span class="o">.</span><span class="n">shallow_hll_1D</span><span class="p">,</span><span class="n">q_l</span><span class="p">,</span><span class="n">q_r</span><span class="p">,</span>
                                                        <span class="n">problem_data</span><span class="o">=</span><span class="n">problem_data</span><span class="p">)</span>
 <span class="n">riemann_tools</span><span class="o">.</span><span class="n">plot_phase</span><span class="p">(</span><span class="n">states</span><span class="p">)</span>
 </pre></div>
 </div>
-</div>
-<div class="nboutput nblast docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area docutils container">
-<img alt="riemann/../../../../../../../../../Users/rjl/git/clawpack/doc/doc/_build/html/dev/.doctrees/nbsphinx/riemann_Shallow_water_Riemann_solvers_11_0.png" src="riemann/../../../../../../../../../Users/rjl/git/clawpack/doc/doc/_build/html/dev/.doctrees/nbsphinx/riemann_Shallow_water_Riemann_solvers_11_0.png" />
-</div>
-</div>
+<img alt="../_images/output_11_0.png" src="../_images/output_11_0.png" />
 </div>
 </div>
 </div>
@@ -461,16 +276,16 @@ included.</p>
 </a>
 <h2>Version dev</h2>
 </p>
-  <h3><a href="../contents.html">Table Of Contents</a></h3>
+  <h3><a href="../contents.html">Table of Contents</a></h3>
   <ul>
 <li><a class="reference internal" href="#">Shallow water Riemann solvers in Clawpack</a><ul>
-<li><a class="reference internal" href="#One-dimension">One dimension</a></li>
-<li><a class="reference internal" href="#Two-dimensions">Two dimensions</a></li>
-<li><a class="reference internal" href="#Layered-shallow-water-equations">Layered shallow water equations</a></li>
-<li><a class="reference internal" href="#Potentially-useful-contributions-(what's-missing)">Potentially useful contributions (what&#8217;s missing)</a></li>
-<li><a class="reference internal" href="#Demonstrations">Demonstrations</a><ul>
-<li><a class="reference internal" href="#Roe">Roe</a></li>
-<li><a class="reference internal" href="#HLL">HLL</a></li>
+<li><a class="reference internal" href="#one-dimension">One dimension</a></li>
+<li><a class="reference internal" href="#two-dimensions">Two dimensions</a></li>
+<li><a class="reference internal" href="#layered-shallow-water-equations">Layered shallow water equations</a></li>
+<li><a class="reference internal" href="#potentially-useful-contributions-whats-missing">Potentially useful contributions (what’s missing)</a></li>
+<li><a class="reference internal" href="#demonstrations">Demonstrations</a><ul>
+<li><a class="reference internal" href="#roe">Roe</a></li>
+<li><a class="reference internal" href="#hll">HLL</a></li>
 </ul>
 </li>
 </ul>
@@ -485,43 +300,44 @@ included.</p>
 </ul>
   <h3>This Page</h3>
   <ul class="this-page-menu">
-    <li><a href="../_sources/riemann/Shallow_water_Riemann_solvers.ipynb.txt"
+    <li><a href="../_sources/riemann/Shallow_water_Riemann_solvers.rst.txt"
            rel="nofollow">Show Source</a></li>
-    <li><a href="https://github.com/clawpack/doc/blob/master/doc/riemann/Shallow_water_Riemann_solvers.ipynb"
-           rel="nofollow">Show on GitHub</a></li>
-    <li><a href="https://github.com/clawpack/doc/edit/master/doc/riemann/Shallow_water_Riemann_solvers.ipynb"
-           rel="nofollow">Edit on GitHub</a></li>
   </ul>
 <div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
     <form class="search" action="../search.html" method="get">
-      <div><input type="text" name="q" /></div>
-      <div><input type="submit" value="Go" /></div>
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
     </form>
+    </div>
 </div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
-<h3>Versions</h3>
+<script>$('#searchbox').show(0);</script>
+<h4>Latest Version</h4>
 <ul>
-    <li><a href="../../v5.4.1/riemann/Shallow_water_Riemann_solvers.html">v5.4.1</a></li>
-    <li><a href="../../v5.4.0/contents.html">v5.4.0</a></li>
-    <li><a href="../../v5.3.1/contents.html">v5.3.1</a></li>
-    <li><a href="../../v5.3.0/contents.html">v5.3.0</a></li>
-    <li><a href="../../v5.2.1/contents.html">v5.2.1</a></li>
-    <li><a href="../../v5.2.0/contents.html">v5.2.0</a></li>
-    <li><a href="../../v5.1.0/contents.html">v5.1.0</a></li>
-    <li><a href="../../v5.6.1/riemann/Shallow_water_Riemann_solvers.html">v5.6.1</a></li>
-    <li><a href="../../v5.6.0/riemann/Shallow_water_Riemann_solvers.html">v5.6.0</a></li>
-    <li><a href="../../v5.5.0/riemann/Shallow_water_Riemann_solvers.html">v5.5.0</a></li>
-    <li><a href="Shallow_water_Riemann_solvers.html">dev</a></li>
+  <li><a href="Shallow_water_Riemann_solvers.html">dev</a></li>
+  <li><a href="../../v5.7.0/riemann/Shallow_water_Riemann_solvers.html">v5.7.0</a></li>
 </ul>
+<h4>Older Versions</h4>
+<ul>
+  <li><a href="../../v5.1.0/index.html">v5.1.0</a></li>
+  <li><a href="../../v5.2.0/index.html">v5.2.0</a></li>
+  <li><a href="../../v5.2.1/index.html">v5.2.1</a></li>
+  <li><a href="../../v5.3.0/index.html">v5.3.0</a></li>
+  <li><a href="../../v5.3.1/index.html">v5.3.1</a></li>
+  <li><a href="../../v5.4.0/index.html">v5.4.0</a></li>
+  <li><a href="../../v5.4.1/index.html">v5.4.1</a></li>
+  <li><a href="../../v5.5.0/index.html">v5.5.0</a></li>
+  <li><a href="../../v5.6.0/index.html">v5.6.0</a></li>
+  <li><a href="../../v5.6.1/index.html">v5.6.1</a></li>
+</ul>
+
         </div>
       </div>
       <div class="clearer"></div>
     </div>
   <div class="footer">
-    &copy; Copyright CC-BY 2019, The Clawpack Development Team.
+    &copy; Copyright CC-BY 2020, The Clawpack Development Team.
     Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
   </div>
   <script>

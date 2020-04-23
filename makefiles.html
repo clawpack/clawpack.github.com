@@ -1,41 +1,28 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
+<!DOCTYPE html>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
-    <title>Clawpack Makefiles &#8212; Clawpack 5.6.1 documentation</title>
-    
+    <meta charset="utf-8" />
+    <title>Clawpack Makefiles &#8212; Clawpack 5.7.0 documentation</title>
     <link rel="stylesheet" href="_static/flasky.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="stylesheet" href="_static/base.css" type="text/css" />
     <link rel="stylesheet" href="_static/layout.css" type="text/css" />
-    <link rel="stylesheet" href="_static/banner.css" type="text/css" />
-    
-    <script type="text/javascript">
-      var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    './',
-        VERSION:     '5.6.1',
-        COLLAPSE_INDEX: false,
-        FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true,
-        SOURCELINK_SUFFIX: '.txt'
-      };
-    </script>
-    <script type="text/javascript" src="_static/jquery.js"></script>
-    <script type="text/javascript" src="_static/underscore.js"></script>
-    <script type="text/javascript" src="_static/doctools.js"></script>
-    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="stylesheet" type="text/css" href="_static/graphviz.css" />
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <script async="async" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="shortcut icon" href="_static/clawicon.ico"/>
     <link rel="author" title="About these documents" href="about.html" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Library routines in Makefiles" href="makefiles_library.html" />
     <link rel="prev" title="Python Hints" href="python.html" /> 
-  </head>
-  <body role="document">
+  </head><body>
 <div id="main-wrapper" class="sphinx">
 <div id="header-wrapper">
   <section id="header">
@@ -50,7 +37,7 @@
           <a href="installing.html">Install</a>
         </li>
         <li>
-          <a class="" href="gallery/index.html">Gallery</a>
+          <a class="" href="http://clawpack.org/gallery">Gallery</a>
         </li>
         <li>
           <a class="" href="community.html">Community</a>
@@ -82,7 +69,7 @@
         <li class="right" >
           <a href="python.html" title="Python Hints"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="contents.html">Clawpack 5.6.1 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="contents.html">Clawpack 5.7.0 documentation</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -102,7 +89,7 @@ rather than listing all the files individually in every <cite>Makefile</cite>.  
 <a class="reference internal" href="makefiles_library.html#makefiles-library"><span class="std std-ref">Library routines in Makefiles</span></a> for more details on how to specify local files in
 place of library files if you need to replace a default file.</p>
 <p>In most directories with a <cite>Makefile</cite> you can type:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span>$ make help
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ make help
 </pre></div>
 </div>
 <p>to find out what options are available.</p>
@@ -112,7 +99,7 @@ place of library files if you need to replace a default file.</p>
 <span id="makefiles-output"></span><h3>output<a class="headerlink" href="#output" title="Permalink to this headline">¶</a></h3>
 <p>In applications directories, compiling and running the code can usually be
 accomplished via:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span>$ make .output
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ make .output
 </pre></div>
 </div>
 <p>This checks dependencies using the data of the hidden file <cite>.output</cite> that is
@@ -121,39 +108,39 @@ modified since this date, the code is first recompiled.  If the <cite>setrun.py<
 script has been changed more recently, then the data files are first
 recreated.</p>
 <p>If you want to re-run the code and you get:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span>$ make .output
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ make .output
 make: `.output&#39; is up to date.
 </pre></div>
 </div>
 <p>then you can force it to run again by removing the file <cite>.output</cite>:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span>$ rm -f .output
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ rm -f .output
 $ make .output
 </pre></div>
 </div>
 <p>This happens for example if you changed something that you know
-will affect the output but that isn&#8217;t in the Makefile&#8217;s set of
+will affect the output but that isn’t in the Makefile’s set of
 dependencies, or if the code bombed or was aborted before completion.</p>
-<p>The hidden file <code class="docutils literal"><span class="pre">.output</span></code> contains a single line, which is the path to the
-directory where the output resides (as specified by the <code class="docutils literal"><span class="pre">CLAW_outdir</span></code> variable
-in the <code class="docutils literal"><span class="pre">Makefile</span></code>).  This file is used by the interactive plotting routines, as
+<p>The hidden file <code class="docutils literal notranslate"><span class="pre">.output</span></code> contains a single line, which is the path to the
+directory where the output resides (as specified by the <code class="docutils literal notranslate"><span class="pre">CLAW_outdir</span></code> variable
+in the <code class="docutils literal notranslate"><span class="pre">Makefile</span></code>).  This file is used by the interactive plotting routines, as
 described in <a class="reference internal" href="plotting.html#plotting"><span class="std std-ref">Plotting with Visclaw</span></a>.</p>
 <p>You can also do:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span>$ make output
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ make output
 </pre></div>
 </div>
-<p>(with no dot before <code class="docutils literal"><span class="pre">output</span></code>) to run the code without checking dependencies.
+<p>(with no dot before <code class="docutils literal notranslate"><span class="pre">output</span></code>) to run the code without checking dependencies.
 This is sometimes handy but note that
-if you modify the <code class="docutils literal"><span class="pre">setrun</span></code> function
-and then do <code class="docutils literal"><span class="pre">make</span> <span class="pre">output</span></code>, it will not use the new parameter values.
-You must do <code class="docutils literal"><span class="pre">make</span> <span class="pre">.data</span></code> to regenerate the data files used by Clawpack.
-This would be done automatically by <code class="docutils literal"><span class="pre">make</span> <span class="pre">.output</span></code>, for which <code class="docutils literal"><span class="pre">.data</span></code> is a
+if you modify the <code class="docutils literal notranslate"><span class="pre">setrun</span></code> function
+and then do <code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">output</span></code>, it will not use the new parameter values.
+You must do <code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">.data</span></code> to regenerate the data files used by Clawpack.
+This would be done automatically by <code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">.output</span></code>, for which <code class="docutils literal notranslate"><span class="pre">.data</span></code> is a
 dependency.</p>
 </div>
 <div class="section" id="plots">
 <span id="makefiles-plots"></span><h3>plots<a class="headerlink" href="#plots" title="Permalink to this headline">¶</a></h3>
 <p>In applications directories, plotting results computed by Clawpack can generally
 be accomplished via:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span>$ make .plots
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ make .plots
 </pre></div>
 </div>
 <p>This checks dependencies using the date of the hidden file <cite>.plots</cite>.</p>
@@ -162,10 +149,11 @@ be accomplished via:</p>
 there.</p>
 <p>Starting in 4.5.1, you can also do</p>
 <blockquote>
-<div>$ make plots</div></blockquote>
-<p>(with no dot before <code class="docutils literal"><span class="pre">plots</span></code>) to plot the output without checking dependencies.
+<div><p>$ make plots</p>
+</div></blockquote>
+<p>(with no dot before <code class="docutils literal notranslate"><span class="pre">plots</span></code>) to plot the output without checking dependencies.
 This insures that the code will not be run again and is sometime safer than
-<code class="docutils literal"><span class="pre">make</span> <span class="pre">.plots</span></code>, which may attempt to run the code if something appears out of
+<code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">.plots</span></code>, which may attempt to run the code if something appears out of
 date.</p>
 </div>
 <div class="section" id="variables">
@@ -173,9 +161,9 @@ date.</p>
 <p>A number of variables are defined in the Makefiles of application
 directories.  For example, output is directed to the subdirectory specified
 by the variable <cite>OUTDIR</cite>.  To change this, simply modify the Makefile before
-typing &#8220;make .output&#8221;.  Alternatively, you can modify the variable from the
+typing “make .output”.  Alternatively, you can modify the variable from the
 command line, e.g.:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span>$ make .output OUTDIR=run1
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ make .output OUTDIR=run1
 </pre></div>
 </div>
 <p>to direct output to a subdirectory named <cite>run1</cite>.</p>
@@ -185,9 +173,9 @@ command line, e.g.:</p>
 <p>Compiler flags can be changed by modifying the <cite>FFLAGS</cite> variable in the
 Makefile.  If you change compiler flags you will generally need to recompile
 all the Fortran files and the Makefile dependencies will not detect this.
-To force recompilation of all files, use the &#8220;make new&#8221; option, e.g. to
+To force recompilation of all files, use the “make new” option, e.g. to
 recompile with the <cite>-g</cite> flag for debugging:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span>$ make new FFLAGS=-g
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ make new FFLAGS=-g
 </pre></div>
 </div>
 <p>See <a class="reference internal" href="fortran_compilers.html#fortran-compilers"><span class="std std-ref">Fortran Compilers</span></a> for more about compiler flags.</p>
@@ -219,9 +207,9 @@ not be in conflict.  If you do have conflicting source either remove the
 <p><a href="http://clawpack.org/">
     <img class="logo" src= "_static/clawlogo.jpg" alt="Logo"/>
 </a>
-<h2>Version 5.6.1</h2>
+<h2>Version 5.7.0</h2>
 </p>
-  <h3><a href="contents.html">Table Of Contents</a></h3>
+  <h3><a href="contents.html">Table of Contents</a></h3>
   <ul>
 <li><a class="reference internal" href="#">Clawpack Makefiles</a><ul>
 <li><a class="reference internal" href="#applications-directory-makefiles">Applications directory Makefiles</a><ul>
@@ -246,41 +234,42 @@ not be in conflict.  If you do have conflicting source either remove the
   <ul class="this-page-menu">
     <li><a href="_sources/makefiles.rst.txt"
            rel="nofollow">Show Source</a></li>
-    <li><a href="https://github.com/clawpack/doc/blob/master/doc/makefiles.rst"
-           rel="nofollow">Show on GitHub</a></li>
-    <li><a href="https://github.com/clawpack/doc/edit/master/doc/makefiles.rst"
-           rel="nofollow">Edit on GitHub</a></li>
   </ul>
 <div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
     <form class="search" action="search.html" method="get">
-      <div><input type="text" name="q" /></div>
-      <div><input type="submit" value="Go" /></div>
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
     </form>
+    </div>
 </div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
-<h3>Versions</h3>
+<script>$('#searchbox').show(0);</script>
+<h4>Latest Version</h4>
 <ul>
-    <li><a href="v5.4.1/makefiles.html">v5.4.1</a></li>
-    <li><a href="v5.4.0/makefiles.html">v5.4.0</a></li>
-    <li><a href="v5.3.1/makefiles.html">v5.3.1</a></li>
-    <li><a href="v5.3.0/makefiles.html">v5.3.0</a></li>
-    <li><a href="v5.2.1/makefiles.html">v5.2.1</a></li>
-    <li><a href="v5.2.0/makefiles.html">v5.2.0</a></li>
-    <li><a href="v5.1.0/makefiles.html">v5.1.0</a></li>
-    <li><a href="v5.6.1/makefiles.html">v5.6.1</a></li>
-    <li><a href="v5.6.0/makefiles.html">v5.6.0</a></li>
-    <li><a href="v5.5.0/makefiles.html">v5.5.0</a></li>
-    <li><a href="dev/makefiles.html">dev</a></li>
+  <li><a href="./dev/makefiles.html">dev</a></li>
+  <li><a href="makefiles.html">v5.7.0</a></li>
 </ul>
+<h4>Older Versions</h4>
+<ul>
+  <li><a href="./v5.1.0/makefiles.html">v5.1.0</a></li>
+  <li><a href="./v5.2.0/makefiles.html">v5.2.0</a></li>
+  <li><a href="./v5.2.1/makefiles.html">v5.2.1</a></li>
+  <li><a href="./v5.3.0/makefiles.html">v5.3.0</a></li>
+  <li><a href="./v5.3.1/makefiles.html">v5.3.1</a></li>
+  <li><a href="./v5.4.0/makefiles.html">v5.4.0</a></li>
+  <li><a href="./v5.4.1/makefiles.html">v5.4.1</a></li>
+  <li><a href="./v5.5.0/makefiles.html">v5.5.0</a></li>
+  <li><a href="./v5.6.0/makefiles.html">v5.6.0</a></li>
+  <li><a href="./v5.6.1/makefiles.html">v5.6.1</a></li>
+</ul>
+
         </div>
       </div>
       <div class="clearer"></div>
     </div>
   <div class="footer">
-    &copy; Copyright CC-BY 2019, The Clawpack Development Team.
+    &copy; Copyright CC-BY 2020, The Clawpack Development Team.
     Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
   </div>
   <script>

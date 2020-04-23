@@ -8,26 +8,26 @@
 
 
           <head>
-           <link rel="icon" href="http://www.clawpack.org//clawicon.ico" />
+           <link rel="icon" href="http://www.clawpack.org//_static/clawicon_new.ico" />
           </head> 
            <BODY TEXT="#000000" BGCOLOR="#FFFFFF" LINK="#0000FF" 
                  VLINK="#5500DD" ALINK="#FF0000">
            <font FACE="HELVETICA,ARIAL">
            
-<!-- Created from the file /Users/rjl/Downloads/clawpack-v5.6.0_test/clawpack-v5.6.0_galleries/geoclaw/examples/tsunami/chile2010/setplot_kml.py -->
-<!-- Date: Sat Jun  1 2019 at 10:55:38 -->
+<!-- Created from the file /Users/rjl/clawpack_src/clawpack_master/geoclaw/examples/tsunami/chile2010/setplot_kml.py -->
+<!-- Date: Sat Apr 18 2020 at 12:34:03 -->
 
 <table bgcolor="#FFEE99"> <tr> <td>
 &nbsp;<font size=6> setplot_kml.py.html </font> </td>
 
             <td><a href="http://www.clawpack.org/index.html"><img
-            src="http://www.clawpack.org//clawlogo.jpg"
-            width=100 alt="CLAWPACK"></a>&nbsp;&nbsp; </td> </tr> <tr> <td>
+            src="http://www.clawpack.org//_static/clawlogo_border.jpg"
+            width=150 alt="CLAWPACK"></a>&nbsp;&nbsp; </td> </tr> <tr> <td>
 &nbsp;Source file: &nbsp;&nbsp;<a href="setplot_kml.py">setplot_kml.py </a>
 </td></tr><tr><td>
-&nbsp;Directory:  &nbsp; /Users/rjl/Downloads/clawpack-v5.6.0_test/clawpack-v5.6.0_galleries/geoclaw/examples/tsunami/chile2010 
+&nbsp;Directory:  &nbsp; /Users/rjl/clawpack_src/clawpack_master/geoclaw/examples/tsunami/chile2010 
 </td></tr><tr><td>
-&nbsp;Converted:  &nbsp; Sat Jun  1 2019 at 10:55:38 
+&nbsp;Converted:  &nbsp; Sat Apr 18 2020 at 12:34:03 
 &nbsp; using <a href="http://www.clawpack.org//doc/application_documentation.html#clawcode2html">clawcode2html</a>
 </td></tr><tr><td>
 <font color="#BB3300"> &nbsp;This documentation file will 
@@ -49,7 +49,7 @@ from __future__ import print_function
 import numpy as np
 import matplotlib.pyplot as plt
 
-from clawpack.geoclaw import topotools
+from clawpack.geoclaw import topotools, kmltools
 from six.moves import range
 
 try:
@@ -119,10 +119,10 @@ def setplot(plotdata):
     <font color="blue"># Resolution (should be consistent with data)</font>
     <font color="blue"># Refinement levels : [2,6]; max level = 3; num_cells = [30,30]</font>
     <font color="blue"># rcl : resolution of the coarsest level in this figure</font>
-    rcl = 1    <font color="blue"># rcl*figsize = num_cells</font>
+    rcl = 5    <font color="blue"># choose so rcl*figsize = integer multiple of num_cells</font>
     plotfigure.kml_figsize = [30.0,30.0]
     plotfigure.kml_dpi = rcl*2*6         <font color="blue"># Resolve all three levels</font>
-    plotfigure.kml_tile_images = False    <font color="blue"># Tile images for faster loading.  Requires GDAL [False]</font>
+    plotfigure.kml_tile_images = False    <font color="blue"># Tile images for faster loading.  Requires GDAL</font>
 
 
     <font color="blue"># Water</font>
@@ -134,7 +134,9 @@ def setplot(plotdata):
     plotitem.pcolor_cmax = cmax
 
     def kml_colorbar(filename):
-        geoplot.kml_build_colorbar(filename,cmap,cmin,cmax)
+        kmltools.kml_build_colorbar(filename,cmap=cmap,cmin=cmin,cmax=cmax,
+                                    label='meters', title='surface',
+                                    extend='both')
 
     plotfigure.kml_colorbar = kml_colorbar
 
@@ -142,7 +144,7 @@ def setplot(plotdata):
     <font color="blue"># Figure for KML files (zoom)</font>
     <font color="blue">#----------------------------------------------------------</font>
     plotfigure = plotdata.new_plotfigure(name='Sea Surface (zoom)',figno=2)
-    plotfigure.show = True
+    <font color="blue">#plotfigure.show = False</font>
 
     plotfigure.use_for_kml = True
     plotfigure.kml_use_for_initial_view = False  <font color="blue"># Use large plot for view</font>
@@ -165,11 +167,6 @@ def setplot(plotdata):
     plotitem.pcolor_cmap = cmap
     plotitem.pcolor_cmin = cmin
     plotitem.pcolor_cmax = cmax
-
-    def kml_colorbar(filename):
-        geoplot.kml_build_colorbar(filename,cmap,cmin,cmax)
-
-    plotfigure.kml_colorbar = kml_colorbar
 
 
     <font color="blue">#-----------------------------------------</font>

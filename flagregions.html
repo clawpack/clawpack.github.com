@@ -1,0 +1,251 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>Specifying flagregions for adaptive refinement &#8212; Clawpack 5.7.0 documentation</title>
+    <link rel="stylesheet" href="_static/flasky.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/base.css" type="text/css" />
+    <link rel="stylesheet" href="_static/layout.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/graphviz.css" />
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <script async="async" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="shortcut icon" href="_static/clawicon.ico"/>
+    <link rel="author" title="About these documents" href="about.html" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Ruled Rectangles" href="ruled_rectangles.html" />
+    <link rel="prev" title="AMR refinement criteria" href="refinement.html" /> 
+  </head><body>
+<div id="main-wrapper" class="sphinx">
+<div id="header-wrapper">
+  <section id="header">
+    <!-- <h1><a href="http://clawpack.org/">Clawpack</a></h1> -->
+    <h1><a href="http://clawpack.org/">Clawpack-5</a></h1> 
+    <nav>
+      <ul>
+        <li>
+          <a href="contents.html">Docs</a>
+        </li>
+        <li>
+          <a href="installing.html">Install</a>
+        </li>
+        <li>
+          <a class="" href="http://clawpack.org/gallery">Gallery</a>
+        </li>
+        <li>
+          <a class="" href="community.html">Community</a>
+        </li>
+        <li>
+          <a class="active" href="http://github.com/clawpack">Source</a>
+        </li>
+        <li>
+          <a class="" href="developers.html">Develop</a>
+        </li>
+      </ul>
+    </nav>
+  </section>
+<div class="decoration"></div>
+</div>
+
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="ruled_rectangles.html" title="Ruled Rectangles"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="refinement.html" title="AMR refinement criteria"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="contents.html">Clawpack 5.7.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="amrclaw.html" accesskey="U">AMRClaw Description and Detailed Contents</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="specifying-flagregions-for-adaptive-refinement">
+<span id="flagregions"></span><h1>Specifying flagregions for adaptive refinement<a class="headerlink" href="#specifying-flagregions-for-adaptive-refinement" title="Permalink to this headline">¶</a></h1>
+<p><strong>New in Version 5.7.0.</strong></p>
+<p>AMRClaw and GeoClaw version 5.6.1 (and earlier) allow specifying
+rectangular refinement regions (see <a class="reference internal" href="refinement.html#refinement-regions"><span class="std std-ref">Specifying AMR regions</span></a>)
+in <cite>setrun.py</cite>, in the form of a list that is appended to
+<cite>rundata.regiondata.regions</cite>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rundata</span><span class="o">.</span><span class="n">regiondata</span><span class="o">.</span><span class="n">regions</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">minlevel</span><span class="p">,</span><span class="n">maxlevel</span><span class="p">,</span><span class="n">t1</span><span class="p">,</span><span class="n">t2</span><span class="p">,</span><span class="n">x1</span><span class="p">,</span><span class="n">x2</span><span class="p">,</span><span class="n">y1</span><span class="p">,</span><span class="n">y2</span><span class="p">])</span>
+</pre></div>
+</div>
+<p>This is a region that is active from time <cite>t1</cite> to <cite>t2</cite> over the
+spatial extent <cite>[x1,x2,y1,y2]</cite>.</p>
+<p>Starting in v5.7.0 of AMRClaw/GeoClaw we now support a new approach to
+specifying regions that are now called <cite>flagregions</cite> for more clarity
+regarding what they are used for.  The new data structure
+also supports simple rectangles and so should ultimately replace
+<cite>regions</cite> in both AMRClaw and GeoClaw, but currently you can mix and match.</p>
+<p>The new way of specifying a flag region in <cite>setrun.py</cite> is to first
+define an object <cite>flagregion</cite> of class <cite>clawpack.amrclaw.data.FlagRegion</cite>,
+set various
+attributes of this object (including <cite>minlevel</cite>, <cite>maxlevel</cite>, <cite>t1</cite>,
+<cite>t2</cite>, and a spatial extent), and then append this object to the list
+<cite>rundata.flagregiondata.flagregions</cite>.</p>
+<p>Here is how you would specify a simple rectangle as above in the new
+style, chosen to cover the entire spatial domain and to allow only 1 level
+everywhere (which might be supplemented by other regions where more levels
+are allowed):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">x1</span><span class="p">,</span><span class="n">x2</span><span class="p">,</span><span class="n">y1</span><span class="p">,</span><span class="n">y2</span> <span class="o">=</span> <span class="p">[</span><span class="n">rundatat</span><span class="o">.</span><span class="n">clawdata</span><span class="o">.</span><span class="n">lower</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">rundatat</span><span class="o">.</span><span class="n">clawdata</span><span class="o">.</span><span class="n">upper</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+               <span class="n">rundatat</span><span class="o">.</span><span class="n">clawdata</span><span class="o">.</span><span class="n">lower</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">rundatat</span><span class="o">.</span><span class="n">clawdata</span><span class="o">.</span><span class="n">upper</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span>
+
+<span class="kn">from</span> <span class="nn">clawpack.amrclaw.data</span> <span class="kn">import</span> <span class="n">FlagRegion</span>
+<span class="n">flagregion</span> <span class="o">=</span> <span class="n">FlagRegion</span><span class="p">(</span><span class="n">num_dim</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>  <span class="c1"># so far only 2D supported</span>
+<span class="n">flagregion</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;Region_domain&#39;</span>
+<span class="n">flagregion</span><span class="o">.</span><span class="n">minlevel</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="n">flagregion</span><span class="o">.</span><span class="n">maxlevel</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="n">flagregion</span><span class="o">.</span><span class="n">t1</span> <span class="o">=</span> <span class="mf">0.</span>
+<span class="n">flagregion</span><span class="o">.</span><span class="n">t2</span> <span class="o">=</span> <span class="mf">1e9</span>
+<span class="n">flagregion</span><span class="o">.</span><span class="n">spatial_region_type</span> <span class="o">=</span> <span class="mi">1</span>  <span class="c1"># Rectangle</span>
+<span class="n">flagregion</span><span class="o">.</span><span class="n">spatial_region</span> <span class="o">=</span> <span class="p">[</span><span class="n">x1</span><span class="p">,</span><span class="n">x2</span><span class="p">,</span><span class="n">y1</span><span class="p">,</span><span class="n">y2</span><span class="p">]</span>
+<span class="n">rundata</span><span class="o">.</span><span class="n">flagregiondata</span><span class="o">.</span><span class="n">flagregions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">flagregion</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Note that <cite>flagregion.spatial_region_type == 1</cite> indicates that the
+flagregion is a rectangle.</p>
+<div class="section" id="using-ruled-rectangles-as-flagregions">
+<span id="flagregions-rr"></span><h2>Using ruled rectangles as flagregions<a class="headerlink" href="#using-ruled-rectangles-as-flagregions" title="Permalink to this headline">¶</a></h2>
+<p>In addition to simple rectangles, more general ruled rectangles can also be
+used as flagregions.  These are a restricted set of polygons for which it is
+easy to test if a point is inside or outside, as described in more detail in
+<a class="reference internal" href="ruled_rectangles.html#ruled-rectangles"><span class="std std-ref">Ruled Rectangles</span></a>.</p>
+<p>To specify a ruled rectangle, use <cite>flagregion.spatial_region_type == 2</cite>
+and provide a path to a data file that describes the ruled rectangle.
+For simple ruled rectangles the code to create the data file can also be
+included in <cite>setrun.py</cite>.</p>
+<p>Here is an example where a simple ruled rectangle is defined and used as a
+flagregion.  In this case the flagregion is a trapezoid with vertices
+<span class="math notranslate nohighlight">\((1,3),~ (1,6),~ (2,4),~ (2,7)\)</span>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">clawpack.amrclaw.data</span> <span class="kn">import</span> <span class="n">FlagRegion</span>
+<span class="n">flagregion</span> <span class="o">=</span> <span class="n">FlagRegion</span><span class="p">(</span><span class="n">num_dim</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">flagregion</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;Region_Trapezoid&#39;</span>
+<span class="n">flagregion</span><span class="o">.</span><span class="n">minlevel</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="n">flagregion</span><span class="o">.</span><span class="n">maxlevel</span> <span class="o">=</span> <span class="mi">3</span>
+<span class="n">flagregion</span><span class="o">.</span><span class="n">t1</span> <span class="o">=</span> <span class="mf">0.</span>
+<span class="n">flagregion</span><span class="o">.</span><span class="n">t2</span> <span class="o">=</span> <span class="mf">1e9</span>
+<span class="n">flagregion</span><span class="o">.</span><span class="n">spatial_region_type</span> <span class="o">=</span> <span class="mi">2</span>  <span class="c1"># Ruled Rectangle</span>
+<span class="n">flagregion</span><span class="o">.</span><span class="n">spatial_region_file</span> <span class="o">=</span> \
+    <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="s1">&#39;RuledRectangle_Trapezoid.data&#39;</span><span class="p">)</span>
+<span class="n">rundata</span><span class="o">.</span><span class="n">flagregiondata</span><span class="o">.</span><span class="n">flagregions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">flagregion</span><span class="p">)</span>
+
+<span class="c1"># code to make RuledRectangle_Trapezoid.data:</span>
+<span class="kn">from</span> <span class="nn">clawpack.amrclaw</span> <span class="kn">import</span> <span class="n">region_tools</span>
+<span class="n">rr</span> <span class="o">=</span> <span class="n">region_tools</span><span class="o">.</span><span class="n">RuledRectangle</span><span class="p">()</span>
+<span class="n">rr</span><span class="o">.</span><span class="n">method</span> <span class="o">=</span> <span class="mi">1</span> <span class="c1"># piecewiselinear edges between s values</span>
+<span class="n">rr</span><span class="o">.</span><span class="n">ixy</span> <span class="o">=</span> <span class="s1">&#39;x&#39;</span>  <span class="c1"># so s refers to x, lower &amp; upper are limits in y</span>
+<span class="n">rr</span><span class="o">.</span><span class="n">s</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">])</span>
+<span class="n">rr</span><span class="o">.</span><span class="n">lower</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">3</span><span class="p">,</span><span class="mi">6</span><span class="p">])</span>
+<span class="n">rr</span><span class="o">.</span><span class="n">upper</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">4</span><span class="p">,</span><span class="mi">7</span><span class="p">])</span>
+<span class="n">rr</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;RuledRectangle_Trapezoid.data&#39;</span><span class="p">)</span>  <span class="c1"># creates data file</span>
+</pre></div>
+</div>
+<p>See the <cite>setrun.py</cite> file in
+<cite>$CLAW/amrclaw/examples/advection_2d_flagregions</cite> for additional examples.</p>
+<p>See <a class="reference internal" href="marching_front.html#mf-amr-flag"><span class="std std-ref">Creating an AMR flag region</span></a> for a more complex example where a ruled rectangle is
+defined that covers a set of fgmax points (see <a class="reference internal" href="fgmax.html#fgmax"><span class="std std-ref">Fixed grid monitoring</span></a>) defined with the
+<a class="reference internal" href="marching_front.html#marching-front"><span class="std std-ref">Marching Front algorithm</span></a>.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<p><a href="http://clawpack.org/">
+    <img class="logo" src= "_static/clawlogo.jpg" alt="Logo"/>
+</a>
+<h2>Version 5.7.0</h2>
+</p>
+  <h3><a href="contents.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Specifying flagregions for adaptive refinement</a><ul>
+<li><a class="reference internal" href="#using-ruled-rectangles-as-flagregions">Using ruled rectangles as flagregions</a></li>
+</ul>
+</li>
+</ul>
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="contents.html">Documentation overview</a><ul>
+  <li><a href="amrclaw.html">AMRClaw Description and Detailed Contents</a><ul>
+      <li>Previous: <a href="refinement.html" title="previous chapter">AMR refinement criteria</a></li>
+      <li>Next: <a href="ruled_rectangles.html" title="next chapter">Ruled Rectangles</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/flagregions.rst.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+<h4>Latest Version</h4>
+<ul>
+  <li><a href="./dev/flagregions.html">dev</a></li>
+  <li><a href="flagregions.html">v5.7.0</a></li>
+</ul>
+<h4>Older Versions</h4>
+<ul>
+  <li><a href="./v5.1.0/index.html">v5.1.0</a></li>
+  <li><a href="./v5.2.0/index.html">v5.2.0</a></li>
+  <li><a href="./v5.2.1/index.html">v5.2.1</a></li>
+  <li><a href="./v5.3.0/index.html">v5.3.0</a></li>
+  <li><a href="./v5.3.1/index.html">v5.3.1</a></li>
+  <li><a href="./v5.4.0/index.html">v5.4.0</a></li>
+  <li><a href="./v5.4.1/index.html">v5.4.1</a></li>
+  <li><a href="./v5.5.0/index.html">v5.5.0</a></li>
+  <li><a href="./v5.6.0/index.html">v5.6.0</a></li>
+  <li><a href="./v5.6.1/index.html">v5.6.1</a></li>
+</ul>
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+  <div class="footer">
+    &copy; Copyright CC-BY 2020, The Clawpack Development Team.
+    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
+  </div>
+  <script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-44811544-1', 'auto');
+  ga('send', 'pageview');
+
+  </script>
+  
+  </body>
+</html>

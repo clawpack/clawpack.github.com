@@ -1,39 +1,26 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
+<!DOCTYPE html>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
+    <meta charset="utf-8" />
     <title>Wave-propagation algorithms &#8212; Clawpack 5.4.0 documentation</title>
-    
     <link rel="stylesheet" href="_static/flasky.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="stylesheet" href="_static/base.css" type="text/css" />
     <link rel="stylesheet" href="_static/layout.css" type="text/css" />
-    <link rel="stylesheet" href="_static/banner.css" type="text/css" />
-    
-    <script type="text/javascript">
-      var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    './',
-        VERSION:     '5.4.0',
-        COLLAPSE_INDEX: false,
-        FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true,
-        SOURCELINK_SUFFIX: '.txt'
-      };
-    </script>
-    <script type="text/javascript" src="_static/jquery.js"></script>
-    <script type="text/javascript" src="_static/underscore.js"></script>
-    <script type="text/javascript" src="_static/doctools.js"></script>
-    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="stylesheet" type="text/css" href="_static/graphviz.css" />
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <script async="async" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="shortcut icon" href="_static/clawicon.ico"/>
     <link rel="author" title="About these documents" href="about.html" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" /> 
-  </head>
-  <body role="document">
+  </head><body>
 <div id="main-wrapper" class="sphinx">
 <div id="header-wrapper">
   <section id="header">
@@ -48,7 +35,7 @@
           <a href="installing.html">Install</a>
         </li>
         <li>
-          <a class="" href="galleries.html">Gallery</a>
+          <a class="" href="http://clawpack.org/gallery">Gallery</a>
         </li>
         <li>
           <a class="" href="community.html">Community</a>
@@ -88,100 +75,100 @@
 <div class="section" id="one-space-dimension">
 <span id="wp-1d"></span><h2>One space dimension<a class="headerlink" href="#one-space-dimension" title="Permalink to this headline">¶</a></h2>
 <p>Clawpack can be used to solve a system of equations of the form</p>
-<div class="math">
+<div class="math notranslate nohighlight">
 \[\kappa(x)q_t+f(q)_x = \psi(q,x,t),\]</div>
-<p>where <span class="math">\(q=q(x,t)\in{\cal R}^m\)</span>.  The standard case of a homogeneous
-conservation law has <span class="math">\(\kappa\equiv 1\)</span> and <span class="math">\(\psi\equiv 0\)</span>,</p>
-<div class="math" id="equation-cons1d">
+<p>where <span class="math notranslate nohighlight">\(q=q(x,t)\in{\cal R}^m\)</span>.  The standard case of a homogeneous
+conservation law has <span class="math notranslate nohighlight">\(\kappa\equiv 1\)</span> and <span class="math notranslate nohighlight">\(\psi\equiv 0\)</span>,</p>
+<div class="math notranslate nohighlight" id="equation-cons1d">
 <span class="eqno">(1)<a class="headerlink" href="#equation-cons1d" title="Permalink to this equation">¶</a></span>\[q_t+f(q)_x=0.\]</div>
-<p>The flux function <span class="math">\(f(q)\)</span> can also depend explicitly on <span class="math">\(x\)</span> and
-<span class="math">\(t\)</span> as well as on <span class="math">\(q\)</span>.
+<p>The flux function <span class="math notranslate nohighlight">\(f(q)\)</span> can also depend explicitly on <span class="math notranslate nohighlight">\(x\)</span> and
+<span class="math notranslate nohighlight">\(t\)</span> as well as on <span class="math notranslate nohighlight">\(q\)</span>.
 Hyperbolic systems that are not in conservation form, e.g.,</p>
-<div class="math">
+<div class="math notranslate nohighlight">
 \[q_t+A(x,t)q_x=0,\]</div>
-<p>can also be solved. See <a class="reference internal" href="biblio.html#leveque-fvmhp" id="id1">[LeVeque-FVMHP]</a> for more details about the
+<p>can also be solved. See <a class="reference internal" href="biblio.html#leveque-fvmhp" id="id1"><span>[LeVeque-FVMHP]</span></a> for more details about the
 wave-propagation algorithms that are briefly described here.</p>
 <p>The basic requirement on the homogeneous system is that it be hyperbolic in
 the sense that a Riemann solver can be specified that, for any two states
-<span class="math">\(q_{i-1}\)</span> and <span class="math">\(Q_i\)</span>, returns a set of <span class="math">\(M_w\)</span> waves
-<span class="math">\({\cal W}^p_{i-1/2}\)</span> and speeds
-<span class="math">\(s^p_{i-1/2}\)</span>
+<span class="math notranslate nohighlight">\(q_{i-1}\)</span> and <span class="math notranslate nohighlight">\(Q_i\)</span>, returns a set of <span class="math notranslate nohighlight">\(M_w\)</span> waves
+<span class="math notranslate nohighlight">\({\cal W}^p_{i-1/2}\)</span> and speeds
+<span class="math notranslate nohighlight">\(s^p_{i-1/2}\)</span>
 satisfying</p>
-<div class="math">
+<div class="math notranslate nohighlight">
 \[\sum_{p=1}^{M_w} {\cal W}^p_{i-1/2} = Q_i-Q_{i-1} \equiv \Delta Q_{i-1/2}.\]</div>
 <p>The Riemann solver must also return a left-going fluctuation
-<span class="math">\({\cal A}^-\Delta Q_{i-1/2}\)</span> and
-a right-going fluctuation <span class="math">\({\cal A}^+\Delta Q_{i-1/2}\)</span>. In
+<span class="math notranslate nohighlight">\({\cal A}^-\Delta Q_{i-1/2}\)</span> and
+a right-going fluctuation <span class="math notranslate nohighlight">\({\cal A}^+\Delta Q_{i-1/2}\)</span>. In
 the standard conservative case <a class="reference internal" href="#equation-cons1d">(1)</a> these should satisfy</p>
-<div class="math" id="equation-asum">
+<div class="math notranslate nohighlight" id="equation-asum">
 <span class="eqno">(2)<a class="headerlink" href="#equation-asum" title="Permalink to this equation">¶</a></span>\[{\cal A}^-\Delta Q_{i-1/2}+{\cal A}^+\Delta Q_{i-1/2} = f(Q_i)-f(Q_{i-1})\]</div>
-<p>and the fluctuations then define a &#8220;flux-difference splitting&#8221;.</p>
-<div class="math">
+<p>and the fluctuations then define a “flux-difference splitting”.</p>
+<div class="math notranslate nohighlight">
 \[{\cal A}^-\Delta Q_{i-1/2} = \sum_p (s^p_{i-1/2})^- {\cal W}^p_{i-1/2},
 \qquad {\cal A}^+\Delta Q_{i-1/2} = \sum_p (s^p_{i-1/2})^+ {\cal W}^p_{i-1/2},\]</div>
-<p>where <span class="math">\(s^- = \min(s,0)\)</span> and <span class="math">\(s^+ = \max(s,0)\)</span>.  In the
-nonconservative case eqn{claw_1dnoncon}, there is no &#8220;flux function&#8221;
-<span class="math">\(f(q)\)</span>,
+<p>where <span class="math notranslate nohighlight">\(s^- = \min(s,0)\)</span> and <span class="math notranslate nohighlight">\(s^+ = \max(s,0)\)</span>.  In the
+nonconservative case eqn{claw_1dnoncon}, there is no “flux function”
+<span class="math notranslate nohighlight">\(f(q)\)</span>,
 and the constraint <a class="reference internal" href="#equation-asum">(2)</a> need not be satisfied.</p>
 </div>
 <div class="section" id="godunov-s-method">
-<h2>Godunov&#8217;s method<a class="headerlink" href="#godunov-s-method" title="Permalink to this headline">¶</a></h2>
+<h2>Godunov’s method<a class="headerlink" href="#godunov-s-method" title="Permalink to this headline">¶</a></h2>
 <p>Only the fluctuations are used for the first-order Godunov method, which is
 implemented in the form</p>
-<div class="math">
+<div class="math notranslate nohighlight">
 \[Q_i^{n+1} = Q_i^n - \frac{\Delta t}{\Delta x}\left[{\cal A}^+\Delta Q_{i-1/2}
 + {\cal A}^-\Delta Q_{i+1/2}\right],\]</div>
-<p>assuming <span class="math">\(\kappa \equiv 1\)</span>.</p>
+<p>assuming <span class="math notranslate nohighlight">\(\kappa \equiv 1\)</span>.</p>
 <p>The Riemann solver must be supplied by the user in the form of a subroutine
 <cite>rp1</cite>, as described in <a class="reference internal" href="user_routines.html#user-riemann"><span class="std std-ref">Specifying the Riemann solver</span></a>.</p>
 <p>Typically the Riemann solver first computes waves and speeds and then uses
-these to compute <span class="math">\({\cal A}^+Q_{i-1/2}\)</span> and <span class="math">\({\cal A}^-Q_{i-1/2}\)</span>
+these to compute <span class="math notranslate nohighlight">\({\cal A}^+Q_{i-1/2}\)</span> and <span class="math notranslate nohighlight">\({\cal A}^-Q_{i-1/2}\)</span>
 internally in the Riemann solver.</p>
 </div>
 <div class="section" id="high-resolution-methods">
 <h2>High-resolution methods<a class="headerlink" href="#high-resolution-methods" title="Permalink to this headline">¶</a></h2>
 <p>The waves and speeds must also
 be returned by the Riemann solver in order to use the high-resolution
-methods described in <a class="reference internal" href="biblio.html#leveque-fvmhp" id="id2">[LeVeque-FVMHP]</a>, which reduce to a second-order
+methods described in <a class="reference internal" href="biblio.html#leveque-fvmhp" id="id2"><span>[LeVeque-FVMHP]</span></a>, which reduce to a second-order
 accurate Lax-Wendroff type method when limiters are not used.
 By introducing wave limiters, non-physical oscillations near discontinuities
 or steep gradients in the solution can be avoided.  The limiters are based
 on the theory of TVD methods for nonlinear scalar equations and extended in
 a natural way to systems of equations.</p>
 <p>These methods take the form</p>
-<div class="math">
+<div class="math notranslate nohighlight">
 \[Q_i^{n+1} = Q_i^n - \frac{\Delta t}{\Delta x}\left[{\cal A}^+Q_{i-1/2}
 + {\cal A}^-Q_{i+1/2}\right]
 - \frac{\Delta t}{\Delta x}(\tilde F_{i+1/2} - \tilde F_{i-1/2})\]</div>
 <p>where</p>
-<div class="math">
+<div class="math notranslate nohighlight">
 \[\tilde F_{i-1/2} = \frac 1 2 \sum_{p=1}^{M_w} |s^p_{i-1/2}|
 \left( 1-\frac{\Delta t}{\Delta x} |s^p_{i-1/2}|\right)
 \tilde{\cal W}_{i-1/2}^p.\]</div>
-<p>Here <span class="math">\(\tilde{\cal W}_{i-1/2}^p\)</span> represents a limited version of the wave
-<span class="math">\({\cal W}_{i-1/2}^p\)</span>, obtained by comparing <span class="math">\({\cal W}_{i-1/2}^p\)</span> to
-<span class="math">\({\cal W}_{i-3/2}^p\)</span> if <span class="math">\(s^p&gt;0\)</span> or to <span class="math">\({\cal W}_{i+1/2}^p\)</span>
-if <span class="math">\(s^p&lt;0\)</span>.</p>
+<p>Here <span class="math notranslate nohighlight">\(\tilde{\cal W}_{i-1/2}^p\)</span> represents a limited version of the wave
+<span class="math notranslate nohighlight">\({\cal W}_{i-1/2}^p\)</span>, obtained by comparing <span class="math notranslate nohighlight">\({\cal W}_{i-1/2}^p\)</span> to
+<span class="math notranslate nohighlight">\({\cal W}_{i-3/2}^p\)</span> if <span class="math notranslate nohighlight">\(s^p&gt;0\)</span> or to <span class="math notranslate nohighlight">\({\cal W}_{i+1/2}^p\)</span>
+if <span class="math notranslate nohighlight">\(s^p&lt;0\)</span>.</p>
 </div>
 <div class="section" id="f-wave-formulation">
 <span id="wp-fwave"></span><h2>f-wave formulation<a class="headerlink" href="#f-wave-formulation" title="Permalink to this headline">¶</a></h2>
 <p>For equations with spatially-varying flux functions, such as</p>
-<div class="math" id="equation-cons1dvf">
+<div class="math notranslate nohighlight" id="equation-cons1dvf">
 <span class="eqno">(3)<a class="headerlink" href="#equation-cons1dvf" title="Permalink to this equation">¶</a></span>\[q_t+f(q,x)_x=0.\]</div>
 <p>it is often convenient to use the f-wave formulation of the algorithm, as
-proposed in <a class="reference internal" href="biblio.html#balelevmitross02" id="id3">[BaleLevMitRoss02]</a>. Rather than decomposing the jump
-<span class="math">\(Q_i-Q_{i-1}\)</span> into waves, the idea of the f-wave approach is to
-decompose the flux difference <span class="math">\(f(Q_i,x_i) - f(Q_{i-1},x_{i-1})\)</span> into
+proposed in <a class="reference internal" href="biblio.html#balelevmitross02" id="id3"><span>[BaleLevMitRoss02]</span></a>. Rather than decomposing the jump
+<span class="math notranslate nohighlight">\(Q_i-Q_{i-1}\)</span> into waves, the idea of the f-wave approach is to
+decompose the flux difference <span class="math notranslate nohighlight">\(f(Q_i,x_i) - f(Q_{i-1},x_{i-1})\)</span> into
 f-waves using appropriate eigenvectors of the Jacobian matrices to either
 side of the interface.  See <a class="reference internal" href="riemann.html#riemann-fwave"><span class="std std-ref">f-wave Riemann solvers</span></a> for more details.</p>
 </div>
 <div class="section" id="capacity-functions">
 <h2>Capacity functions<a class="headerlink" href="#capacity-functions" title="Permalink to this headline">¶</a></h2>
-<p>When a capacity function <span class="math">\(\kappa(x)\)</span> is present, the Godunov method becomes</p>
-<div class="math">
+<p>When a capacity function <span class="math notranslate nohighlight">\(\kappa(x)\)</span> is present, the Godunov method becomes</p>
+<div class="math notranslate nohighlight">
 \[Q_i^{n+1} = Q_i^n - \frac{\Delta t}{\kappa_i \Delta x}
 \left[{\cal A}^+Q_{i-1/2} + {\cal A}^-Q_{i+1/2}\right],\]</div>
-<p>See <a class="reference internal" href="biblio.html#leveque-fvmhp" id="id4">[LeVeque-FVMHP]</a> for discussion of this algorithm and its extension to
+<p>See <a class="reference internal" href="biblio.html#leveque-fvmhp" id="id4"><span>[LeVeque-FVMHP]</span></a> for discussion of this algorithm and its extension to
 the high-resolution method.
 Capacity functions are useful in particular for solving equations on a
 mapped grid.</p>
@@ -190,7 +177,7 @@ mapped grid.</p>
 <h2>Source terms<a class="headerlink" href="#source-terms" title="Permalink to this headline">¶</a></h2>
 <p>If the equation has a source term,
 a routine <cite>src1</cite> must also be supplied that
-solves the  source term equation <span class="math">\(q_t=\psi\)</span> over a time step.
+solves the  source term equation <span class="math notranslate nohighlight">\(q_t=\psi\)</span> over a time step.
 A fractional step method  is used to couple this with the homogeneous
 solution, as described in <a class="reference internal" href="user_routines.html#user-src"><span class="std std-ref">Using src for source terms</span></a>.</p>
 </div>
@@ -198,7 +185,7 @@ solution, as described in <a class="reference internal" href="user_routines.html
 <h2>Boundary conditions<a class="headerlink" href="#boundary-conditions" title="Permalink to this headline">¶</a></h2>
 <p>Boundary conditions are imposed by setting values in ghost cells each time
 step, as described in <a class="reference internal" href="bc.html#bc"><span class="std std-ref">Boundary conditions</span></a>.</p>
-<p>TODO: Continue description &#8211; 2d and 3d, transverse solvers.</p>
+<p>TODO: Continue description – 2d and 3d, transverse solvers.</p>
 </div>
 </div>
 
@@ -213,11 +200,11 @@ step, as described in <a class="reference internal" href="bc.html#bc"><span clas
 </a>
 <h2>Version 5.4.0</h2>
 </p>
-  <h3><a href="contents.html">Table Of Contents</a></h3>
+  <h3><a href="contents.html">Table of Contents</a></h3>
   <ul>
 <li><a class="reference internal" href="#">Wave-propagation algorithms</a><ul>
 <li><a class="reference internal" href="#one-space-dimension">One space dimension</a></li>
-<li><a class="reference internal" href="#godunov-s-method">Godunov&#8217;s method</a></li>
+<li><a class="reference internal" href="#godunov-s-method">Godunov’s method</a></li>
 <li><a class="reference internal" href="#high-resolution-methods">High-resolution methods</a></li>
 <li><a class="reference internal" href="#f-wave-formulation">f-wave formulation</a></li>
 <li><a class="reference internal" href="#capacity-functions">Capacity functions</a></li>
@@ -231,43 +218,46 @@ step, as described in <a class="reference internal" href="bc.html#bc"><span clas
   <li><a href="contents.html">Documentation overview</a><ul>
   </ul></li>
 </ul>
-  <div role="note" aria-label="source link">
-    <h3>This Page</h3>
-    <ul class="this-page-menu">
-      <li><a href="_sources/wp_algorithms.rst.txt"
-            rel="nofollow">Show Source</a></li>
-    </ul>
-   </div>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/wp_algorithms.rst.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
 <div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
     <form class="search" action="search.html" method="get">
-      <div><input type="text" name="q" /></div>
-      <div><input type="submit" value="Go" /></div>
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
     </form>
+    </div>
 </div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
-<h3>Versions</h3>
+<script>$('#searchbox').show(0);</script>
+<h4>Latest Version</h4>
 <ul>
-    <li><a href="../v5.4.1/wp_algorithms.html">v5.4.1</a></li>
-    <li><a href="wp_algorithms.html">v5.4.0</a></li>
-    <li><a href="../v5.3.1/wp_algorithms.html">v5.3.1</a></li>
-    <li><a href="../v5.3.0/wp_algorithms.html">v5.3.0</a></li>
-    <li><a href="../v5.2.1/wp_algorithms.html">v5.2.1</a></li>
-    <li><a href="../v5.2.0/wp_algorithms.html">v5.2.0</a></li>
-    <li><a href="../v5.1.0/wp_algorithms.html">v5.1.0</a></li>
-    <li><a href="../v5.6.1/wp_algorithms.html">v5.6.1</a></li>
-    <li><a href="../v5.6.0/wp_algorithms.html">v5.6.0</a></li>
-    <li><a href="../v5.5.0/wp_algorithms.html">v5.5.0</a></li>
-    <li><a href="../dev/wp_algorithms.html">dev</a></li>
+  <li><a href="../dev/wp_algorithms.html">dev</a></li>
+  <li><a href="../v5.7.0/wp_algorithms.html">v5.7.0</a></li>
 </ul>
+<h4>Older Versions</h4>
+<ul>
+  <li><a href="../v5.1.0/wp_algorithms.html">v5.1.0</a></li>
+  <li><a href="../v5.2.0/wp_algorithms.html">v5.2.0</a></li>
+  <li><a href="../v5.2.1/wp_algorithms.html">v5.2.1</a></li>
+  <li><a href="../v5.3.0/wp_algorithms.html">v5.3.0</a></li>
+  <li><a href="../v5.3.1/wp_algorithms.html">v5.3.1</a></li>
+  <li><a href="wp_algorithms.html">v5.4.0</a></li>
+  <li><a href="../v5.4.1/wp_algorithms.html">v5.4.1</a></li>
+  <li><a href="../v5.5.0/wp_algorithms.html">v5.5.0</a></li>
+  <li><a href="../v5.6.0/wp_algorithms.html">v5.6.0</a></li>
+  <li><a href="../v5.6.1/wp_algorithms.html">v5.6.1</a></li>
+</ul>
+
         </div>
       </div>
       <div class="clearer"></div>
     </div>
   <div class="footer">
-    &copy; Copyright 2017, The Clawpack Development Team.
+    &copy; Copyright CC-BY 2020, The Clawpack Development Team.
     Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
   </div>
   <script>

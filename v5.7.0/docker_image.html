@@ -1,0 +1,296 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>Docker for Clawpack &#8212; Clawpack 5.7.0 documentation</title>
+    <link rel="stylesheet" href="_static/flasky.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/base.css" type="text/css" />
+    <link rel="stylesheet" href="_static/layout.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/graphviz.css" />
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <script async="async" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="shortcut icon" href="_static/clawicon.ico"/>
+    <link rel="author" title="About these documents" href="about.html" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Clawpack Virtual Machine" href="vm.html" />
+    <link rel="prev" title="Troubleshooting" href="trouble.html" /> 
+  </head><body>
+<div id="main-wrapper" class="sphinx">
+<div id="header-wrapper">
+  <section id="header">
+    <!-- <h1><a href="http://clawpack.org/">Clawpack</a></h1> -->
+    <h1><a href="http://clawpack.org/">Clawpack-5</a></h1> 
+    <nav>
+      <ul>
+        <li>
+          <a href="contents.html">Docs</a>
+        </li>
+        <li>
+          <a href="installing.html">Install</a>
+        </li>
+        <li>
+          <a class="" href="http://clawpack.org/gallery">Gallery</a>
+        </li>
+        <li>
+          <a class="" href="community.html">Community</a>
+        </li>
+        <li>
+          <a class="active" href="http://github.com/clawpack">Source</a>
+        </li>
+        <li>
+          <a class="" href="developers.html">Develop</a>
+        </li>
+      </ul>
+    </nav>
+  </section>
+<div class="decoration"></div>
+</div>
+
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="vm.html" title="Clawpack Virtual Machine"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="trouble.html" title="Troubleshooting"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="contents.html">Clawpack 5.7.0 documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="docker-for-clawpack">
+<span id="docker-image"></span><h1>Docker for Clawpack<a class="headerlink" href="#docker-for-clawpack" title="Permalink to this headline">¶</a></h1>
+<p>Rather than installing Clawpack and all its dependencies on your computer, if
+you have <a class="reference external" href="https://www.docker.com/">Docker</a> installed then you can now use a
+docker image from the <a class="reference external" href="https://hub.docker.com/u/clawpack/dashboard/">DockerHub Clawpack repositories</a>.</p>
+<p>To download an image:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ docker pull clawpack/v5.6.1_dockerimage
+</pre></div>
+</div>
+<p>To create a container and run it:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ docker run -i -t -p 8889:8889 --name clawpack-v5.6.1_container \
+    clawpack/v5.6.1_dockerimage
+</pre></div>
+</div>
+<p>You can change the container name if you wish, and also the port 8889 (on
+which jupyter notebooks might be served, see below).</p>
+<p>You should now see a prompt like:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>jovyan $
+</pre></div>
+</div>
+<p>indicating that you are in the container, logged in as user <cite>jovyan</cite>.</p>
+<p>Once logged in to the container, you should find a directory
+<cite>$HOME/clawpack-v5.6.1</cite> that contains the Clawpack installation (including the
+current master branch of the <a class="reference internal" href="apps.html#apps"><span class="std std-ref">Clawpack Applications repository</span></a>).</p>
+<div class="section" id="a-better-image-for-geoclaw-users">
+<h2>A better image for GeoClaw users<a class="headerlink" href="#a-better-image-for-geoclaw-users" title="Permalink to this headline">¶</a></h2>
+<p><strong>Still under development</strong></p>
+<p>GeoClaw users might want to instead use the image <cite>clawpack/v5.6.1_geoclaw</cite>,
+which includes everything in <cite>clawpack/v5.6.1_dockerimage</cite> but also installs
+a number of other tools useful for GeoClaw users, see the Dockerfile
+<a class="reference external" href="https://github.com/clawpack/docker-files/blob/master/Dockerfile_v5.6.1_geoclaw">clawpack/docker-files/Dockerfile_v5.6.1_geoclaw</a>.</p>
+</div>
+<div class="section" id="stopping-a-container">
+<h2>Stopping a container<a class="headerlink" href="#stopping-a-container" title="Permalink to this headline">¶</a></h2>
+<p>You can exit a container (after using <cite>ctrl-C</cite> to quit the jupyter server if
+one is running) via:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">exit</span>
+</pre></div>
+</div>
+<p>at the <cite>jovyan $</cite> prompt.</p>
+</div>
+<div class="section" id="restarting-a-container">
+<h2>Restarting a container<a class="headerlink" href="#restarting-a-container" title="Permalink to this headline">¶</a></h2>
+<p>You can restart the container via:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">docker</span> <span class="n">start</span> <span class="o">-</span><span class="n">a</span> <span class="o">-</span><span class="n">i</span> <span class="n">clawpack</span><span class="o">-</span><span class="n">v5</span><span class="o">.</span><span class="mf">6.1</span><span class="n">_container</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="running-jupyter-notebooks">
+<h2>Running Jupyter notebooks<a class="headerlink" href="#running-jupyter-notebooks" title="Permalink to this headline">¶</a></h2>
+<p>The form of run command suggested above also allows you to run Jupyter
+notebooks from port 8889 on your own computer (or whatever port you
+specified when creating the container).</p>
+<p>To start the sever, in the docker container (at the <cite>jovyan $</cite> prompt)
+run this command:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">jupyter</span> <span class="n">notebook</span> <span class="o">--</span><span class="n">ip</span><span class="o">=</span><span class="mf">0.0</span><span class="o">.</span><span class="mf">0.0</span> <span class="o">--</span><span class="n">port</span><span class="o">=</span><span class="mi">8889</span> <span class="o">--</span><span class="n">no</span><span class="o">-</span><span class="n">browser</span>
+</pre></div>
+</div>
+<p>Then open a browser (on the host machine) to:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>http://localhost:8889/?token=TOKEN
+</pre></div>
+</div>
+<p>replacing <cite>TOKEN</cite> with the token that should have printed out when you started
+the server.</p>
+<p>This will open to the top level of <cite>$HOME</cite>, and you can then navigate to
+wherever the notebooks are you want to run, e.g. the sample ones in the
+<cite>apps</cite> repository can be found at <cite>clawpack-v5.6.1/apps/notebooks</cite>.</p>
+<p>PyClaw users might want to start with
+<cite>clawpack-v5.6.1/apps/notebooks/pyclaw/Acoustics-1D.ipynb</cite>.</p>
+<p>GeoClaw users might want to try running
+<cite>clawpack-v5.6.1/apps/notebooks/geoclaw/chile2010a.ipynb</cite>,
+which exercises most aspects of GeoClaw.</p>
+</div>
+<div class="section" id="moving-files-between-the-docker-container-and-the-host-machine">
+<h2>Moving files between the docker container and the host machine<a class="headerlink" href="#moving-files-between-the-docker-container-and-the-host-machine" title="Permalink to this headline">¶</a></h2>
+<p>Often you want to run the code on Docker and then transfer the resulting output
+files, and/or the plots generated, back to the host machine (e.g. some
+directory on your laptop).  You can use the <cite>–volume</cite> flag when running a
+container to accomplish this, see
+<a class="reference external" href="https://docs.docker.com/storage/volumes/">docker volume documentation</a>.</p>
+</div>
+<div class="section" id="some-other-useful-docker-commands">
+<h2>Some other useful docker commands<a class="headerlink" href="#some-other-useful-docker-commands" title="Permalink to this headline">¶</a></h2>
+<p>See the <a class="reference external" href="https://docs.docker.com/engine/reference/commandline/cli/">docker command line documentation</a>
+or any of the tutorials available on-line for more details, but here are a
+few particularly useful commands:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">docker</span> <span class="n">help</span>
+<span class="n">docker</span> <span class="n">info</span>
+
+<span class="n">docker</span> <span class="n">ps</span> <span class="o">-</span><span class="n">a</span>  <span class="c1"># list all containsers</span>
+<span class="n">docker</span> <span class="n">rm</span> <span class="n">clawpack</span><span class="o">-</span><span class="n">v5</span><span class="o">.</span><span class="mf">6.0</span><span class="n">_container</span>  <span class="c1"># remove a container</span>
+
+<span class="n">docker</span> <span class="n">images</span> <span class="o">-</span><span class="n">a</span>  <span class="c1"># list all images</span>
+<span class="n">docker</span> <span class="n">rmi</span> <span class="n">clawpack</span><span class="o">/</span><span class="n">v5</span><span class="o">.</span><span class="mf">6.0</span><span class="n">_dockerimage</span>  <span class="c1"># remove an image</span>
+<span class="n">docker</span> <span class="n">prune</span>  <span class="c1"># remove all images not used by any container</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="creating-your-own-docker-image">
+<h2>Creating your own docker image<a class="headerlink" href="#creating-your-own-docker-image" title="Permalink to this headline">¶</a></h2>
+<p>If you want to create a new docker image that includes other software in
+addition to Clawpack, you can find the <cite>Dockerile</cite> used to create the docker
+image on dockerhub in the repository
+<a class="reference external" href="https://github.com/clawpack/docker-files">https://github.com/clawpack/docker-files</a>.</p>
+<p>This might be useful if you want to distribute your own code that depends on
+Clawpack in a form that’s easy for others to use.</p>
+<p>You can also create a Dockerfile that uses the already-build Clawpack 5.6.1
+on Dockerhub by starting the Dockerfile with:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">FROM</span> <span class="n">clawpack</span><span class="o">/</span><span class="n">v5</span><span class="o">.</span><span class="mf">6.1</span><span class="n">_dockerimage</span><span class="p">:</span><span class="n">release</span>
+</pre></div>
+</div>
+<p>and then adding anything addition you want in the image,
+such as other Python modules you need or your own application code.
+You may need to specify <cite>USER root</cite> in order to install some things, and
+then switch back to <cite>USER jovyan</cite> at the end.  For an example, see
+<a class="reference external" href="https://github.com/clawpack/docker-files/blob/master/Dockerfile_v5.6.1_geoclaw">clawpack/docker-files/Dockerfile_v5.6.1_geoclaw</a>.</p>
+</div>
+<div class="section" id="dockerfiles-for-binder">
+<h2>Dockerfiles for binder<a class="headerlink" href="#dockerfiles-for-binder" title="Permalink to this headline">¶</a></h2>
+<p>The username jovyan was chosen so that you can use this docker image also for
+starting up a Jupyter notebook server on <a class="reference external" href="http://www.mybinder.org">binder</a>.  You can do this by
+including a simple Dockerfile at the top level of your repository that
+uses the dockerhub image, as above. See this repository for a simple example:
+<a class="reference external" href="https://github.com/rjleveque/test_binder">https://github.com/rjleveque/test_binder</a>.</p>
+<p>See <a class="reference external" href="https://mybinder.readthedocs.io/en/latest/sample_repos.html#minimal-dockerfiles-for-binder">the binder documentation</a>
+for more details on using Dockerfiles there.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<p><a href="http://clawpack.org/">
+    <img class="logo" src= "_static/clawlogo.jpg" alt="Logo"/>
+</a>
+<h2>Version 5.7.0</h2>
+</p>
+  <h3><a href="contents.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Docker for Clawpack</a><ul>
+<li><a class="reference internal" href="#a-better-image-for-geoclaw-users">A better image for GeoClaw users</a></li>
+<li><a class="reference internal" href="#stopping-a-container">Stopping a container</a></li>
+<li><a class="reference internal" href="#restarting-a-container">Restarting a container</a></li>
+<li><a class="reference internal" href="#running-jupyter-notebooks">Running Jupyter notebooks</a></li>
+<li><a class="reference internal" href="#moving-files-between-the-docker-container-and-the-host-machine">Moving files between the docker container and the host machine</a></li>
+<li><a class="reference internal" href="#some-other-useful-docker-commands">Some other useful docker commands</a></li>
+<li><a class="reference internal" href="#creating-your-own-docker-image">Creating your own docker image</a></li>
+<li><a class="reference internal" href="#dockerfiles-for-binder">Dockerfiles for binder</a></li>
+</ul>
+</li>
+</ul>
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="contents.html">Documentation overview</a><ul>
+      <li>Previous: <a href="trouble.html" title="previous chapter">Troubleshooting</a></li>
+      <li>Next: <a href="vm.html" title="next chapter">Clawpack Virtual Machine</a></li>
+  </ul></li>
+</ul>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/docker_image.rst.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+<h4>Latest Version</h4>
+<ul>
+  <li><a href="../dev/docker_image.html">dev</a></li>
+  <li><a href="docker_image.html">v5.7.0</a></li>
+</ul>
+<h4>Older Versions</h4>
+<ul>
+  <li><a href="../v5.1.0/index.html">v5.1.0</a></li>
+  <li><a href="../v5.2.0/index.html">v5.2.0</a></li>
+  <li><a href="../v5.2.1/index.html">v5.2.1</a></li>
+  <li><a href="../v5.3.0/index.html">v5.3.0</a></li>
+  <li><a href="../v5.3.1/index.html">v5.3.1</a></li>
+  <li><a href="../v5.4.0/docker_image.html">v5.4.0</a></li>
+  <li><a href="../v5.4.1/docker_image.html">v5.4.1</a></li>
+  <li><a href="../v5.5.0/docker_image.html">v5.5.0</a></li>
+  <li><a href="../v5.6.0/docker_image.html">v5.6.0</a></li>
+  <li><a href="../v5.6.1/docker_image.html">v5.6.1</a></li>
+</ul>
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+  <div class="footer">
+    &copy; Copyright CC-BY 2020, The Clawpack Development Team.
+    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
+  </div>
+  <script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-44811544-1', 'auto');
+  ga('send', 'pageview');
+
+  </script>
+  
+  </body>
+</html>

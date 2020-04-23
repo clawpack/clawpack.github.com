@@ -1,0 +1,200 @@
+Clawpack git diffs...
+
+===========
+classic
+===========
+/Users/rjl/clawpack_src/clawpack_master/classic
+
+
+
+===========
+amrclaw
+===========
+/Users/rjl/clawpack_src/clawpack_master/amrclaw
+
+
+
+===========
+clawutil
+===========
+/Users/rjl/clawpack_src/clawpack_master/clawutil
+
+diff --git a/src/python/clawutil/make_all.py b/src/python/clawutil/make_all.py
+index 0654d8b..c6e444c 100644
+--- a/src/python/clawutil/make_all.py
++++ b/src/python/clawutil/make_all.py
+@@ -90,6 +90,8 @@ def make_all(examples_dir = '.',make_clean_first=False, env=None):
+     import subprocess
+     for directory in dir_list:
+ 
++        print("=====> %s" % directory)
++
+         fout.write("\n=============================================\n")
+         fout.write(directory)
+         fout.write("\n=============================================\n")
+@@ -162,15 +164,16 @@ def make_notebook_htmls(examples_dir = '.',make_clean_first=False, env=None):
+ 
+     current_dir = os.getcwd()
+ 
+-    dir_list = list_examples(examples_dir)
++    #dir_list = list_examples(examples_dir)
+     print("Found the following Jupyter notebooks:")
+     nb_dir_list = []
+-    for d in dir_list:
+-        notebooks = glob.glob(d + '/*.ipynb')
+-        if len(notebooks) != 0:
+-            nb_dir_list.append(d)
+-        for nbfile in notebooks:
+-            print(nbfile)
++    for (dirpath, subdirs, files) in os.walk('.',topdown=False):
++        if '.ipynb_checkpoints' not in dirpath:
++            notebooks = glob.glob(dirpath + '/*.ipynb')
++            if len(notebooks) != 0:
++                nb_dir_list.append(os.path.abspath(dirpath))
++            for nbfile in notebooks:
++                print(nbfile)
+             
+     if len(nb_dir_list) == 0:
+         print("  none")
+@@ -201,6 +204,8 @@ def make_notebook_htmls(examples_dir = '.',make_clean_first=False, env=None):
+     import subprocess
+     for directory in nb_dir_list:
+ 
++        print("=====> %s" % directory)
++
+         fout.write("\n=============================================\n")
+         fout.write(directory)
+         fout.write("\n=============================================\n")
+diff --git a/src/python/clawutil/nbtools.py b/src/python/clawutil/nbtools.py
+index ad5652e..ef6f796 100644
+--- a/src/python/clawutil/nbtools.py
++++ b/src/python/clawutil/nbtools.py
+@@ -4,7 +4,10 @@ Useful tools for running Clawpack from an IPython notebook.
+ 
+ from __future__ import absolute_import
+ from __future__ import print_function
++import os
++
+ from IPython.core.display import display
++
+ try:
+     from IPython.display import FileLink
+ except:
+@@ -87,7 +90,7 @@ def make_exe(new=False, env=None, verbose=True):
+     make_driver(args, env, outfile, verbose)
+ 
+     
+-def make_output(label=None, env=None, verbose=True):
++def make_output(label=None, env=None, outdir_base='_output', verbose=True):
+     """Perform 'make output' and display link."""
+     
+     if label is None: 
+@@ -95,7 +98,7 @@ def make_output(label=None, env=None, verbose=True):
+     else:
+         if label[0] != '_':
+             label = '_' + label
+-    outdir = '_output%s' % str(label)
++    outdir = '%s%s' % (outdir_base,str(label))
+     outfile = 'run_output%s.txt' % str(label)
+ 
+     args = 'output OUTDIR=%s' % outdir
+@@ -104,7 +107,8 @@ def make_output(label=None, env=None, verbose=True):
+     return outdir
+ 
+     
+-def make_plots(label=None, env=None, verbose=True):
++def make_plots(label=None, env=None, outdir_base='_output', 
++               plotdir_base='_plots', verbose=True):
+     """Perform 'make plots' and display links"""
+ 
+     if label is None: 
+@@ -112,29 +116,42 @@ def make_plots(label=None, env=None, verbose=True):
+     else:
+         if label[0] != '_':
+             label = '_' + label
+-    outdir = '_output%s' % str(label)
+-    plotdir = '_plots%s' % str(label)
++    outdir = '%s%s' % (outdir_base,str(label))
++    plotdir = '%s%s' % (plotdir_base,str(label))
+     outfile = 'plot_output%s.txt' % str(label)
+ 
+     args = 'plots OUTDIR=%s PLOTDIR=%s' % (outdir,plotdir)
+     make_driver(args, env, outfile, verbose)
+ 
+     if verbose:
+-        index_file = FileLink('%s/_PlotIndex.html' % plotdir)
++        print('+++ ',os.getcwd())
++        plotindex_path = '%s/PlotIndex.html' % plotdir
++        index_file = FileLink(plotindex_path)
+         print("View plots created at this link:")
+         display(index_file)
+ 
++        plotindex_path = os.path.join(os.getcwd(), '%s/PlotIndex.html' % plotdir)
++        plotindex_path = 'file://' + plotindex_path
++        print('Note that some links may not work when opened on Juptyer')
++        print('If you are running this locally, you should also be able to view')
++        print('plots by copying and pasting this link into a new browser tab:')
++        print('    ',plotindex_path)
++
+     return plotdir
+     
+ 
+-def make_output_and_plots(label=None, env=None, verbose=True):
++def make_output_and_plots(label=None, env=None, 
++                outdir_base='_output', plotdir_base='_plots', verbose=True):
+ 
+-    outdir = make_output(label,env,verbose)
+-    plotdir = make_plots(label,env,verbose)
++    outdir = make_output(label,env,outdir_base=outdir_base,verbose=verbose)
++    plotdir = make_plots(label,env,outdir_base=outdir_base,
++                         plotdir_base=plotdir_base,verbose=verbose)
+     return outdir,plotdir
+ 
+ 
+-def make_all(label=None, env=None, verbose=True):
++def make_all(label=None, env=None,
++             outdir_base='_output', plotdir_base='_plots', verbose=True):
++
+     """Perform 'make all' and display links"""
+ 
+     if label is None: 
+@@ -150,7 +167,10 @@ def make_all(label=None, env=None, verbose=True):
+     make_driver(args, env, outfile, verbose)
+ 
+     if verbose:
+-        index_file = FileLink('%s/_PlotIndex.html' % plotdir)
++        print('+++ ',os.getcwd())
++        plotindex_path = os.path.join(os.getcwd(), '%s/PlotIndex.html' % plotdir)
++        print('+++ ',plotindex_path)
++        index_file = FileLink(plotindex_path)
+         print("View plots created at this link:")
+         display(index_file)
+ 
+
+
+===========
+pyclaw
+===========
+/Users/rjl/clawpack_src/clawpack_master/pyclaw
+
+
+
+===========
+visclaw
+===========
+/Users/rjl/clawpack_src/clawpack_master/visclaw
+
+
+
+===========
+riemann
+===========
+/Users/rjl/clawpack_src/clawpack_master/riemann
+
+
+
+===========
+geoclaw
+===========
+/Users/rjl/clawpack_src/clawpack_master/geoclaw
+

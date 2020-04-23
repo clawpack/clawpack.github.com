@@ -3,7 +3,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=unicode" />
-<meta name="generator" content="Docutils 0.14: http://docutils.sourceforge.net/" />
+<meta name="generator" content="Docutils 0.16: http://docutils.sourceforge.net/" />
 <title>Chile 2010 test case for fgmax routines</title>
 <style type="text/css">
 
@@ -359,12 +359,12 @@ ul.auto-toc {
 
 </style>
 
-<link rel="icon" href="http://www.clawpack.org/clawicon.ico" />
+<link rel="icon" href="http://www.clawpack.org/_static/clawicon_new.ico" />
 </head>
 <body BGCOLOR="#FFFFE8" LINK="#7F0000" VLINK="#7F0000">
 <font FACE="TREBUCHET MS,HELVETICA,ARIAL">
 <a href="http://www.clawpack.org">
-<IMG SRC="http://www.clawpack.org/clawlogo.jpg" WIDTH="200" HEIGHT="70" 
+<IMG SRC="http://www.clawpack.org/_static/clawlogo_border.jpg" WIDTH="250" HEIGHT="70" 
 VSPACE="0" HSPACE="0" ALT="CLAWPACK" BORDER="0" LOOP="0"> </a>
 <div class="document" id="chile-2010-test-case-for-fgmax-routines">
 <span id="apps-tsunami-chile2010-fgmax"></span>
@@ -374,12 +374,14 @@ VSPACE="0" HSPACE="0" ALT="CLAWPACK" BORDER="0" LOOP="0"> </a>
 the wave at each point in the domain and the arrival times.
 This uses the &quot;fgmax&quot; (fixed grid maxima monitoring)
 capabilities described in <a class="reference external" href="http://www.clawpack.org/fgmax.html">http://www.clawpack.org/fgmax.html</a>.</p>
+<p><strong>Changed for v5.7.0:</strong> The fgmax grid is now specified directly in
+<cite>setrun.py</cite> and doing <cite>make data</cite> (or <cite>make .output</cite>) leads to the creation
+of a file <cite>fgmax_grids.data</cite> that is read into GeoClaw.</p>
 <p>To test:</p>
 <pre class="literal-block">
-python make_fgmax.py   # to create fgmax_grid.txt
 make .output
 python plot_fgmax.py   # to plot fgmax results
-make plots
+make plots             # to make frame plots and _PlotIndex.html
 </pre>
 <p>Or simply:</p>
 <pre class="literal-block">
@@ -395,27 +397,14 @@ along with the usual time frame plots.</p>
 <li><p class="first">See <a class="reference external" href="http://www.clawpack.org/fgmax.html">http://www.clawpack.org/fgmax.html</a> for more information about
 specifying fgmax parameters.</p>
 </li>
-<li><p class="first">The file <cite>make_fgmax.py</cite> is used to create the input file for
-<cite>fgmax_grid.txt</cite> that is needed as input for the Fortran code.
-The following lines in <cite>setrun.py</cite> specify this:</p>
-<pre class="literal-block">
-# == fgmax.data values ==
-fgmax_files = rundata.fgmax_data.fgmax_files
-# for fixed grids append to this list names of any fgmax input files
-fgmax_files.append('fgmax_grid.txt')
-rundata.fgmax_data.num_fgmax_val = 1  # Save depth only
-</pre>
-<p>The last line above indicates that we only want to keep track of maximum
-depth (and elevation), not speed, momentum flux, etc.</p>
-</li>
-<li><p class="first">The time <cite>tstart_max</cite> in this file is set to 10 seconds so that the
+<li><p class="first">The time <cite>fg.tstart_max</cite> in <cite>setrun.py</cite> is set to 10 seconds so that the
 topography in the source region has been finalized following the
 earthquake before we start monitoring the maxima.  (Since the topo on the
 fixed grid must also be stored for later postprocessing.)</p>
 </li>
 <li><p class="first">The refinement parameters and regions are set so that the maximum
 amplitude we wish to capture always appears on a level 3 grid and
-<cite>min_level_check = 3</cite> is set in <cite>make_fgmax.py</cite>.  Other choices of these
+<cite>fg.min_level_check = 3</cite> is set in <cite>setrun.py</cite>.  Other choices of these
 parameters may give misleading or bizarre results.  The fgmax capabilities
 were designed with the assumption that the region of interest will always
 be refined to the maximum level allowed.</p>
@@ -433,12 +422,13 @@ otherfigure = plotdata.new_otherfigure(name='max amplitude and arrival times',
 <h1>Version history:</h1>
 <ul class="simple">
 <li>Updated for Clawpack 5.3.0 on 15 Sept 2015</li>
+<li>Updated for Clawpack 5.7.0 on 18 April 2020</li>
 </ul>
 </div>
 </div>
 </body>
 </html>
-<h2>Files</h2>
+<h2>Files (html versions)</h2>
 <ul>
 
 <li><a href="Makefile.html">Makefile</a>
@@ -448,7 +438,9 @@ otherfigure = plotdata.new_otherfigure(name='max amplitude and arrival times',
 
 <p>
 
-<li><a href="make_fgmax.py.html">make_fgmax.py</a>
+
+<p>
+
 <li><a href="setrun.py.html">setrun.py</a>
 <li><a href="setplot.py.html">setplot.py</a>
 <li><a href="plot_fgmax.py.html">plot_fgmax.py</a>

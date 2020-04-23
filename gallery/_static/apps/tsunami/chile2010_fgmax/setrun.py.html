@@ -8,26 +8,26 @@
 
 
           <head>
-           <link rel="icon" href="http://www.clawpack.org//clawicon.ico" />
+           <link rel="icon" href="http://www.clawpack.org//_static/clawicon_new.ico" />
           </head> 
            <BODY TEXT="#000000" BGCOLOR="#FFFFFF" LINK="#0000FF" 
                  VLINK="#5500DD" ALINK="#FF0000">
            <font FACE="HELVETICA,ARIAL">
            
-<!-- Created from the file /Users/rjl/Downloads/clawpack-v5.6.0_test/clawpack-v5.6.0_galleries/apps/tsunami/chile2010_fgmax/setrun.py -->
-<!-- Date: Sat Jun  1 2019 at 13:06:02 -->
+<!-- Created from the file /Users/rjl/clawpack_src/clawpack_master/apps/tsunami/chile2010_fgmax/setrun.py -->
+<!-- Date: Sat Apr 18 2020 at 20:05:29 -->
 
 <table bgcolor="#FFEE99"> <tr> <td>
 &nbsp;<font size=6> setrun.py.html </font> </td>
 
             <td><a href="http://www.clawpack.org/index.html"><img
-            src="http://www.clawpack.org//clawlogo.jpg"
-            width=100 alt="CLAWPACK"></a>&nbsp;&nbsp; </td> </tr> <tr> <td>
+            src="http://www.clawpack.org//_static/clawlogo_border.jpg"
+            width=150 alt="CLAWPACK"></a>&nbsp;&nbsp; </td> </tr> <tr> <td>
 &nbsp;Source file: &nbsp;&nbsp;<a href="setrun.py">setrun.py </a>
 </td></tr><tr><td>
-&nbsp;Directory:  &nbsp; /Users/rjl/Downloads/clawpack-v5.6.0_test/clawpack-v5.6.0_galleries/apps/tsunami/chile2010_fgmax 
+&nbsp;Directory:  &nbsp; /Users/rjl/clawpack_src/clawpack_master/apps/tsunami/chile2010_fgmax 
 </td></tr><tr><td>
-&nbsp;Converted:  &nbsp; Sat Jun  1 2019 at 13:06:02 
+&nbsp;Converted:  &nbsp; Sat Apr 18 2020 at 20:05:29 
 &nbsp; using <a href="http://www.clawpack.org//doc/application_documentation.html#clawcode2html">clawcode2html</a>
 </td></tr><tr><td>
 <font color="#BB3300"> &nbsp;This documentation file will 
@@ -43,10 +43,9 @@ that will be read in by the Fortran code.
 
 """
 
-from __future__ import absolute_import
-from __future__ import print_function
 import os
 import numpy as np
+from clawpack.geoclaw import fgmax_tools
 
 try:
     CLAW = os.environ['CLAW']
@@ -453,12 +452,39 @@ def setgeo(rundata):
     <font color="blue"># [t1,t2,noutput,x1,x2,y1,y2,xpoints,ypoints,\</font>
     <font color="blue">#  ioutarrivaltimes,ioutsurfacemax]</font>
 
-    <font color="blue"># == fgmax.data values ==</font>
-    fgmax_files = rundata.fgmax_data.fgmax_files
-    <font color="blue"># for fixed grids append to this list names of any fgmax input files</font>
-    fgmax_files.append('fgmax_grid.txt')
-    rundata.fgmax_data.num_fgmax_val = 1  <font color="blue"># Save depth only</font>
 
+    <font color="blue"># == fgmax_grids.data values ==</font>
+    <font color="blue"># NEW STYLE STARTING IN v5.7.0</font>
+
+    <font color="blue"># set num_fgmax_val = 1 to save only max depth,</font>
+    <font color="blue">#                     2 to also save max speed,</font>
+    <font color="blue">#                     5 to also save max hs,hss,hmin</font>
+    rundata.fgmax_data.num_fgmax_val = 2  <font color="blue"># Save depth and speed</font>
+
+    fgmax_grids = rundata.fgmax_data.fgmax_grids  <font color="blue"># empty list to start</font>
+
+    <font color="blue"># Now append to this list objects of class fgmax_tools.FGmaxGrid</font>
+    <font color="blue"># specifying any fgmax grids.</font>
+
+    <font color="blue"># Points on a uniform 2d grid:</font>
+    dx_fine = 2./(3.*4.)  <font color="blue"># grid resolution at finest level</font>
+
+    fg = fgmax_tools.FGmaxGrid()
+    fg.point_style = 2  <font color="blue"># uniform rectangular x-y grid</font>
+    fg.x1 = -120. + dx_fine/2.
+    fg.x2 = -60. - dx_fine/2.
+    fg.y1 = -60. + dx_fine/2.
+    fg.y2 = 0. - dx_fine/2.
+    fg.dx = dx_fine
+    fg.tstart_max =  10.      <font color="blue"># when to start monitoring max values</font>
+    fg.tend_max = 1.e10       <font color="blue"># when to stop monitoring max values</font>
+    fg.dt_check = 60.         <font color="blue"># target time (sec) increment between updating </font>
+                              <font color="blue"># max values</font>
+    fg.min_level_check = 3    <font color="blue"># which levels to monitor max on</font>
+    fg.arrival_tol = 1.e-2    <font color="blue"># tolerance for flagging arrival</font>
+
+    fg.interp_method = 0      <font color="blue"># 0 ==> pw const in cells, recommended</font>
+    fgmax_grids.append(fg)    <font color="blue"># written to fgmax_grids.data</font>
 
 
     return rundata

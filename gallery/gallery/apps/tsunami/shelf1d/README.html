@@ -1,0 +1,187 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>Tsunami interacting with 1d continental shelf &#8212; Clawpack 5.7.0 documentation</title>
+    <link rel="stylesheet" href="../../../../_static/flasky.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../_static/base.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../_static/layout.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css" />
+    <script id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
+    <script src="../../../../_static/jquery.js"></script>
+    <script src="../../../../_static/underscore.js"></script>
+    <script src="../../../../_static/doctools.js"></script>
+    <script src="../../../../_static/language_data.js"></script>
+    <script async="async" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="shortcut icon" href="../../../../_static/clawicon.ico"/>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+  </head><body>
+<div id="main-wrapper" class="sphinx">
+<div id="header-wrapper">
+  <section id="header">
+    <!-- <h1><a href="http://clawpack.org/">Clawpack</a></h1> -->
+    <h1><a href="http://clawpack.org/">Clawpack-5</a></h1> 
+    <nav>
+      <ul>
+        <li>
+          <a href="http://clawpack.org/contents.html">Docs</a>
+        </li>
+        <li>
+          <a href="http://clawpack.org/installing.html">Install</a>
+        </li>
+        <li>
+          <a class="" href="../../../../index.html">Gallery</a>
+        </li>
+        <li>
+          <a href="http://clawpack.org/community.html">Community</a>
+        </li>
+        <li>
+          <a class="active" href="http://github.com/clawpack">Source</a>
+        </li>
+        <li>
+          <a href="http://clawpack.org/developers.html">Develop</a>
+        </li>
+      </ul>
+    </nav>
+  </section>
+<div class="decoration"></div>
+</div>
+
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../../index.html">Clawpack 5.7.0 documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="tsunami-interacting-with-1d-continental-shelf">
+<span id="apps-tsunami-shelf1d"></span><h1>Tsunami interacting with 1d continental shelf<a class="headerlink" href="#tsunami-interacting-with-1d-continental-shelf" title="Permalink to this headline">¶</a></h1>
+<p>This one dimensional test problem consists of a flat ocean floor, linear
+continental slope, flat continental shelf, and a solid wall reflecting
+boundary.</p>
+<p>It is designed to illustrate how a tsunami wave is modified as it moves from
+the deep ocean onto the continental shelf, and the manner in which some of
+the energy can be trapped on the shelf and bounce back and forth.</p>
+<hr class="docutils" />
+<p><strong>Note:</strong> For more about shoaling of tsunami waves on continental shelves, and the manner in which the width of the continental slope affects the transmission and reflection, see the recent paper:</p>
+<ul class="simple">
+<li><p>Shoaling on Steep Continental Slopes: Relating Transmission and Reflection Coefficients to Green’s Law
+by J. D. George, D. I. Ketcheson, and R. J. LeVeque, Pure and Applied Geophysics, 2019.
+<a class="reference external" href="https://doi.org/10.1007/s00024-019-02316-y">DOI 10.1007/s00024-019-02316-y</a></p></li>
+</ul>
+<p>See also: <a class="reference external" href="http://faculty.washington.edu/rjl/pubs/Shoaling2019/index.html">http://faculty.washington.edu/rjl/pubs/Shoaling2019/index.html</a></p>
+<p>Additional examples from this paper, and Jupyter notebooks, can be found in
+the GitHub repository <a class="reference external" href="https://github.com/rjleveque/shoaling_paper_figures">https://github.com/rjleveque/shoaling_paper_figures</a>.</p>
+<hr class="docutils" />
+<p>Try the following bathymetry by changing lines in the file <cite>setrun.py</cite>
+and the rerunning the code and plotting the results via:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">make</span> <span class="o">.</span><span class="n">plots</span>
+</pre></div>
+</div>
+<p>Original: a step discontinuity between deep ocean and shallow shelf:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Bocean</span> <span class="o">=</span> <span class="o">-</span><span class="mf">4000.</span>
+<span class="n">Bshelf</span> <span class="o">=</span> <span class="o">-</span><span class="mf">200.</span>
+<span class="n">width</span> <span class="o">=</span> <span class="mf">1.</span>
+<span class="n">start</span> <span class="o">=</span> <span class="o">-</span><span class="mf">30.e3</span>
+</pre></div>
+</div>
+<p>With a shallower shelf, note that the wave moves slower but is more amplified:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Bocean</span> <span class="o">=</span> <span class="o">-</span><span class="mf">4000.</span>
+<span class="n">Bshelf</span> <span class="o">=</span> <span class="o">-</span><span class="mf">50.</span>
+<span class="n">width</span> <span class="o">=</span> <span class="mf">1.</span>
+<span class="n">start</span> <span class="o">=</span> <span class="o">-</span><span class="mf">30.e3</span>
+</pre></div>
+</div>
+<p>With a wide continental shelf rather than a discontinuity,
+note that there is less energy trapped on the shelf:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Bocean</span> <span class="o">=</span> <span class="o">-</span><span class="mf">4000.</span>
+<span class="n">Bshelf</span> <span class="o">=</span> <span class="o">-</span><span class="mf">200.</span>
+<span class="n">width</span> <span class="o">=</span> <span class="mf">100.e3</span>
+<span class="n">start</span> <span class="o">=</span> <span class="o">-</span><span class="mf">130.e3</span>
+</pre></div>
+</div>
+<p>The IPython notebook <cite>Shelf_1d.ipynb</cite> illustrates these cases.</p>
+<div class="section" id="version">
+<h2>Version<a class="headerlink" href="#version" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p>This code runs with Clawpack 5.2.2.</p></li>
+<li><p>Added December, 2014</p></li>
+<li><p>Updated to v5.7.0 on 18 April 2020</p></li>
+</ul>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<p><a href="http://clawpack.org/">
+    <img class="logo" src= "../../../../_static/clawlogo.jpg" alt="Logo"/>
+</a>
+<h2>Version 5.7.0</h2>
+</p>
+  <h3><a href="../../../../index.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Tsunami interacting with 1d continental shelf</a><ul>
+<li><a class="reference internal" href="#version">Version</a></li>
+</ul>
+</li>
+</ul>
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../../index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../../../../_sources/gallery/apps/tsunami/shelf1d/README.rst.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+  <div class="footer">
+    &copy; Copyright CC-BY 2020, The Clawpack Development Team.
+    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
+  </div>
+  <script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-44811544-1', 'auto');
+  ga('send', 'pageview');
+
+  </script>
+  
+  </body>
+</html>

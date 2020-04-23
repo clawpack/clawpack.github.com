@@ -1,41 +1,28 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
+<!DOCTYPE html>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
-    <title>Guide for updating this documentation &#8212; Clawpack 5.6.1 documentation</title>
-    
+    <meta charset="utf-8" />
+    <title>Guide for updating this documentation &#8212; Clawpack 5.7.0 documentation</title>
     <link rel="stylesheet" href="_static/flasky.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="stylesheet" href="_static/base.css" type="text/css" />
     <link rel="stylesheet" href="_static/layout.css" type="text/css" />
-    <link rel="stylesheet" href="_static/banner.css" type="text/css" />
-    
-    <script type="text/javascript">
-      var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    './',
-        VERSION:     '5.6.1',
-        COLLAPSE_INDEX: false,
-        FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true,
-        SOURCELINK_SUFFIX: '.txt'
-      };
-    </script>
-    <script type="text/javascript" src="_static/jquery.js"></script>
-    <script type="text/javascript" src="_static/underscore.js"></script>
-    <script type="text/javascript" src="_static/doctools.js"></script>
-    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="stylesheet" type="text/css" href="_static/graphviz.css" />
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <script async="async" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="shortcut icon" href="_static/clawicon.ico"/>
     <link rel="author" title="About these documents" href="about.html" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Guide for doing a Clawpack release" href="howto_release.html" />
     <link rel="prev" title="Clawpack Community" href="community.html" /> 
-  </head>
-  <body role="document">
+  </head><body>
 <div id="main-wrapper" class="sphinx">
 <div id="header-wrapper">
   <section id="header">
@@ -50,7 +37,7 @@
           <a href="installing.html">Install</a>
         </li>
         <li>
-          <a class="" href="gallery/index.html">Gallery</a>
+          <a class="" href="http://clawpack.org/gallery">Gallery</a>
         </li>
         <li>
           <a class="" href="community.html">Community</a>
@@ -82,7 +69,7 @@
         <li class="right" >
           <a href="community.html" title="Clawpack Community"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="contents.html">Clawpack 5.6.1 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="contents.html">Clawpack 5.7.0 documentation</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -102,75 +89,91 @@ want to work with these files.</p>
 <p>After cloning into the <cite>$CLAW</cite> directory, the restructured text
 files for the main documentation are in <cite>$CLAW/doc/doc</cite>.  All files
 related to the gallery are in <cite>$CLAW/doc/gallery</cite>.  As of Version
-5.4.1, these two subdirectories are separate Sphinx projects connected using
+5.4.1, these two subdirectories are separate Sphinx projects</p>
+<p>They used to be connected using
 <a class="reference external" href="http://www.sphinx-doc.org/en/stable/ext/intersphinx.html">intersphinx</a>.
-This is so that past versions of the main documentation pages can
-be supported without past versions of the galleries.</p>
+but this was dropped in v5.7.0.</p>
 <p>The general look of the documentation and various things that appear on each
 page are controlled by the following files:</p>
 <blockquote>
 <div><ul class="simple">
-<li><cite>conf.py</cite> includes the version number, sets the <cite>html_theme</cite>, as well as
-setting paths to extensions and various other sphinx settings.</li>
-<li><cite>_themes/flask_local/layout.html</cite> determines the menus at the top</li>
-<li><cite>_themes/flask_web/layout.html</cite> version used for building for the web,
-is the same except for different relative link to the galleries.</li>
-<li><cite>_static/clawlogo.jpg</cite> is the Clawpack logo put on each page</li>
-<li><cite>_static/clawicon.ico</cite> is the icon that appears on browser tabs</li>
+<li><p><cite>conf.py</cite> includes the version number, sets the <cite>html_theme</cite>, as well as
+setting paths to extensions and various other sphinx settings.</p></li>
+<li><p><cite>_themes/flask_local/layout.html</cite> determines the menus at the top</p></li>
+<li><p><cite>_themes/flask_web/layout.html</cite> version used for building for the web,
+is the same except for different relative link to the galleries.</p></li>
+<li><p><cite>_static/clawlogo.jpg</cite> is the Clawpack logo put on each page</p></li>
+<li><p><cite>_static/clawicon.ico</cite> is the icon that appears on browser tabs</p></li>
 </ul>
 </div></blockquote>
 <p>Before proceeding, first make sure other repositories are checked out to
-master, since some pages now have literalinclude&#8217;s that bring in code
+master, since some pages now have literalinclude’s that bring in code
 (e.g. setaux_defaults.rst, etc).</p>
-<p>To create html files:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span>cd $CLAW/doc/doc
-make html
+<p>To create html files from the dev branch only, for example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>cd $CLAW/doc/doc
+git checkout dev
+sphinx-build -b html . _build1/html
 </pre></div>
 </div>
-<p>To view the files, point your browser to <cite>$CLAW/doc/doc/_build/html/index.html</cite></p>
+<p>To view the files, point your browser to <cite>$CLAW/doc/doc/_build1/html/index.html</cite></p>
+<p>Note that we suggest using <cite>_build1</cite> when building a single version so this
+can be quickly rebuilt when writing and editing documentation.</p>
 </div>
 <div class="section" id="to-generate-pages-with-old-clawpack-versions">
 <h1>To generate pages with old Clawpack versions<a class="headerlink" href="#to-generate-pages-with-old-clawpack-versions" title="Permalink to this headline">¶</a></h1>
 <p>This should be done when you are close to pushing changes to the website,
 otherwise the above approach works fine and shows the current state of the
 documentation based on files in your working directory.</p>
-<p>This takes much longer than <cite>make html</cite> since it rebuilds pages for all
+<p>This can take much longer since it rebuilds pages for all
 versions.</p>
 <p>The instructions below make webpages that list v5.4.0, etc. and allow
 viewing docs that may be more relevant to a previous version of Clawpack.</p>
-<p>But note that the <cite>.rst</cite> files used to build these pages come form what is
-checked into the <cite>v5.x.x</cite> branch on Github (and the commits corresponding to
-tags such as <cite>v5.4.0</cite>).  So if you have changed <cite>.rst</cite> files but these have
-not yet been merged into <cite>v5.x.x</cite> or <cite>dev</cite> on Github, you will not see the changes
-reflected in the html files you build.</p>
-<p>To make pages that show previous Clawpack versions, first install the
-sphinx extension via:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="o">-</span><span class="n">U</span> <span class="n">sphinx</span>
-<span class="n">pip</span> <span class="n">install</span> <span class="n">sphinxcontrib</span><span class="o">-</span><span class="n">versioning</span>
+<p>As of v5.7.0, we are now using
+<a class="reference external" href="https://holzhaus.github.io/sphinx-multiversion/master/index.html">sphinx-multiversion</a>
+instead of
+<a class="reference external" href="https://github.com/sphinx-contrib/sphinxcontrib-versioning">sphinxcontrib-versioning</a>.</p>
+<p>To make pages that show previous Clawpack versions, first install
+<a class="reference external" href="https://holzhaus.github.io/sphinx-multiversion/master/index.html">sphinx-multiversion</a>.</p>
+<p>Insure that any changes you want to show up in multiversion docs has been
+committed to some branch (normally <cite>dev</cite> if you have been adding something new).</p>
+<p>And then do this:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>cd $CLAW/doc/doc
+sphinx-multiversion . _build/html
 </pre></div>
 </div>
-<p>and then do this:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span>cd $CLAW/doc/doc
-export SPHINX_WEB=False # to build for local viewing
-sphinx-versioning build -i -r v5.x.x doc ./_build/html
-    # change v5.x.x to the current version
+<p>To view the files, point your browser to <cite>_build/html/dev/index.html</cite>
+and from there you should be able to navigate to other versions.</p>
+<p>Unlike <cite>sphinxcontrib-versioning</cite>, this now uses your local branches and tags
+rather than the versions on Github.  It lists only two branches under “Latest
+Versions” and all tags as “Older Versions”.
+The two branches are set to <cite>dev</cite> and the most
+recent version, by this line of <cite>conf.py</cite>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">smv_branch_whitelist</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;v5.6.1|dev&#39;</span>
 </pre></div>
 </div>
-<p>Note that <cite>-i</cite> causes versions to be listed in reverse order at the bottom,
-<cite>-r v5.x.x</cite> uses the <cite>v5.x.x</cite> branch for the main landing page, and <cite>doc</cite> is
-the directory containing the <cite>.rst</cite> files relative to the top directory
-of the Git repository. Only <cite>.rst</cite> files that are checked into Git on some
-branch at <cite>origin</cite> are seen.</p>
-<p>To view the files, point your browser to
-<cite>$CLAW/doc/doc/_build/html/v5.x.x/index.html</cite>
-(with <cite>5.x.x</cite> replaced by the current version).</p>
+<p>This should be updated for a new version.</p>
+<p>Note that <cite>_build/html</cite> contains a subdirectory for each version, but there
+are no <cite>.html</cite> files in the top level of <cite>_build/html</cite>.  For the Clawpack
+webpage we need to:</p>
+<ul class="simple">
+<li><p>Copy the files from the current version to the top level so that
+navigating to <a class="reference external" href="http://www.clawpack.org/installing.html">http://www.clawpack.org/installing.html</a>,
+for example, goes to the current version of this document.</p></li>
+<li><p>Fix the links in the sidebars of each of these <cite>.html</cite> files so that clicking
+on <cite>dev</cite>, for example, takes you to <a class="reference external" href="http://www.clawpack.org/dev/installing.html">http://www.clawpack.org/dev/installing.html</a></p></li>
+</ul>
+<p>This can be done as follows:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>cd $CLAW/doc/doc/_build/html
+cp v5.6.1/*.html .   # replacing v5.6.1 with the current version
+python ../../fix_links_top_level.py
+</pre></div>
+</div>
 <p>If you like what you see, you can push back to your fork and then issue a
 pull request to have these changes incorporated into the documentation.</p>
-<p><strong>Note:</strong> To make versions where the links to the gallery work properly after the
-pages are pushed to the Clawpack website (but not locally), set
-the environment variable <cite>SPHINX_WEB</cite> to True in the above steps.
-This variable is used in <cite>conf.py</cite> to adjust the links used in
-<cite>intersphinx_mapping</cite> since two sphinx projects are linked together.</p>
+<p><strong>Note:</strong> We are no longer using <cite>intersphinx</cite> to link the gallery and the
+main doc pages together.   Instead there are hard links to <cite>www.clawpack.org</cite>
+to go from one to the other.  So the old use of
+the environment variable <cite>SPHINX_WEB</cite> is now deprecated.</p>
 <div class="section" id="updating-the-gallery">
 <h2>Updating the gallery<a class="headerlink" href="#updating-the-gallery" title="Permalink to this headline">¶</a></h2>
 <p>The gallery webpages are now decoupled from the main sphinx pages, and reside
@@ -179,20 +182,10 @@ in <cite>$CLAW/doc/gallery</cite> rather than <cite>$CLAW/doc/doc</cite>.</p>
 results shown in the galleries.</p>
 <p>For detailed instructions, see <a class="reference external" href="https://github.com/clawpack/doc/blob/dev/gallery/README.md">CLAW/doc/gallery/README.md</a>.</p>
 <p>Then do the following:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span>cd $CLAW/doc/gallery
-export SPHINX_WEB=False # to build for local viewing
-make html
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>cd $CLAW/doc/gallery    make html
 </pre></div>
 </div>
-<p>Note that <cite>sphinx-versioning build</cite> is not used in the gallery since we don&#8217;t
-track versions here.</p>
-<p>If the environment variable <cite>SPHINX_WEB</cite> is set to False (or not set) then
-this makes files in which the links work to jump to the main doc files, when
-viewed locally.</p>
-<p>Set the environment variable <cite>SPHINX_WEB</cite> to True to make files where the
-links work properly when pushed to the Clawpack webpages.
-This variable is used in <cite>conf.py</cite> to adjust the links used in
-<cite>intersphinx_mapping</cite> since two sphinx projects are linked together.</p>
+<p>Note that we don’t track past versions in the gallery.</p>
 <p>Note that <cite>doc/gallery/notebooks.rst</cite> contains pointers to html versions of many
 notebooks, stored in <cite>doc/gallery/_static/notebooks</cite>.  If any notebooks were
 updated for this release, the corresponding html files should be too.
@@ -204,12 +197,12 @@ updated for this release, the corresponding html files should be too.
 <a class="reference external" href="https://github.com/clawpack/clawpack.github.com">clawpack/clawpack.github.com</a>
 which causes them to show up on the web at
 <a class="reference external" href="http://clawpack.github.io">http://clawpack.github.io</a>.</p>
-<p>To do so, first create the html files as described above, with
-<cite>SPHINX_WEB=True</cite> in both the <cite>doc</cite> and <cite>gallery</cite> directories.</p>
+<p>To do so, first create the html files as described above, which should appear
+in <cite>doc/doc/_build/html</cite> and <cite>doc/gallery/_build/html</cite>.</p>
 <p>Commit any changed source files and
 push to <a class="reference external" href="https://github.com/clawpack/doc">clawpack/doc</a>.</p>
 <p>Then do:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span>cd $CLAW/clawpack.github.com
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>cd $CLAW/clawpack.github.com
 git checkout v5.x.x
 git pull origin  # make sure you are up to date before doing next steps!
 
@@ -218,25 +211,25 @@ rsync -azv _build/html/ ../../clawpack.github.com/
 </pre></div>
 </div>
 <p>If you have updated the gallery, also do:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">rsync</span> <span class="o">-</span><span class="n">azv</span> <span class="o">../</span><span class="n">gallery</span><span class="o">/</span><span class="n">_build</span><span class="o">/</span><span class="n">html</span><span class="o">/</span> <span class="o">../../</span><span class="n">clawpack</span><span class="o">.</span><span class="n">github</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">gallery</span><span class="o">/</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rsync</span> <span class="o">-</span><span class="n">azv</span> <span class="o">../</span><span class="n">gallery</span><span class="o">/</span><span class="n">_build</span><span class="o">/</span><span class="n">html</span><span class="o">/</span> <span class="o">../../</span><span class="n">clawpack</span><span class="o">.</span><span class="n">github</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">gallery</span><span class="o">/</span>
 </pre></div>
 </div>
 <p>Then move to the <cite>clawpack.github.com</cite> repository and
 add and commit any new or changed files.
 All files are needed, so</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span>cd $CLAW/clawpack.github.com
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>cd $CLAW/clawpack.github.com
 git add .
 </pre></div>
 </div>
 <p>should work.  For the commit message you might want to add the commit
 hash of the most recent commit in $CLAW/doc/doc:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span>cd $CLAW/clawpack.github.com
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>cd $CLAW/clawpack.github.com
 git add .
 git commit -m &quot;changes from doc/doc commit &lt;hash&gt;&quot;
 </pre></div>
 </div>
 <p>And finally push to the web:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">git</span> <span class="n">push</span> <span class="n">origin</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">git</span> <span class="n">push</span> <span class="n">origin</span>
 </pre></div>
 </div>
 <p>which assumes that <cite>origin</cite> is
@@ -276,9 +269,9 @@ have not been copied to Github.</p>
 <p><a href="http://clawpack.org/">
     <img class="logo" src= "_static/clawlogo.jpg" alt="Logo"/>
 </a>
-<h2>Version 5.6.1</h2>
+<h2>Version 5.7.0</h2>
 </p>
-  <h3><a href="contents.html">Table Of Contents</a></h3>
+  <h3><a href="contents.html">Table of Contents</a></h3>
   <ul>
 <li><a class="reference internal" href="#">Guide for updating this documentation</a></li>
 <li><a class="reference internal" href="#to-generate-pages-with-old-clawpack-versions">To generate pages with old Clawpack versions</a><ul>
@@ -299,41 +292,42 @@ have not been copied to Github.</p>
   <ul class="this-page-menu">
     <li><a href="_sources/howto_doc.rst.txt"
            rel="nofollow">Show Source</a></li>
-    <li><a href="https://github.com/clawpack/doc/blob/master/doc/howto_doc.rst"
-           rel="nofollow">Show on GitHub</a></li>
-    <li><a href="https://github.com/clawpack/doc/edit/master/doc/howto_doc.rst"
-           rel="nofollow">Edit on GitHub</a></li>
   </ul>
 <div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
     <form class="search" action="search.html" method="get">
-      <div><input type="text" name="q" /></div>
-      <div><input type="submit" value="Go" /></div>
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
     </form>
+    </div>
 </div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
-<h3>Versions</h3>
+<script>$('#searchbox').show(0);</script>
+<h4>Latest Version</h4>
 <ul>
-    <li><a href="v5.4.1/howto_doc.html">v5.4.1</a></li>
-    <li><a href="v5.4.0/howto_doc.html">v5.4.0</a></li>
-    <li><a href="v5.3.1/howto_doc.html">v5.3.1</a></li>
-    <li><a href="v5.3.0/howto_doc.html">v5.3.0</a></li>
-    <li><a href="v5.2.1/howto_doc.html">v5.2.1</a></li>
-    <li><a href="v5.2.0/howto_doc.html">v5.2.0</a></li>
-    <li><a href="v5.1.0/howto_doc.html">v5.1.0</a></li>
-    <li><a href="v5.6.1/howto_doc.html">v5.6.1</a></li>
-    <li><a href="v5.6.0/howto_doc.html">v5.6.0</a></li>
-    <li><a href="v5.5.0/howto_doc.html">v5.5.0</a></li>
-    <li><a href="dev/howto_doc.html">dev</a></li>
+  <li><a href="./dev/howto_doc.html">dev</a></li>
+  <li><a href="howto_doc.html">v5.7.0</a></li>
 </ul>
+<h4>Older Versions</h4>
+<ul>
+  <li><a href="./v5.1.0/howto_doc.html">v5.1.0</a></li>
+  <li><a href="./v5.2.0/howto_doc.html">v5.2.0</a></li>
+  <li><a href="./v5.2.1/howto_doc.html">v5.2.1</a></li>
+  <li><a href="./v5.3.0/howto_doc.html">v5.3.0</a></li>
+  <li><a href="./v5.3.1/howto_doc.html">v5.3.1</a></li>
+  <li><a href="./v5.4.0/howto_doc.html">v5.4.0</a></li>
+  <li><a href="./v5.4.1/howto_doc.html">v5.4.1</a></li>
+  <li><a href="./v5.5.0/howto_doc.html">v5.5.0</a></li>
+  <li><a href="./v5.6.0/howto_doc.html">v5.6.0</a></li>
+  <li><a href="./v5.6.1/howto_doc.html">v5.6.1</a></li>
+</ul>
+
         </div>
       </div>
       <div class="clearer"></div>
     </div>
   <div class="footer">
-    &copy; Copyright CC-BY 2019, The Clawpack Development Team.
+    &copy; Copyright CC-BY 2020, The Clawpack Development Team.
     Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
   </div>
   <script>

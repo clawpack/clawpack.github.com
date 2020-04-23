@@ -1,41 +1,28 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
+<!DOCTYPE html>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
+    <meta charset="utf-8" />
     <title>Manning friction term &#8212; Clawpack 5.4.1 documentation</title>
-    
     <link rel="stylesheet" href="_static/flasky.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="stylesheet" href="_static/base.css" type="text/css" />
     <link rel="stylesheet" href="_static/layout.css" type="text/css" />
-    <link rel="stylesheet" href="_static/banner.css" type="text/css" />
-    
-    <script type="text/javascript">
-      var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    './',
-        VERSION:     '5.4.1',
-        COLLAPSE_INDEX: false,
-        FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true,
-        SOURCELINK_SUFFIX: '.txt'
-      };
-    </script>
-    <script type="text/javascript" src="_static/jquery.js"></script>
-    <script type="text/javascript" src="_static/underscore.js"></script>
-    <script type="text/javascript" src="_static/doctools.js"></script>
-    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="stylesheet" type="text/css" href="_static/graphviz.css" />
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <script async="async" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="shortcut icon" href="_static/clawicon.ico"/>
     <link rel="author" title="About these documents" href="about.html" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Fixed grid output" href="fgout.html" />
     <link rel="prev" title="Setting sealevel" href="sealevel.html" /> 
-  </head>
-  <body role="document">
+  </head><body>
 <div id="main-wrapper" class="sphinx">
 <div id="header-wrapper">
   <section id="header">
@@ -50,7 +37,7 @@
           <a href="installing.html">Install</a>
         </li>
         <li>
-          <a class="" href="gallery/index.html">Gallery</a>
+          <a class="" href="http://clawpack.org/gallery">Gallery</a>
         </li>
         <li>
           <a class="" href="community.html">Community</a>
@@ -99,19 +86,20 @@ appropriate bottom friction term in the equations.  This takes the form of a
 source term added to the right hand side of
 the momentum equations:</p>
 <blockquote>
-<div><p><span class="math">\((hu)_t + \cdots = -\gamma (hu),\)</span></p>
-<p><span class="math">\((hv)_t + \cdots = -\gamma (hv),\)</span></p>
+<div><p><span class="math notranslate nohighlight">\((hu)_t + \cdots = -\gamma (hu),\)</span></p>
+<p><span class="math notranslate nohighlight">\((hv)_t + \cdots = -\gamma (hv),\)</span></p>
 </div></blockquote>
 <p>The form built into GeoClaw is the Manning formulation, in which
-<span class="math">\(\gamma\)</span> is a function of the depth and momentum:</p>
+<span class="math notranslate nohighlight">\(\gamma\)</span> is a function of the depth and momentum:</p>
 <blockquote>
-<div><span class="math">\(\gamma = \frac{gn^2\sqrt{(hu)^2 + (hv)^2}}{h^{7/3}}.\)</span></div></blockquote>
-<p>with <span class="math">\(g\)</span> the gravitational constant and <span class="math">\(n\)</span> the &#8220;Manning
-coefficient&#8221;.  This is an empirical formula and the proper value of
-<span class="math">\(n\)</span> to use depends on the roughness of the terrain or seabed, as shown
+<div><p><span class="math notranslate nohighlight">\(\gamma = \frac{gn^2\sqrt{(hu)^2 + (hv)^2}}{h^{7/3}}.\)</span></p>
+</div></blockquote>
+<p>with <span class="math notranslate nohighlight">\(g\)</span> the gravitational constant and <span class="math notranslate nohighlight">\(n\)</span> the “Manning
+coefficient”.  This is an empirical formula and the proper value of
+<span class="math notranslate nohighlight">\(n\)</span> to use depends on the roughness of the terrain or seabed, as shown
 for example in
 <a class="reference external" href="http://www.engineeringtoolbox.com/mannings-roughness-d_799.html">this table</a>.
-Often for generic tsunami modeling, the constant value <span class="math">\(n=0.025\)</span> is used.
+Often for generic tsunami modeling, the constant value <span class="math notranslate nohighlight">\(n=0.025\)</span> is used.
 An enhancement of GeoClaw planned for the future is to allow
 spatially-varying Manning coefficient.</p>
 <p>The friction term is only applied in regions where the depth is below a
@@ -120,22 +108,22 @@ threshold specified by <em>friction_depth</em> (see <a class="reference internal
 different regions based on the topography B, e.g. one value offshore and a
 different value onshore.  See <a class="reference internal" href="setrun_geoclaw.html#setrun-geo"><span class="std std-ref">General geo parameters</span></a>.</p>
 <div class="admonition warning">
-<p class="first admonition-title">Warning</p>
-<p class="last">Changing the Manning coefficient can have a significant effect
+<p class="admonition-title">Warning</p>
+<p>Changing the Manning coefficient can have a significant effect
 on the extent of inundation and runup.  If GeoClaw (or any other code) is
 used for estimating real-world hazards, users should think carefully
 about chosing an appropriate value, and may want to run sensitivity
-studies.  A smaller value of <span class="math">\(n\)</span> (less friction) will generally
+studies.  A smaller value of <span class="math notranslate nohighlight">\(n\)</span> (less friction) will generally
 lead to greater inundation.</p>
 </div>
 <div class="admonition warning">
-<p class="first admonition-title">Warning</p>
-<p class="last">A bug was recently discovered in GeoClaw that was corrected
+<p class="admonition-title">Warning</p>
+<p>A bug was recently discovered in GeoClaw that was corrected
 in Version 4.6.3:  The exponent (7/3) was used in the Fortran code, which
 evaluates as 2 in integer arithmetic rather than 2.3333.  This has now
 been corrected by writing it as (7.d0/3.d0).  This can make a difference in
 the extent of inundation and runup.  Given the uncertainty in the proper
-value of <span class="math">\(n\)</span> to use and the inadequacy of using the same value
+value of <span class="math notranslate nohighlight">\(n\)</span> to use and the inadequacy of using the same value
 everywhere, the effect of this bug on the resulting accuracy was probably
 small, but users may want to test this.</p>
 </div>
@@ -164,41 +152,42 @@ small, but users may want to test this.</p>
   <ul class="this-page-menu">
     <li><a href="_sources/manning.rst.txt"
            rel="nofollow">Show Source</a></li>
-    <li><a href="https://github.com/clawpack/doc/blob/master/doc/manning.rst"
-           rel="nofollow">Show on GitHub</a></li>
-    <li><a href="https://github.com/clawpack/doc/edit/master/doc/manning.rst"
-           rel="nofollow">Edit on GitHub</a></li>
   </ul>
 <div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
     <form class="search" action="search.html" method="get">
-      <div><input type="text" name="q" /></div>
-      <div><input type="submit" value="Go" /></div>
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
     </form>
+    </div>
 </div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
-<h3>Versions</h3>
+<script>$('#searchbox').show(0);</script>
+<h4>Latest Version</h4>
 <ul>
-    <li><a href="manning.html">v5.4.1</a></li>
-    <li><a href="../v5.4.0/manning.html">v5.4.0</a></li>
-    <li><a href="../v5.3.1/manning.html">v5.3.1</a></li>
-    <li><a href="../v5.3.0/manning.html">v5.3.0</a></li>
-    <li><a href="../v5.2.1/manning.html">v5.2.1</a></li>
-    <li><a href="../v5.2.0/manning.html">v5.2.0</a></li>
-    <li><a href="../v5.1.0/manning.html">v5.1.0</a></li>
-    <li><a href="../v5.6.1/manning.html">v5.6.1</a></li>
-    <li><a href="../v5.6.0/manning.html">v5.6.0</a></li>
-    <li><a href="../v5.5.0/manning.html">v5.5.0</a></li>
-    <li><a href="../dev/manning.html">dev</a></li>
+  <li><a href="../dev/manning.html">dev</a></li>
+  <li><a href="../v5.7.0/manning.html">v5.7.0</a></li>
 </ul>
+<h4>Older Versions</h4>
+<ul>
+  <li><a href="../v5.1.0/manning.html">v5.1.0</a></li>
+  <li><a href="../v5.2.0/manning.html">v5.2.0</a></li>
+  <li><a href="../v5.2.1/manning.html">v5.2.1</a></li>
+  <li><a href="../v5.3.0/manning.html">v5.3.0</a></li>
+  <li><a href="../v5.3.1/manning.html">v5.3.1</a></li>
+  <li><a href="../v5.4.0/manning.html">v5.4.0</a></li>
+  <li><a href="manning.html">v5.4.1</a></li>
+  <li><a href="../v5.5.0/manning.html">v5.5.0</a></li>
+  <li><a href="../v5.6.0/manning.html">v5.6.0</a></li>
+  <li><a href="../v5.6.1/manning.html">v5.6.1</a></li>
+</ul>
+
         </div>
       </div>
       <div class="clearer"></div>
     </div>
   <div class="footer">
-    &copy; Copyright 2017, The Clawpack Development Team.
+    &copy; Copyright CC-BY 2020, The Clawpack Development Team.
     Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
   </div>
   <script>

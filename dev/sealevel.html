@@ -1,41 +1,28 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
+<!DOCTYPE html>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
+    <meta charset="utf-8" />
     <title>Setting sealevel &#8212; Clawpack dev documentation</title>
-    
     <link rel="stylesheet" href="_static/flasky.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="stylesheet" href="_static/base.css" type="text/css" />
     <link rel="stylesheet" href="_static/layout.css" type="text/css" />
-    <link rel="stylesheet" href="_static/banner.css" type="text/css" />
-    
-    <script type="text/javascript">
-      var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    './',
-        VERSION:     'dev',
-        COLLAPSE_INDEX: false,
-        FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true,
-        SOURCELINK_SUFFIX: '.txt'
-      };
-    </script>
-    <script type="text/javascript" src="_static/jquery.js"></script>
-    <script type="text/javascript" src="_static/underscore.js"></script>
-    <script type="text/javascript" src="_static/doctools.js"></script>
-    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="stylesheet" type="text/css" href="_static/graphviz.css" />
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <script async="async" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="shortcut icon" href="_static/clawicon.ico"/>
     <link rel="author" title="About these documents" href="about.html" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Manning friction term" href="manning.html" />
+    <link rel="next" title="Set Eta Init – spatially varying initial surface elevation" href="set_eta_init.html" />
     <link rel="prev" title="Earthquake sources: Fault slip and the Okada model" href="okada.html" /> 
-  </head>
-  <body role="document">
+  </head><body>
 <div id="main-wrapper" class="sphinx">
 <div id="header-wrapper">
   <section id="header">
@@ -50,7 +37,7 @@
           <a href="installing.html">Install</a>
         </li>
         <li>
-          <a class="" href="gallery/index.html">Gallery</a>
+          <a class="" href="http://clawpack.org/gallery">Gallery</a>
         </li>
         <li>
           <a class="" href="community.html">Community</a>
@@ -77,13 +64,13 @@
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="manning.html" title="Manning friction term"
+          <a href="set_eta_init.html" title="Set Eta Init – spatially varying initial surface elevation"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="okada.html" title="Earthquake sources: Fault slip and the Okada model"
              accesskey="P">previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="contents.html">Clawpack dev documentation</a> &#187;</li>
-          <li class="nav-item nav-item-1"><a href="geoclaw.html" accesskey="U">GeoClaw</a> &#187;</li> 
+          <li class="nav-item nav-item-1"><a href="geoclaw.html" accesskey="U">GeoClaw Description and Detailed Contents</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -96,7 +83,10 @@
 <span id="sealevel"></span><h1>Setting sealevel<a class="headerlink" href="#setting-sealevel" title="Permalink to this headline">¶</a></h1>
 <p>GeoClaw has a parameter <em>sealevel</em> (see <a class="reference internal" href="setrun_geoclaw.html#setrun-geoclaw"><span class="std std-ref">Specifying GeoClaw parameters in setrun.py</span></a>) that can be
 used to specify the initialization of the fluid depth relative to the
-specified topography (see <a class="reference internal" href="topo.html#topo"><span class="std std-ref">Topography data</span></a>).  Unless a different set of initial
+specified topography (see <a class="reference internal" href="topo.html#topo"><span class="std std-ref">Topography data</span></a>).</p>
+<p><strong>New in v5.7.0:</strong> You can now specify a spatially varying initial surface
+elevation, see <a class="reference internal" href="set_eta_init.html#set-eta-init"><span class="std std-ref">Set Eta Init – spatially varying initial surface elevation</span></a>.</p>
+<p>Unless a different set of initial
 conditions is specified (see <a class="reference internal" href="setrun_geoclaw.html#setrun-qinit"><span class="std std-ref">qinit data file parameters</span></a>), the default is to
 initialize with zero velocity and depth <em>h</em> chosen so that <em>h+B = sealevel</em>
 at any point where <em>B &lt; sealevel</em>, where <em>B</em> is the topography or bathymetry
@@ -119,8 +109,7 @@ you will see a <em>Datums</em> link on the left menu.
 (Be sure to switch from feet to meters!)</p>
 <p>Note that the difference between MHW and MSL can vary greatly between
 different locations.
-Global bathymetry data such as the ETOPO1 data (available from
-<a class="reference external" href="http://www.ngdc.noaa.gov/mgg/gdas/gd_designagrid.html">GEODAS Grid Translator - Design-a-Grid</a>)
+Global bathymetry data such as the ETOPO1 data (see <a class="reference internal" href="tsunamidata.html#tsunamidata"><span class="std std-ref">Some sources of tsunami data</span></a>)
 is generally relative to MSL.
 However, this data has a resolution of 1 arc-minute, more than 1.5 km, and
 is not suitable as coastal bathymetry, so this data will presumably only be
@@ -138,11 +127,11 @@ patterns, but these are also ignored in GeoClaw since the water is assumed
 to be at rest before the tsunami arrives.</p>
 <p>If GeoClaw is used for hazard assessment based on potential tsunami
 scenarios, then thought should be given to the appropriate value of
-<em>sealevel</em> to assume.  The NGDC coastal bathymetry data is referenced to MHW
+<em>sealevel</em> to assume.  The NCEI coastal bathymetry data is often referenced to MHW
 because this is often the level assumed for tsunami hazard assessment, but
 higher tide levels such as Mean Higher High Water (MHHW) or the Astronomical
 High Tide (AHT) are sometimes used for worst-case scenarios.</p>
-<p>See <a class="reference internal" href="tsunamidata.html#tsunamidata"><span class="std std-ref">Some sources of tsunami data</span></a> for some other sources of data.</p>
+<p>See <a class="reference internal" href="tsunamidata.html#tsunamidata"><span class="std std-ref">Some sources of tsunami data</span></a> for more information and links to sources of data.</p>
 </div>
 
 
@@ -158,9 +147,9 @@ High Tide (AHT) are sometimes used for worst-case scenarios.</p>
 </p><h3>Related Topics</h3>
 <ul>
   <li><a href="contents.html">Documentation overview</a><ul>
-  <li><a href="geoclaw.html">GeoClaw</a><ul>
+  <li><a href="geoclaw.html">GeoClaw Description and Detailed Contents</a><ul>
       <li>Previous: <a href="okada.html" title="previous chapter">Earthquake sources: Fault slip and the Okada model</a></li>
-      <li>Next: <a href="manning.html" title="next chapter">Manning friction term</a></li>
+      <li>Next: <a href="set_eta_init.html" title="next chapter">Set Eta Init – spatially varying initial surface elevation</a></li>
   </ul></li>
   </ul></li>
 </ul>
@@ -168,41 +157,42 @@ High Tide (AHT) are sometimes used for worst-case scenarios.</p>
   <ul class="this-page-menu">
     <li><a href="_sources/sealevel.rst.txt"
            rel="nofollow">Show Source</a></li>
-    <li><a href="https://github.com/clawpack/doc/blob/master/doc/sealevel.rst"
-           rel="nofollow">Show on GitHub</a></li>
-    <li><a href="https://github.com/clawpack/doc/edit/master/doc/sealevel.rst"
-           rel="nofollow">Edit on GitHub</a></li>
   </ul>
 <div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
     <form class="search" action="search.html" method="get">
-      <div><input type="text" name="q" /></div>
-      <div><input type="submit" value="Go" /></div>
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
     </form>
+    </div>
 </div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
-<h3>Versions</h3>
+<script>$('#searchbox').show(0);</script>
+<h4>Latest Version</h4>
 <ul>
-    <li><a href="../v5.4.1/sealevel.html">v5.4.1</a></li>
-    <li><a href="../v5.4.0/sealevel.html">v5.4.0</a></li>
-    <li><a href="../v5.3.1/sealevel.html">v5.3.1</a></li>
-    <li><a href="../v5.3.0/sealevel.html">v5.3.0</a></li>
-    <li><a href="../v5.2.1/sealevel.html">v5.2.1</a></li>
-    <li><a href="../v5.2.0/sealevel.html">v5.2.0</a></li>
-    <li><a href="../v5.1.0/sealevel.html">v5.1.0</a></li>
-    <li><a href="../v5.6.1/sealevel.html">v5.6.1</a></li>
-    <li><a href="../v5.6.0/sealevel.html">v5.6.0</a></li>
-    <li><a href="../v5.5.0/sealevel.html">v5.5.0</a></li>
-    <li><a href="sealevel.html">dev</a></li>
+  <li><a href="sealevel.html">dev</a></li>
+  <li><a href="../v5.7.0/sealevel.html">v5.7.0</a></li>
 </ul>
+<h4>Older Versions</h4>
+<ul>
+  <li><a href="../v5.1.0/sealevel.html">v5.1.0</a></li>
+  <li><a href="../v5.2.0/sealevel.html">v5.2.0</a></li>
+  <li><a href="../v5.2.1/sealevel.html">v5.2.1</a></li>
+  <li><a href="../v5.3.0/sealevel.html">v5.3.0</a></li>
+  <li><a href="../v5.3.1/sealevel.html">v5.3.1</a></li>
+  <li><a href="../v5.4.0/sealevel.html">v5.4.0</a></li>
+  <li><a href="../v5.4.1/sealevel.html">v5.4.1</a></li>
+  <li><a href="../v5.5.0/sealevel.html">v5.5.0</a></li>
+  <li><a href="../v5.6.0/sealevel.html">v5.6.0</a></li>
+  <li><a href="../v5.6.1/sealevel.html">v5.6.1</a></li>
+</ul>
+
         </div>
       </div>
       <div class="clearer"></div>
     </div>
   <div class="footer">
-    &copy; Copyright CC-BY 2019, The Clawpack Development Team.
+    &copy; Copyright CC-BY 2020, The Clawpack Development Team.
     Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
   </div>
   <script>

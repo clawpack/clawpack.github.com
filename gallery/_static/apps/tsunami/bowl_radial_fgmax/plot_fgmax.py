@@ -3,9 +3,6 @@ Plot fgmax output from GeoClaw run.
 
 """
 
-from __future__ import absolute_import
-from __future__ import print_function
-
 import matplotlib.pyplot as plt
 import numpy
 from clawpack.geoclaw import fgmax_tools, geoplot
@@ -105,23 +102,23 @@ if __name__=="__main__":
     plt.figure(1)
     fname = os.path.join(plotdir, "fgmax_grid1.png")
     plt.savefig(fname)
-    print("Created ",fname)
+    print "Created ",fname
 
     plot_fgmax_grid(2)
     plt.figure(2)
     fname = os.path.join(plotdir, "fgmax_grid2.png")
     plt.savefig(fname)
-    print("Created ",fname)
+    print "Created ",fname
 
     plot_fgmax_transects()
     plt.figure(3)
     fname = os.path.join(plotdir, "fgmax_transects.png")
     plt.savefig(fname)
-    print("Created ",fname)
+    print "Created ",fname
 
     plt.figure(5)
     fname = os.path.join(plotdir, "fgmax_along_shore.png")
     plt.savefig(fname)
-    print("Created ",fname)
+    print "Created ",fname
 
 

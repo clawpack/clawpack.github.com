@@ -1,41 +1,28 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
+<!DOCTYPE html>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
-    <title>Boundary conditions &#8212; Clawpack 5.6.1 documentation</title>
-    
+    <meta charset="utf-8" />
+    <title>Boundary conditions &#8212; Clawpack 5.7.0 documentation</title>
     <link rel="stylesheet" href="_static/flasky.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="stylesheet" href="_static/base.css" type="text/css" />
     <link rel="stylesheet" href="_static/layout.css" type="text/css" />
-    <link rel="stylesheet" href="_static/banner.css" type="text/css" />
-    
-    <script type="text/javascript">
-      var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    './',
-        VERSION:     '5.6.1',
-        COLLAPSE_INDEX: false,
-        FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true,
-        SOURCELINK_SUFFIX: '.txt'
-      };
-    </script>
-    <script type="text/javascript" src="_static/jquery.js"></script>
-    <script type="text/javascript" src="_static/underscore.js"></script>
-    <script type="text/javascript" src="_static/doctools.js"></script>
-    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="stylesheet" type="text/css" href="_static/graphviz.css" />
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <script async="async" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="shortcut icon" href="_static/clawicon.ico"/>
     <link rel="author" title="About these documents" href="about.html" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Output data formats" href="output_styles.html" />
     <link rel="prev" title="Sample setrun.py module for classic Clawpack" href="setrun_sample.html" /> 
-  </head>
-  <body role="document">
+  </head><body>
 <div id="main-wrapper" class="sphinx">
 <div id="header-wrapper">
   <section id="header">
@@ -50,7 +37,7 @@
           <a href="installing.html">Install</a>
         </li>
         <li>
-          <a class="" href="gallery/index.html">Gallery</a>
+          <a class="" href="http://clawpack.org/gallery">Gallery</a>
         </li>
         <li>
           <a class="" href="community.html">Community</a>
@@ -82,7 +69,7 @@
         <li class="right" >
           <a href="setrun_sample.html" title="Sample setrun.py module for classic Clawpack"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="contents.html">Clawpack 5.6.1 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="contents.html">Clawpack 5.7.0 documentation</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -94,19 +81,19 @@
   <div class="section" id="boundary-conditions">
 <span id="bc"></span><h1>Boundary conditions<a class="headerlink" href="#boundary-conditions" title="Permalink to this headline">¶</a></h1>
 <p>Boundary conditions are imposed each time step by filling ghost cells
-adjacent to the edge of each grid patch.  See Chapter 4 of <a class="reference internal" href="biblio.html#leveque-fvmhp" id="id1">[LeVeque-FVMHP]</a>
+adjacent to the edge of each grid patch.  See Chapter 4 of <a class="reference internal" href="biblio.html#leveque-fvmhp" id="id1"><span>[LeVeque-FVMHP]</span></a>
 for more details.</p>
 <p>Boundary conditions are set by the library routines:</p>
 <ul class="simple">
-<li><cite>$CLAW/classic/src/Nd/bcN.f</cite> for the classic code (N = 1, 2, 3).</li>
-<li><cite>$CLAW/amrclaw/src/Nd/bcNamr.f</cite> for the amrclaw code (N = 2, 3).</li>
+<li><p><cite>$CLAW/classic/src/Nd/bcN.f</cite> for the classic code (N = 1, 2, 3).</p></li>
+<li><p><cite>$CLAW/amrclaw/src/Nd/bcNamr.f</cite> for the amrclaw code (N = 2, 3).</p></li>
 </ul>
 <p>Several standard choices of boundary condition procedures are provided in
 these routines, and can be
 selected at each boundary by setting the input parameters <cite>bc_lower</cite> and
 <cite>bc_upper</cite> in each dimension (see <a class="reference internal" href="setrun.html#setrun"><span class="std std-ref">Specifying classic run-time parameters in setrun.py</span></a>) to one of the following:</p>
 <ul>
-<li><p class="first">1 or &#8216;extrap&#8217;   : extrapolation (non-reflecting outflow)</p>
+<li><p>1 or ‘extrap’   : extrapolation (non-reflecting outflow)</p>
 <p>In this case values from the grid cell adjacent to the boundary
 are copied into all ghost cells moving in the direction normal to
 the boundary.  This gives a fairly good approximation to a
@@ -115,14 +102,14 @@ out of the boundary without reflection, particularly in one space
 dimension.  In more than one direction this is not perfect for waves
 that hit the boundary at an oblique angle.</p>
 </li>
-<li><p class="first">2 or &#8216;periodic&#8217; : periodic boundary conditions</p>
+<li><p>2 or ‘periodic’ : periodic boundary conditions</p>
 <p>In this case ghost cell values are set by copying from interior
 cells at the opposite boundary so that periodic boundary conditions
 are perfectly imposed.  Normally periodic boundary conditions would
 be imposed by setting this value for both <cite>bc_lower</cite> and <cite>bc_upper</cite>
 in some dimension, but this is not required.</p>
 </li>
-<li><p class="first">3 or &#8216;wall&#8217;     : solid wall boundary conditions are imposed
+<li><p>3 or ‘wall’     : solid wall boundary conditions are imposed
 for systems where the second component of <cite>q</cite>  is the <cite>x</cite> velocity
 or momentum in one dimension (and where the third component
 of <cite>q</cite> is also the <cite>y</cite> velocity/momentum in more dimensions,
@@ -136,7 +123,7 @@ while all other components are extrapolated.</p>
 <p>Reflecting boundary conditions can also often be used on a line of
 symmetry of a solution in order to reduce the computational domain
 to be only half of the physical domain.</p>
-<p>Note that this option does not work on a mapped grid...
+<p>Note that this option does not work on a mapped grid…
 <strong>Add pointer to modified version</strong></p>
 </li>
 </ul>
@@ -188,15 +175,15 @@ into ghost cells.</p>
 <p>In 2D AMRClaw and  GeoClaw, an additional option is available for <cite>bc_lower</cite>
 and <cite>bc_upper</cite> that is implemented in the library routines:</p>
 <ul>
-<li><p class="first">4 or &#8216;sphere&#8217;   : sphere boundary conditions</p>
+<li><p>4 or ‘sphere’   : sphere boundary conditions</p>
 <p>Must set <cite>bc_lower[0:2] = bc_upper[0:2] = 4</cite> (i.e. at all 4 boundaries)</p>
 <p>These boundary conditions are similar to periodic boundary conditions,
-but for the clamshell grid introduced in [CalhounHelzelLeVeque]
+but for the clamshell grid introduced in <span id="id2">[CalhounHelzelLeVeque]</span>
 for solving problems on the sphere using a single logically rectangular
 grid.  This is best envisioned by folding a rectangular piece of paper
 in half, gluing the edges together, and inflating to a sphere.  See the
 animations on the <a class="reference external" href="?">website for the original paper</a>
-See also [BergerCalhounHelzelLeVeque] for further examples.</p>
+See also <span id="id3">[BergerCalhounHelzelLeVeque]</span> for further examples.</p>
 </li>
 </ul>
 </div>
@@ -205,21 +192,21 @@ See also [BergerCalhounHelzelLeVeque] for further examples.</p>
 <p>If none of the boundary conditions described above is suitable at one or
 more boundaries of the domain, then you will have to modify the library
 routine to implement the desired boundary condition.
-See Chapter 4 of <a class="reference internal" href="biblio.html#leveque-fvmhp" id="id4">[LeVeque-FVMHP]</a> for hints on how to specify the ghost cell
+See Chapter 4 of <a class="reference internal" href="biblio.html#leveque-fvmhp" id="id4"><span>[LeVeque-FVMHP]</span></a> for hints on how to specify the ghost cell
 values each time step.</p>
 <p>Suppose you need to specify different boundary conditions at the boundary
 <cite>xlower</cite>, for example.  Then in <cite>setrun.py</cite> you should set
 <cite>bc_lower[0] = 0</cite> and modify the library boundary condition routine to
 insert your desired boundary conditions at the point indicated in the code,
 where it says:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">c</span>     <span class="c1"># user-specified boundary conditions go here in place of error output</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">c</span>     <span class="c1"># user-specified boundary conditions go here in place of error output</span>
 </pre></div>
 </div>
 <p>in the section marked <cite>left boundary</cite>.   The details of how this is done
 differ a bit between the classic and AMR codes and also depend on the number
 of space dimensions.  Examine the way other boundary conditions are
 implemented and follow the model in your own code.</p>
-<p>TODO: Give some hints on how things work in AMR code &#8211; must check which ghost
+<p>TODO: Give some hints on how things work in AMR code – must check which ghost
 cells extend outside the physical domain and which are filled automatically
 from adjacent grid patches or by interpolation from coarser patches if they
 are interior to the domain.</p>
@@ -235,9 +222,9 @@ are interior to the domain.</p>
 <p><a href="http://clawpack.org/">
     <img class="logo" src= "_static/clawlogo.jpg" alt="Logo"/>
 </a>
-<h2>Version 5.6.1</h2>
+<h2>Version 5.7.0</h2>
 </p>
-  <h3><a href="contents.html">Table Of Contents</a></h3>
+  <h3><a href="contents.html">Table of Contents</a></h3>
   <ul>
 <li><a class="reference internal" href="#">Boundary conditions</a><ul>
 <li><a class="reference internal" href="#boundary-conditions-for-adaptive-refinement">Boundary conditions for adaptive refinement</a></li>
@@ -258,41 +245,42 @@ are interior to the domain.</p>
   <ul class="this-page-menu">
     <li><a href="_sources/bc.rst.txt"
            rel="nofollow">Show Source</a></li>
-    <li><a href="https://github.com/clawpack/doc/blob/master/doc/bc.rst"
-           rel="nofollow">Show on GitHub</a></li>
-    <li><a href="https://github.com/clawpack/doc/edit/master/doc/bc.rst"
-           rel="nofollow">Edit on GitHub</a></li>
   </ul>
 <div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
     <form class="search" action="search.html" method="get">
-      <div><input type="text" name="q" /></div>
-      <div><input type="submit" value="Go" /></div>
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
     </form>
+    </div>
 </div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
-<h3>Versions</h3>
+<script>$('#searchbox').show(0);</script>
+<h4>Latest Version</h4>
 <ul>
-    <li><a href="v5.4.1/bc.html">v5.4.1</a></li>
-    <li><a href="v5.4.0/bc.html">v5.4.0</a></li>
-    <li><a href="v5.3.1/bc.html">v5.3.1</a></li>
-    <li><a href="v5.3.0/bc.html">v5.3.0</a></li>
-    <li><a href="v5.2.1/bc.html">v5.2.1</a></li>
-    <li><a href="v5.2.0/bc.html">v5.2.0</a></li>
-    <li><a href="v5.1.0/bc.html">v5.1.0</a></li>
-    <li><a href="v5.6.1/bc.html">v5.6.1</a></li>
-    <li><a href="v5.6.0/bc.html">v5.6.0</a></li>
-    <li><a href="v5.5.0/bc.html">v5.5.0</a></li>
-    <li><a href="dev/bc.html">dev</a></li>
+  <li><a href="./dev/bc.html">dev</a></li>
+  <li><a href="bc.html">v5.7.0</a></li>
 </ul>
+<h4>Older Versions</h4>
+<ul>
+  <li><a href="./v5.1.0/bc.html">v5.1.0</a></li>
+  <li><a href="./v5.2.0/bc.html">v5.2.0</a></li>
+  <li><a href="./v5.2.1/bc.html">v5.2.1</a></li>
+  <li><a href="./v5.3.0/bc.html">v5.3.0</a></li>
+  <li><a href="./v5.3.1/bc.html">v5.3.1</a></li>
+  <li><a href="./v5.4.0/bc.html">v5.4.0</a></li>
+  <li><a href="./v5.4.1/bc.html">v5.4.1</a></li>
+  <li><a href="./v5.5.0/bc.html">v5.5.0</a></li>
+  <li><a href="./v5.6.0/bc.html">v5.6.0</a></li>
+  <li><a href="./v5.6.1/bc.html">v5.6.1</a></li>
+</ul>
+
         </div>
       </div>
       <div class="clearer"></div>
     </div>
   <div class="footer">
-    &copy; Copyright CC-BY 2019, The Clawpack Development Team.
+    &copy; Copyright CC-BY 2020, The Clawpack Development Team.
     Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
   </div>
   <script>

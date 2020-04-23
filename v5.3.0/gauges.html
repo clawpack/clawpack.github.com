@@ -1,41 +1,28 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
+<!DOCTYPE html>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
+    <meta charset="utf-8" />
     <title>Gauges &#8212; Clawpack 5.3.0 documentation</title>
-    
     <link rel="stylesheet" href="_static/flasky.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="stylesheet" href="_static/base.css" type="text/css" />
     <link rel="stylesheet" href="_static/layout.css" type="text/css" />
-    <link rel="stylesheet" href="_static/banner.css" type="text/css" />
-    
-    <script type="text/javascript">
-      var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    './',
-        VERSION:     '5.3.0',
-        COLLAPSE_INDEX: false,
-        FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true,
-        SOURCELINK_SUFFIX: '.txt'
-      };
-    </script>
-    <script type="text/javascript" src="_static/jquery.js"></script>
-    <script type="text/javascript" src="_static/underscore.js"></script>
-    <script type="text/javascript" src="_static/doctools.js"></script>
-    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="stylesheet" type="text/css" href="_static/graphviz.css" />
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <script async="async" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="shortcut icon" href="_static/clawicon.ico"/>
     <link rel="author" title="About these documents" href="about.html" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="GeoClaw" href="geoclaw.html" />
     <link rel="prev" title="AMR refinement criteria" href="refinement.html" /> 
-  </head>
-  <body role="document">
+  </head><body>
 <div id="main-wrapper" class="sphinx">
 <div id="header-wrapper">
   <section id="header">
@@ -50,7 +37,7 @@
           <a href="installing.html">Install</a>
         </li>
         <li>
-          <a class="" href="galleries.html">Gallery</a>
+          <a class="" href="http://clawpack.org/gallery">Gallery</a>
         </li>
         <li>
           <a class="" href="community.html">Community</a>
@@ -101,14 +88,14 @@ time range (t1,t2).</p>
 <p>Gauges are useful in several ways, e.g.:</p>
 <blockquote>
 <div><ol class="arabic simple">
-<li>To compare computational results to measurements from
+<li><p>To compare computational results to measurements from
 physical gauges such as a pressure gauge or tide gauge that
-record data as a function of time at a single point,</li>
-<li>To better visualize how the solution behaves at a single point,</li>
-<li>To better compare results obtained with different methods or grid resolutions.
+record data as a function of time at a single point,</p></li>
+<li><p>To better visualize how the solution behaves at a single point,</p></li>
+<li><p>To better compare results obtained with different methods or grid resolutions.
 Comparing two-dimensional pcolor or contour plots can be difficult whereas
 comparing to curves that give the solution as a function of time often reveals
-more clearly differences in accuracy or nonphysical oscillations.</li>
+more clearly differences in accuracy or nonphysical oscillations.</p></li>
 </ol>
 </div></blockquote>
 <div class="section" id="gauge-parameters-in-setrun">
@@ -118,25 +105,25 @@ more clearly differences in accuracy or nonphysical oscillations.</li>
 desired gauge to the <cite>ClawRunData</cite>
 object <cite>rundata.gaugedata.gauges</cite>.  This is initialized as an empty list and
 new gauges can be specified by:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">rundata</span><span class="o">.</span><span class="n">gaugedata</span><span class="o">.</span><span class="n">gauges</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">gaugeno</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">t1</span><span class="p">,</span> <span class="n">t2</span><span class="p">])</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rundata</span><span class="o">.</span><span class="n">gaugedata</span><span class="o">.</span><span class="n">gauges</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">gaugeno</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">t1</span><span class="p">,</span> <span class="n">t2</span><span class="p">])</span>
 </pre></div>
 </div>
 <p>with values</p>
 <ul>
-<li><p class="first"><em>gaugeno</em> : integer</p>
+<li><p><em>gaugeno</em> : integer</p>
 <p>the number of this gauge</p>
 </li>
-<li><p class="first"><em>x, y</em> : floats</p>
+<li><p><em>x, y</em> : floats</p>
 <p>the location of this gauge</p>
 </li>
-<li><p class="first"><em>t1, t2</em> : floats</p>
+<li><p><em>t1, t2</em> : floats</p>
 <p>the time interval over which gauge data should be output.</p>
 </li>
 </ul>
 <p>During the computation the value of all components of q at all gauge locations will
 be output to a single file <cite>fort.gauge</cite> in the output directory.  Lines of this
 file have the form:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">gaugeno</span>  <span class="n">level</span>  <span class="n">t</span>  <span class="n">q</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>  <span class="n">q</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">...</span>  <span class="n">q</span><span class="p">[</span><span class="n">meqn</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">gaugeno</span>  <span class="n">level</span>  <span class="n">t</span>  <span class="n">q</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>  <span class="n">q</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">...</span>  <span class="n">q</span><span class="p">[</span><span class="n">meqn</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
 </pre></div>
 </div>
 <p>where level is the AMR level used to determine the q values at this time.
@@ -145,8 +132,8 @@ interpolation to the gauge locations from the 4 nearest cell centers.</p>
 <p>If you wish to change what is output at these points, you should copy the library
 routine <cite>dumpgauge.f</cite> to your own directory and modify it appropriately.</p>
 <div class="admonition warning">
-<p class="first admonition-title">Warning</p>
-<p class="last">When doing a restart, previous gauge output is deleted unless
+<p class="admonition-title">Warning</p>
+<p>When doing a restart, previous gauge output is deleted unless
 you are careful to preserve it.  See <a class="reference internal" href="restart.html#restart-output"><span class="std std-ref">Output files after a restart</span></a>.</p>
 </div>
 </div>
@@ -156,7 +143,7 @@ you are careful to preserve it.  See <a class="reference internal" href="restart
 have to parse the file <cite>fort.gauge</cite> yourself.</p>
 <p>If you want to read in the data for a particular gauge to manipulate it
 yourself, you can do, for example:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">clawpack.visclaw.data</span> <span class="k">import</span> <span class="n">ClawPlotData</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">clawpack.visclaw.data</span> <span class="kn">import</span> <span class="n">ClawPlotData</span>
 <span class="n">plotdata</span> <span class="o">=</span> <span class="n">ClawPlotData</span><span class="p">()</span>
 <span class="n">plotdata</span><span class="o">.</span><span class="n">outdir</span> <span class="o">=</span> <span class="s1">&#39;_output&#39;</span>   <span class="c1"># set to the proper output directory</span>
 <span class="n">gaugeno</span> <span class="o">=</span> <span class="mi">1</span>                   <span class="c1"># gauge number to examine</span>
@@ -165,15 +152,15 @@ yourself, you can do, for example:</p>
 </div>
 <p>Then:</p>
 <ul class="simple">
-<li><cite>g.t</cite> is the array of times,</li>
-<li><cite>g.q</cite> is the array of values recorded at the gauges (<cite>g.q[m,n]</cite> is the <cite>m`th
-variable at time `t[n]</cite>)</li>
+<li><p><cite>g.t</cite> is the array of times,</p></li>
+<li><p><cite>g.q</cite> is the array of values recorded at the gauges (<cite>g.q[m,n]</cite> is the <cite>m`th
+variable at time `t[n]</cite>)</p></li>
 </ul>
 <p>In the <cite>setplot</cite> Python script you
 can specify plots that are to be done for each gauge, similar to the manner in
 which you can specify plots that are to be done for each time frame.  For example,
 to plot the component q[0] at each gauge, include in <cite>setplot</cite> lines of this form:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">plotfigure</span> <span class="o">=</span> <span class="n">plotdata</span><span class="o">.</span><span class="n">new_plotfigure</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;q[0] at gauges&#39;</span><span class="p">,</span> <span class="n">figno</span><span class="o">=</span><span class="mi">300</span><span class="p">,</span> \
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">plotfigure</span> <span class="o">=</span> <span class="n">plotdata</span><span class="o">.</span><span class="n">new_plotfigure</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;q[0] at gauges&#39;</span><span class="p">,</span> <span class="n">figno</span><span class="o">=</span><span class="mi">300</span><span class="p">,</span> \
                 <span class="nb">type</span><span class="o">=</span><span class="s1">&#39;each_gauge&#39;</span><span class="p">)</span>
 
 <span class="c1"># Set up for axes in this figure:</span>
@@ -188,33 +175,33 @@ to plot the component q[0] at each gauge, include in <cite>setplot</cite> lines 
 <span class="n">plotitem</span><span class="o">.</span><span class="n">plotstyle</span> <span class="o">=</span> <span class="s1">&#39;b-&#39;</span>
 </pre></div>
 </div>
-<p>Note that <cite>plotdata.new_plotfigure</cite> is called with <cite>type=&#8217;each_gauge&#8217;</cite> which
+<p>Note that <cite>plotdata.new_plotfigure</cite> is called with <cite>type=’each_gauge’</cite> which
 denotes that this plot is to be produced for each gauge found in <cite>setgauges.data</cite>.
-(When type is not specified, the default is <cite>type=&#8217;each_frame&#8217;</cite> for time frame data).</p>
+(When type is not specified, the default is <cite>type=’each_frame’</cite> for time frame data).</p>
 <p>If you type:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span>$ make .plots
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ make .plots
 </pre></div>
 </div>
 <p>then html files will be created for the gauge plots along with the time frame plots
 and will all show up in the index (usually in <cite>_plots/_PlotIndex.html</cite>).</p>
 <p>When using Iplotclaw to interactively view plots, try:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">PLOTCLAW</span><span class="o">&gt;</span> <span class="n">plotgauge</span> <span class="mi">1</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">PLOTCLAW</span><span class="o">&gt;</span> <span class="n">plotgauge</span> <span class="mi">1</span>
 </pre></div>
 </div>
 <p>to produce the plot for gauge 1, or simply:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">PLOTCLAW</span><span class="o">&gt;</span> <span class="n">plotgauge</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">PLOTCLAW</span><span class="o">&gt;</span> <span class="n">plotgauge</span>
 </pre></div>
 </div>
 <p>to loop through all gauges.  If you rerun the code without re-executing
 <cite>Iplotclaw</cite>, you can refresh the gauge data via:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">PLOTCLAW</span><span class="o">&gt;</span> <span class="n">cleargauges</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">PLOTCLAW</span><span class="o">&gt;</span> <span class="n">cleargauges</span>
 </pre></div>
 </div>
 <p>You can of course specify more than one plotitem on each plotaxes if you want.  For
 example to plot the each gauge from the current run as a blue line and the same
 gauge from some previous run (perhaps with a different grid resolution)
 as a red line, you could add the following lines to the above example:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="c1"># Plot q[0] from previous run as red line:</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># Plot q[0] from previous run as red line:</span>
 <span class="n">plotitem</span> <span class="o">=</span> <span class="n">plotaxes</span><span class="o">.</span><span class="n">new_plotitem</span><span class="p">(</span><span class="n">plot_type</span><span class="o">=</span><span class="s1">&#39;1d_plot&#39;</span><span class="p">)</span>
 <span class="n">plotitem</span><span class="o">.</span><span class="n">plot_var</span> <span class="o">=</span> <span class="mi">0</span>
 <span class="n">plotitem</span><span class="o">.</span><span class="n">plotstyle</span> <span class="o">=</span> <span class="s1">&#39;r-&#39;</span>
@@ -226,20 +213,20 @@ as a red line, you could add the following lines to the above example:</p>
 <h2>Plotting gauge locations<a class="headerlink" href="#plotting-gauge-locations" title="Permalink to this headline">¶</a></h2>
 <p>It is often convenient to plot the locations of the gauges on pcolor or contour
 plots each time frame.  You can do this as follows, for example:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">plotfigure</span> <span class="o">=</span> <span class="n">plotdata</span><span class="o">.</span><span class="n">new_plotfigure</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;pcolor&#39;</span><span class="p">,</span> <span class="n">figno</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">plotfigure</span> <span class="o">=</span> <span class="n">plotdata</span><span class="o">.</span><span class="n">new_plotfigure</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;pcolor&#39;</span><span class="p">,</span> <span class="n">figno</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
 <span class="n">plotaxes</span> <span class="o">=</span> <span class="n">plotfigure</span><span class="o">.</span><span class="n">new_plotaxes</span><span class="p">(</span><span class="s1">&#39;pcolor&#39;</span><span class="p">)</span>
 <span class="n">plotitem</span> <span class="o">=</span> <span class="n">plotaxes</span><span class="o">.</span><span class="n">new_plotitem</span><span class="p">(</span><span class="n">plot_type</span><span class="o">=</span><span class="s1">&#39;2d_pcolor&#39;</span><span class="p">)</span>
 <span class="c1"># set other attributes as desired</span>
 
 <span class="k">def</span> <span class="nf">addgauges</span><span class="p">(</span><span class="n">current_data</span><span class="p">):</span>
-    <span class="kn">from</span> <span class="nn">pyclaw.plotters</span> <span class="k">import</span> <span class="n">gaugetools</span>
+    <span class="kn">from</span> <span class="nn">pyclaw.plotters</span> <span class="kn">import</span> <span class="n">gaugetools</span>
     <span class="n">gaugetools</span><span class="o">.</span><span class="n">plot_gauge_locations</span><span class="p">(</span><span class="n">current_data</span><span class="o">.</span><span class="n">plotdata</span><span class="p">,</span> \
          <span class="n">gaugenos</span><span class="o">=</span><span class="s1">&#39;all&#39;</span><span class="p">,</span> <span class="n">format_string</span><span class="o">=</span><span class="s1">&#39;ko&#39;</span><span class="p">,</span> <span class="n">add_labels</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
 <span class="n">plotaxes</span><span class="o">.</span><span class="n">afteraxes</span> <span class="o">=</span> <span class="n">addgauges</span>
 </pre></div>
 </div>
-<p>You can replace <cite>gaugenos=&#8217;all&#8217;</cite> by <cite>gaugenos=[1,2]</cite> or other list of specific
+<p>You can replace <cite>gaugenos=’all’</cite> by <cite>gaugenos=[1,2]</cite> or other list of specific
 gauges to plot.  The <cite>format_string</cite> above specifies a black dot at each gauge
 location and <cite>add_labels=True</cite> means that the gauge number will appear next to each
 gauge.</p>
@@ -265,7 +252,7 @@ and <cite>$CLAW/geoclaw/examples/</cite> contain the specification of gauges.</p
 </a>
 <h2>Version 5.3.0</h2>
 </p>
-  <h3><a href="contents.html">Table Of Contents</a></h3>
+  <h3><a href="contents.html">Table of Contents</a></h3>
   <ul>
 <li><a class="reference internal" href="#">Gauges</a><ul>
 <li><a class="reference internal" href="#gauge-parameters-in-setrun">Gauge parameters in setrun</a></li>
@@ -282,43 +269,46 @@ and <cite>$CLAW/geoclaw/examples/</cite> contain the specification of gauges.</p
       <li>Next: <a href="geoclaw.html" title="next chapter">GeoClaw</a></li>
   </ul></li>
 </ul>
-  <div role="note" aria-label="source link">
-    <h3>This Page</h3>
-    <ul class="this-page-menu">
-      <li><a href="_sources/gauges.rst.txt"
-            rel="nofollow">Show Source</a></li>
-    </ul>
-   </div>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/gauges.rst.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
 <div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
     <form class="search" action="search.html" method="get">
-      <div><input type="text" name="q" /></div>
-      <div><input type="submit" value="Go" /></div>
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
     </form>
+    </div>
 </div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
-<h3>Versions</h3>
+<script>$('#searchbox').show(0);</script>
+<h4>Latest Version</h4>
 <ul>
-    <li><a href="../v5.4.1/gauges.html">v5.4.1</a></li>
-    <li><a href="../v5.4.0/gauges.html">v5.4.0</a></li>
-    <li><a href="../v5.3.1/gauges.html">v5.3.1</a></li>
-    <li><a href="gauges.html">v5.3.0</a></li>
-    <li><a href="../v5.2.1/gauges.html">v5.2.1</a></li>
-    <li><a href="../v5.2.0/gauges.html">v5.2.0</a></li>
-    <li><a href="../v5.1.0/gauges.html">v5.1.0</a></li>
-    <li><a href="../v5.6.1/gauges.html">v5.6.1</a></li>
-    <li><a href="../v5.6.0/gauges.html">v5.6.0</a></li>
-    <li><a href="../v5.5.0/gauges.html">v5.5.0</a></li>
-    <li><a href="../dev/gauges.html">dev</a></li>
+  <li><a href="../dev/gauges.html">dev</a></li>
+  <li><a href="../v5.7.0/gauges.html">v5.7.0</a></li>
 </ul>
+<h4>Older Versions</h4>
+<ul>
+  <li><a href="../v5.1.0/gauges.html">v5.1.0</a></li>
+  <li><a href="../v5.2.0/gauges.html">v5.2.0</a></li>
+  <li><a href="../v5.2.1/gauges.html">v5.2.1</a></li>
+  <li><a href="gauges.html">v5.3.0</a></li>
+  <li><a href="../v5.3.1/gauges.html">v5.3.1</a></li>
+  <li><a href="../v5.4.0/gauges.html">v5.4.0</a></li>
+  <li><a href="../v5.4.1/gauges.html">v5.4.1</a></li>
+  <li><a href="../v5.5.0/gauges.html">v5.5.0</a></li>
+  <li><a href="../v5.6.0/gauges.html">v5.6.0</a></li>
+  <li><a href="../v5.6.1/gauges.html">v5.6.1</a></li>
+</ul>
+
         </div>
       </div>
       <div class="clearer"></div>
     </div>
   <div class="footer">
-    &copy; Copyright 2015, The Clawpack Development Team.
+    &copy; Copyright CC-BY 2020, The Clawpack Development Team.
     Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
   </div>
   <script>

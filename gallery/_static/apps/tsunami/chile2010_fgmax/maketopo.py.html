@@ -8,26 +8,26 @@
 
 
           <head>
-           <link rel="icon" href="http://www.clawpack.org//clawicon.ico" />
+           <link rel="icon" href="http://www.clawpack.org//_static/clawicon_new.ico" />
           </head> 
            <BODY TEXT="#000000" BGCOLOR="#FFFFFF" LINK="#0000FF" 
                  VLINK="#5500DD" ALINK="#FF0000">
            <font FACE="HELVETICA,ARIAL">
            
-<!-- Created from the file /Users/rjl/Downloads/clawpack-v5.6.0_test/clawpack-v5.6.0_galleries/apps/tsunami/chile2010_fgmax/maketopo.py -->
-<!-- Date: Sat Jun  1 2019 at 13:06:02 -->
+<!-- Created from the file /Users/rjl/clawpack_src/clawpack_master/apps/tsunami/chile2010_fgmax/maketopo.py -->
+<!-- Date: Sat Apr 18 2020 at 20:05:29 -->
 
 <table bgcolor="#FFEE99"> <tr> <td>
 &nbsp;<font size=6> maketopo.py.html </font> </td>
 
             <td><a href="http://www.clawpack.org/index.html"><img
-            src="http://www.clawpack.org//clawlogo.jpg"
-            width=100 alt="CLAWPACK"></a>&nbsp;&nbsp; </td> </tr> <tr> <td>
+            src="http://www.clawpack.org//_static/clawlogo_border.jpg"
+            width=150 alt="CLAWPACK"></a>&nbsp;&nbsp; </td> </tr> <tr> <td>
 &nbsp;Source file: &nbsp;&nbsp;<a href="maketopo.py">maketopo.py </a>
 </td></tr><tr><td>
-&nbsp;Directory:  &nbsp; /Users/rjl/Downloads/clawpack-v5.6.0_test/clawpack-v5.6.0_galleries/apps/tsunami/chile2010_fgmax 
+&nbsp;Directory:  &nbsp; /Users/rjl/clawpack_src/clawpack_master/apps/tsunami/chile2010_fgmax 
 </td></tr><tr><td>
-&nbsp;Converted:  &nbsp; Sat Jun  1 2019 at 13:06:02 
+&nbsp;Converted:  &nbsp; Sat Apr 18 2020 at 20:05:29 
 &nbsp; using <a href="http://www.clawpack.org//doc/application_documentation.html#clawcode2html">clawcode2html</a>
 </td></tr><tr><td>
 <font color="#BB3300"> &nbsp;This documentation file will 
@@ -45,11 +45,7 @@ but now they are explicit below.
 Call functions with makeplots==True to create plots of topo, slip, and dtopo.
 """
 
-from __future__ import absolute_import
-from __future__ import print_function
-import os
-
-import clawpack.clawutil.data
+import os,sys
 
 try:
     CLAW = os.environ['CLAW']
@@ -64,10 +60,11 @@ def get_topo(makeplots=False):
     Retrieve the topo file from the GeoClaw repository.
     """
     from clawpack.geoclaw import topotools
+    import clawpack.clawutil.data as data
     topo_fname = 'etopo10min120W60W60S0S.asc'
-    url = 'http://depts.washington.edu/clawpack/geoclaw/topo/etopo/' + topo_fname
-    clawpack.clawutil.data.get_remote_file(url, output_dir=scratch_dir, 
-            file_name=topo_fname, verbose=True)
+    url = 'http://www.geoclaw.org/topo/etopo/' + topo_fname
+    data.get_remote_file(url, output_dir=scratch_dir, file_name=topo_fname,
+            verbose=True)
 
     if makeplots:
         from matplotlib import pyplot as plt

@@ -8,11 +8,7 @@ but now they are explicit below.
 Call functions with makeplots==True to create plots of topo, slip, and dtopo.
 """
 
-from __future__ import absolute_import
-from __future__ import print_function
-import os
-
-import clawpack.clawutil.data
+import os,sys
 
 try:
     CLAW = os.environ['CLAW']
@@ -27,10 +23,11 @@ def get_topo(makeplots=False):
     Retrieve the topo file from the GeoClaw repository.
     """
     from clawpack.geoclaw import topotools
+    import clawpack.clawutil.data as data
     topo_fname = 'etopo10min120W60W60S0S.asc'
-    url = 'http://depts.washington.edu/clawpack/geoclaw/topo/etopo/' + topo_fname
-    clawpack.clawutil.data.get_remote_file(url, output_dir=scratch_dir, 
-            file_name=topo_fname, verbose=True)
+    url = 'http://www.geoclaw.org/topo/etopo/' + topo_fname
+    data.get_remote_file(url, output_dir=scratch_dir, file_name=topo_fname,
+            verbose=True)
 
     if makeplots:
         from matplotlib import pyplot as plt

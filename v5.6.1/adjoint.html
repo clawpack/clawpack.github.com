@@ -1,41 +1,28 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
+<!DOCTYPE html>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
+    <meta charset="utf-8" />
     <title>Guiding AMR with adjoint flagging &#8212; Clawpack 5.6.1 documentation</title>
-    
     <link rel="stylesheet" href="_static/flasky.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="stylesheet" href="_static/base.css" type="text/css" />
     <link rel="stylesheet" href="_static/layout.css" type="text/css" />
-    <link rel="stylesheet" href="_static/banner.css" type="text/css" />
-    
-    <script type="text/javascript">
-      var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    './',
-        VERSION:     '5.6.1',
-        COLLAPSE_INDEX: false,
-        FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true,
-        SOURCELINK_SUFFIX: '.txt'
-      };
-    </script>
-    <script type="text/javascript" src="_static/jquery.js"></script>
-    <script type="text/javascript" src="_static/underscore.js"></script>
-    <script type="text/javascript" src="_static/doctools.js"></script>
-    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="stylesheet" type="text/css" href="_static/graphviz.css" />
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <script async="async" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="shortcut icon" href="_static/clawicon.ico"/>
     <link rel="author" title="About these documents" href="about.html" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Gauges" href="gauges.html" />
     <link rel="prev" title="AMR refinement criteria" href="refinement.html" /> 
-  </head>
-  <body role="document">
+  </head><body>
 <div id="main-wrapper" class="sphinx">
 <div id="header-wrapper">
   <section id="header">
@@ -50,7 +37,7 @@
           <a href="installing.html">Install</a>
         </li>
         <li>
-          <a class="" href="gallery/index.html">Gallery</a>
+          <a class="" href="http://clawpack.org/gallery">Gallery</a>
         </li>
         <li>
           <a class="" href="community.html">Community</a>
@@ -95,7 +82,7 @@
   <div class="section" id="guiding-amr-with-adjoint-flagging">
 <span id="adjoint"></span><h1>Guiding AMR with adjoint flagging<a class="headerlink" href="#guiding-amr-with-adjoint-flagging" title="Permalink to this headline">¶</a></h1>
 <p>A new approach to flagging cells for refinement was introduced in Clawpack
-5.6.0 &#8211; using the solution to an adjoint problem to determine what cells in
+5.6.0 – using the solution to an adjoint problem to determine what cells in
 the forward solution should be refined because these cells may have an impact
 on the some specified functional of interest.  This approach currently only
 works for autonomous linear problems, in which case the adjoint problem needs
@@ -106,8 +93,8 @@ of the forward solution, and space-time interpolation used as needed at each
 regridding time.</p>
 <p>The general approach is described in:</p>
 <ul class="simple">
-<li><a class="reference internal" href="biblio.html#davisleveque2018" id="id1">[DavisLeVeque2018]</a></li>
-<li><a class="reference internal" href="biblio.html#davis2018" id="id2">[Davis2018]</a></li>
+<li><p><a class="reference internal" href="biblio.html#davisleveque2018" id="id1"><span>[DavisLeVeque2018]</span></a></p></li>
+<li><p><a class="reference internal" href="biblio.html#davis2018" id="id2"><span>[Davis2018]</span></a></p></li>
 </ul>
 <p>See <a class="reference internal" href="#adjoint-geoclaw"><span class="std std-ref">Using adjoint flagging in GeoClaw</span></a> for discussion of the GeoClaw version.</p>
 <p>Adjoint flagging is appropriate when you are not interested in computing an
@@ -115,29 +102,29 @@ accurate solution over the entire space-time domain, but rather are
 interested only in some linear functional applied to the solution at each
 time (or at a single time, or range of times).
 In one space dimension this functional has  the form</p>
-<div class="math">
+<div class="math notranslate nohighlight">
 \[J(t) = \int_a^b \phi(x)^T q(x,t)\,dx\]</div>
-<p>where <span class="math">\(a\leq x \leq b\)</span> is the full computational domain and
-<span class="math">\(\phi(x)\)</span> is specified by the user as initial data for the
+<p>where <span class="math notranslate nohighlight">\(a\leq x \leq b\)</span> is the full computational domain and
+<span class="math notranslate nohighlight">\(\phi(x)\)</span> is specified by the user as initial data for the
 adjoint problem that is solved backward in time.  For example, if the
-solution is of interest only over a small range of <span class="math">\(x\)</span> values, say
-<span class="math">\(x_1 \leq x \leq x_2\)</span>,  then <span class="math">\(\phi(x)\)</span>
+solution is of interest only over a small range of <span class="math notranslate nohighlight">\(x\)</span> values, say
+<span class="math notranslate nohighlight">\(x_1 \leq x \leq x_2\)</span>,  then <span class="math notranslate nohighlight">\(\phi(x)\)</span>
 might be a box function with value 1 in this interval and 0 elsewhere, or
-<span class="math">\(\phi(x)\)</span> could be a sharply peaked Gaussian about one location of
+<span class="math notranslate nohighlight">\(\phi(x)\)</span> could be a sharply peaked Gaussian about one location of
 interest.</p>
 <p>In order to calculate an accurate solution near the location of interest at
-the final time <span class="math">\(T\)</span> it may be necessary to refine the solution at other
+the final time <span class="math notranslate nohighlight">\(T\)</span> it may be necessary to refine the solution at other
 places at earlier times.  The adjoint helps to identify where refinement is
 needed.  The adjoint equation is first solved backward in time from the final
-time <span class="math">\(T\)</span> with initial data <span class="math">\(\hat q(x,T) = \phi(x)\)</span> given by the
-functional.  The waves propagating backward from time <span class="math">\(T\)</span> to some
-regridding time <span class="math">\(t_r\)</span> in the adjoint solution identify which
-waves in the forward solution at time <span class="math">\(t_r\)</span> will reach the location of
-interest at time <span class="math">\(T\)</span>.</p>
+time <span class="math notranslate nohighlight">\(T\)</span> with initial data <span class="math notranslate nohighlight">\(\hat q(x,T) = \phi(x)\)</span> given by the
+functional.  The waves propagating backward from time <span class="math notranslate nohighlight">\(T\)</span> to some
+regridding time <span class="math notranslate nohighlight">\(t_r\)</span> in the adjoint solution identify which
+waves in the forward solution at time <span class="math notranslate nohighlight">\(t_r\)</span> will reach the location of
+interest at time <span class="math notranslate nohighlight">\(T\)</span>.</p>
 <p>Some examples for AMRClaw are available in</p>
 <ul class="simple">
-<li><cite>$CLAW/amrclaw/examples/acoustics_1d_adjoint</cite></li>
-<li><cite>$CLAW/amrclaw/examples/acoustics_2d_adjoint</cite></li>
+<li><p><cite>$CLAW/amrclaw/examples/acoustics_1d_adjoint</cite></p></li>
+<li><p><cite>$CLAW/amrclaw/examples/acoustics_2d_adjoint</cite></p></li>
 </ul>
 <p>In each case the main directory has a subdirectory named <cite>adjoint</cite>
 that contains the code that must be run first in order to compute and save
@@ -148,14 +135,14 @@ transposes of the coefficient matrices appearing in the forward problem.</p>
 <p>For variable-coefficient problems it is important to note that if the forward
 problem is in conservation form then the adjoint is not, and vice versa.  For
 example, in one space dimension, if the forward problem is
-<span class="math">\(q_t + A(x)q_x = 0\)</span>, then the adjoint is
-<span class="math">\(\hat q_t + (A(x)^T \hat q)_x = 0\)</span>.  On the other hand if the
+<span class="math notranslate nohighlight">\(q_t + A(x)q_x = 0\)</span>, then the adjoint is
+<span class="math notranslate nohighlight">\(\hat q_t + (A(x)^T \hat q)_x = 0\)</span>.  On the other hand if the
 forward problem is
-<span class="math">\(q_t + (A(x)q)_x = 0\)</span>, then the adjoint is
-<span class="math">\(\hat q_t + A(x)^T \hat q_x = 0\)</span>.</p>
-<p>Note that the eigenvalues of <span class="math">\(A\)</span> are unchanged upon transforming but
-the left eigenvectors of <span class="math">\(A\)</span> are now the right eigenvectors of
-<span class="math">\(A^T\)</span>, and these must be used in the adjoint Riemann solver.
+<span class="math notranslate nohighlight">\(q_t + (A(x)q)_x = 0\)</span>, then the adjoint is
+<span class="math notranslate nohighlight">\(\hat q_t + A(x)^T \hat q_x = 0\)</span>.</p>
+<p>Note that the eigenvalues of <span class="math notranslate nohighlight">\(A\)</span> are unchanged upon transforming but
+the left eigenvectors of <span class="math notranslate nohighlight">\(A\)</span> are now the right eigenvectors of
+<span class="math notranslate nohighlight">\(A^T\)</span>, and these must be used in the adjoint Riemann solver.
 See for example <cite>$CLAW/riemann/src/rp1_acoustics_variable_adjoint.f90</cite>, used
 for the example in <cite>$CLAW/amrclaw/examples/acoustics_1d_adjoint/adjoint</cite>.</p>
 <p>Boundary conditions conditions may also need to be adjusted in going from the
@@ -163,14 +150,14 @@ forward to adjoint equation.  The guiding principle is that boundary
 conditions must vanish during the integration by parts that is used to define
 the adjoint PDE, as described in more detail in the references.</p>
 <p>The functional of interest is defined in the <cite>adjoint/qinit.f</cite> file that
-specifies &#8220;initial&#8221; conditions for the adjoint problem.</p>
-<p>The <cite>adjoint/setrun.py</cite> file specifies the final time <span class="math">\(T\)</span> (as
+specifies “initial” conditions for the adjoint problem.</p>
+<p>The <cite>adjoint/setrun.py</cite> file specifies the final time <span class="math notranslate nohighlight">\(T\)</span> (as
 <cite>clawdata.tfinal</cite>) and the output interval via <cite>clawdata.num_output_times</cite>,
-as usual.  You should specify <span class="math">\(T\)</span> at least as large as the final time
+as usual.  You should specify <span class="math notranslate nohighlight">\(T\)</span> at least as large as the final time
 of interest in the forward problem, and frequent enough snapshots that
 interpolation between them is reasonable.</p>
 <p>You should set</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">clawdata</span><span class="o">.</span><span class="n">output_format</span> <span class="o">=</span> <span class="s1">&#39;binary&#39;</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">clawdata</span><span class="o">.</span><span class="n">output_format</span> <span class="o">=</span> <span class="s1">&#39;binary&#39;</span>
 </pre></div>
 </div>
 <p>so that output is in binary format, since the code that reads in these
@@ -184,7 +171,7 @@ is available named <cite>adjointdata</cite>. This ia an object of class
 <cite>amrclaw.data.AdjointData</cite> and has several attribures that should be set.
 For example, in <cite>$CLAW/amrclaw/examples/acoustics_1d_adjoint</cite> they are set
 as follows:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="c1">#------------------------------------------------------------------</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1">#------------------------------------------------------------------</span>
 <span class="c1"># Adjoint specific data:</span>
 <span class="c1">#------------------------------------------------------------------</span>
 <span class="c1"># Also need to set flagging method and appropriate tolerances above</span>
@@ -210,7 +197,7 @@ as follows:</p>
 over which the functional is of interest, and <cite>adjointdata.adjoint_outdir</cite>
 specifies where the adjoint snapshots are found.</p>
 <p>The flagging method and tolerances are set using, e.g.:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="c1"># set tolerances appropriate for adjoint flagging:</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># set tolerances appropriate for adjoint flagging:</span>
 
 <span class="c1"># Flag for refinement based on Richardson error estimater:</span>
 <span class="n">amrdata</span><span class="o">.</span><span class="n">flag_richardson</span> <span class="o">=</span> <span class="kc">False</span>
@@ -233,11 +220,11 @@ inner project is greater than <cite>amrdata.flag2refine_tol</cite>.</p>
 <span id="adjoint-geoclaw"></span><h2>Using adjoint flagging in GeoClaw<a class="headerlink" href="#using-adjoint-flagging-in-geoclaw" title="Permalink to this headline">¶</a></h2>
 <p>The references above contain tsunami modeling examples, as does the paper</p>
 <ul class="simple">
-<li><a class="reference internal" href="biblio.html#davisleveque2016" id="id3">[DavisLeVeque2016]</a></li>
+<li><p><a class="reference internal" href="biblio.html#davisleveque2016" id="id3"><span>[DavisLeVeque2016]</span></a></p></li>
 </ul>
 <p>An example can be found in</p>
 <ul class="simple">
-<li><cite>$CLAW/geoclaw/examples/tsunami/chile2010_adjoint</cite></li>
+<li><p><cite>$CLAW/geoclaw/examples/tsunami/chile2010_adjoint</cite></p></li>
 </ul>
 <p>Note that GeoClaw solves the nonlinear shallow water equations while the
 adjoint as implemented in GeoClaw is only suitable for linear problems.  To
@@ -250,8 +237,8 @@ linearized about the ocean at rest.  Hence the adjoint problem is also solved
 about the ocean at rest and the adjoint equations take essentially the same
 form as the forward equations.  The adjoint Riemann solver can be found in</p>
 <ul class="simple">
-<li><cite>$CLAW/riemann/src/rpn2_geoclaw_adjoint_qwave.f</cite></li>
-<li><cite>$CLAW/riemann/src/rpt2_geoclaw_adjoint_qwave.f</cite></li>
+<li><p><cite>$CLAW/riemann/src/rpn2_geoclaw_adjoint_qwave.f</cite></p></li>
+<li><p><cite>$CLAW/riemann/src/rpt2_geoclaw_adjoint_qwave.f</cite></p></li>
 </ul>
 <p>Note that since in the forward problem the adjoint equation is solved using
 a f-wave formulation, the adjoint problem is a variable-coefficient problem
@@ -272,7 +259,7 @@ jumps in the flux. See the comments in the <cite>rpn2</cite> solver for more det
 </a>
 <h2>Version 5.6.1</h2>
 </p>
-  <h3><a href="contents.html">Table Of Contents</a></h3>
+  <h3><a href="contents.html">Table of Contents</a></h3>
   <ul>
 <li><a class="reference internal" href="#">Guiding AMR with adjoint flagging</a><ul>
 <li><a class="reference internal" href="#using-adjoint-flagging-in-geoclaw">Using adjoint flagging in GeoClaw</a></li>
@@ -292,41 +279,42 @@ jumps in the flux. See the comments in the <cite>rpn2</cite> solver for more det
   <ul class="this-page-menu">
     <li><a href="_sources/adjoint.rst.txt"
            rel="nofollow">Show Source</a></li>
-    <li><a href="https://github.com/clawpack/doc/blob/master/doc/adjoint.rst"
-           rel="nofollow">Show on GitHub</a></li>
-    <li><a href="https://github.com/clawpack/doc/edit/master/doc/adjoint.rst"
-           rel="nofollow">Edit on GitHub</a></li>
   </ul>
 <div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
     <form class="search" action="search.html" method="get">
-      <div><input type="text" name="q" /></div>
-      <div><input type="submit" value="Go" /></div>
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
     </form>
+    </div>
 </div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
-<h3>Versions</h3>
+<script>$('#searchbox').show(0);</script>
+<h4>Latest Version</h4>
 <ul>
-    <li><a href="../v5.4.1/contents.html">v5.4.1</a></li>
-    <li><a href="../v5.4.0/contents.html">v5.4.0</a></li>
-    <li><a href="../v5.3.1/contents.html">v5.3.1</a></li>
-    <li><a href="../v5.3.0/contents.html">v5.3.0</a></li>
-    <li><a href="../v5.2.1/contents.html">v5.2.1</a></li>
-    <li><a href="../v5.2.0/contents.html">v5.2.0</a></li>
-    <li><a href="../v5.1.0/contents.html">v5.1.0</a></li>
-    <li><a href="adjoint.html">v5.6.1</a></li>
-    <li><a href="../v5.6.0/adjoint.html">v5.6.0</a></li>
-    <li><a href="../v5.5.0/contents.html">v5.5.0</a></li>
-    <li><a href="../dev/adjoint.html">dev</a></li>
+  <li><a href="../dev/adjoint.html">dev</a></li>
+  <li><a href="../v5.7.0/adjoint.html">v5.7.0</a></li>
 </ul>
+<h4>Older Versions</h4>
+<ul>
+  <li><a href="../v5.1.0/index.html">v5.1.0</a></li>
+  <li><a href="../v5.2.0/index.html">v5.2.0</a></li>
+  <li><a href="../v5.2.1/index.html">v5.2.1</a></li>
+  <li><a href="../v5.3.0/index.html">v5.3.0</a></li>
+  <li><a href="../v5.3.1/index.html">v5.3.1</a></li>
+  <li><a href="../v5.4.0/index.html">v5.4.0</a></li>
+  <li><a href="../v5.4.1/index.html">v5.4.1</a></li>
+  <li><a href="../v5.5.0/index.html">v5.5.0</a></li>
+  <li><a href="../v5.6.0/adjoint.html">v5.6.0</a></li>
+  <li><a href="adjoint.html">v5.6.1</a></li>
+</ul>
+
         </div>
       </div>
       <div class="clearer"></div>
     </div>
   <div class="footer">
-    &copy; Copyright CC-BY 2019, The Clawpack Development Team.
+    &copy; Copyright CC-BY 2020, The Clawpack Development Team.
     Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
   </div>
   <script>
