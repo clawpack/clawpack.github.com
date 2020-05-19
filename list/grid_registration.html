@@ -1,0 +1,282 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>Grid registration &#8212; Clawpack dev documentation</title>
+    <link rel="stylesheet" href="_static/flasky.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/base.css" type="text/css" />
+    <link rel="stylesheet" href="_static/layout.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/graphviz.css" />
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <script async="async" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="shortcut icon" href="_static/clawicon.ico"/>
+    <link rel="author" title="About these documents" href="about.html" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Python tools for working with topo and dtopo" href="topotools.html" />
+    <link rel="prev" title="Topography data" href="topo.html" /> 
+  </head><body>
+<div id="main-wrapper" class="sphinx">
+<div id="header-wrapper">
+  <section id="header">
+    <!-- <h1><a href="http://clawpack.org/">Clawpack</a></h1> -->
+    <h1><a href="http://clawpack.org/">Clawpack-5</a></h1> 
+    <nav>
+      <ul>
+        <li>
+          <a href="contents.html">Docs</a>
+        </li>
+        <li>
+          <a href="installing.html">Install</a>
+        </li>
+        <li>
+          <a class="" href="http://clawpack.org/gallery">Gallery</a>
+        </li>
+        <li>
+          <a class="" href="community.html">Community</a>
+        </li>
+        <li>
+          <a class="active" href="http://github.com/clawpack">Source</a>
+        </li>
+        <li>
+          <a class="" href="developers.html">Develop</a>
+        </li>
+      </ul>
+    </nav>
+  </section>
+<div class="decoration"></div>
+</div>
+
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="topotools.html" title="Python tools for working with topo and dtopo"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="topo.html" title="Topography data"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="contents.html">Clawpack dev documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="geoclaw.html" accesskey="U">GeoClaw Description and Detailed Contents</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="grid-registration">
+<span id="id1"></span><h1>Grid registration<a class="headerlink" href="#grid-registration" title="Permalink to this headline">¶</a></h1>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="topo.html#topo"><span class="std std-ref">Topography data</span></a></p></li>
+<li><p><a class="reference internal" href="topotools.html#topotools"><span class="std std-ref">Python tools for working with topo and dtopo</span></a></p></li>
+</ul>
+</div>
+<p>GeoClaw <cite>topo_type == 3</cite> is
+essentially the same as the <a class="reference external" href="http://resources.esri.com/help/9.3/arcgisengine/java/GP_ToolRef/spatial_analyst_tools/esri_ascii_raster_format.htm">ESRI ASCII Raster format</a>
+but it is important to note which grid registration is used.
+(<cite>topo_type == 2</cite> uses the same header conventions, so this discussion also
+applies to these files.)</p>
+<p>See <a class="reference external" href="https://www.ngdc.noaa.gov/mgg/global/gridregistration.html">this NOAA page</a>
+and <a class="reference external" href="https://en.wikipedia.org/wiki/Esri_grid">the wikipedia ESRI grid page</a>
+for more about registration, with some useful figures.</p>
+<p>The third and fourth lines of the header file contain labels that tell whether the
+registration is <cite>llcorner</cite> (lower left corner) or <cite>llcenter</cite> (lower left center).
+GeoClaw also recognizes <cite>lower</cite>, which is currently handled in a way
+equivalent to <cite>llcenter</cite>.  This is also the assumed default registration
+if the string is not one of these recognized values.</p>
+<p>According to the documentation linked above for ESRI raster format, the topography
+data given in the file should be viewed as <strong>cell averages</strong> of the topography over
+DEM cells of dimension <cite>dx</cite> by <cite>dy</cite> where in this format <cite>dx = dy</cite> and is given by the
+<cite>cellsize</cite> parameter. (We use DEM cell to denote the cell in the Digital Elevation
+Model provided in the topofile, not be be confused with the computational grid
+cells used by the finite volume method.)</p>
+<p>The <strong>registration</strong>
+indicates whether the <cite>(x,y)</cite> (longitude, latitude) value given in the header
+corresponds to the location of the lower left corner of the SW-most DEM cell, or to the
+center of this cell.  Using the example from <a class="reference internal" href="topo.html#topo"><span class="std std-ref">Topography data</span></a>, a file containing:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="mi">2</span>         <span class="n">mx</span>
+<span class="mi">2</span>         <span class="n">my</span>
+<span class="mf">0.</span>        <span class="n">xllcenter</span>
+<span class="mf">20.</span>       <span class="n">yllcenter</span>
+<span class="mf">10.</span>       <span class="n">cellsize</span>
+<span class="o">-</span><span class="mi">9999</span>     <span class="n">nodatavalue</span>
+<span class="o">-</span><span class="mf">1000.</span>  <span class="o">-</span><span class="mf">2000.</span>
+<span class="o">-</span><span class="mf">3000.</span>  <span class="o">-</span><span class="mf">4000.</span>
+</pre></div>
+</div>
+<p>would specify DEM cells with centers at <cite>(0,30), (10,30), (0,20), (10,20)</cite>, which
+are the same points specified in the <cite>topo_type == 1</cite> example on <a class="reference internal" href="topo.html#topo"><span class="std std-ref">Topography data</span></a>.</p>
+<p>By contrast, the file:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="mi">2</span>         <span class="n">mx</span>
+<span class="mi">2</span>         <span class="n">my</span>
+<span class="mf">0.</span>        <span class="n">xllcorner</span>
+<span class="mf">20.</span>       <span class="n">yllcorner</span>
+<span class="mf">10.</span>       <span class="n">cellsize</span>
+<span class="o">-</span><span class="mi">9999</span>     <span class="n">nodatavalue</span>
+<span class="o">-</span><span class="mf">1000.</span>  <span class="o">-</span><span class="mf">2000.</span>
+<span class="o">-</span><span class="mf">3000.</span>  <span class="o">-</span><span class="mf">4000.</span>
+</pre></div>
+</div>
+<p>would specify DEM cells with lower left corners at the 4 points listed above, and
+hence cell centers at <cite>(5,35), (15,35), (5,25), (15,25)</cite>.</p>
+<p>In the GeoClaw Fortran code, we assume the DEM values are actually
+pointwise values and these are used to construct a piecewise bilinear
+function interpolating these values.  This function is then integrated
+over the computational grid cells in order to get the
+cell-averaged topography values that are stored in <cite>aux(1,:,:)</cite> and
+used in the finite volume method.  The computational cells over
+which this function is integrated can vary as adaptive refinement is performed.</p>
+<p>If the topography is smoothly varying, then the cell average over a DEM cell
+agrees with the pointwise value at the cell center, so for our purpose
+it is best to view the DEM values as being located at cell centers.  Hence if
+<cite>llcorner</cite> registration is specified, the lower left corner (and all other <cite>(x,y)</cite>
+points spaced according to <cite>cellsize</cite>) should all be shifted by <cite>cellsize/2</cite> in
+both <cite>x</cite> and <cite>y</cite> before being used.</p>
+<p>Starting with Version 5.5.0, this is done in the Fortran code when the DEM topofile
+is read in.  It is also done in the Python <cite>topotools</cite> module at the time of
+reading the file, so the internal representation has <cite>Topography.x</cite> and
+<cite>Topography.y</cite> corresponding to the cell centers or points where the data should be
+interpreted in a pointwise view.  This is also best when producing contour plots,
+for example.   When writing a topography file using <cite>Topography.write()</cite>, a new
+optional argument <cite>grid_registration</cite> has been added.  The <cite>(x,y)</cite> values in the
+header will be printed properly based on the registration chosen.</p>
+<p>Note that if you use <cite>Topography.crop()</cite> with a <cite>coarsen</cite> parameter
+in order to generate a coarser version of the DEM, this simply
+subsamples the topography.  This followed by <cite>Topography.write()</cite>
+should print out the proper <cite>llcorner</cite> or <cite>llcenter</cite> value for the
+coarsened topography based on the location of the subsamples, but
+<cite>crop()</cite> does not currently average topography over large cells as
+the ESRI standard suggests should be done.  In the future a
+<cite>coarsen_method</cite> parameter might be added to <cite>crop()</cite> to allow this.</p>
+<p>Earlier versions of GeoClaw always viewed the <cite>(x,y)</cite> value in the header as the
+location of the SW-most data point, i.e., always assumed <cite>llcenter == lower</cite>
+registration.  So if you rerun a previous example that had a topofile specifying
+<cite>llcorner</cite> in the header, the results may change since the DEM data will now be (more
+properly) viewed as specified at slightly different points.  If you need to try to
+reproduce your earlier results, you could change <cite>llcorner</cite> to <cite>lower</cite> in the
+header lines, for example.</p>
+<p>For GeoClaw <cite>topo_type=1</cite>, each row contains <cite>x, y, z</cite> data for a single
+point and we interpret <cite>z</cite> as the pointwise data at the specified <cite>x, y</cite>.</p>
+<div class="section" id="netcdf-files">
+<h2>NetCDF files<a class="headerlink" href="#netcdf-files" title="Permalink to this headline">¶</a></h2>
+<p>For netCDF files the
+data points are generally interpreted as pointwise values at the points
+specified in the <cite>lat</cite> and <cite>lon</cite> arrays included in the file (or as
+cell-averaged values with these points as the cell centers).</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<p><a href="http://clawpack.org/">
+    <img class="logo" src= "_static/clawlogo.jpg" alt="Logo"/>
+</a>
+<h2>Version dev</h2>
+</p>
+  <h3><a href="contents.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Grid registration</a><ul>
+<li><a class="reference internal" href="#netcdf-files">NetCDF files</a></li>
+</ul>
+</li>
+</ul>
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="contents.html">Documentation overview</a><ul>
+  <li><a href="geoclaw.html">GeoClaw Description and Detailed Contents</a><ul>
+      <li>Previous: <a href="topo.html" title="previous chapter">Topography data</a></li>
+      <li>Next: <a href="topotools.html" title="next chapter">Python tools for working with topo and dtopo</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+<div class="widget navlinks">
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/grid_registration.rst.txt"
+            rel="nofollow"
+            target="_blank">Source .rst</a></li>
+    <li><a href="https://github.com/clawpack/doc/blob/dev/doc/grid_registration.rst"
+            rel="nofollow"
+            target="_blank">Source on GitHub</a></li>
+     <li><a href="https://github.com/clawpack/doc/commits/dev/doc/grid_registration.rst"
+             rel="nofollow"
+             target="_blank">History</a></li>
+    <li><a href="https://github.com/clawpack/doc/edit/dev/doc/grid_registration.rst"
+            rel="nofollow"
+            target="_blank">Suggest Edits</a></li>
+     <li><a href="https://github.com/clawpack/doc/issues/new/choose"
+             rel="nofollow"
+             target="_blank">Raise an Issue</a></li>
+  </ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+<h4>Latest Version</h4>
+<ul>
+  <li><a href="../dev/grid_registration.html">dev</a></li>
+  <li><a href="../v5.7.0/grid_registration.html">v5.7.0</a></li>
+</ul>
+<h4>Older Versions</h4>
+<ul>
+  <li><a href="grid_registration.html">list</a></li>
+  <li><a href="../v5.1.0/index.html">v5.1.0</a></li>
+  <li><a href="../v5.2.0/index.html">v5.2.0</a></li>
+  <li><a href="../v5.2.1/index.html">v5.2.1</a></li>
+  <li><a href="../v5.3.0/index.html">v5.3.0</a></li>
+  <li><a href="../v5.3.1/index.html">v5.3.1</a></li>
+  <li><a href="../v5.4.0/index.html">v5.4.0</a></li>
+  <li><a href="../v5.4.1/index.html">v5.4.1</a></li>
+  <li><a href="../v5.5.0/grid_registration.html">v5.5.0</a></li>
+  <li><a href="../v5.6.0/grid_registration.html">v5.6.0</a></li>
+</ul>
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+  <div class="footer">
+    &copy; Copyright CC-BY 2020, The Clawpack Development Team.
+    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
+  </div>
+  <script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-44811544-1', 'auto');
+  ga('send', 'pageview');
+
+  </script>
+  
+  </body>
+</html>

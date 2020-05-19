@@ -1,0 +1,499 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>Force Cells to be Dry Initially &#8212; Clawpack dev documentation</title>
+    <link rel="stylesheet" href="_static/flasky.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/base.css" type="text/css" />
+    <link rel="stylesheet" href="_static/layout.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/graphviz.css" />
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <script async="async" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="shortcut icon" href="_static/clawicon.ico"/>
+    <link rel="author" title="About these documents" href="about.html" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Pyclaw" href="pyclaw/index.html" />
+    <link rel="prev" title="Marching Front algorithm" href="marching_front.html" /> 
+  </head><body>
+<div id="main-wrapper" class="sphinx">
+<div id="header-wrapper">
+  <section id="header">
+    <!-- <h1><a href="http://clawpack.org/">Clawpack</a></h1> -->
+    <h1><a href="http://clawpack.org/">Clawpack-5</a></h1> 
+    <nav>
+      <ul>
+        <li>
+          <a href="contents.html">Docs</a>
+        </li>
+        <li>
+          <a href="installing.html">Install</a>
+        </li>
+        <li>
+          <a class="" href="http://clawpack.org/gallery">Gallery</a>
+        </li>
+        <li>
+          <a class="" href="community.html">Community</a>
+        </li>
+        <li>
+          <a class="active" href="http://github.com/clawpack">Source</a>
+        </li>
+        <li>
+          <a class="" href="developers.html">Develop</a>
+        </li>
+      </ul>
+    </nav>
+  </section>
+<div class="decoration"></div>
+</div>
+
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="pyclaw/index.html" title="Pyclaw"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="marching_front.html" title="Marching Front algorithm"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="contents.html">Clawpack dev documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="geoclaw.html" accesskey="U">GeoClaw Description and Detailed Contents</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="force-cells-to-be-dry-initially">
+<span id="force-dry"></span><h1>Force Cells to be Dry Initially<a class="headerlink" href="#force-cells-to-be-dry-initially" title="Permalink to this headline">¶</a></h1>
+<p><strong>New in Version 5.7.0.</strong></p>
+<p>Adapted from <a class="reference external" href="http://www.clawpack.org/new_features_for_v5.7.0/notebooks_html/ForceDry.html">this notebook</a>
+from a <a class="reference external" href="http://www.clawpack.org/new_features_for_v5.7.0/">collection illustrating new features for v5.7.0</a>.</p>
+<p>See also <a class="reference internal" href="marching_front.html#marching-front"><span class="std std-ref">Marching Front algorithm</span></a>, which describes a
+tool to select points from a topography DEM that satisfy given
+constraints on elevation, and how this can be used to determine dry land
+behind dikes.</p>
+<p>This can then be used to define an array
+that can be read into GeoClaw and used when initializing the water depth
+during the creation of new grid patches.
+See the section <a class="reference external" href="#fdry-geoclaw">Usage in GeoClaw Fortran code</a>
+for instructions on how to specify this in <cite>setrun.py</cite>.</p>
+<p>We define an rectangular array <cite>force_dry_init</cite> that is aligned with
+cell centers of the computational grid at some resolution (typically the
+finest resolution) and that has the value <cite>force_dry_init[i,j] = 1</cite> to
+indicate cells that should be initialized to dry (<cite>h[i,j] = 0</cite>)
+regardless of the value of the GeoClaw topography <cite>B[i,j]</cite> in this
+cell. If <cite>force_dry_init[i,j] = 0</cite> the the cell is initialized in the
+usual manner, which generally means</p>
+<p><cite>h[i,j] = max(0, sea_level - B[i,j])</cite>.</p>
+<p>Notes:</p>
+<ul class="simple">
+<li><p>Another new feature allows initializing the depth so that the surface
+elevation <cite>eta</cite> is spatially varying rather than using a single
+scalar value <cite>sea_level</cite> everywhere. That feature is described in
+<a class="reference internal" href="set_eta_init.html#set-eta-init"><span class="std std-ref">Set Eta Init – spatially varying initial surface elevation</span></a>.  If that is used in
+conjunction with a <cite>force_dry_init</cite> array,
+<cite>force_dry_init[i,j] = 1</cite> still indicates that the cell should be
+dry while elsewhere the “usual” thing is done.</p></li>
+<li><p>The current implementation allows only one <cite>force_dry_init</cite> array
+but in the future this may be generalized to allow multiple arrays
+covering different subsets of the domain, and perhaps at different grid
+resolutions.</p></li>
+<li><p>Typically the <cite>force_dry_init</cite> array is computed from a DEM file at
+the desired resolution, using the marching front algorithm defined in
+<a class="reference internal" href="marching_front.html#marching-front"><span class="std std-ref">Marching Front algorithm</span></a>.  But recall that the
+GeoClaw topography value <cite>B[i,j]</cite> does not agree with the DEM value
+<cite>Z[i,j]</cite> even if the cell center is aligned with the DEM point due
+to the way <cite>B</cite> is computed by averaging over piecewise bilinear
+functions that interpolate the <cite>Z</cite> values. So one has to be careful
+not to set <cite>force_dry_init[i,j] = 1</cite> in a cell close to the shore
+simply because <cite>Z &gt; 0</cite> at this point since the <cite>B</cite> value might be
+negative in the cell. This is dealt with in the examples below by
+doing some buffering.</p></li>
+</ul>
+<div class="section" id="contents">
+<h2>Contents<a class="headerlink" href="#contents" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p><a class="reference external" href="#fdry-topo">Sample topography from a 1/3 arcsecond DEM</a></p></li>
+<li><p><a class="reference external" href="#fdry-init">Creating the force_dry_init array</a></p></li>
+<li><p><a class="reference external" href="#fdry-file">Create file to read into GeoClaw</a></p></li>
+<li><p><a class="reference external" href="#fdry-geoclaw">Usage in GeoClaw Fortran code</a></p></li>
+</ul>
+</div>
+<div class="section" id="examples">
+<h2>Examples<a class="headerlink" href="#examples" title="Permalink to this headline">¶</a></h2>
+<p>First import some needed modules and set up color maps.</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%</span><span class="k">matplotlib</span> inline
+</pre></div>
+</div>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pylab</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">import</span> <span class="nn">os</span><span class="o">,</span><span class="nn">sys</span>
+<span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="n">ma</span> <span class="c1"># masked arrays</span>
+<span class="kn">from</span> <span class="nn">clawpack.visclaw</span> <span class="kn">import</span> <span class="n">colormaps</span>
+
+<span class="kn">from</span> <span class="nn">clawpack.geoclaw</span> <span class="kn">import</span> <span class="n">marching_front</span><span class="p">,</span> <span class="n">topotools</span>
+<span class="kn">from</span> <span class="nn">clawpack.amrclaw</span> <span class="kn">import</span> <span class="n">region_tools</span>
+<span class="kn">from</span> <span class="nn">clawpack.visclaw</span> <span class="kn">import</span> <span class="n">plottools</span>
+</pre></div>
+</div>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">zmin</span> <span class="o">=</span> <span class="o">-</span><span class="mf">60.</span>
+<span class="n">zmax</span> <span class="o">=</span> <span class="mf">40.</span>
+
+<span class="n">land_cmap</span> <span class="o">=</span> <span class="n">colormaps</span><span class="o">.</span><span class="n">make_colormap</span><span class="p">({</span> <span class="mf">0.0</span><span class="p">:[</span><span class="mf">0.1</span><span class="p">,</span><span class="mf">0.4</span><span class="p">,</span><span class="mf">0.0</span><span class="p">],</span>
+                                     <span class="mf">0.25</span><span class="p">:[</span><span class="mf">0.0</span><span class="p">,</span><span class="mf">1.0</span><span class="p">,</span><span class="mf">0.0</span><span class="p">],</span>
+                                      <span class="mf">0.5</span><span class="p">:[</span><span class="mf">0.8</span><span class="p">,</span><span class="mf">1.0</span><span class="p">,</span><span class="mf">0.5</span><span class="p">],</span>
+                                      <span class="mf">1.0</span><span class="p">:[</span><span class="mf">0.8</span><span class="p">,</span><span class="mf">0.5</span><span class="p">,</span><span class="mf">0.2</span><span class="p">]})</span>
+
+<span class="n">sea_cmap</span> <span class="o">=</span> <span class="n">colormaps</span><span class="o">.</span><span class="n">make_colormap</span><span class="p">({</span> <span class="mf">0.0</span><span class="p">:[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span> <span class="mf">1.</span><span class="p">:[</span><span class="o">.</span><span class="mi">8</span><span class="p">,</span><span class="o">.</span><span class="mi">8</span><span class="p">,</span><span class="mi">1</span><span class="p">]})</span>
+
+<span class="n">cmap</span><span class="p">,</span> <span class="n">norm</span> <span class="o">=</span> <span class="n">colormaps</span><span class="o">.</span><span class="n">add_colormaps</span><span class="p">((</span><span class="n">land_cmap</span><span class="p">,</span> <span class="n">sea_cmap</span><span class="p">),</span>
+                                     <span class="n">data_limits</span><span class="o">=</span><span class="p">(</span><span class="n">zmin</span><span class="p">,</span><span class="n">zmax</span><span class="p">),</span>
+                                     <span class="n">data_break</span><span class="o">=</span><span class="mf">0.</span><span class="p">)</span>
+
+<span class="n">sea_cmap_dry</span> <span class="o">=</span> <span class="n">colormaps</span><span class="o">.</span><span class="n">make_colormap</span><span class="p">({</span> <span class="mf">0.0</span><span class="p">:[</span><span class="mf">1.0</span><span class="p">,</span><span class="mf">0.7</span><span class="p">,</span><span class="mf">0.7</span><span class="p">],</span> <span class="mf">1.</span><span class="p">:[</span><span class="mf">1.0</span><span class="p">,</span><span class="mf">0.7</span><span class="p">,</span><span class="mf">0.7</span><span class="p">]})</span>
+<span class="n">cmap_dry</span><span class="p">,</span> <span class="n">norm_dry</span> <span class="o">=</span> <span class="n">colormaps</span><span class="o">.</span><span class="n">add_colormaps</span><span class="p">((</span><span class="n">land_cmap</span><span class="p">,</span> <span class="n">sea_cmap_dry</span><span class="p">),</span>
+                                     <span class="n">data_limits</span><span class="o">=</span><span class="p">(</span><span class="n">zmin</span><span class="p">,</span><span class="n">zmax</span><span class="p">),</span>
+                                     <span class="n">data_break</span><span class="o">=</span><span class="mf">0.</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="sample-topography-from-a-1-3-arcsecond-dem">
+<span id="fdry-topo"></span><h2>Sample topography from a 1/3 arcsecond DEM<a class="headerlink" href="#sample-topography-from-a-1-3-arcsecond-dem" title="Permalink to this headline">¶</a></h2>
+<p>We consider a small region on the SW coast of Whidbey Island north of
+Maxwelton Beach as an example, as was used in
+<a class="reference external" href="MarchingFront.ipynb">MarchingFront.ipynb</a>.</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">region1_png</span> <span class="o">=</span> <span class="n">imread</span><span class="p">(</span><span class="s1">&#39;region1.png&#39;</span><span class="p">)</span>
+<span class="n">extent</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mf">122.46</span><span class="p">,</span> <span class="o">-</span><span class="mf">122.38</span><span class="p">,</span> <span class="mf">47.93</span><span class="p">,</span> <span class="mf">47.96</span><span class="p">]</span>
+
+<span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span><span class="mi">6</span><span class="p">))</span>
+<span class="n">imshow</span><span class="p">(</span><span class="n">region1_png</span><span class="p">,</span> <span class="n">extent</span><span class="o">=</span><span class="n">extent</span><span class="p">)</span>
+<span class="n">gca</span><span class="p">()</span><span class="o">.</span><span class="n">set_aspect</span><span class="p">(</span><span class="mf">1.</span><span class="o">/</span><span class="n">cos</span><span class="p">(</span><span class="mi">48</span><span class="o">*</span><span class="n">pi</span><span class="o">/</span><span class="mf">180.</span><span class="p">))</span>
+</pre></div>
+</div>
+<img alt="_images/output_9_0.png" src="_images/output_9_0.png" />
+<p>We read this small portion of the 1/3 arcsecond Puget Sound DEM,
+available from the NCEI thredds server:</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">path</span> <span class="o">=</span> <span class="s1">&#39;https://www.ngdc.noaa.gov/thredds/dodsC/regional/puget_sound_13_mhw_2014.nc&#39;</span>
+<span class="n">topo</span> <span class="o">=</span> <span class="n">topotools</span><span class="o">.</span><span class="n">read_netcdf</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">extent</span><span class="o">=</span><span class="n">extent</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Plot the topo we downloaded:</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span><span class="mi">6</span><span class="p">))</span>
+<span class="n">plottools</span><span class="o">.</span><span class="n">pcolorcells</span><span class="p">(</span><span class="n">topo</span><span class="o">.</span><span class="n">X</span><span class="p">,</span> <span class="n">topo</span><span class="o">.</span><span class="n">Y</span><span class="p">,</span> <span class="n">topo</span><span class="o">.</span><span class="n">Z</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="n">cmap</span><span class="p">,</span> <span class="n">norm</span><span class="o">=</span><span class="n">norm</span><span class="p">)</span>
+<span class="n">colorbar</span><span class="p">(</span><span class="n">extend</span><span class="o">=</span><span class="s1">&#39;both&#39;</span><span class="p">)</span>
+<span class="n">gca</span><span class="p">()</span><span class="o">.</span><span class="n">set_aspect</span><span class="p">(</span><span class="mf">1.</span><span class="o">/</span><span class="n">cos</span><span class="p">(</span><span class="mi">48</span><span class="o">*</span><span class="n">pi</span><span class="o">/</span><span class="mf">180.</span><span class="p">))</span>
+</pre></div>
+</div>
+<img alt="_images/output_13_0.png" src="_images/output_13_0.png" />
+<p>This plot shows that there is a region with elevation below MHW (0 in
+the DEM) where the Google Earth image shows wetland that should not be
+initialized as a lake. We repeat the code used in <a class="reference internal" href="marching_front.html#marching-front"><span class="std std-ref">Marching Front algorithm</span></a>
+to identify dry land below MHW:</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">wet_points</span> <span class="o">=</span> <span class="n">marching_front</span><span class="o">.</span><span class="n">select_by_flooding</span><span class="p">(</span><span class="n">topo</span><span class="o">.</span><span class="n">Z</span><span class="p">,</span> <span class="n">Z1</span><span class="o">=-</span><span class="mf">5.</span><span class="p">,</span> <span class="n">Z2</span><span class="o">=</span><span class="mf">0.</span><span class="p">,</span> <span class="n">max_iters</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+
+<span class="n">Zdry</span> <span class="o">=</span> <span class="n">ma</span><span class="o">.</span><span class="n">masked_array</span><span class="p">(</span><span class="n">topo</span><span class="o">.</span><span class="n">Z</span><span class="p">,</span> <span class="n">wet_points</span><span class="p">)</span>
+
+<span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span><span class="mi">6</span><span class="p">))</span>
+<span class="n">plottools</span><span class="o">.</span><span class="n">pcolorcells</span><span class="p">(</span><span class="n">topo</span><span class="o">.</span><span class="n">X</span><span class="p">,</span> <span class="n">topo</span><span class="o">.</span><span class="n">Y</span><span class="p">,</span> <span class="n">Zdry</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="n">cmap</span><span class="p">,</span> <span class="n">norm</span><span class="o">=</span><span class="n">norm</span><span class="p">)</span>
+<span class="n">colorbar</span><span class="p">(</span><span class="n">extend</span><span class="o">=</span><span class="s1">&#39;both&#39;</span><span class="p">)</span>
+<span class="n">gca</span><span class="p">()</span><span class="o">.</span><span class="n">set_aspect</span><span class="p">(</span><span class="mf">1.</span><span class="o">/</span><span class="n">cos</span><span class="p">(</span><span class="mi">48</span><span class="o">*</span><span class="n">pi</span><span class="o">/</span><span class="mf">180.</span><span class="p">))</span>
+<span class="n">title</span><span class="p">(</span><span class="s1">&#39;Dry land&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Selecting</span> <span class="n">points</span> <span class="k">with</span> <span class="n">Z1</span> <span class="o">=</span> <span class="o">-</span><span class="mi">5</span><span class="p">,</span> <span class="n">Z2</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">max_iters</span><span class="o">=</span><span class="mi">279936</span>
+<span class="n">Done</span> <span class="n">after</span> <span class="mi">112</span> <span class="n">iterations</span> <span class="k">with</span> <span class="mi">59775</span> <span class="n">points</span> <span class="n">chosen</span>
+</pre></div>
+</div>
+<img alt="_images/output_15_2.png" src="_images/output_15_2.png" />
+<p>Now the blue region above is properly identified as being dry land.</p>
+<p>The colors are misleading, so here’s a way to plot with the dry land
+that is below MHW colored pink to distinguish it from the water better:</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Create a version of topo.Z with all wet points masked out:</span>
+<span class="n">mask_dry</span> <span class="o">=</span> <span class="n">logical_not</span><span class="p">(</span><span class="n">wet_points</span><span class="p">)</span>
+<span class="n">Z_dry</span> <span class="o">=</span> <span class="n">ma</span><span class="o">.</span><span class="n">masked_array</span><span class="p">(</span><span class="n">topo</span><span class="o">.</span><span class="n">Z</span><span class="p">,</span> <span class="n">wet_points</span><span class="p">)</span>
+
+<span class="c1"># Create a version of topo.Z with only dry points below MHW masked out:</span>
+<span class="n">mask_dry_onshore</span> <span class="o">=</span> <span class="n">logical_and</span><span class="p">(</span><span class="n">mask_dry</span><span class="p">,</span> <span class="n">topo</span><span class="o">.</span><span class="n">Z</span><span class="o">&lt;</span><span class="mf">0.</span><span class="p">)</span>
+<span class="n">Z_allow_wet</span><span class="o">=</span> <span class="n">ma</span><span class="o">.</span><span class="n">masked_array</span><span class="p">(</span><span class="n">topo</span><span class="o">.</span><span class="n">Z</span><span class="p">,</span> <span class="n">mask_dry_onshore</span><span class="p">)</span>
+
+<span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="mi">12</span><span class="p">))</span>
+
+<span class="c1"># first plot all dry points as pink:</span>
+<span class="n">plottools</span><span class="o">.</span><span class="n">pcolorcells</span><span class="p">(</span><span class="n">topo</span><span class="o">.</span><span class="n">X</span><span class="p">,</span> <span class="n">topo</span><span class="o">.</span><span class="n">Y</span><span class="p">,</span> <span class="n">Z_dry</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="n">cmap_dry</span><span class="p">,</span> <span class="n">norm</span><span class="o">=</span><span class="n">norm_dry</span><span class="p">)</span>
+
+<span class="c1"># then plot colored by topography except at dry points below MHW:</span>
+<span class="n">plottools</span><span class="o">.</span><span class="n">pcolorcells</span><span class="p">(</span><span class="n">topo</span><span class="o">.</span><span class="n">X</span><span class="p">,</span> <span class="n">topo</span><span class="o">.</span><span class="n">Y</span><span class="p">,</span> <span class="n">Z_allow_wet</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="n">cmap</span><span class="p">,</span> <span class="n">norm</span><span class="o">=</span><span class="n">norm</span><span class="p">)</span>
+
+<span class="n">gca</span><span class="p">()</span><span class="o">.</span><span class="n">set_aspect</span><span class="p">(</span><span class="mf">1.</span><span class="o">/</span><span class="n">cos</span><span class="p">(</span><span class="mi">48</span><span class="o">*</span><span class="n">pi</span><span class="o">/</span><span class="mf">180.</span><span class="p">))</span>
+<span class="n">ticklabel_format</span><span class="p">(</span><span class="n">useOffset</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">xticks</span><span class="p">(</span><span class="n">rotation</span><span class="o">=</span><span class="mi">20</span><span class="p">);</span>
+</pre></div>
+</div>
+<img alt="_images/output_17_0.png" src="_images/output_17_0.png" />
+</div>
+<div class="section" id="creating-the-force-dry-init-array">
+<span id="fdry-init"></span><h2>Creating the <cite>force_dry_init</cite> array<a class="headerlink" href="#creating-the-force-dry-init-array" title="Permalink to this headline">¶</a></h2>
+<p>The array <cite>wet_points</cite> generated above has the value 1 at DEM points
+identified as wet and 0 at points identified as dry, so if we set</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">dry_points</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">wet_points</span>
+</pre></div>
+</div>
+<p>then <cite>dry_points[i,j] = 1</cite> at the DEM points determined to be dry. We
+do not necessarily want to force the GeoClaw cell to be dry however at
+all these dry points, because the GeoClaw topography value <cite>B</cite> may be
+slightly negative even if the DEM value <cite>Z</cite> was positive at the same
+point, due to the way <cite>B</cite> is computed, and so this might force some
+cells near the shore to have <cite>h = 0</cite> even though <cite>B &lt; 0</cite>.</p>
+<p>Instead we will set <cite>force_dry_init[i,j] = 1</cite> only if
+<cite>dry_points[i,j] = 1</cite> and the same is true of all its 8 nearest
+neighbors. This avoids problems near the proper shoreline while forcing
+cells inland to be dry where they should be.</p>
+<p>We also assume it is fine to set <cite>force_dry_init[i,j] = 0</cite> around the
+boundary of the grid on which <cite>dry_points</cite> has been defined, so that
+the usual GeoClaw procedure is used to initialize these points. If there
+are points at the boundary that must be forced to be dry that we should
+have started with a large grid patch.</p>
+<p>So we can accomplish this by summing the <cite>dry_points</cite> array over 3x3
+blocks and setting <cite>force_dry_init[i,j] = 1</cite> only at points where this
+sum is 9:</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">dry_points_sum</span> <span class="o">=</span> <span class="n">dry_points</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">dry_points</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">dry_points</span><span class="p">[</span><span class="mi">2</span><span class="p">:,</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> \
+                 <span class="n">dry_points</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">:</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span> <span class="o">+</span> <span class="n">dry_points</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span><span class="mi">0</span><span class="p">:</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span> <span class="o">+</span> <span class="n">dry_points</span><span class="p">[</span><span class="mi">2</span><span class="p">:,</span><span class="mi">0</span><span class="p">:</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span> <span class="o">+</span> \
+                 <span class="n">dry_points</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">:]</span> <span class="o">+</span> <span class="n">dry_points</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">:]</span> <span class="o">+</span> <span class="n">dry_points</span><span class="p">[</span><span class="mi">2</span><span class="p">:,</span><span class="mi">2</span><span class="p">:]</span>
+
+<span class="c1"># initialize array to 0 everywhere:</span>
+<span class="n">force_dry_init</span> <span class="o">=</span> <span class="n">zeros</span><span class="p">(</span><span class="n">dry_points</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+<span class="c1"># reset in interior to 1 if all points in the 3x3 block around it are dry:</span>
+<span class="n">force_dry_init</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">where</span><span class="p">(</span><span class="n">dry_points_sum</span> <span class="o">==</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>If we use <cite>1-force_dry_init</cite> as a mask then we see only the points
+forced to be dry:</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">Zdry</span> <span class="o">=</span> <span class="n">ma</span><span class="o">.</span><span class="n">masked_array</span><span class="p">(</span><span class="n">topo</span><span class="o">.</span><span class="n">Z</span><span class="p">,</span> <span class="mi">1</span><span class="o">-</span><span class="n">force_dry_init</span><span class="p">)</span>
+
+<span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span><span class="mi">6</span><span class="p">))</span>
+<span class="n">plottools</span><span class="o">.</span><span class="n">pcolorcells</span><span class="p">(</span><span class="n">topo</span><span class="o">.</span><span class="n">X</span><span class="p">,</span> <span class="n">topo</span><span class="o">.</span><span class="n">Y</span><span class="p">,</span> <span class="n">Zdry</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="n">cmap</span><span class="p">,</span> <span class="n">norm</span><span class="o">=</span><span class="n">norm</span><span class="p">)</span>
+<span class="n">colorbar</span><span class="p">(</span><span class="n">extend</span><span class="o">=</span><span class="s1">&#39;both&#39;</span><span class="p">)</span>
+<span class="n">gca</span><span class="p">()</span><span class="o">.</span><span class="n">set_aspect</span><span class="p">(</span><span class="mf">1.</span><span class="o">/</span><span class="n">cos</span><span class="p">(</span><span class="mi">48</span><span class="o">*</span><span class="n">pi</span><span class="o">/</span><span class="mf">180.</span><span class="p">))</span>
+<span class="n">title</span><span class="p">(</span><span class="s1">&#39;Points with force_dry_init==1&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<img alt="_images/output_23_1.png" src="_images/output_23_1.png" />
+<p>This looks a lot like the plot above where we masked with
+<cite>wet_points</cite>. However, if we plot <cite>dry_points - force_dry_init</cite> we
+see that this is not identically zero – and there are points along the
+shore and the boundaries where the point was identified as dry but will
+not be forced to be dry:</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span><span class="mi">6</span><span class="p">))</span>
+<span class="n">plottools</span><span class="o">.</span><span class="n">pcolorcells</span><span class="p">(</span><span class="n">topo</span><span class="o">.</span><span class="n">X</span><span class="p">,</span> <span class="n">topo</span><span class="o">.</span><span class="n">Y</span><span class="p">,</span> <span class="n">dry_points</span> <span class="o">-</span> <span class="n">force_dry_init</span><span class="p">,</span>
+                      <span class="n">cmap</span><span class="o">=</span><span class="n">colormaps</span><span class="o">.</span><span class="n">white_red</span><span class="p">)</span>
+<span class="n">colorbar</span><span class="p">()</span>
+<span class="n">gca</span><span class="p">()</span><span class="o">.</span><span class="n">set_aspect</span><span class="p">(</span><span class="mf">1.</span><span class="o">/</span><span class="n">cos</span><span class="p">(</span><span class="mi">48</span><span class="o">*</span><span class="n">pi</span><span class="o">/</span><span class="mf">180.</span><span class="p">))</span>
+<span class="n">axis</span><span class="p">([</span><span class="o">-</span><span class="mf">122.461</span><span class="p">,</span> <span class="o">-</span><span class="mf">122.379</span><span class="p">,</span> <span class="mf">47.929</span><span class="p">,</span> <span class="mf">47.961</span><span class="p">])</span> <span class="c1"># expanded domain</span>
+<span class="n">title</span><span class="p">(</span><span class="s1">&#39;Points with dry_points - force_dry_init==1&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+<img alt="_images/output_25_1.png" src="_images/output_25_1.png" />
+</div>
+<div class="section" id="create-file-to-read-into-geoclaw">
+<span id="fdry-file"></span><h2>Create file to read into GeoClaw<a class="headerlink" href="#create-file-to-read-into-geoclaw" title="Permalink to this headline">¶</a></h2>
+<p>The array <cite>force_dry_init</cite> can now be saved in the same format as topo
+files, using <cite>topo_type=3</cite> and specifying <cite>Z_format=’%1i’</cite> so that
+the data values from the array, which are all either 0 or 1, are printed
+as single digits to help reduce the file size.</p>
+<p>Note we also use the new convenience fuction <cite>set_xyZ</cite> introduced in
+<cite>topotools.Topography</cite>.</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">force_dry_init_topo</span> <span class="o">=</span> <span class="n">topotools</span><span class="o">.</span><span class="n">Topography</span><span class="p">()</span>
+<span class="n">force_dry_init_topo</span><span class="o">.</span><span class="n">set_xyZ</span><span class="p">(</span><span class="n">topo</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">topo</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="n">force_dry_init</span><span class="p">)</span>
+
+<span class="c1"># Old way of setting x,y,Z:</span>
+<span class="c1">#force_dry_init_topo._x = topo.x</span>
+<span class="c1">#force_dry_init_topo._y = topo.y</span>
+<span class="c1">#force_dry_init_topo._Z = force_dry_init</span>
+<span class="c1">#force_dry_init_topo.generate_2d_coordinates()</span>
+
+<span class="n">fname_force_dry_init</span> <span class="o">=</span> <span class="s1">&#39;force_dry_init.data&#39;</span>
+<span class="n">force_dry_init_topo</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">fname_force_dry_init</span><span class="p">,</span> <span class="n">topo_type</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">Z_format</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">%1i</span><span class="s1">&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Created </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">fname_force_dry_init</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Created</span> <span class="n">force_dry_init</span><span class="o">.</span><span class="n">data</span>
+</pre></div>
+</div>
+<p>As usual, the first 6 lines of this file are the header, which is then
+followed by the data:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="mi">864</span>                              <span class="n">ncols</span>
+<span class="mi">324</span>                              <span class="n">nrows</span>
+<span class="o">-</span><span class="mf">1.224599074275750e+02</span>              <span class="n">xlower</span>
+<span class="mf">4.793009258334999e+01</span>              <span class="n">ylower</span>
+<span class="mf">9.259259000800000e-05</span>              <span class="n">cellsize</span>
+<span class="o">-</span><span class="mi">9999</span>                          <span class="n">nodata_value</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="usage-in-geoclaw-fortran-code">
+<span id="fdry-geoclaw"></span><h2>Usage in GeoClaw Fortran code<a class="headerlink" href="#usage-in-geoclaw-fortran-code" title="Permalink to this headline">¶</a></h2>
+<p>To use a <cite>force_dry_init.data</cite> file of the sort created above, when
+setting up a GeoClaw run the <cite>setrun.py</cite> file must be modified to
+indicate the name of this file along with a time <cite>tend</cite>. The array is
+used when initializing new grid patches only if <cite>t &lt; tend</cite>, so this
+time should be set to a time after the finest grids are initialized, but
+before the tsunami arrives.</p>
+<p>For example, to use the file <cite>force_dry_init.data</cite> to indicate cells that
+should be forced to be dry for times up to 15 minutes, we could specify:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">clawpack.geoclaw.data</span> <span class="kn">import</span> <span class="n">ForceDry</span>
+<span class="n">force_dry</span> <span class="o">=</span> <span class="n">ForceDry</span><span class="p">()</span>
+<span class="n">force_dry</span><span class="o">.</span><span class="n">tend</span> <span class="o">=</span> <span class="mi">15</span><span class="o">*</span><span class="mf">60.</span>
+<span class="n">force_dry</span><span class="o">.</span><span class="n">fname</span> <span class="o">=</span> <span class="s1">&#39;force_dry_init.data&#39;</span>
+<span class="n">rundata</span><span class="o">.</span><span class="n">qinit_data</span><span class="o">.</span><span class="n">force_dry_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">force_dry</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="section" id="internal-geoclaw-modifications">
+<h3>Internal GeoClaw modifications<a class="headerlink" href="#internal-geoclaw-modifications" title="Permalink to this headline">¶</a></h3>
+<p>The following files in <cite>geoclaw/src/2d/shallow</cite> have been modified to
+handle the <cite>force_dry_init</cite> array:</p>
+<ul class="simple">
+<li><p><cite>setprob.f90</cite> to read in a parameter indicating that there is such
+an array,</p></li>
+<li><p><cite>qinit_module.f90</cite> with code to read the array,</p></li>
+<li><p><cite>qinit.f90</cite> to initialize dry land properly at the initial time,</p></li>
+<li><p><cite>filpatch.f90</cite> to initialize new grid patches properly at later
+times,</p></li>
+<li><p><cite>filval.f90</cite> to initialize new grid patches properly at later
+times.</p></li>
+</ul>
+<p>The <cite>force_dry_init</cite> array is used when initializing new patches only
+if:</p>
+<ul class="simple">
+<li><p>The resolution of the patch agrees with that of the
+<cite>force_dry_init</cite> array, and it is then assumed that the points in
+the array are aligned with cell centers on the patch.</p></li>
+<li><p>The simulation time <cite>t</cite> is less than <cite>t_stays_dry</cite>, a time set to
+be after the relevant level is introduced in the region of interest
+but before the main tsunami wave has arrived. At later times the
+tsunami may have gotten a region wet even if <cite>force_dry_init</cite>
+indicates is should be initially dry.</p></li>
+</ul>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<p><a href="http://clawpack.org/">
+    <img class="logo" src= "_static/clawlogo.jpg" alt="Logo"/>
+</a>
+<h2>Version dev</h2>
+</p>
+  <h3><a href="contents.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Force Cells to be Dry Initially</a><ul>
+<li><a class="reference internal" href="#contents">Contents</a></li>
+<li><a class="reference internal" href="#examples">Examples</a></li>
+<li><a class="reference internal" href="#sample-topography-from-a-1-3-arcsecond-dem">Sample topography from a 1/3 arcsecond DEM</a></li>
+<li><a class="reference internal" href="#creating-the-force-dry-init-array">Creating the <cite>force_dry_init</cite> array</a></li>
+<li><a class="reference internal" href="#create-file-to-read-into-geoclaw">Create file to read into GeoClaw</a></li>
+<li><a class="reference internal" href="#usage-in-geoclaw-fortran-code">Usage in GeoClaw Fortran code</a><ul>
+<li><a class="reference internal" href="#internal-geoclaw-modifications">Internal GeoClaw modifications</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="contents.html">Documentation overview</a><ul>
+  <li><a href="geoclaw.html">GeoClaw Description and Detailed Contents</a><ul>
+      <li>Previous: <a href="marching_front.html" title="previous chapter">Marching Front algorithm</a></li>
+      <li>Next: <a href="pyclaw/index.html" title="next chapter">Pyclaw</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+<div class="widget navlinks">
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/force_dry.rst.txt"
+            rel="nofollow"
+            target="_blank">Source .rst</a></li>
+    <li><a href="https://github.com/clawpack/doc/blob/dev/doc/force_dry.rst"
+            rel="nofollow"
+            target="_blank">Source on GitHub</a></li>
+     <li><a href="https://github.com/clawpack/doc/commits/dev/doc/force_dry.rst"
+             rel="nofollow"
+             target="_blank">History</a></li>
+    <li><a href="https://github.com/clawpack/doc/edit/dev/doc/force_dry.rst"
+            rel="nofollow"
+            target="_blank">Suggest Edits</a></li>
+     <li><a href="https://github.com/clawpack/doc/issues/new/choose"
+             rel="nofollow"
+             target="_blank">Raise an Issue</a></li>
+  </ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+<h4>Latest Version</h4>
+<ul>
+  <li><a href="../dev/force_dry.html">dev</a></li>
+  <li><a href="../v5.7.0/force_dry.html">v5.7.0</a></li>
+</ul>
+<h4>Older Versions</h4>
+<ul>
+  <li><a href="force_dry.html">list</a></li>
+  <li><a href="../v5.1.0/index.html">v5.1.0</a></li>
+  <li><a href="../v5.2.0/index.html">v5.2.0</a></li>
+  <li><a href="../v5.2.1/index.html">v5.2.1</a></li>
+  <li><a href="../v5.3.0/index.html">v5.3.0</a></li>
+  <li><a href="../v5.3.1/index.html">v5.3.1</a></li>
+  <li><a href="../v5.4.0/index.html">v5.4.0</a></li>
+  <li><a href="../v5.4.1/index.html">v5.4.1</a></li>
+  <li><a href="../v5.5.0/index.html">v5.5.0</a></li>
+  <li><a href="../v5.6.0/index.html">v5.6.0</a></li>
+</ul>
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+  <div class="footer">
+    &copy; Copyright CC-BY 2020, The Clawpack Development Team.
+    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
+  </div>
+  <script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-44811544-1', 'auto');
+  ga('send', 'pageview');
+
+  </script>
+  
+  </body>
+</html>
