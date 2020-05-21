@@ -37,7 +37,7 @@
           <a href="installing.html">Install</a>
         </li>
         <li>
-          <a class="" href="http://clawpack.org/gallery">Gallery</a>
+          <a class="" href="http://clawpack.org/gallery/index.html">Gallery</a>
         </li>
         <li>
           <a class="" href="community.html">Community</a>
@@ -108,6 +108,10 @@ current master branch of the <a class="reference internal" href="apps.html#apps"
 which includes everything in <cite>clawpack/v5.7.0_dockerimage</cite> but also installs
 a number of other tools useful for GeoClaw users, see the Dockerfile
 <a class="reference external" href="https://github.com/clawpack/docker-files/blob/master/Dockerfile_v5.7.0_geoclaw">clawpack/docker-files/Dockerfile_v5.7.0_geoclaw</a>.</p>
+<p>You can pull this image from dockerhub via:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ docker pull clawpack/v5.7.0_geoclaw_dockerimage
+</pre></div>
+</div>
 <p>You can use this in the same manner as the main clawpack docker image, e.g.
 create and run a new container via:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">docker</span> <span class="n">run</span> <span class="o">-</span><span class="n">i</span> <span class="o">-</span><span class="n">t</span> <span class="o">-</span><span class="n">p</span> <span class="mi">8889</span><span class="p">:</span><span class="mi">8889</span> <span class="o">--</span><span class="n">name</span> <span class="n">clawpack</span><span class="o">-</span><span class="n">v5</span><span class="o">.</span><span class="mf">7.0</span><span class="n">_geoclaw_container</span> \
@@ -163,6 +167,22 @@ files, and/or the plots generated, back to the host machine (e.g. some
 directory on your laptop).  You can use the <cite>–volume</cite> flag when running a
 container to accomplish this, see
 <a class="reference external" href="https://docs.docker.com/storage/volumes/">docker volume documentation</a>.</p>
+<p>For example, if you have created a directory <cite>$HOME/docker_disk</cite> on your computer
+then adding:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>-v $HOME/docker_disk:/home/jovyan/work
+</pre></div>
+</div>
+<p>to your <cite>docker run</cite> command will map this directory to <cite>/home/jovyan/work</cite> in
+the docker container.  So you can move Clawpack output or plots to that directory
+in order to have access to them from your host computer.</p>
+<p>Putting this together with previous options, here’s a sample command
+that creates and runs a geoclaw-based container with this mapping
+and also allowing us to start a Jupyter server:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ docker run -i -t -p 8889:8889 -v ~/docker_disk:/home/jovyan/work \
+  --name clawpack-v5.7.0_geoclaw_container \
+  clawpack/v5.7.0_geoclaw_dockerimage
+</pre></div>
+</div>
 </div>
 <div class="section" id="some-other-useful-docker-commands">
 <h2>Some other useful docker commands<a class="headerlink" href="#some-other-useful-docker-commands" title="Permalink to this headline">¶</a></h2>
@@ -282,7 +302,6 @@ for more details on using Dockerfiles there.</p>
 </ul>
 <h4>Older Versions</h4>
 <ul>
-  <li><a href="../list/docker_image.html">list</a></li>
   <li><a href="./v5.1.0/index.html">v5.1.0</a></li>
   <li><a href="./v5.2.0/index.html">v5.2.0</a></li>
   <li><a href="./v5.2.1/index.html">v5.2.1</a></li>
