@@ -12,19 +12,6 @@ amrclaw
 ===========
 /Users/rjl/clawpack_src/clawpack_master/amrclaw
 
-diff --git a/examples/advection_1d_example1/setrun.py b/examples/advection_1d_example1/setrun.py
-index 465a777..1b687db 100644
---- a/examples/advection_1d_example1/setrun.py
-+++ b/examples/advection_1d_example1/setrun.py
-@@ -106,7 +106,7 @@ def setrun(claw_pkg='amrclaw'):
-     if clawdata.output_style==1:
-         # Output ntimes frames at equally spaced times up to tfinal:
-         # Can specify num_output_times = 0 for no output
--        clawdata.num_output_times = 20
-+        clawdata.num_output_times = 4 #20
-         clawdata.tfinal = 4.000000
-         clawdata.output_t0 = True  # output at initial (or restart) time?
-         
 
 
 ===========
@@ -32,6 +19,52 @@ clawutil
 ===========
 /Users/rjl/clawpack_src/clawpack_master/clawutil
 
+diff --git a/src/python/clawutil/make_all.py b/src/python/clawutil/make_all.py
+index 0654d8b..c6e444c 100644
+--- a/src/python/clawutil/make_all.py
++++ b/src/python/clawutil/make_all.py
+@@ -90,6 +90,8 @@ def make_all(examples_dir = '.',make_clean_first=False, env=None):
+     import subprocess
+     for directory in dir_list:
+ 
++        print("=====> %s" % directory)
++
+         fout.write("\n=============================================\n")
+         fout.write(directory)
+         fout.write("\n=============================================\n")
+@@ -162,15 +164,16 @@ def make_notebook_htmls(examples_dir = '.',make_clean_first=False, env=None):
+ 
+     current_dir = os.getcwd()
+ 
+-    dir_list = list_examples(examples_dir)
++    #dir_list = list_examples(examples_dir)
+     print("Found the following Jupyter notebooks:")
+     nb_dir_list = []
+-    for d in dir_list:
+-        notebooks = glob.glob(d + '/*.ipynb')
+-        if len(notebooks) != 0:
+-            nb_dir_list.append(d)
+-        for nbfile in notebooks:
+-            print(nbfile)
++    for (dirpath, subdirs, files) in os.walk('.',topdown=False):
++        if '.ipynb_checkpoints' not in dirpath:
++            notebooks = glob.glob(dirpath + '/*.ipynb')
++            if len(notebooks) != 0:
++                nb_dir_list.append(os.path.abspath(dirpath))
++            for nbfile in notebooks:
++                print(nbfile)
+             
+     if len(nb_dir_list) == 0:
+         print("  none")
+@@ -201,6 +204,8 @@ def make_notebook_htmls(examples_dir = '.',make_clean_first=False, env=None):
+     import subprocess
+     for directory in nb_dir_list:
+ 
++        print("=====> %s" % directory)
++
+         fout.write("\n=============================================\n")
+         fout.write(directory)
+         fout.write("\n=============================================\n")
 diff --git a/src/python/clawutil/nbtools.py b/src/python/clawutil/nbtools.py
 index ad5652e..ef6f796 100644
 --- a/src/python/clawutil/nbtools.py
@@ -165,24 +198,3 @@ geoclaw
 ===========
 /Users/rjl/clawpack_src/clawpack_master/geoclaw
 
-diff --git a/examples/tsunami/chile2010/setplot_kml.py b/examples/tsunami/chile2010/setplot_kml.py
-index 9fc1043..def12f7 100644
---- a/examples/tsunami/chile2010/setplot_kml.py
-+++ b/examples/tsunami/chile2010/setplot_kml.py
-@@ -194,7 +194,7 @@ def setplot(plotdata):
- 
-     plotdata.printfigs = True                # print figures
-     plotdata.print_format = 'png'            # file format
--    plotdata.print_framenos = 'all'         # list of frames to print
-+    plotdata.print_framenos = [0,1,2]         # list of frames to print
-     plotdata.print_gaugenos = 'all'          # list of gauges to print
-     plotdata.print_fignos = 'all'           # list of figures to print
-     plotdata.html = False                     # create html files of plots?
-@@ -205,6 +205,6 @@ def setplot(plotdata):
-     plotdata.latex_framesperline = 1         # layout of plots
-     plotdata.latex_makepdf = False           # also run pdflatex?
- 
--    plotdata.kml = True
-+    plotdata.kml = False
- 
-     return plotdata
