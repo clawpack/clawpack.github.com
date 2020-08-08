@@ -1,0 +1,594 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>Specifying classic run-time parameters in setrun.py &#8212; Clawpack 5.7.x documentation</title>
+    <link rel="stylesheet" href="_static/flasky.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/base.css" type="text/css" />
+    <link rel="stylesheet" href="_static/layout.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/graphviz.css" />
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <script async="async" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="shortcut icon" href="_static/clawicon.ico"/>
+    <link rel="author" title="About these documents" href="about.html" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Sample setrun.py module for classic Clawpack" href="setrun_sample.html" />
+    <link rel="prev" title="Application documentation" href="application_documentation.html" /> 
+  </head><body>
+<div id="main-wrapper" class="sphinx">
+<div id="header-wrapper">
+  <section id="header">
+    <!-- <h1><a href="http://clawpack.org/">Clawpack</a></h1> -->
+    <h1><a href="http://clawpack.org/">Clawpack-5</a></h1> 
+    <nav>
+      <ul>
+        <li>
+          <a href="contents.html">Docs</a>
+        </li>
+        <li>
+          <a href="installing.html">Install</a>
+        </li>
+        <li>
+          <a class="" href="http://clawpack.org/gallery/index.html">Gallery</a>
+        </li>
+        <li>
+          <a href="about.html">Citation</a>
+        </li>
+        <li>
+          <a class="active" href="http://github.com/clawpack">GitHub</a>
+        </li>
+        <li>
+          <a class="" href="community.html">Community</a>
+        </li>
+        <li>
+          <a class="" href="developers.html">Contribute</a>
+        </li>
+      </ul>
+    </nav>
+  </section>
+<div class="decoration"></div>
+</div>
+
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="setrun_sample.html" title="Sample setrun.py module for classic Clawpack"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="application_documentation.html" title="Application documentation"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="contents.html">Clawpack 5.7.x documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="specifying-classic-run-time-parameters-in-setrun-py">
+<span id="setrun"></span><h1>Specifying classic run-time parameters in <cite>setrun.py</cite><a class="headerlink" href="#specifying-classic-run-time-parameters-in-setrun-py" title="Permalink to this headline">¶</a></h1>
+<p>It may be useful to look at a specific example, e.g.
+<a class="reference internal" href="setrun_sample.html#setrun-sample"><span class="std std-ref">Sample setrun.py module for classic Clawpack</span></a>.</p>
+<p><strong>Note:</strong> Many parameters have changed name since Version 4.X and some new
+ones have been added.  See <a class="reference internal" href="clawpack5.html#setrun-changes"><span class="std std-ref">Changes to input parameters in setrun.py from 4.x to 5.0</span></a> for a summary.</p>
+<p>To convert a Version 4.x <cite>setrun.py</cite> file to Version 5.0, see <a class="reference internal" href="claw46to50.html#claw46to50"><span class="std std-ref">Converting from Clawpack 4.6 to 5.0</span></a>.</p>
+<div class="section" id="input">
+<h2>Input<a class="headerlink" href="#input" title="Permalink to this headline">¶</a></h2>
+<p><cite>setrun</cite> takes a single argument <cite>claw_pkg</cite> that should be set to <cite>classic</cite>.</p>
+</div>
+<div class="section" id="output">
+<h2>Output<a class="headerlink" href="#output" title="Permalink to this headline">¶</a></h2>
+<p><cite>rundata</cite>, an object of class <cite>ClawRunData</cite>, created in the
+setrun file with the commands:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">clawpack.clawutil</span> <span class="kn">import</span> <span class="n">clawdata</span>
+<span class="n">rundata</span> <span class="o">=</span> <span class="n">clawdata</span><span class="o">.</span><span class="n">ClawRunData</span><span class="p">(</span><span class="n">claw_pkg</span><span class="p">,</span> <span class="n">num_dim</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The <cite>rundata</cite> object has an attribute <cite>rundata.clawdata</cite> whose
+attributes are described below.</p>
+<p>This section explains the parameters needed for the classic single-grid
+Clawpack code.  Additional parameters are needed by extensions of the code.
+For these, see:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>AMRClaw (adaptive mesh refinement): <a class="reference internal" href="setrun_amrclaw.html#setrun-amrclaw"><span class="std std-ref">Specifying AMRClaw run-time parameters in setrun.py</span></a></p></li>
+<li><p>GeoClaw (geophysical flows): <a class="reference internal" href="setrun_geoclaw.html#setrun-geoclaw"><span class="std std-ref">Specifying GeoClaw parameters in setrun.py</span></a></p></li>
+</ul>
+</div></blockquote>
+</div>
+<div class="section" id="run-time-parameters">
+<h2>Run-time parameters<a class="headerlink" href="#run-time-parameters" title="Permalink to this headline">¶</a></h2>
+<p>The parameters needed in 1 space dimension (<em>ndim=1</em>) are described.  In 2d
+and 3d there are analogous parameters in y and z required, as mentioned
+below.</p>
+<dl class="attribute">
+<dt>
+<code class="sig-name descname">num_dim : integer from [1,2,3]</code></dt>
+<dd><p>number of space dimensions.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="sig-name descname">lower : list of floats</code></dt>
+<dd><p>lower limits in the x, [y,z]  directions.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="sig-name descname">upper : list of floats</code></dt>
+<dd><p>upper limits in the x, [y ,z]  directions.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="sig-name descname">num_cells : list of integers</code></dt>
+<dd><p>The number of grid cells in the x, [y, ,z]  directions.</p>
+<p>Note that when AMR is used, <cite>num_cells</cite> determines the number of cells in
+each dimension on the coarsest Level 1 grid.  Additional parameters
+described below determine refinement ratios to finer levels.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="sig-name descname">num_eqn : integer</code></dt>
+<dd><p>Number of equations in the system (e.g. <em>num_eqn=1</em> for a scalar problem).</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="sig-name descname">num_aux : integer</code></dt>
+<dd><p>Number of auxiliary variables in the aux array (initialized in <cite>setaux.f</cite>)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="sig-name descname">capa_index : integer</code></dt>
+<dd><p>Index of aux array corresponding to capacity function, if there is one.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="sig-name descname">t0 : float</code></dt>
+<dd><p>Initial time, often <em>t0 = 0.</em></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="sig-name descname">restart : boolean</code></dt>
+<dd><p><strong>Currently only available in amrclaw and geoclaw.</strong></p>
+<p>Set True to restart a previous computation.  To use this option,
+see <a class="reference internal" href="restart.html#restart"><span class="std std-ref">Checkpointing and restarting</span></a>.  Note that a change in the <cite>Makefile</cite> is also
+required.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="sig-name descname">restart_file : str</code></dt>
+<dd><p>If <cite>restart == True</cite> then this should be the name of the checkpoint
+file containing all the information needed to do a restart.  This will
+generally be of the form <cite>fort.chkNNNNN</cite> where <cite>NNNNN</cite> is the (coarse
+grid) timestep from the previous computation to restart from.
+This file is assumed to be in the directory specified for output from
+this run.
+See <a class="reference internal" href="restart.html#restart"><span class="std std-ref">Checkpointing and restarting</span></a> for more details.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="sig-name descname">output_style: integer</code></dt>
+<dd><p>There are three possible ways to specify the output
+times.   This parameter selects the desired manner to specify the times,
+and affects what other attributes are required.</p>
+<blockquote>
+<div><ul>
+<li><p><em>output_style = 1</em> : Output at fixed time intervals.</p>
+<p>Requires additional parameters:</p>
+<ul class="simple">
+<li><p><cite>num_output_times</cite> : integer, number of output times</p></li>
+<li><p><cite>tfinal</cite> : float, final time</p></li>
+<li><p><cite>output_t0</cite> : boolean, whether to also output at initial time <cite>t0</cite>.</p></li>
+</ul>
+<p>The time steps will be adjusted to hit these times exactly. (Provided
+<em>dt_variable = True</em>.  Otherwise <em>dt_initial</em> must divide
+<em>tfinal/num_output_times</em> an integer number of times.)</p>
+</li>
+<li><p><em>output_style = 2</em>  : Output at specified times.</p>
+<p>Requires the additional parameter:</p>
+<ul class="simple">
+<li><p><cite>output_times</cite> : list of floats,
+times to output (include <cite>t0</cite> explicitly if desired)</p></li>
+</ul>
+</li>
+<li><p><em>output_style = 3</em>  : Output every so many steps.
+Most often used for debugging, e.g to output every time step.</p>
+<p>Requires additional parameters:</p>
+<ul class="simple">
+<li><p><cite>output_step_interval</cite> : integer, number of steps between outputs</p></li>
+<li><p><cite>total_steps</cite> : integer, total number of steps to take</p></li>
+<li><p><cite>output_t0</cite> : boolean, whether to also output at initial time <cite>t0</cite>.</p></li>
+</ul>
+</li>
+</ul>
+</div></blockquote>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="sig-name descname">output_format: str</code></dt>
+<dd><p>Format of output.  Currently the following are supported:</p>
+<ul class="simple">
+<li><p><cite>‘ascii’</cite> : the files <cite>fort.q0000</cite> etc. are ASCII files.</p></li>
+<li><p><cite>‘binary’</cite> : Raw binary dump.  Working??</p></li>
+<li><p><cite>‘netcdf’</cite> : NetCDF format.  Working??</p></li>
+</ul>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="sig-name descname">output_q_components: list of booleans or str</code></dt>
+<dd><ul class="simple">
+<li><p>A list such as <cite>[1,0,1]</cite> would indicate to output <cite>q[0]</cite> and <cite>q[2]</cite> only.
+<em>This might not be working yet.</em></p></li>
+<li><p>The string <cite>‘all’</cite> indicates that all components should be output</p></li>
+<li><p>The string <cite>‘none’</cite> indicates that no components should be output</p></li>
+</ul>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="sig-name descname">output_aux_components: list of booleans or str</code></dt>
+<dd><ul class="simple">
+<li><p>A list such as <cite>[1,0,1]</cite> would indicate to output <cite>aux[0]</cite> and <cite>aux[2]</cite> only.
+<em>This might not be working yet.</em></p></li>
+<li><p>The string <cite>‘all’</cite> indicates that all components should be output</p></li>
+<li><p>The string <cite>‘none’</cite> indicates that no components should be output</p></li>
+</ul>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="sig-name descname">output_aux_onlyonce: boolean</code></dt>
+<dd><p>If <cite>output_aux_components</cite> is not <cite>‘none’</cite> or an empty list, this
+indicates whether <cite>aux</cite> arrays should be only output at time <cite>t0</cite> or at
+every output time.  The latter is generally necessary for AMR
+applications unless the grids never change (and the component of <cite>aux</cite>
+are never modified except in <cite>setaux</cite>).</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="sig-name descname">verbosity: integer &gt;= 0</code></dt>
+<dd><p>A line of output (reporting t, dt and CFL number) is written to the
+terminal every time step, but only at Level <cite>verbosity</cite> or coarser.</p>
+<p>Set to 0 to suppress all such output.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="sig-name descname">dt_initial: float &gt;= 0.</code></dt>
+<dd><p>Initial time step to try in first step.  If using <cite>dt_variable == True</cite>
+and are unsure of an appropriate
+timestep, set to a very small value (e.g. <cite>1.e-10</cite>).  After the first
+step the wave speeds observed in all Riemann solutions will be used to
+set the time step appropriately for the next step.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="sig-name descname">dt_variable: boolean</code></dt>
+<dd><p>If True, time steps are adjusted automatically based on the desired
+Courant number <em>cfl_desired</em>.</p>
+<p>If False, fixed time steps of lenght <em>dt_initial</em> are used.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="sig-name descname">dt_max: float &gt;= 0.</code></dt>
+<dd><p>If <em>dt_variable = True</em> then this is an upper bound on the allowable time
+step regardless of the Courant number.  Useful if there are other reasons
+to limit the time step (e.g. stiff source terms).</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="sig-name descname">cfl_desired: float &gt;= 0.</code></dt>
+<dd><p>If <em>dt_variable = True</em> then this is the desired Courant number.  Time
+steps will be adjusted based on the maximum wave speed seen in the <em>last</em>
+time step taken.  For a nonlinear problem this may not result in the
+Courant number being exactly the desired value in the next step.</p>
+<p>Usually <em>cfl_desired = 0.9</em> or less.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="sig-name descname">cfl_max: float</code></dt>
+<dd><p>If <em>dt_variable = True</em> then this is the maximum Courant number that can
+be allowed.  If a time step results in a Courant number that is greater
+than <em>cfl_desired</em> but less than or equal to <em>cfl_max</em>, the step is
+accepted.  If the Courant number is greater than <em>cfl_max</em> then the step
+is rejected and a smaller step is taken.  (At this point the maximum wave
+speed from Riemann solutions is known, so the step can be adjusted to
+exactly hit the desired value <em>cfl_desired</em>.)</p>
+<p><strong>Note:</strong> With AMRClaw it is impossible to retake a step and so if
+<cite>cfl &gt; cfl_max</cite> then a warning message is printed and the computation
+continues.  <em>Note that results may be contaminated if the Courant number
+is much above 1.</em>
+This means that with AMR it is important to choose an appropriate time
+step  <cite>dt_initial</cite> for the first time step, or use a very small value.</p>
+<p>Usually <em>cfl_max = 1.0</em> is fine, e.g. 500000.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="sig-name descname">steps_max: int</code></dt>
+<dd><p>Maximum number of time steps allowed between output times.  This is just
+to avoid infinite loops and generally a large value is fine.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="sig-name descname">order : int</code></dt>
+<dd><p><cite>order == 1</cite> : Use Godunov’s method</p>
+<p><cite>order == 2</cite> : Use second order corrections with limiters in normal
+direction.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="sig-name descname">dimensional_split : str</code></dt>
+<dd><p><cite>dimensional_split == ‘unsplit’</cite>  is the only option currently allowed
+for AMRClaw.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="sig-name descname">transverse_waves : int or str</code></dt>
+<dd><p><cite>transverse_waves == 0 or ‘none’</cite> : No transverse correction terms
+(Donor cell upwind if also <cite>order == 1</cite>).</p>
+<p><cite>transverse_waves == 1 or ‘increment’</cite> : Only the increment waves are
+transmitted transversely.
+(Corner transport upwind if also <cite>order == 1</cite>,  should be second order
+accurate if <cite>order == 2</cite>).</p>
+<p><cite>transverse_waves == 2 or ‘all’</cite> : Corner tranpsort of second order
+corrections as well.  (Somewhat improved stability.)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="sig-name descname">num_waves : int</code></dt>
+<dd><p>Number of waves the Riemann solver returns.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="sig-name descname">limiter : list of int or str, of length num_waves</code></dt>
+<dd><p>Each element of the list can take the values:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>0 or ‘none’     : no limiter (Lax-Wendroff)</p></li>
+<li><p>1 or ‘minmod’   : minmod</p></li>
+<li><p>2 or ‘superbee’ : superbee</p></li>
+<li><p>3 or ‘mc’       : monotonized central (MC) limiter</p></li>
+<li><p>4 or ‘vanleer’  : van Leer</p></li>
+</ul>
+</div></blockquote>
+<p>See Chapter 6 of <a class="reference internal" href="biblio.html#leveque-fvmhp" id="id1"><span>[LeVeque-FVMHP]</span></a> for details.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="sig-name descname">use_fwaves : boolean</code></dt>
+<dd><p>If True, the Riemann solvers should return f-waves (a decomposition of
+the the flux difference) rather than the usual waves (which give
+a decomposition of the jump in Q between adjacent states).
+See <a class="reference internal" href="wp_algorithms.html#wp-fwave"><span class="std std-ref">f-wave formulation</span></a>, <a class="reference internal" href="riemann.html#riemann-fwave"><span class="std std-ref">f-wave Riemann solvers</span></a> and
+Section 16.4 of <a class="reference internal" href="biblio.html#leveque-fvmhp" id="id2"><span>[LeVeque-FVMHP]</span></a> or <a class="reference internal" href="biblio.html#balelevmitross02" id="id3"><span>[BaleLevMitRoss02]</span></a> for details.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="sig-name descname">source_split : list of int or str, of length num_waves</code></dt>
+<dd><p>Determines form of fractional step algorithm used to apply source terms
+(if any).  Source terms must be implemented by providing a subroutine
+<cite>srcN.f</cite> (in <cite>N</cite> space dimensions) that is called each time step
+and should advance the solution by solving the source term equations
+(the PDE after dropping the hyperolic terms).
+See <a class="reference internal" href="user_routines.html#user-src"><span class="std std-ref">Using src for source terms</span></a>.</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>src_split == 0 or ‘none’    : no source term (<cite>srcN</cite> routine never called)</p></li>
+<li><p>src_split == 1 or ‘godunov’ : Godunov (1st order) splitting used,</p></li>
+<li><p>src_split == 2 or ‘strang’  : Strang (2nd order) splitting used.</p></li>
+</ul>
+</div></blockquote>
+<p>The Strang splitting requires calling the source term routine twice each
+time step (before and after the hyperbolic step, with half the time step)
+and is generally not recommended.  It is often no more accurate thn the
+Godunov splitting, requires more work, and can make it harder to properly
+set ghost cells for boundary conditions.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="sig-name descname">num_ghost : int</code></dt>
+<dd><p>number of ghost cells at each boundary.  Should be at least 1 if
+<cite>order == 1</cite> and at least 2 if <cite>order == 2</cite>.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="sig-name descname">bc_lower : list of int or str, of length num_ghost</code></dt>
+<dd><p>Choice of boundary conditions at the lower boundary in each dimension.
+Each element can take the following values:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>0 or ‘user’     : user specified (must modify <cite>bcNamr.f</cite> to use this option)</p></li>
+<li><p>1 or ‘extrap’   : extrapolation (non-reflecting outflow)</p></li>
+<li><p>2 or ‘periodic’ : periodic (must specify this at both boundaries)</p></li>
+<li><p>3 or ‘wall’     : solid wall for systems where q(2) is normal velocity</p></li>
+</ul>
+<p>If the value is 0 or ‘user’, then the user must modify the boundary
+condition routine <cite>bcNamr.f</cite> to fill ghost cells in the desired manner.
+See <a class="reference internal" href="bc.html#bc"><span class="std std-ref">Boundary conditions</span></a> for more details.</p>
+</div></blockquote>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="sig-name descname">bc_upper : list of int or str, of length num_ghost</code></dt>
+<dd><p>Choice of boundary conditions at the upper boundary in each dimension.
+The same choices are available as for <cite>bc_lower</cite>.</p>
+<p>Note that if periodic boundary conditions are specified at the lower
+boundary in some dimension then the same should be specified at the upper.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="sig-name descname">checkpt_style :: int</code></dt>
+<dd><p><strong>Currently only available in amrclaw and geoclaw.</strong></p>
+<p>Specify how often checkpoint files should be created that can be used to
+restart a computation.
+See <a class="reference internal" href="restart.html#restart"><span class="std std-ref">Checkpointing and restarting</span></a> for more details.</p>
+<blockquote>
+<div><ul>
+<li><p><em>checkpt_style = 0</em> : Do not checkpoint at all</p></li>
+<li><p><em>checkpt_style = 1</em> : Checkpoint only at the final time.</p></li>
+<li><p><em>checkpt_style = 2</em> : Specify a list of checkpoint times.</p>
+<p>This is generally <strong>not</strong> recommended because time steps will be
+adjusted to hit the checkpoint times, but may be useful in order to
+create a checkpoint file just before some event of interest (e.g.
+when debugging a code that is known to crash at a certain time).</p>
+<p>Requires additional parameter:</p>
+<ul class="simple">
+<li><p>checkpt_times : list of floats</p></li>
+</ul>
+</li>
+<li><p><em>checkpt_style = 3</em> : Specify an interval for checkpointing.</p>
+<p>Requires additional parameter:</p>
+<ul>
+<li><p>checkpt_interval : int</p>
+<p>Checkpoint every <cite>checkpt_interval</cite> time steps on Level 1 (coarsest
+level).</p>
+</li>
+</ul>
+</li>
+</ul>
+</div></blockquote>
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<p><a href="http://clawpack.org/">
+    <img class="logo" src= "_static/clawlogo.jpg" alt="Logo"/>
+</a>
+<h2>Version 5.7.x</h2>
+</p>
+  <h3><a href="contents.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Specifying classic run-time parameters in <cite>setrun.py</cite></a><ul>
+<li><a class="reference internal" href="#input">Input</a></li>
+<li><a class="reference internal" href="#output">Output</a></li>
+<li><a class="reference internal" href="#run-time-parameters">Run-time parameters</a></li>
+</ul>
+</li>
+</ul>
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="contents.html">Documentation overview</a><ul>
+      <li>Previous: <a href="application_documentation.html" title="previous chapter">Application documentation</a></li>
+      <li>Next: <a href="setrun_sample.html" title="next chapter">Sample <cite>setrun.py</cite> module for classic Clawpack</a></li>
+  </ul></li>
+</ul>
+<div class="widget navlinks">
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/setrun.rst.txt"
+            rel="nofollow"
+            target="_blank">Source .rst</a></li>
+    <li><a href="https://github.com/clawpack/doc/blob/dev/doc/setrun.rst"
+            rel="nofollow"
+            target="_blank">Source on GitHub</a></li>
+     <li><a href="https://github.com/clawpack/doc/commits/dev/doc/setrun.rst"
+             rel="nofollow"
+             target="_blank">History</a></li>
+    <li><a href="https://github.com/clawpack/doc/edit/dev/doc/setrun.rst"
+            rel="nofollow"
+            target="_blank">Suggest Edits</a></li>
+     <li><a href="https://github.com/clawpack/doc/issues/new/choose"
+             rel="nofollow"
+             target="_blank">Raise an Issue</a></li>
+  </ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+<h4>Latest Version</h4>
+<ul>
+  <li><a href="../dev/setrun.html">dev</a></li>
+  <li><a href="setrun.html">v5.7.x</a></li>
+</ul>
+<h4>Older Versions</h4>
+<ul>
+  <li><a href="../v5.1.0/setrun.html">v5.1.0</a></li>
+  <li><a href="../v5.2.0/setrun.html">v5.2.0</a></li>
+  <li><a href="../v5.2.1/setrun.html">v5.2.1</a></li>
+  <li><a href="../v5.3.0/setrun.html">v5.3.0</a></li>
+  <li><a href="../v5.3.1/setrun.html">v5.3.1</a></li>
+  <li><a href="../v5.4.0/setrun.html">v5.4.0</a></li>
+  <li><a href="../v5.4.1/setrun.html">v5.4.1</a></li>
+  <li><a href="../v5.5.0/setrun.html">v5.5.0</a></li>
+  <li><a href="../v5.6.0/setrun.html">v5.6.0</a></li>
+  <li><a href="../v5.6.1/setrun.html">v5.6.1</a></li>
+</ul>
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+  <div class="footer">
+    &copy; Copyright CC-BY 2020, The Clawpack Development Team.
+    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
+  </div>
+  <script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-44811544-1', 'auto');
+  ga('send', 'pageview');
+
+  </script>
+  
+  </body>
+</html>

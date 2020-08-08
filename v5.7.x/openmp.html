@@ -1,0 +1,253 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>Using OpenMP &#8212; Clawpack 5.7.x documentation</title>
+    <link rel="stylesheet" href="_static/flasky.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/base.css" type="text/css" />
+    <link rel="stylesheet" href="_static/layout.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/graphviz.css" />
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <script async="async" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="shortcut icon" href="_static/clawicon.ico"/>
+    <link rel="author" title="About these documents" href="about.html" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Timing Statistics" href="timing.html" />
+    <link rel="prev" title="User files required for the Fortran code" href="user_routines.html" /> 
+  </head><body>
+<div id="main-wrapper" class="sphinx">
+<div id="header-wrapper">
+  <section id="header">
+    <!-- <h1><a href="http://clawpack.org/">Clawpack</a></h1> -->
+    <h1><a href="http://clawpack.org/">Clawpack-5</a></h1> 
+    <nav>
+      <ul>
+        <li>
+          <a href="contents.html">Docs</a>
+        </li>
+        <li>
+          <a href="installing.html">Install</a>
+        </li>
+        <li>
+          <a class="" href="http://clawpack.org/gallery/index.html">Gallery</a>
+        </li>
+        <li>
+          <a href="about.html">Citation</a>
+        </li>
+        <li>
+          <a class="active" href="http://github.com/clawpack">GitHub</a>
+        </li>
+        <li>
+          <a class="" href="community.html">Community</a>
+        </li>
+        <li>
+          <a class="" href="developers.html">Contribute</a>
+        </li>
+      </ul>
+    </nav>
+  </section>
+<div class="decoration"></div>
+</div>
+
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="timing.html" title="Timing Statistics"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="user_routines.html" title="User files required for the Fortran code"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="contents.html">Clawpack 5.7.x documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="using-openmp">
+<span id="openmp"></span><h1>Using OpenMP<a class="headerlink" href="#using-openmp" title="Permalink to this headline">¶</a></h1>
+<p>The Clawpack Fortran Classic 3d code, AMRClaw 2d and 3d code,
+and GeoClaw codes include
+OpenMP directives for making use of multicore shared memory machines.</p>
+<p><strong>Note:</strong> Versions of gfortran before 4.6 are known to have OpenMP bugs.
+You should use a recent version or a different compiler if you want to use
+OpenMP.</p>
+<p>To invoke OpenMP you need to compile the entire code with appropriate
+compiler flags (see <a class="reference internal" href="fortran_compilers.html#fortran-compilers"><span class="std std-ref">Fortran Compilers</span></a>).  For example, with gfortran
+and the bash shell you could do:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">export</span> <span class="n">FFLAGS</span><span class="o">=</span><span class="s1">&#39;-O2 -fopenmp&#39;</span>  <span class="c1"># or hardwire FFLAGS in the Makefile</span>
+<span class="n">make</span> <span class="n">new</span>
+</pre></div>
+</div>
+<p>in an application directory, which should recompile all of the library
+routines as well.</p>
+<p>Then you may want to specify how many threads OpenMP should split the work
+between, e.g.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">export</span> <span class="n">OMP_NUM_THREADS</span><span class="o">=</span><span class="mi">2</span>
+</pre></div>
+</div>
+<p>If you do not set this environment variable some default for your system
+will be used.</p>
+<p>You may also need to increase the stack size if the code bombs for no
+apparent reason (and no useful error message):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">export</span> <span class="n">OMP_STACKSIZE</span><span class="o">=</span><span class="mi">16</span><span class="n">M</span>
+</pre></div>
+</div>
+<p>and also:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ulimit</span> <span class="o">-</span><span class="n">s</span> <span class="n">unlimited</span>
+</pre></div>
+</div>
+<p>On a Mac this isn’t allowed and the best you can do is</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ulimit</span> <span class="o">-</span><span class="n">s</span> <span class="n">hard</span>
+</pre></div>
+</div>
+<p>To stop using OpenMP you could do:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">export</span> <span class="n">FFLAGS</span><span class="o">=-</span><span class="n">O2</span>   <span class="c1"># or hardwire FFLAGS in the Makefile</span>
+<span class="n">make</span> <span class="n">new</span>
+</pre></div>
+</div>
+<div class="section" id="using-openmp-with-amr">
+<span id="openmp-amr"></span><h2>Using OpenMP with AMR<a class="headerlink" href="#using-openmp-with-amr" title="Permalink to this headline">¶</a></h2>
+<p>The code in AMRClaw and GeoClaw is parallelized by splitting the list of
+patches that must be advanced in time between threads, and then each grid
+patch is handled by a single thread.  For this reason good performance will
+be seen only when there are a sufficiently large number of patches at each
+level relative to the number of threads.  For this reason it is recommended
+that the parameter <cite>max1d</cite> be set to 60 in the modules</p>
+<ul class="simple">
+<li><p><cite>$CLAW/amrclaw/src/2d/amr_module.f90</cite></p></li>
+<li><p><cite>$CLAW/amrclaw/src/3d/amr_module.f90</cite></p></li>
+</ul>
+<p>when OpenMP is used.  This limits the size of any patch to have at most
+<cite>max1d</cite> grid cells in each direction.  If OpenMP is not used, a larger value
+of <cite>max1d</cite> might give somewhat better performance since there is less
+overhead associated with passing boundary values in ghost cells and other
+per-patch work.  However, this is generally negligible and <cite>max1d=60</cite> is the
+default value set in the code.   If you do change this value, remember to
+recompile everything via:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">make</span> <span class="n">new</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="fixed-grid-output-in-geoclaw">
+<span id="openmp-fixedgrids"></span><h2>Fixed grid output in GeoClaw<a class="headerlink" href="#fixed-grid-output-in-geoclaw" title="Permalink to this headline">¶</a></h2>
+<p>The original fixed grid output routines are not thread safe and so OpenMP
+should not be used if you want to produce output on fixed grids.</p>
+<p>The newer fgmax routines that keep track of maxima on fixed grids should be
+thread safe, see <a class="reference internal" href="fgmax.html#fgmax"><span class="std std-ref">Fixed grid monitoring</span></a>.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<p><a href="http://clawpack.org/">
+    <img class="logo" src= "_static/clawlogo.jpg" alt="Logo"/>
+</a>
+<h2>Version 5.7.x</h2>
+</p>
+  <h3><a href="contents.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Using OpenMP</a><ul>
+<li><a class="reference internal" href="#using-openmp-with-amr">Using OpenMP with AMR</a></li>
+<li><a class="reference internal" href="#fixed-grid-output-in-geoclaw">Fixed grid output in GeoClaw</a></li>
+</ul>
+</li>
+</ul>
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="contents.html">Documentation overview</a><ul>
+      <li>Previous: <a href="user_routines.html" title="previous chapter">User files required for the Fortran code</a></li>
+      <li>Next: <a href="timing.html" title="next chapter">Timing Statistics</a></li>
+  </ul></li>
+</ul>
+<div class="widget navlinks">
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/openmp.rst.txt"
+            rel="nofollow"
+            target="_blank">Source .rst</a></li>
+    <li><a href="https://github.com/clawpack/doc/blob/dev/doc/openmp.rst"
+            rel="nofollow"
+            target="_blank">Source on GitHub</a></li>
+     <li><a href="https://github.com/clawpack/doc/commits/dev/doc/openmp.rst"
+             rel="nofollow"
+             target="_blank">History</a></li>
+    <li><a href="https://github.com/clawpack/doc/edit/dev/doc/openmp.rst"
+            rel="nofollow"
+            target="_blank">Suggest Edits</a></li>
+     <li><a href="https://github.com/clawpack/doc/issues/new/choose"
+             rel="nofollow"
+             target="_blank">Raise an Issue</a></li>
+  </ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+<h4>Latest Version</h4>
+<ul>
+  <li><a href="../dev/openmp.html">dev</a></li>
+  <li><a href="openmp.html">v5.7.x</a></li>
+</ul>
+<h4>Older Versions</h4>
+<ul>
+  <li><a href="../v5.1.0/openmp.html">v5.1.0</a></li>
+  <li><a href="../v5.2.0/openmp.html">v5.2.0</a></li>
+  <li><a href="../v5.2.1/openmp.html">v5.2.1</a></li>
+  <li><a href="../v5.3.0/openmp.html">v5.3.0</a></li>
+  <li><a href="../v5.3.1/openmp.html">v5.3.1</a></li>
+  <li><a href="../v5.4.0/openmp.html">v5.4.0</a></li>
+  <li><a href="../v5.4.1/openmp.html">v5.4.1</a></li>
+  <li><a href="../v5.5.0/openmp.html">v5.5.0</a></li>
+  <li><a href="../v5.6.0/openmp.html">v5.6.0</a></li>
+  <li><a href="../v5.6.1/openmp.html">v5.6.1</a></li>
+</ul>
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+  <div class="footer">
+    &copy; Copyright CC-BY 2020, The Clawpack Development Team.
+    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
+  </div>
+  <script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-44811544-1', 'auto');
+  ga('send', 'pageview');
+
+  </script>
+  
+  </body>
+</html>

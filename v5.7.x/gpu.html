@@ -1,0 +1,227 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>Using the GPU version of Clawpack &#8212; Clawpack 5.7.x documentation</title>
+    <link rel="stylesheet" href="_static/flasky.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/base.css" type="text/css" />
+    <link rel="stylesheet" href="_static/layout.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/graphviz.css" />
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <script async="async" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="shortcut icon" href="_static/clawicon.ico"/>
+    <link rel="author" title="About these documents" href="about.html" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="AMRClaw Description and Detailed Contents" href="amrclaw.html" />
+    <link rel="prev" title="Saving and sharing results" href="sharing.html" /> 
+  </head><body>
+<div id="main-wrapper" class="sphinx">
+<div id="header-wrapper">
+  <section id="header">
+    <!-- <h1><a href="http://clawpack.org/">Clawpack</a></h1> -->
+    <h1><a href="http://clawpack.org/">Clawpack-5</a></h1> 
+    <nav>
+      <ul>
+        <li>
+          <a href="contents.html">Docs</a>
+        </li>
+        <li>
+          <a href="installing.html">Install</a>
+        </li>
+        <li>
+          <a class="" href="http://clawpack.org/gallery/index.html">Gallery</a>
+        </li>
+        <li>
+          <a href="about.html">Citation</a>
+        </li>
+        <li>
+          <a class="active" href="http://github.com/clawpack">GitHub</a>
+        </li>
+        <li>
+          <a class="" href="community.html">Community</a>
+        </li>
+        <li>
+          <a class="" href="developers.html">Contribute</a>
+        </li>
+      </ul>
+    </nav>
+  </section>
+<div class="decoration"></div>
+</div>
+
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="amrclaw.html" title="AMRClaw Description and Detailed Contents"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="sharing.html" title="Saving and sharing results"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="contents.html">Clawpack 5.7.x documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="using-the-gpu-version-of-clawpack">
+<span id="gpu"></span><h1>Using the GPU version of Clawpack<a class="headerlink" href="#using-the-gpu-version-of-clawpack" title="Permalink to this headline">¶</a></h1>
+<p>GPU versions of the two-dimensional AmrClaw and GeoClaw codes have been
+developed primarily by Xinsheng Qin, as described in the references below.</p>
+<p>This is still under development and has not yet been fully merged
+in Clawpack, but there is a <cite>gpu</cite> branch of most of the Clawpack
+repositories and checking those out will give a working version of
+the GPU code.</p>
+<p>You can do this by checking out the gpu branch of the <cite>clawpack/clawpack</cite>
+module and then doing <cite>git module update</cite>.</p>
+<p>To create a new clone <cite>clawpack_gpu</cite> with the
+proper branches checked out, you can use these commands:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">git</span> <span class="n">clone</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">github</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">clawpack</span><span class="o">/</span><span class="n">clawpack</span><span class="o">.</span><span class="n">git</span> <span class="n">clawpack_gpu</span>
+<span class="n">cd</span> <span class="n">clawpack_gpu</span>
+<span class="n">git</span> <span class="n">checkout</span> <span class="o">-</span><span class="n">b</span> <span class="n">gpu</span> <span class="n">origin</span><span class="o">/</span><span class="n">gpu</span>
+<span class="n">git</span> <span class="n">submodule</span> <span class="n">init</span>
+<span class="n">git</span> <span class="n">submodule</span> <span class="n">update</span>
+</pre></div>
+</div>
+<p>Note that this version of the GPU code is roughly based on version 5.5.0 of
+Clawpack but had some other changes merged in as well (in particular adjoint
+flagging, see <a class="reference internal" href="adjoint.html#adjoint"><span class="std std-ref">Guiding AMR with adjoint flagging</span></a>), and so it is not exactly equivalent in
+capabilities.</p>
+<p>The GPU version has some new libraries of source code. In particular,
+<cite>$CLAW/amrclaw/src/2d/GPU</cite> contains <cite>.H</cite>, <cite>.cpp</cite> and <cite>.f90</cite> files for the
+2d amrclaw code.  Many of the <cite>.f90</cite> files replace those normally used
+from <cite>$CLAW/amrclaw/src/2d</cite> and those files are removed from this branch.
+This means that the pure CPU version of amrclaw cannot be run from this
+branch, instead check out a specific version such as <cite>v5.5.0</cite> to
+run the CPU code for comparisons.</p>
+<p>Similarly, <cite>$CLAW/geoclaw/src/2d/shallow/GPU</cite> contains replacement <cite>.f90</cite>
+files for many of the library routines in <cite>$CLAW/geoclaw/src/2d/shallow</cite>.</p>
+<div class="section" id="references">
+<h2>References<a class="headerlink" href="#references" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p>Efficient Tsunami Modeling on Adaptive Grids with Graphics Processing Units (GPUs)
+by X. Qin, R. J. LeVeque, and M. Motley,
+Journal of Advances in Modeling Earth Systems, 2019,
+<a class="reference external" href="https://doi.org/10.1029/2019MS001635">DOI:10.1029/2019MS001635</a></p></li>
+<li><p>Accelerating wave-propagation algorithms with adaptive mesh refinement
+using the Graphics Processing Unit (GPU),
+by X. Qin, R. J. LeVeque, and M. R. Motley,
+<a class="reference external" href="https://arxiv.org/abs/1808.02638">https://arxiv.org/abs/1808.02638</a></p></li>
+<li><p>See also the older instructions and links to Xinsheng’s original branches at
+<a class="reference external" href="https://github.com/xinshengqin/geoclaw/tree/geo_gpu_paper">https://github.com/xinshengqin/geoclaw/tree/geo_gpu_paper</a></p></li>
+</ul>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<p><a href="http://clawpack.org/">
+    <img class="logo" src= "_static/clawlogo.jpg" alt="Logo"/>
+</a>
+<h2>Version 5.7.x</h2>
+</p>
+  <h3><a href="contents.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Using the GPU version of Clawpack</a><ul>
+<li><a class="reference internal" href="#references">References</a></li>
+</ul>
+</li>
+</ul>
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="contents.html">Documentation overview</a><ul>
+      <li>Previous: <a href="sharing.html" title="previous chapter">Saving and sharing results</a></li>
+      <li>Next: <a href="amrclaw.html" title="next chapter">AMRClaw Description and Detailed Contents</a></li>
+  </ul></li>
+</ul>
+<div class="widget navlinks">
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/gpu.rst.txt"
+            rel="nofollow"
+            target="_blank">Source .rst</a></li>
+    <li><a href="https://github.com/clawpack/doc/blob/dev/doc/gpu.rst"
+            rel="nofollow"
+            target="_blank">Source on GitHub</a></li>
+     <li><a href="https://github.com/clawpack/doc/commits/dev/doc/gpu.rst"
+             rel="nofollow"
+             target="_blank">History</a></li>
+    <li><a href="https://github.com/clawpack/doc/edit/dev/doc/gpu.rst"
+            rel="nofollow"
+            target="_blank">Suggest Edits</a></li>
+     <li><a href="https://github.com/clawpack/doc/issues/new/choose"
+             rel="nofollow"
+             target="_blank">Raise an Issue</a></li>
+  </ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+<h4>Latest Version</h4>
+<ul>
+  <li><a href="../dev/gpu.html">dev</a></li>
+  <li><a href="gpu.html">v5.7.x</a></li>
+</ul>
+<h4>Older Versions</h4>
+<ul>
+  <li><a href="../v5.1.0/index.html">v5.1.0</a></li>
+  <li><a href="../v5.2.0/index.html">v5.2.0</a></li>
+  <li><a href="../v5.2.1/index.html">v5.2.1</a></li>
+  <li><a href="../v5.3.0/index.html">v5.3.0</a></li>
+  <li><a href="../v5.3.1/index.html">v5.3.1</a></li>
+  <li><a href="../v5.4.0/index.html">v5.4.0</a></li>
+  <li><a href="../v5.4.1/index.html">v5.4.1</a></li>
+  <li><a href="../v5.5.0/index.html">v5.5.0</a></li>
+  <li><a href="../v5.6.0/gpu.html">v5.6.0</a></li>
+  <li><a href="../v5.6.1/gpu.html">v5.6.1</a></li>
+</ul>
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+  <div class="footer">
+    &copy; Copyright CC-BY 2020, The Clawpack Development Team.
+    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
+  </div>
+  <script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-44811544-1', 'auto');
+  ga('send', 'pageview');
+
+  </script>
+  
+  </body>
+</html>

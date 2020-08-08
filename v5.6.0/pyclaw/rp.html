@@ -15,7 +15,7 @@
     <script src="../_static/underscore.js"></script>
     <script src="../_static/doctools.js"></script>
     <script src="../_static/language_data.js"></script>
-    <script async="async" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script async="async" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="shortcut icon" href="../_static/clawicon.ico"/>
     <link rel="author" title="About these documents" href="../about.html" />
     <link rel="index" title="Index" href="../genindex.html" />
@@ -163,18 +163,328 @@ $i-1/2$.  This follows the same convention used in the Fortran solvers.</p>
 </div></blockquote>
 <div class="section" id="acoustics">
 <span id="id2"></span><h2><code class="xref py py-mod docutils literal notranslate"><span class="pre">Acoustics</span></code><a class="headerlink" href="#acoustics" title="Permalink to this headline">¶</a></h2>
+<span class="target" id="module-clawpack.riemann.acoustics_1D_py"></span><p>Riemann solvers for constant coefficient acoustics.</p>
+<div class="math notranslate nohighlight">
+\[q_t + A q_x = 0\]</div>
+<p>where</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}q(x,t) = \left [ \begin{array}{c} p(x,t) \\ u(x,t) \end{array} \right ]\end{split}\]</div>
+<p>and the coefficient matrix is</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}A = \left [\begin{matrix}
+0      &amp; K\\
+1/\rho &amp; 0 
+\end{matrix} \right ]\end{split}\]</div>
+<p>The parameters <span class="math notranslate nohighlight">\(\rho =\)</span> density and <span class="math notranslate nohighlight">\(K =\)</span> bulk modulus are used
+to calculate the impedence <span class="math notranslate nohighlight">\(= Z\)</span> and speed of sound <cite>= c</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Authors</dt>
+<dd class="field-odd"><p>Kyle T. Mandli (2009-02-03): Initial version</p>
+</dd>
+</dl>
+<dl class="function">
+<dt id="clawpack.riemann.acoustics_1D_py.acoustics_1D">
+<code class="sig-prename descclassname">clawpack.riemann.acoustics_1D_py.</code><code class="sig-name descname">acoustics_1D</code><span class="sig-paren">(</span><em class="sig-param">q_l</em>, <em class="sig-param">q_r</em>, <em class="sig-param">aux_l</em>, <em class="sig-param">aux_r</em>, <em class="sig-param">problem_data</em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.riemann.acoustics_1D_py.acoustics_1D" title="Permalink to this definition">¶</a></dt>
+<dd><p>Basic 1d acoustics riemann solver, with interleaved arrays</p>
+<dl class="simple">
+<dt><em>problem_data</em> is expected to contain -</dt><dd><ul class="simple">
+<li><p><em>zz</em> - (float) Impedence</p></li>
+<li><p><em>cc</em> - (float) Speed of sound</p></li>
+</ul>
+</dd>
+</dl>
+<p>See <a class="reference internal" href="#pyclaw-rp"><span class="std std-ref">Riemann Solver Package</span></a> for more details.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Version</dt>
+<dd class="field-odd"><p>1.0 (2009-02-03)</p>
+</dd>
+</dl>
+</dd></dl>
+
 </div>
 <div class="section" id="advection">
 <span id="id3"></span><h2><code class="xref py py-mod docutils literal notranslate"><span class="pre">Advection</span></code><a class="headerlink" href="#advection" title="Permalink to this headline">¶</a></h2>
+<span class="target" id="module-clawpack.riemann.advection_1D_py"></span><p>Simple advection Riemann solvers</p>
+<p>Basic advection Riemann solvers of the form (1d)</p>
+<div class="math notranslate nohighlight">
+\[q_t + A q_x = 0.\]</div>
+<dl class="field-list simple">
+<dt class="field-odd">Authors</dt>
+<dd class="field-odd"><p>Kyle T. Mandli (2008-2-20): Initial version</p>
+</dd>
+</dl>
+<dl class="function">
+<dt id="clawpack.riemann.advection_1D_py.advection_1D">
+<code class="sig-prename descclassname">clawpack.riemann.advection_1D_py.</code><code class="sig-name descname">advection_1D</code><span class="sig-paren">(</span><em class="sig-param">q_l</em>, <em class="sig-param">q_r</em>, <em class="sig-param">aux_l</em>, <em class="sig-param">aux_r</em>, <em class="sig-param">problem_data</em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.riemann.advection_1D_py.advection_1D" title="Permalink to this definition">¶</a></dt>
+<dd><p>Basic 1d advection riemann solver</p>
+<dl class="simple">
+<dt><em>problem_data</em> should contain -</dt><dd><ul class="simple">
+<li><p><em>u</em> - (float) Determines advection speed</p></li>
+</ul>
+</dd>
+</dl>
+<p>See <a class="reference internal" href="#pyclaw-rp"><span class="std std-ref">Riemann Solver Package</span></a> for more details.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Version</dt>
+<dd class="field-odd"><p>1.0 (2008-2-20)</p>
+</dd>
+</dl>
+</dd></dl>
+
 </div>
 <div class="section" id="burgers-equation">
 <span id="id4"></span><h2><code class="xref py py-mod docutils literal notranslate"><span class="pre">Burgers</span> <span class="pre">Equation</span></code><a class="headerlink" href="#burgers-equation" title="Permalink to this headline">¶</a></h2>
+<span class="target" id="module-clawpack.riemann.burgers_1D_py"></span><p>Riemann solvers for Burgers equation</p>
+<div class="math notranslate nohighlight">
+\[u_t + \left ( \frac{1}{2} u^2 \right)_x = 0\]</div>
+<dl class="field-list simple">
+<dt class="field-odd">Authors</dt>
+<dd class="field-odd"><p>Kyle T. Mandli (2009-2-4): Initial version</p>
+</dd>
+</dl>
+<dl class="function">
+<dt id="clawpack.riemann.burgers_1D_py.burgers_1D">
+<code class="sig-prename descclassname">clawpack.riemann.burgers_1D_py.</code><code class="sig-name descname">burgers_1D</code><span class="sig-paren">(</span><em class="sig-param">q_l</em>, <em class="sig-param">q_r</em>, <em class="sig-param">aux_l</em>, <em class="sig-param">aux_r</em>, <em class="sig-param">problem_data</em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.riemann.burgers_1D_py.burgers_1D" title="Permalink to this definition">¶</a></dt>
+<dd><p>Riemann solver for Burgers equation in 1d</p>
+<dl class="simple">
+<dt><em>problem_data</em> should contain -</dt><dd><ul class="simple">
+<li><p><em>efix</em> - (bool) Whether a entropy fix should be used, if not present, 
+false is assumed</p></li>
+</ul>
+</dd>
+</dl>
+<p>See <a class="reference internal" href="#pyclaw-rp"><span class="std std-ref">Riemann Solver Package</span></a> for more details.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Version</dt>
+<dd class="field-odd"><p>1.0 (2009-2-4)</p>
+</dd>
+</dl>
+</dd></dl>
+
 </div>
 <div class="section" id="euler-equations">
 <span id="id5"></span><h2><code class="xref py py-mod docutils literal notranslate"><span class="pre">Euler</span> <span class="pre">Equations</span></code><a class="headerlink" href="#euler-equations" title="Permalink to this headline">¶</a></h2>
+<span class="target" id="module-clawpack.riemann.euler_1D_py"></span><p>Riemann solvers for the Euler equations</p>
+<p>This module contains Riemann solvers for the Euler equations which have the
+form (in 1d):</p>
+<div class="math notranslate nohighlight">
+\[q_t + f(q)_x = 0\]</div>
+<p>where</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}q(x,t) = \left [ \begin{array}{c} \rho \\ \rho u \\ E \end{array} \right ],\end{split}\]</div>
+<p>the flux function is</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}f(q) = \left [ \begin{array}{c} \rho u \\ \rho u^2 + p \\ u(E+p) \end{array}\right ].\end{split}\]</div>
+<p>and <span class="math notranslate nohighlight">\(\rho\)</span> is the density, <span class="math notranslate nohighlight">\(u\)</span> the velocity, <span class="math notranslate nohighlight">\(E\)</span> is the
+energy and <span class="math notranslate nohighlight">\(p\)</span> is the pressure.</p>
+<p>Unless otherwise noted, the ideal gas equation of state is used:</p>
+<div class="math notranslate nohighlight">
+\[E = (\gamma - 1) \left (E - \frac{1}{2}\rho u^2 \right)\]</div>
+<dl class="function">
+<dt id="clawpack.riemann.euler_1D_py.euler_exact_1D">
+<code class="sig-prename descclassname">clawpack.riemann.euler_1D_py.</code><code class="sig-name descname">euler_exact_1D</code><span class="sig-paren">(</span><em class="sig-param">q_l</em>, <em class="sig-param">q_r</em>, <em class="sig-param">aux_l</em>, <em class="sig-param">aux_r</em>, <em class="sig-param">problem_data</em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.riemann.euler_1D_py.euler_exact_1D" title="Permalink to this definition">¶</a></dt>
+<dd><p>Exact euler Riemann solver</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>This solver has not been implemented.</p>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="clawpack.riemann.euler_1D_py.euler_hll_1D">
+<code class="sig-prename descclassname">clawpack.riemann.euler_1D_py.</code><code class="sig-name descname">euler_hll_1D</code><span class="sig-paren">(</span><em class="sig-param">q_l</em>, <em class="sig-param">q_r</em>, <em class="sig-param">aux_l</em>, <em class="sig-param">aux_r</em>, <em class="sig-param">problem_data</em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.riemann.euler_1D_py.euler_hll_1D" title="Permalink to this definition">¶</a></dt>
+<dd><p>HLL euler solver</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">W_1</span> <span class="o">=</span> <span class="n">Q_hat</span> <span class="o">-</span> <span class="n">Q_l</span>    <span class="n">s_1</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">u_l</span><span class="o">-</span><span class="n">c_l</span><span class="p">,</span><span class="n">u_l</span><span class="o">+</span><span class="n">c_l</span><span class="p">,</span><span class="n">lambda_roe_1</span><span class="p">,</span><span class="n">lambda_roe_2</span><span class="p">)</span>
+<span class="n">W_2</span> <span class="o">=</span> <span class="n">Q_r</span> <span class="o">-</span> <span class="n">Q_hat</span>    <span class="n">s_2</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">u_r</span><span class="o">-</span><span class="n">c_r</span><span class="p">,</span><span class="n">u_r</span><span class="o">+</span><span class="n">c_r</span><span class="p">,</span><span class="n">lambda_roe_1</span><span class="p">,</span><span class="n">lambda_roe_2</span><span class="p">)</span>
+
+<span class="n">Q_hat</span> <span class="o">=</span> <span class="p">(</span> <span class="n">f</span><span class="p">(</span><span class="n">q_r</span><span class="p">)</span> <span class="o">-</span> <span class="n">f</span><span class="p">(</span><span class="n">q_l</span><span class="p">)</span> <span class="o">-</span> <span class="n">s_2</span> <span class="o">*</span> <span class="n">q_r</span> <span class="o">+</span> <span class="n">s_1</span> <span class="o">*</span> <span class="n">q_l</span> <span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">s_1</span> <span class="o">-</span> <span class="n">s_2</span><span class="p">)</span>
+</pre></div>
+</div>
+<dl class="simple">
+<dt><em>problem_data</em> should contain:</dt><dd><ul class="simple">
+<li><p><em>gamma</em> - (float) Ratio of the heat capacities</p></li>
+<li><p><em>gamma1</em> - (float) <span class="math notranslate nohighlight">\(1 - \gamma\)</span></p></li>
+</ul>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Version</dt>
+<dd class="field-odd"><p>1.0 (2014-03-04)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="clawpack.riemann.euler_1D_py.euler_hllc_1D">
+<code class="sig-prename descclassname">clawpack.riemann.euler_1D_py.</code><code class="sig-name descname">euler_hllc_1D</code><span class="sig-paren">(</span><em class="sig-param">q_l</em>, <em class="sig-param">q_r</em>, <em class="sig-param">aux_l</em>, <em class="sig-param">aux_r</em>, <em class="sig-param">problem_data</em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.riemann.euler_1D_py.euler_hllc_1D" title="Permalink to this definition">¶</a></dt>
+<dd><p>HLLC Euler solver</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">W_1</span> <span class="o">=</span> <span class="n">q_hat_l</span> <span class="o">-</span> <span class="n">q_l</span>      <span class="n">s_1</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">u_l</span><span class="o">-</span><span class="n">c_l</span><span class="p">,</span><span class="n">u_l</span><span class="o">+</span><span class="n">c_l</span><span class="p">,</span><span class="n">lambda_roe_1</span><span class="p">,</span><span class="n">lambda_roe_2</span><span class="p">)</span>
+<span class="n">W_2</span> <span class="o">=</span> <span class="n">q_hat_r</span> <span class="o">-</span> <span class="n">q_hat_l</span>  <span class="n">s_2</span> <span class="o">=</span> <span class="n">s_m</span>
+<span class="n">W_3</span> <span class="o">=</span> <span class="n">q_r</span> <span class="o">-</span> <span class="n">q_hat_r</span>      <span class="n">s_3</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">u_r</span><span class="o">-</span><span class="n">c_r</span><span class="p">,</span><span class="n">u_r</span><span class="o">+</span><span class="n">c_r</span><span class="p">,</span><span class="n">lambda_roe_1</span><span class="p">,</span><span class="n">lambda_roe_2</span><span class="p">)</span>
+<span class="n">s_m</span> <span class="o">=</span> <span class="p">(</span><span class="n">p_r</span> <span class="o">-</span> <span class="n">p_l</span> <span class="o">+</span> <span class="n">rho_l</span><span class="o">*</span><span class="n">u_l</span><span class="o">*</span><span class="p">(</span><span class="n">s_l</span> <span class="o">-</span> <span class="n">u_l</span><span class="p">)</span> <span class="o">-</span> <span class="n">rho_r</span><span class="o">*</span><span class="n">u_r</span><span class="o">*</span><span class="p">(</span><span class="n">s_r</span> <span class="o">-</span> <span class="n">u_r</span><span class="p">))</span>\
+  <span class="o">/</span> <span class="p">(</span><span class="n">rho_l</span><span class="o">*</span><span class="p">(</span><span class="n">s_l</span><span class="o">-</span><span class="n">u_l</span><span class="p">)</span> <span class="o">-</span> <span class="n">rho_r</span><span class="o">*</span><span class="p">(</span><span class="n">s_r</span> <span class="o">-</span> <span class="n">u_r</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>left middle state:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">q_hat_l</span><span class="p">[</span><span class="mi">0</span><span class="p">,:]</span> <span class="o">=</span> <span class="n">rho_l</span><span class="o">*</span><span class="p">(</span><span class="n">s_l</span> <span class="o">-</span> <span class="n">u_l</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">s_l</span> <span class="o">-</span> <span class="n">s_m</span><span class="p">)</span>
+<span class="n">q_hat_l</span><span class="p">[</span><span class="mi">1</span><span class="p">,:]</span> <span class="o">=</span> <span class="n">rho_l</span><span class="o">*</span><span class="p">(</span><span class="n">s_l</span> <span class="o">-</span> <span class="n">u_l</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">s_l</span> <span class="o">-</span> <span class="n">s_m</span><span class="p">)</span><span class="o">*</span><span class="n">s_m</span>
+<span class="n">q_hat_l</span><span class="p">[</span><span class="mi">2</span><span class="p">,:]</span> <span class="o">=</span> <span class="n">rho_l</span><span class="o">*</span><span class="p">(</span><span class="n">s_l</span> <span class="o">-</span> <span class="n">u_l</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">s_l</span> <span class="o">-</span> <span class="n">s_m</span><span class="p">)</span>\
+        <span class="o">*</span><span class="p">(</span><span class="n">E_l</span><span class="o">/</span><span class="n">rho_l</span> <span class="o">+</span> <span class="p">(</span><span class="n">s_m</span> <span class="o">-</span> <span class="n">u_l</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">s_m</span> <span class="o">+</span> <span class="n">p_l</span><span class="o">/</span><span class="p">(</span><span class="n">rho_l</span><span class="o">*</span><span class="p">(</span><span class="n">s_l</span> <span class="o">-</span> <span class="n">u_l</span><span class="p">))))</span>
+</pre></div>
+</div>
+<p>right middle state:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">q_hat_r</span><span class="p">[</span><span class="mi">0</span><span class="p">,:]</span> <span class="o">=</span> <span class="n">rho_r</span><span class="o">*</span><span class="p">(</span><span class="n">s_r</span> <span class="o">-</span> <span class="n">u_r</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">s_r</span> <span class="o">-</span> <span class="n">s_m</span><span class="p">)</span>
+<span class="n">q_hat_r</span><span class="p">[</span><span class="mi">1</span><span class="p">,:]</span> <span class="o">=</span> <span class="n">rho_r</span><span class="o">*</span><span class="p">(</span><span class="n">s_r</span> <span class="o">-</span> <span class="n">u_r</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">s_r</span> <span class="o">-</span> <span class="n">s_m</span><span class="p">)</span><span class="o">*</span><span class="n">s_m</span>
+<span class="n">q_hat_r</span><span class="p">[</span><span class="mi">2</span><span class="p">,:]</span> <span class="o">=</span> <span class="n">rho_r</span><span class="o">*</span><span class="p">(</span><span class="n">s_r</span> <span class="o">-</span> <span class="n">u_r</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">s_r</span> <span class="o">-</span> <span class="n">s_m</span><span class="p">)</span>\
+        <span class="o">*</span><span class="p">(</span><span class="n">E_r</span><span class="o">/</span><span class="n">rho_r</span> <span class="o">+</span> <span class="p">(</span><span class="n">s_m</span> <span class="o">-</span> <span class="n">u_r</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">s_m</span> <span class="o">+</span> <span class="n">p_r</span><span class="o">/</span><span class="p">(</span><span class="n">rho_r</span><span class="o">*</span><span class="p">(</span><span class="n">s_r</span> <span class="o">-</span> <span class="n">u_r</span><span class="p">))))</span>
+</pre></div>
+</div>
+<p><em>problem_data</em> should contain:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><em>gamma</em>: (float) Ratio of specific heat capacities</p></li>
+<li><p><em>gamma1</em>: (float) <span class="math notranslate nohighlight">\(\gamma - 1\)</span></p></li>
+</ul>
+</div></blockquote>
+<p>:Version 1.0 (2015-11-18)</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="clawpack.riemann.euler_1D_py.euler_roe_1D">
+<code class="sig-prename descclassname">clawpack.riemann.euler_1D_py.</code><code class="sig-name descname">euler_roe_1D</code><span class="sig-paren">(</span><em class="sig-param">q_l</em>, <em class="sig-param">q_r</em>, <em class="sig-param">aux_l</em>, <em class="sig-param">aux_r</em>, <em class="sig-param">problem_data</em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.riemann.euler_1D_py.euler_roe_1D" title="Permalink to this definition">¶</a></dt>
+<dd><p>Roe Euler solver in 1d</p>
+<dl class="simple">
+<dt><em>aug_global</em> should contain -</dt><dd><ul class="simple">
+<li><p><em>gamma</em> - (float) Ratio of the heat capacities</p></li>
+<li><p><em>gamma1</em> - (float) <span class="math notranslate nohighlight">\(1 - \gamma\)</span></p></li>
+<li><p><em>efix</em> - (bool) Whether to use an entropy fix or not</p></li>
+</ul>
+</dd>
+</dl>
+<p>See <a class="reference internal" href="#pyclaw-rp"><span class="std std-ref">Riemann Solver Package</span></a> for more details.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Version</dt>
+<dd class="field-odd"><p>1.0 (2009-6-26)</p>
+</dd>
+</dl>
+</dd></dl>
+
 </div>
 <div class="section" id="shallow-water-equations">
 <span id="id6"></span><h2><code class="xref py py-mod docutils literal notranslate"><span class="pre">Shallow</span> <span class="pre">Water</span> <span class="pre">Equations</span></code><a class="headerlink" href="#shallow-water-equations" title="Permalink to this headline">¶</a></h2>
+<span class="target" id="module-clawpack.riemann.shallow_1D_py"></span><p>Riemann solvers for the shallow water equations.</p>
+<dl class="simple">
+<dt>The available solvers are:</dt><dd><ul class="simple">
+<li><p>Roe - Use Roe averages to caluclate the solution to the Riemann problem</p></li>
+<li><p>HLL - Use a HLL solver</p></li>
+<li><dl class="simple">
+<dt>Exact - Use a newton iteration to calculate the exact solution to the</dt><dd><p>Riemann problem</p>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+</dl>
+<div class="math notranslate nohighlight">
+\[q_t + f(q)_x = 0\]</div>
+<p>where</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}q(x,t) = \left [ \begin{array}{c} h \\ h u \end{array} \right ],\end{split}\]</div>
+<p>the flux function is</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}f(q) = \left [ \begin{array}{c} h u \\ hu^2 + 1/2 g h^2 \end{array}\right ].\end{split}\]</div>
+<p>and <span class="math notranslate nohighlight">\(h\)</span> is the water column height, <span class="math notranslate nohighlight">\(u\)</span> the velocity and <span class="math notranslate nohighlight">\(g\)</span>
+is the gravitational acceleration.</p>
+<dl class="function">
+<dt id="clawpack.riemann.shallow_1D_py.shallow_exact_1D">
+<code class="sig-prename descclassname">clawpack.riemann.shallow_1D_py.</code><code class="sig-name descname">shallow_exact_1D</code><span class="sig-paren">(</span><em class="sig-param">q_l</em>, <em class="sig-param">q_r</em>, <em class="sig-param">aux_l</em>, <em class="sig-param">aux_r</em>, <em class="sig-param">problem_data</em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.riemann.shallow_1D_py.shallow_exact_1D" title="Permalink to this definition">¶</a></dt>
+<dd><p>Exact shallow water Riemann solver</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>This solver has not been implemented.</p>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="clawpack.riemann.shallow_1D_py.shallow_fwave_1d">
+<code class="sig-prename descclassname">clawpack.riemann.shallow_1D_py.</code><code class="sig-name descname">shallow_fwave_1d</code><span class="sig-paren">(</span><em class="sig-param">q_l</em>, <em class="sig-param">q_r</em>, <em class="sig-param">aux_l</em>, <em class="sig-param">aux_r</em>, <em class="sig-param">problem_data</em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.riemann.shallow_1D_py.shallow_fwave_1d" title="Permalink to this definition">¶</a></dt>
+<dd><p>Shallow water Riemann solver using fwaves</p>
+<p>Also includes support for bathymetry but be wary if you think you might have
+dry states as this has not been tested.</p>
+<dl class="simple">
+<dt><em>problem_data</em> should contain:</dt><dd><ul class="simple">
+<li><p><em>grav</em> - (float) Gravitational constant</p></li>
+<li><p><em>dry_tolerance</em> - (float) Set velocities to zero if h is below this
+tolerance.</p></li>
+<li><p><em>sea_level</em> - (float) Datum from which the dry-state is calculated.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Version</dt>
+<dd class="field-odd"><p>1.0 (2014-09-05)</p>
+</dd>
+<dt class="field-even">Version</dt>
+<dd class="field-even"><p>2.0 (2017-03-07)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="clawpack.riemann.shallow_1D_py.shallow_hll_1D">
+<code class="sig-prename descclassname">clawpack.riemann.shallow_1D_py.</code><code class="sig-name descname">shallow_hll_1D</code><span class="sig-paren">(</span><em class="sig-param">q_l</em>, <em class="sig-param">q_r</em>, <em class="sig-param">aux_l</em>, <em class="sig-param">aux_r</em>, <em class="sig-param">problem_data</em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.riemann.shallow_1D_py.shallow_hll_1D" title="Permalink to this definition">¶</a></dt>
+<dd><p>HLL shallow water solver</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">W_1</span> <span class="o">=</span> <span class="n">Q_hat</span> <span class="o">-</span> <span class="n">Q_l</span>    <span class="n">s_1</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">u_l</span><span class="o">-</span><span class="n">c_l</span><span class="p">,</span><span class="n">u_l</span><span class="o">+</span><span class="n">c_l</span><span class="p">,</span><span class="n">lambda_roe_1</span><span class="p">,</span><span class="n">lambda_roe_2</span><span class="p">)</span>
+<span class="n">W_2</span> <span class="o">=</span> <span class="n">Q_r</span> <span class="o">-</span> <span class="n">Q_hat</span>    <span class="n">s_2</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">u_r</span><span class="o">-</span><span class="n">c_r</span><span class="p">,</span><span class="n">u_r</span><span class="o">+</span><span class="n">c_r</span><span class="p">,</span><span class="n">lambda_roe_1</span><span class="p">,</span><span class="n">lambda_roe_2</span><span class="p">)</span>
+
+<span class="n">Q_hat</span> <span class="o">=</span> <span class="p">(</span> <span class="n">f</span><span class="p">(</span><span class="n">q_r</span><span class="p">)</span> <span class="o">-</span> <span class="n">f</span><span class="p">(</span><span class="n">q_l</span><span class="p">)</span> <span class="o">-</span> <span class="n">s_2</span> <span class="o">*</span> <span class="n">q_r</span> <span class="o">+</span> <span class="n">s_1</span> <span class="o">*</span> <span class="n">q_l</span> <span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">s_1</span> <span class="o">-</span> <span class="n">s_2</span><span class="p">)</span>
+</pre></div>
+</div>
+<dl class="simple">
+<dt><em>problem_data</em> should contain:</dt><dd><ul class="simple">
+<li><p><em>g</em> - (float) Gravitational constant</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Version</dt>
+<dd class="field-odd"><p>1.0 (2009-02-05)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="clawpack.riemann.shallow_1D_py.shallow_roe_1D">
+<code class="sig-prename descclassname">clawpack.riemann.shallow_1D_py.</code><code class="sig-name descname">shallow_roe_1D</code><span class="sig-paren">(</span><em class="sig-param">q_l</em>, <em class="sig-param">q_r</em>, <em class="sig-param">aux_l</em>, <em class="sig-param">aux_r</em>, <em class="sig-param">problem_data</em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.riemann.shallow_1D_py.shallow_roe_1D" title="Permalink to this definition">¶</a></dt>
+<dd><p>Roe shallow water solver in 1d:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ubar</span> <span class="o">=</span> <span class="p">(</span><span class="n">sqrt</span><span class="p">(</span><span class="n">u_l</span><span class="p">)</span> <span class="o">+</span> <span class="n">sqrt</span><span class="p">(</span><span class="n">u_r</span><span class="p">))</span> <span class="o">/</span> <span class="p">(</span><span class="n">sqrt</span><span class="p">(</span><span class="n">h_l</span><span class="p">)</span> <span class="o">+</span> <span class="n">sqrt</span><span class="p">(</span><span class="n">h_r</span><span class="p">))</span>
+<span class="n">cbar</span> <span class="o">=</span> <span class="n">sqrt</span><span class="p">(</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">g</span> <span class="o">*</span> <span class="p">(</span><span class="n">h_l</span> <span class="o">+</span> <span class="n">h_r</span><span class="p">))</span>
+
+<span class="n">W_1</span> <span class="o">=</span> <span class="o">|</span>      <span class="mi">1</span>      <span class="o">|</span>  <span class="n">s_1</span> <span class="o">=</span> <span class="n">ubar</span> <span class="o">-</span> <span class="n">cbar</span>
+      <span class="o">|</span> <span class="n">ubar</span> <span class="o">-</span> <span class="n">cbar</span> <span class="o">|</span>
+
+<span class="n">W_2</span> <span class="o">=</span> <span class="o">|</span>      <span class="mi">1</span>      <span class="o">|</span>  <span class="n">s_1</span> <span class="o">=</span> <span class="n">ubar</span> <span class="o">+</span> <span class="n">cbar</span>
+      <span class="o">|</span> <span class="n">ubar</span> <span class="o">+</span> <span class="n">cbar</span> <span class="o">|</span>
+
+<span class="n">a1</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="p">(</span> <span class="o">-</span> <span class="n">delta_hu</span> <span class="o">+</span> <span class="p">(</span><span class="n">ubar</span> <span class="o">+</span> <span class="n">cbar</span><span class="p">)</span> <span class="o">*</span> <span class="n">delta_h</span> <span class="p">)</span> <span class="o">/</span> <span class="n">cbar</span>
+<span class="n">a2</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="p">(</span>   <span class="n">delta_hu</span> <span class="o">-</span> <span class="p">(</span><span class="n">ubar</span> <span class="o">-</span> <span class="n">cbar</span><span class="p">)</span> <span class="o">*</span> <span class="n">delta_h</span> <span class="p">)</span> <span class="o">/</span> <span class="n">cbar</span>
+</pre></div>
+</div>
+<dl class="simple">
+<dt><em>problem_data</em> should contain:</dt><dd><ul class="simple">
+<li><p><em>g</em> - (float) Gravitational constant</p></li>
+<li><p><em>efix</em> - (bool) Boolean as to whether a entropy fix should be used, if
+not present, false is assumed</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Version</dt>
+<dd class="field-odd"><p>1.0 (2009-02-05)</p>
+</dd>
+</dl>
+</dd></dl>
+
 </div>
 </div>
 
@@ -242,7 +552,7 @@ $i-1/2$.  This follows the same convention used in the Fortran solvers.</p>
 <h4>Latest Version</h4>
 <ul>
   <li><a href="../../dev/pyclaw/rp.html">dev</a></li>
-  <li><a href="../../v5.7.0/pyclaw/rp.html">v5.7.0</a></li>
+  <li><a href="../../v5.7.x/pyclaw/rp.html">v5.7.x</a></li>
 </ul>
 <h4>Older Versions</h4>
 <ul>
@@ -255,6 +565,7 @@ $i-1/2$.  This follows the same convention used in the Fortran solvers.</p>
   <li><a href="../../v5.4.1/pyclaw/rp.html">v5.4.1</a></li>
   <li><a href="../../v5.5.0/pyclaw/rp.html">v5.5.0</a></li>
   <li><a href="rp.html">v5.6.0</a></li>
+  <li><a href="../../v5.6.1/pyclaw/rp.html">v5.6.1</a></li>
 </ul>
 
         </div>
