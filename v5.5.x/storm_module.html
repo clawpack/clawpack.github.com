@@ -1,0 +1,731 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>Storm Specification Class and Tools &#8212; Clawpack 5.5.0 documentation</title>
+    <link rel="stylesheet" href="_static/flasky.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/base.css" type="text/css" />
+    <link rel="stylesheet" href="_static/layout.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/graphviz.css" />
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <script async="async" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="shortcut icon" href="_static/clawicon.ico"/>
+    <link rel="author" title="About these documents" href="about.html" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+  </head><body>
+<div id="main-wrapper" class="sphinx">
+<div id="header-wrapper">
+  <section id="header">
+    <!-- <h1><a href="http://clawpack.org/">Clawpack</a></h1> -->
+    <h1><a href="http://clawpack.org/">Clawpack-5</a></h1> 
+    <nav>
+      <ul>
+        <li>
+          <a href="contents.html">Docs</a>
+        </li>
+        <li>
+          <a href="installing.html">Install</a>
+        </li>
+        <li>
+          <a class="" href="http://clawpack.org/gallery/index.html">Gallery</a>
+        </li>
+        <li>
+          <a href="about.html">Citation</a>
+        </li>
+        <li>
+          <a class="active" href="http://github.com/clawpack">GitHub</a>
+        </li>
+        <li>
+          <a class="" href="community.html">Community</a>
+        </li>
+        <li>
+          <a class="" href="developers.html">Contribute</a>
+        </li>
+      </ul>
+    </nav>
+  </section>
+<div class="decoration"></div>
+</div>
+
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="contents.html">Clawpack 5.5.0 documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="storm-specification-class-and-tools">
+<span id="storm-module"></span><h1>Storm Specification Class and Tools<a class="headerlink" href="#storm-specification-class-and-tools" title="Permalink to this headline">¶</a></h1>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>This describes new tools added in Clawpack 5.5</p>
+</div>
+<span class="target" id="module-clawpack.geoclaw.surge.storm"></span><p>Module defines a class and routines for managing storm best-track type input and
+testing reconstructed wind and pressure fields.  Additionally some support for
+ensembles of storms from various providers is also included.</p>
+<p>The primary class of interest in the module is the <cite>Storm</cite> class that
+facilitates dealing with various best-track formats found around the world and
+the expected GeoClaw storm format that is read into the FORTRAN code.  The basic
+workflow in a <cite>setrun.py</cite> file would do the following:</p>
+<ol class="arabic">
+<li><p>Create a <cite>Storm</cite> object by reading in from a file:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">storm</span> <span class="o">=</span> <span class="n">clawpack</span><span class="o">.</span><span class="n">geoclaw</span><span class="o">.</span><span class="n">surge</span><span class="o">.</span><span class="n">storm</span><span class="o">.</span><span class="n">Storm</span><span class="p">(</span><span class="s2">&quot;my_storm.txt&quot;</span><span class="p">,</span> <span class="n">file_format</span><span class="o">=</span><span class="s1">&#39;ATCF&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</li>
+<li><p>Write out the storm object created into the GeoClaw format:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">storm</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;my_geoclaw_storm.txt&quot;</span><span class="p">,</span> <span class="n">file_format</span><span class="o">=</span><span class="s2">&quot;geoclaw&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</li>
+<li><p>Specify the path to the GeoClaw formatted storm file, in this case
+“my_geoclaw_storm.txt”.</p></li>
+</ol>
+<dl class="field-list simple">
+<dt class="field-odd">Formats Supported</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p>GeoClaw (fully)</p></li>
+<li><p>ATCF (reading only)</p></li>
+<li><p>HURDAT (reading only)</p></li>
+<li><p>IBTrACS (reading only)</p></li>
+<li><p>JMA (reading only)</p></li>
+<li><p>IMD (planned)</p></li>
+<li><p>tcvitals (reading only)</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="exception">
+<dt id="clawpack.geoclaw.surge.storm.NoDataError">
+<em class="property">exception </em><code class="sig-prename descclassname">clawpack.geoclaw.surge.storm.</code><code class="sig-name descname">NoDataError</code><a class="headerlink" href="#clawpack.geoclaw.surge.storm.NoDataError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Exception to raise when no valid data in input file</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="clawpack.geoclaw.surge.storm.Storm">
+<em class="property">class </em><code class="sig-prename descclassname">clawpack.geoclaw.surge.storm.</code><code class="sig-name descname">Storm</code><span class="sig-paren">(</span><em class="sig-param">path=None</em>, <em class="sig-param">file_format='ATCF'</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.geoclaw.surge.storm.Storm" title="Permalink to this definition">¶</a></dt>
+<dd><p>Storm data object</p>
+<p>This object contains a time series of time data that describe a particular
+storm.  This includes the attributes below and the ability to read from
+multiple sources for data such as the U.S. National Hurricane Center (NHC),
+the Japanese Meterological Agency (JMA), and the Indian Meteorlogical
+Department (IMD).  This class can then write out in any of these formats,
+construct the wind and pressure fields using a supported parameterized
+model, or output the GeoClaw supported storm format used for running storm
+surge simulations.</p>
+<p><em>TODO:</em>  Add description of unit handling</p>
+<dl class="field-list simple">
+<dt class="field-odd">Attributes</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><em>t</em> (list(datetime.datetiem)) Contains the time at which each entry of
+the other arrays are at.  These are expected to be <em>datetime</em> objects.
+Note that when written some formats require a <em>time_offset</em> to be set.</p></li>
+<li><p><em>eye_location</em> (ndarray(:, :)) location of the eye of the storm.
+Default units are in signed decimcal longitude and latitude.</p></li>
+<li><p><em>max_wind_speed</em> (ndarray(:)) Maximum wind speed.  Default units are
+meters/second.</p></li>
+<li><p><em>max_wind_radius</em> (ndarray(:)) Radius at which the maximum wind speed
+occurs.  Default units are meters.</p></li>
+<li><p><em>central_pressure</em> (ndarray(:)) Central pressure of storm.  Default
+units are Pascals.</p></li>
+<li><p><em>storm_radius</em> (ndarray(:)) Radius of storm, often defined as the last
+closed iso-bar of pressure.  Default units are meters.</p></li>
+<li><p><em>time_offset</em> (datetime.datetime) A date time that as an offset for the
+simulation time.  This will default to the beginning of the first of the
+year that the first time point is found in.</p></li>
+<li><p><em>wind_speeds</em> (ndarray(:, :)) Wind speeds defined in every record, such
+as 34kt, 50kt, 64kt, etc and their radii. Default units are meters/second 
+and meters.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Initialization</dt>
+<dd class="field-even"><ol class="arabic simple">
+<li><p>Read in existing file at <em>path</em>.</p></li>
+<li><p>Construct an empty storm and supply the fields needed.  Note that these
+fields must be converted to the appropriate units.</p></li>
+</ol>
+</dd>
+<dt class="field-odd">Input</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><em>path</em> (string) Path to file to be read in if requested.</p></li>
+<li><p><em>file_format</em> (string) Format of file at path.  Default is “hurdat”</p></li>
+<li><p><em>kwargs</em> (dict) Other key-word arguments are passed to the appropriate
+read routine.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="method">
+<dt id="clawpack.geoclaw.surge.storm.Storm.category">
+<code class="sig-name descname">category</code><span class="sig-paren">(</span><em class="sig-param">categorization='NHC'</em>, <em class="sig-param">cat_names=False</em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.geoclaw.surge.storm.Storm.category" title="Permalink to this definition">¶</a></dt>
+<dd><p>Categorizes storm based on relevant storm data</p>
+<dl class="field-list simple">
+<dt class="field-odd">Input</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><em>categorization</em> (string) Type of categorization to use.  Defaults
+to the National Hurricane Center “NHC”.</p></li>
+<li><p><em>cat_names</em> (bool) If True returns the category name rather than a
+number.  Default to <em>False</em>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Output</dt>
+<dd class="field-even"><ul class="simple">
+<li><p>(ndarray) Integer array of categories at each time point of the
+storm.</p></li>
+<li><p>(list) Similar to the above but the name of the category as a
+<em>string</em>.  This is only returned if <em>car_names = True</em>.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="clawpack.geoclaw.surge.storm.Storm.plot">
+<code class="sig-name descname">plot</code><span class="sig-paren">(</span><em class="sig-param">axes=None</em>, <em class="sig-param">intensity=False</em>, <em class="sig-param">limits=None</em>, <em class="sig-param">track_color='red'</em>, <em class="sig-param">category_color=None</em>, <em class="sig-param">categorization='NHC'</em>, <em class="sig-param">plot_package=None</em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.geoclaw.surge.storm.Storm.plot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plot the track and optionally the intensity of the storm</p>
+<p>Easily plot the track and intensity of a storm using a mapping package.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Input</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><em>axes</em> (matplotlib.pyplot.axes) Axes to plot into.  Default is <em>None</em></p></li>
+<li><p><em>intensity</em> (bool) Plot the intensity of storm along the track.  
+Defaults to <em>False</em>.</p></li>
+<li><p><em>limits</em> (list) Limits of the plot specified.  Defaults to either 
+using the plotting package’s default or the max and min of the 
+longitude and latitude of the storm track.</p></li>
+<li><p><em>track_color</em> (str) String or specification of plotting color to use 
+for the track if <em>intensity</em> is not being plotted.</p></li>
+<li><p><em>category_color</em> (dict) Dictionary containing mapping between 
+category numerical value and colors.  Defaults to [0, 5] -&gt; [‘red’, 
+‘yellow’, ‘orange’, ‘green’, ‘blue’, ‘gray’]</p></li>
+<li><p><em>categorization</em> (str) Type of categorization, defaults to <em>“NHC”</em></p></li>
+<li><p><em>plot_package</em> (str) Package that will do the plotting.  Available 
+packages include ‘cartopy’, ‘basemap’ and ‘basic’.  Checks to see 
+what packages are available if None is given.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Output</dt>
+<dd class="field-even"><ul class="simple">
+<li><p>(matplotlib.pyplot.axes) Axes object that was plotted into.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="clawpack.geoclaw.surge.storm.Storm.read">
+<code class="sig-name descname">read</code><span class="sig-paren">(</span><em class="sig-param">path=None</em>, <em class="sig-param">file_format='atcf'</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.geoclaw.surge.storm.Storm.read" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read in storm data from <em>path</em> with format <em>file_format</em></p>
+<dl class="field-list simple">
+<dt class="field-odd">Input</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><em>path</em> (string) Path to data file.</p></li>
+<li><p><em>file_format</em> (string) Format of the data file.  See list of
+supported formats for a list of valid strings.  Defaults to
+“hurdat”.</p></li>
+<li><p><em>kwargs</em> (dict) Keyword dictionary for additional arguments that can
+be passed down to the appropriate read functions.  Please refer to
+the specific routine for a list of valid options.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><ul class="simple">
+<li><p><em>ValueError</em> If the <em>file_format</em> requested does not match any of
+the available supported formats a <em>ValueError</em> is raised.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="clawpack.geoclaw.surge.storm.Storm.read_atcf">
+<code class="sig-name descname">read_atcf</code><span class="sig-paren">(</span><em class="sig-param">path</em>, <em class="sig-param">verbose=False</em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.geoclaw.surge.storm.Storm.read_atcf" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read in a ATCF formatted storm file</p>
+<p>ATCF format has storm stored individually so there is no support for
+multiple storms in a particular file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Input</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><em>path</em> (string) Path to the file to be read.</p></li>
+<li><p><em>verbose</em> (bool) Output more info regarding reading.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="clawpack.geoclaw.surge.storm.Storm.read_geoclaw">
+<code class="sig-name descname">read_geoclaw</code><span class="sig-paren">(</span><em class="sig-param">path</em>, <em class="sig-param">verbose=False</em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.geoclaw.surge.storm.Storm.read_geoclaw" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read in a GeoClaw formatted storm file</p>
+<p>GeoClaw storm files are read in by the Fortran code and are not meant
+to be human readable.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Input</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><em>path</em> (string) Path to the file to be read.</p></li>
+<li><p><em>verbose</em> (bool) Output more info regarding reading.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="clawpack.geoclaw.surge.storm.Storm.read_hurdat">
+<code class="sig-name descname">read_hurdat</code><span class="sig-paren">(</span><em class="sig-param">path</em>, <em class="sig-param">verbose=False</em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.geoclaw.surge.storm.Storm.read_hurdat" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read in HURDAT formatted storm file</p>
+<p>This is the current version of HURDAT data available (HURDAT 2).  Note
+that this assumes there is only one storm in the file (includes the
+header information though).  Future features will be added that will allow for
+a file to be read with multiple storms defined.</p>
+<p>For more details on the HURDAT format and getting data see</p>
+<p><a class="reference external" href="http://www.aoml.noaa.gov/hrd/hurdat/Data_Storm.html">http://www.aoml.noaa.gov/hrd/hurdat/Data_Storm.html</a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Input</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><em>path</em> (string) Path to the file to be read.</p></li>
+<li><p><em>verbose</em> (bool) Output more info regarding reading.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><ul class="simple">
+<li><p><em>ValueError</em> If the method cannot find the name/year matching the
+storm or they are not provided when <em>single_storm == False</em> then a
+value error is risen.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="clawpack.geoclaw.surge.storm.Storm.read_ibtracs">
+<code class="sig-name descname">read_ibtracs</code><span class="sig-paren">(</span><em class="sig-param">path, sid=None, storm_name=None, year=None, start_date=None, agency_pref=['wmo', 'usa', 'tokyo', 'newdelhi', 'reunion', 'bom', 'nadi', 'wellington', 'cma', 'hko', 'ds824', 'td9636', 'td9635', 'neumann', 'mlc']</em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.geoclaw.surge.storm.Storm.read_ibtracs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read in IBTrACS formatted storm file</p>
+<p>This reads in the netcdf-formatted IBTrACS v4 data. You must either pass
+the <em>sid</em> of the storm (a unique identifier supplied by IBTrACS) OR
+<em>storm_name</em> and <em>year</em>. The latter will not be unique for unnamed storms,
+so you may optionally pass <em>start_date</em> as well. The <cite>wmo_*</cite> variable is
+used when non-missing, with missing values filled in by the corresponding
+variable of the agency specified in <cite>wmo_agency</cite> and/or <cite>usa_agency</cite>. If
+still missing, the other agencies are checked in order of <em>agency_pref</em> to
+see if any more non-missing values are available.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Input</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><em>path</em> (string) Path to the file to be read.</p></li>
+<li><dl class="simple">
+<dt><em>sid</em> (string, optional) IBTrACS-supplied unique track identifier.</dt><dd><p>Either <em>sid</em> OR <em>storm_name</em> and <em>year</em> must not be None.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><em>storm_name</em> (string, optional) name of storm of interest</dt><dd><p>(NAME field in IBTrACS). Either <em>sid</em> OR <em>storm_name</em> and
+<em>year</em> must not be None.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><em>year</em> (int, optional) year of storm of interest.</dt><dd><p>Either <em>sid</em> OR <em>storm_name</em> and <em>year</em> must not be None.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><em>start_date</em> (<code class="xref py py-class docutils literal notranslate"><span class="pre">datetime.datetime</span></code>, optional) If storm is not</dt><dd><p>named, will find closest unnamed storm to this start date. Only
+used for unnamed storms when specifying <em>storm_name</em> and <em>year</em>
+does not uniquely identify storm.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><em>agency_pref</em> (list, optional) Preference order to use if <cite>wmo_*</cite> variable</dt><dd><p>is missing and <cite>wmo_agency</cite> and <cite>usa_agency</cite> are also missing.</p>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><ul class="simple">
+<li><dl class="simple">
+<dt><em>ValueError</em> If the method cannot find the matching storm then a</dt><dd><p>value error is risen.</p>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="clawpack.geoclaw.surge.storm.Storm.read_imd">
+<code class="sig-name descname">read_imd</code><span class="sig-paren">(</span><em class="sig-param">path</em>, <em class="sig-param">verbose=False</em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.geoclaw.surge.storm.Storm.read_imd" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="simple">
+<dt>Extract relevant hurricane data from IMD file</dt><dd><p>and update storm fields with proper values.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Input</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><em>path</em> (string) Path to the file to be read.</p></li>
+</ul>
+</dd>
+</dl>
+<p>Return ValueError if format incorrect or if file not IMD.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="clawpack.geoclaw.surge.storm.Storm.read_jma">
+<code class="sig-name descname">read_jma</code><span class="sig-paren">(</span><em class="sig-param">path</em>, <em class="sig-param">verbose=False</em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.geoclaw.surge.storm.Storm.read_jma" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read in JMA formatted storm file</p>
+<p>Note that only files that contain one storm are currently supported.</p>
+<p>For more details on the JMA format and getting data see</p>
+<p><a class="reference external" href="http://www.jma.go.jp/jma/jma-eng/jma-center/rsmc-hp-pub-eg/Besttracks/e_format_bst.html">http://www.jma.go.jp/jma/jma-eng/jma-center/rsmc-hp-pub-eg/Besttracks/e_format_bst.html</a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Input</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><em>path</em> (string) Path to the file to be read.</p></li>
+<li><p><em>verbose</em> (bool) Output more info regarding reading.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><ul class="simple">
+<li><p><em>ValueError</em> If the method cannot find the name/year matching the
+storm or they are not provided when <em>single_storm == False</em> then a
+value error is risen.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="clawpack.geoclaw.surge.storm.Storm.read_tcvitals">
+<code class="sig-name descname">read_tcvitals</code><span class="sig-paren">(</span><em class="sig-param">path</em>, <em class="sig-param">verbose=False</em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.geoclaw.surge.storm.Storm.read_tcvitals" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="simple">
+<dt>Extract relevant hurricane data from TCVITALS file</dt><dd><p>and update storm fields with proper values.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Input</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><em>path</em> (string) Path to the file to be read.</p></li>
+<li><p><em>verbose</em> (bool) Output more info regarding reading.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="clawpack.geoclaw.surge.storm.Storm.write">
+<code class="sig-name descname">write</code><span class="sig-paren">(</span><em class="sig-param">path</em>, <em class="sig-param">file_format='geoclaw'</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.geoclaw.surge.storm.Storm.write" title="Permalink to this definition">¶</a></dt>
+<dd><p>Write out the storm data to <em>path</em> in format <em>file_format</em></p>
+<dl class="field-list simple">
+<dt class="field-odd">Input</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><em>path</em> (string) Path to data file.</p></li>
+<li><p><em>file_format</em> (string) Format of the data file.  See list of
+supported formats for a list of valid strings.  Defaults to
+“geoclaw”.</p></li>
+<li><p><em>kwargs</em> (dict) Keyword dictionary for additional arguments that can
+be passed down to the appropriate write functions.  Please refer to
+the specific routine for a list of valid options.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><ul class="simple">
+<li><p><em>ValueError</em> If the <em>file_format</em> requested does not match any of
+the available supported formats a <em>ValueError</em> is raised.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="clawpack.geoclaw.surge.storm.Storm.write_atcf">
+<code class="sig-name descname">write_atcf</code><span class="sig-paren">(</span><em class="sig-param">path</em>, <em class="sig-param">verbose=False</em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.geoclaw.surge.storm.Storm.write_atcf" title="Permalink to this definition">¶</a></dt>
+<dd><p>Write out a ATCF formatted storm file</p>
+<dl class="field-list simple">
+<dt class="field-odd">Input</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><em>path</em> (string) Path to the file to be written.</p></li>
+<li><p><em>verbose</em> (bool) Print out additional information when writing.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="clawpack.geoclaw.surge.storm.Storm.write_geoclaw">
+<code class="sig-name descname">write_geoclaw</code><span class="sig-paren">(</span><em class="sig-param">path</em>, <em class="sig-param">verbose=False</em>, <em class="sig-param">max_wind_radius_fill=None</em>, <em class="sig-param">storm_radius_fill=None</em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.geoclaw.surge.storm.Storm.write_geoclaw" title="Permalink to this definition">¶</a></dt>
+<dd><p>Write out a GeoClaw formatted storm file</p>
+<p>GeoClaw storm files are read in by the GeoClaw Fortran code.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Input</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><em>path</em> (string) Path to the file to be written.</p></li>
+<li><p><em>verbose</em> (bool) Print out additional information when writing.</p></li>
+<li><p><em>max_wind_radius_fill</em> (func) Function that can be used to fill in
+missing data for <cite>max_wind_radius</cite> values.  This defaults to simply
+setting the value to -1.  The function signature should be
+<cite>max_wind_radius(t, storm)</cite> where t is the time of the forecast and
+<cite>storm</cite> is the storm object.  Note that if this or <cite>storm_radius</cite>
+field remains -1 that this data line will be assumed to be redundant
+and not be written out.</p></li>
+<li><p><em>storm_radius_fill</em> (func) Function that can be used to fill in
+missing data for <cite>storm_radius</cite> values.  This defaults to simply
+setting the value to -1.  The function signature should be
+<cite>storm_radius(t, storm)</cite> where t is the time of the forecast and
+<cite>storm</cite> is the storm object.  Note that if this or <cite>max_wind_radius</cite>
+field remains -1 that this data line will be assumed to be redundant
+and not be written</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="clawpack.geoclaw.surge.storm.Storm.write_hurdat">
+<code class="sig-name descname">write_hurdat</code><span class="sig-paren">(</span><em class="sig-param">path</em>, <em class="sig-param">verbose=False</em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.geoclaw.surge.storm.Storm.write_hurdat" title="Permalink to this definition">¶</a></dt>
+<dd><p>Write out a HURDAT formatted storm file</p>
+<dl class="field-list simple">
+<dt class="field-odd">Input</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><em>path</em> (string) Path to the file to be written.</p></li>
+<li><p><em>verbose</em> (bool) Print out additional information when writing.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="clawpack.geoclaw.surge.storm.Storm.write_imd">
+<code class="sig-name descname">write_imd</code><span class="sig-paren">(</span><em class="sig-param">path</em>, <em class="sig-param">verbose=False</em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.geoclaw.surge.storm.Storm.write_imd" title="Permalink to this definition">¶</a></dt>
+<dd><p>Write out an IMD formatted storm file</p>
+<dl class="field-list simple">
+<dt class="field-odd">Input</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><em>path</em> (string) Path to the file to be written.</p></li>
+<li><p><em>verbose</em> (bool) Print out additional information when writing.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="clawpack.geoclaw.surge.storm.Storm.write_jma">
+<code class="sig-name descname">write_jma</code><span class="sig-paren">(</span><em class="sig-param">path</em>, <em class="sig-param">verbose=False</em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.geoclaw.surge.storm.Storm.write_jma" title="Permalink to this definition">¶</a></dt>
+<dd><p>Write out a JMA formatted storm file</p>
+<dl class="field-list simple">
+<dt class="field-odd">Input</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><em>path</em> (string) Path to the file to be written.</p></li>
+<li><p><em>verbose</em> (bool) Print out additional information when writing.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="clawpack.geoclaw.surge.storm.Storm.write_tcvitals">
+<code class="sig-name descname">write_tcvitals</code><span class="sig-paren">(</span><em class="sig-param">path</em>, <em class="sig-param">verbose=False</em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.geoclaw.surge.storm.Storm.write_tcvitals" title="Permalink to this definition">¶</a></dt>
+<dd><p>Write out an TCVITALS formatted storm file</p>
+<dl class="field-list simple">
+<dt class="field-odd">Input</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><em>path</em> (string) Path to the file to be written.</p></li>
+<li><p><em>verbose</em> (bool) Print out additional information when writing.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="clawpack.geoclaw.surge.storm.available_formats">
+<code class="sig-prename descclassname">clawpack.geoclaw.surge.storm.</code><code class="sig-name descname">available_formats</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.geoclaw.surge.storm.available_formats" title="Permalink to this definition">¶</a></dt>
+<dd><p>Construct a string suitable for listing available storm file formats.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="clawpack.geoclaw.surge.storm.available_models">
+<code class="sig-prename descclassname">clawpack.geoclaw.surge.storm.</code><code class="sig-name descname">available_models</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.geoclaw.surge.storm.available_models" title="Permalink to this definition">¶</a></dt>
+<dd><p>Construct a string suitable for listing available storm models.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="clawpack.geoclaw.surge.storm.fill_rad_w_other_source">
+<code class="sig-prename descclassname">clawpack.geoclaw.surge.storm.</code><code class="sig-name descname">fill_rad_w_other_source</code><span class="sig-paren">(</span><em class="sig-param">t</em>, <em class="sig-param">storm_targ</em>, <em class="sig-param">storm_fill</em>, <em class="sig-param">var</em>, <em class="sig-param">interp_kwargs={}</em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.geoclaw.surge.storm.fill_rad_w_other_source" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fill in storm radius variable (<em>max_wind_radius</em> or <em>storm_radius</em>) with values from another source. i.e.
+if you have missing radii in IBTrACS, you can fill with ATCF.
+This function will assume <em>storm_fill</em> has more non-missing
+values than <em>storm_targ</em> for this particular radius variable.
+Thus, it first attempts to interpolate the variable in <em>storm_fill</em>
+to the desired timestep. If that is missing, it tries to interpolate
+the non-missing values of the variable in <em>storm_targ</em>. If that
+also fails, it simply returns -1. The proper usage of this
+function is to wrap it such that you can pass a function
+with (<em>t</em>, <em>storm</em>) arguments to <em>max_wind_radius_fill</em> or
+<em>storm_radius_fill</em> when calling <em>write_geoclaw</em>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Input</dt>
+<dd class="field-odd"><p></p></dd>
+</dl>
+<div class="system-message">
+<p class="system-message-title">System Message: WARNING/2 (<span class="docutils literal">/Users/rjl/clawpack_src/clawpack_master/clawpack/geoclaw/surge/storm.py:docstring of clawpack.geoclaw.surge.storm.fill_rad_w_other_source</span>, line 15)</p>
+<p>Field list ends without a blank line; unexpected unindent.</p>
+</div>
+<ul class="simple">
+<li><dl class="simple">
+<dt><em>t</em> (<code class="xref py py-class docutils literal notranslate"><span class="pre">datetime.datetime</span></code>) the time corresponding to</dt><dd><p>a missing value of <em>max_wind_radius</em> or <em>storm_radius</em></p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><em>storm_targ</em> (<code class="xref py py-class docutils literal notranslate"><span class="pre">clawpack.geoclaw.storm.Storm</span></code>) storm</dt><dd><p>that has missing values you want to fill</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><em>storm_fill</em> (<code class="xref py py-class docutils literal notranslate"><span class="pre">clawpack.geoclaw.storm.Storm</span></code>) storm</dt><dd><p>that has non-missing values you want to use to fill <em>storm_targ</em></p>
+</dd>
+</dl>
+</li>
+<li><p><em>var</em> (str) Either ‘max_wind_radius’ or ‘storm_radius’</p></li>
+<li><dl class="simple">
+<dt><em>interp_kwargs</em> (dict) Additional keywords passed to scipy’s</dt><dd><p>interpolator.</p>
+</dd>
+</dl>
+</li>
+</ul>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p></p></dd>
+</dl>
+<div class="system-message">
+<p class="system-message-title">System Message: WARNING/2 (<span class="docutils literal">/Users/rjl/clawpack_src/clawpack_master/clawpack/geoclaw/surge/storm.py:docstring of clawpack.geoclaw.surge.storm.fill_rad_w_other_source</span>, line 26)</p>
+<p>Field list ends without a blank line; unexpected unindent.</p>
+</div>
+<ul class="simple">
+<li><dl class="simple">
+<dt>(float) value to use to fill this time point in <em>storm_targ</em>. -1</dt><dd><p>if still missing after using <em>storm_fill</em> to fill.</p>
+</dd>
+</dl>
+</li>
+</ul>
+<dl class="field-list simple">
+<dt class="field-odd">Examples</dt>
+<dd class="field-odd"><p></p></dd>
+</dl>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">storm_ibtracs</span> <span class="o">=</span> <span class="n">Storm</span><span class="p">(</span><span class="n">file_format</span><span class="o">=</span><span class="s1">&#39;IBTrACS&#39;</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="s1">&#39;path_to_ibtracs.nc&#39;</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">sid</span><span class="o">=</span><span class="s1">&#39;2018300N26315&#39;</span><span class="p">)</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">storm_atcf</span> <span class="o">=</span> <span class="n">Storm</span><span class="p">(</span><span class="n">file_format</span><span class="o">=</span><span class="s1">&#39;ATCF&#39;</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="s1">&#39;path_to_atcf.dat&#39;</span><span class="p">)</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">fill_mwr</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">storm</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="k">return</span> <span class="n">fill_rad_w_other_source</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">storm</span><span class="p">,</span> <span class="n">storm_atcf</span><span class="p">,</span> <span class="s1">&#39;max_wind_radius&#39;</span><span class="p">)</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">storm_ibtracs</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">file_format</span> <span class="o">=</span> <span class="s1">&#39;geoclaw&#39;</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">path</span> <span class="o">=</span> <span class="s1">&#39;out_path.storm&#39;</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">max_wind_radius_fill</span> <span class="o">=</span> <span class="n">fill_mwr</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<p><a href="http://clawpack.org/">
+    <img class="logo" src= "_static/clawlogo.jpg" alt="Logo"/>
+</a>
+<h2>Version 5.5.0</h2>
+</p><h3>Related Topics</h3>
+<ul>
+  <li><a href="contents.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+<div class="widget navlinks">
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/storm_module.rst.txt"
+            rel="nofollow"
+            target="_blank">Source .rst</a></li>
+    <li><a href="https://github.com/clawpack/doc/blob/dev/doc/storm_module.rst"
+            rel="nofollow"
+            target="_blank">Source on GitHub</a></li>
+     <li><a href="https://github.com/clawpack/doc/commits/dev/doc/storm_module.rst"
+             rel="nofollow"
+             target="_blank">History</a></li>
+    <li><a href="https://github.com/clawpack/doc/edit/dev/doc/storm_module.rst"
+            rel="nofollow"
+            target="_blank">Suggest Edits</a></li>
+     <li><a href="https://github.com/clawpack/doc/issues/new/choose"
+             rel="nofollow"
+             target="_blank">Raise an Issue</a></li>
+  </ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+<h4>Latest Version</h4>
+<ul>
+  <li><a href="../dev/storm_module.html">dev</a></li>
+  <li><a href="../v5.7.x/storm_module.html">v5.7.x</a></li>
+</ul>
+<h4>Older Versions</h4>
+<ul>
+  <li><a href="../v5.1.x/index.html">v5.1.x</a></li>
+  <li><a href="../v5.2.x/index.html">v5.2.x</a></li>
+  <li><a href="../v5.3.x/index.html">v5.3.x</a></li>
+  <li><a href="../v5.4.x/index.html">v5.4.x</a></li>
+  <li><a href="storm_module.html">v5.5.x</a></li>
+  <li><a href="../v5.6.x/storm_module.html">v5.6.x</a></li>
+</ul>
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+  <div class="footer">
+    &copy; Copyright CC-BY 2020, The Clawpack Development Team.
+    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
+  </div>
+  <script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-44811544-1', 'auto');
+  ga('send', 'pageview');
+
+  </script>
+  
+  </body>
+</html>

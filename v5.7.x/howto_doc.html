@@ -95,7 +95,7 @@ related to the gallery are in <cite>$CLAW/doc/gallery</cite>.  As of Version
 5.4.1, these two subdirectories are separate Sphinx projects</p>
 <p>They used to be connected using
 <a class="reference external" href="http://www.sphinx-doc.org/en/stable/ext/intersphinx.html">intersphinx</a>.
-but this was dropped in v5.7.0.</p>
+but this was dropped in v5.7.x.</p>
 <p>The general look of the documentation and various things that appear on each
 page are controlled by the following files:</p>
 <blockquote>
@@ -103,10 +103,9 @@ page are controlled by the following files:</p>
 <li><p><cite>conf.py</cite> includes the version number, sets the <cite>html_theme</cite>, as well as
 setting paths to extensions and various other sphinx settings.</p></li>
 <li><p><cite>_themes/flask_local/layout.html</cite> determines the menus at the top</p></li>
-<li><p><cite>_themes/flask_web/layout.html</cite> version used for building for the web,
-is the same except for different relative link to the galleries.</p></li>
 <li><p><cite>_static/clawlogo.jpg</cite> is the Clawpack logo put on each page</p></li>
 <li><p><cite>_static/clawicon.ico</cite> is the icon that appears on browser tabs</p></li>
+<li><p><cite>_templates/index.html</cite> contains the main landing page</p></li>
 </ul>
 </div></blockquote>
 <p>Before proceeding, first make sure other repositories are checked out to
@@ -115,7 +114,11 @@ master, since some pages now have literalinclude’s that bring in code
 <p>To create html files from the dev branch only, for example:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>cd $CLAW/doc/doc
 git checkout dev
-sphinx-build -b html . _build1/html
+make html
+</pre></div>
+</div>
+<p>The <cite>Makefile</cite> has been modified so that <cite>make html</cite> does this:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sphinx</span><span class="o">-</span><span class="n">build</span> <span class="o">-</span><span class="n">b</span> <span class="n">html</span> <span class="o">.</span> <span class="n">_build1</span><span class="o">/</span><span class="n">html</span>
 </pre></div>
 </div>
 <p>To view the files, point your browser to <cite>$CLAW/doc/doc/_build1/html/index.html</cite></p>
@@ -131,7 +134,7 @@ documentation based on files in your working directory.</p>
 versions.</p>
 <p>The instructions below make webpages that list v5.4.0, etc. and allow
 viewing docs that may be more relevant to a previous version of Clawpack.</p>
-<p>As of v5.7.0, we are now using
+<p>As of v5.7.x, we are now using
 <a class="reference external" href="https://holzhaus.github.io/sphinx-multiversion/master/index.html">sphinx-multiversion</a>
 instead of
 <a class="reference external" href="https://github.com/sphinx-contrib/sphinxcontrib-versioning">sphinxcontrib-versioning</a>.</p>
@@ -141,7 +144,11 @@ instead of
 committed to some branch (normally <cite>dev</cite> if you have been adding something new).</p>
 <p>And then do this:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>cd $CLAW/doc/doc
-sphinx-multiversion . _build/html
+make versions
+</pre></div>
+</div>
+<p>The <cite>Makefile</cite> has been modified so that <cite>make versions</cite> does this:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sphinx</span><span class="o">-</span><span class="n">multiversion</span> <span class="o">.</span> <span class="n">_build</span><span class="o">/</span><span class="n">html</span>
 </pre></div>
 </div>
 <p>To view the files, point your browser to <cite>_build/html/dev/index.html</cite>
@@ -151,7 +158,7 @@ rather than the versions on Github.  It lists only two branches under “Latest
 Versions” and all tags as “Older Versions”.
 The two branches are set to <cite>dev</cite> and the most
 recent version, by this line of <cite>conf.py</cite>:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">smv_branch_whitelist</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;v5.6.1|dev&#39;</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">smv_branch_whitelist</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;v5.7.x|dev&#39;</span>
 </pre></div>
 </div>
 <p>This should be updated for a new version.</p>
@@ -167,7 +174,8 @@ on <cite>dev</cite>, for example, takes you to <a class="reference external" hre
 </ul>
 <p>This can be done as follows:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>cd $CLAW/doc/doc/_build/html
-cp v5.6.1/*.html .   # replacing v5.6.1 with the current version
+rm -f *.html         # remove the html file with bad sidebars
+cp -r v5.7.x/* .   # replacing v5.7.x with the current version
 python ../../fix_links_top_level.py
 </pre></div>
 </div>
@@ -328,16 +336,12 @@ have not been copied to Github.</p>
 </ul>
 <h4>Older Versions</h4>
 <ul>
-  <li><a href="../v5.1.0/howto_doc.html">v5.1.0</a></li>
-  <li><a href="../v5.2.0/howto_doc.html">v5.2.0</a></li>
-  <li><a href="../v5.2.1/howto_doc.html">v5.2.1</a></li>
-  <li><a href="../v5.3.0/howto_doc.html">v5.3.0</a></li>
-  <li><a href="../v5.3.1/howto_doc.html">v5.3.1</a></li>
-  <li><a href="../v5.4.0/howto_doc.html">v5.4.0</a></li>
-  <li><a href="../v5.4.1/howto_doc.html">v5.4.1</a></li>
-  <li><a href="../v5.5.0/howto_doc.html">v5.5.0</a></li>
-  <li><a href="../v5.6.0/howto_doc.html">v5.6.0</a></li>
-  <li><a href="../v5.6.1/howto_doc.html">v5.6.1</a></li>
+  <li><a href="../v5.1.x/howto_doc.html">v5.1.x</a></li>
+  <li><a href="../v5.2.x/howto_doc.html">v5.2.x</a></li>
+  <li><a href="../v5.3.x/howto_doc.html">v5.3.x</a></li>
+  <li><a href="../v5.4.x/howto_doc.html">v5.4.x</a></li>
+  <li><a href="../v5.5.x/howto_doc.html">v5.5.x</a></li>
+  <li><a href="../v5.6.x/howto_doc.html">v5.6.x</a></li>
 </ul>
 
         </div>

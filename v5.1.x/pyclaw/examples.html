@@ -1,0 +1,292 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>Working with PyClaw’s built-in examples &#8212; Clawpack 5.1.0 documentation</title>
+    <link rel="stylesheet" href="../_static/flasky.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/base.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/layout.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script async="async" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="shortcut icon" href="../_static/clawicon.ico"/>
+    <link rel="author" title="About these documents" href="../about.html" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Plotting PyClaw results" href="plotting.html" />
+    <link rel="prev" title="PyClaw tutorial: Solve the acoustics equations" href="tutorial.html" /> 
+  </head><body>
+<div id="main-wrapper" class="sphinx">
+<div id="header-wrapper">
+  <section id="header">
+    <!-- <h1><a href="http://clawpack.org/">Clawpack</a></h1> -->
+    <h1><a href="http://clawpack.org/">Clawpack-5</a></h1> 
+    <nav>
+      <ul>
+        <li>
+          <a href="../contents.html">Docs</a>
+        </li>
+        <li>
+          <a href="../installing.html">Install</a>
+        </li>
+        <li>
+          <a class="" href="http://clawpack.org/gallery/index.html">Gallery</a>
+        </li>
+        <li>
+          <a href="../about.html">Citation</a>
+        </li>
+        <li>
+          <a class="active" href="http://github.com/clawpack">GitHub</a>
+        </li>
+        <li>
+          <a class="" href="../community.html">Community</a>
+        </li>
+        <li>
+          <a class="" href="../developers.html">Contribute</a>
+        </li>
+      </ul>
+    </nav>
+  </section>
+<div class="decoration"></div>
+</div>
+
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="plotting.html" title="Plotting PyClaw results"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="tutorial.html" title="PyClaw tutorial: Solve the acoustics equations"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../contents.html">Clawpack 5.1.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" >Pyclaw</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="basics.html" accesskey="U">PyClaw Basics</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="working-with-pyclaw-s-built-in-examples">
+<span id="examples"></span><h1>Working with PyClaw’s built-in examples<a class="headerlink" href="#working-with-pyclaw-s-built-in-examples" title="Permalink to this headline">¶</a></h1>
+<p>PyClaw comes with many example problem scripts that can be
+accessed from the module <cite>clawpack.pyclaw.examples</cite>.
+If you have downloaded the PyClaw source, you can find them
+in the directory <cite>clawpack/pyclaw/examples/</cite>.
+These examples demonstrate the kinds of things that can be done
+with PyClaw and are a great way to learn how to use PyClaw.</p>
+<div class="section" id="running-and-plotting-examples">
+<h2>Running and plotting examples<a class="headerlink" href="#running-and-plotting-examples" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="interactively-in-ipython">
+<h3>Interactively in IPython<a class="headerlink" href="#interactively-in-ipython" title="Permalink to this headline">¶</a></h3>
+<dl class="simple">
+<dt>::</dt><dd><p>from clawpack.pyclaw import examples
+claw = examples.shock_bubble_interaction.setup()
+claw.run()
+claw.plot()</p>
+</dd>
+</dl>
+<p>To run and plot a different example, simply replace <cite>shock_bubble_interaction</cite>
+with another example name.  A number of keyword arguments may be passed to
+the setup function; see its docstring for details.
+These usually include the following:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">use_petsc</span></code>: set to 1 to run in parallel</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">solver_type</span></code>: set to classic or sharpclaw</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">iplot</span></code>: set to 1 to automatically launch interactive plotting after running.
+Note that this shouldn’t be used in parallel, as every process will try to plot.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">htmlplot</span></code>: set to 1 to automatically create HTML plot pages after running.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">outdir</span></code>: the name of the subdirectory in which to put output files.  Defaults to
+‘./_output’.</p></li>
+</ul>
+</div></blockquote>
+</div>
+<div class="section" id="from-the-command-line">
+<h3>From the command line<a class="headerlink" href="#from-the-command-line" title="Permalink to this headline">¶</a></h3>
+<p>If you have downloaded the Clawpack source, you can run
+the examples from the command line.
+Simply do the following at the command prompt:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ cd clawpack/pyclaw/examples/acoustics_1d_homogeneous
+$ python acoustics.py iplot=1
+</pre></div>
+</div>
+<p>You can run any of the examples similarly by going to the appropriate directory and
+executing the Python script.  For convenience, the scripts are set up to pass any
+command-line options as arguments to the setup function.</p>
+</div>
+</div>
+<div class="section" id="list-of-built-in-examples">
+<h2>List of built-in examples<a class="headerlink" href="#list-of-built-in-examples" title="Permalink to this headline">¶</a></h2>
+<p>You can see results from many of the examples in the <a class="reference internal" href="../galleries.html#galleries"><span class="std std-ref">Galleries of all Clawpack applications</span></a>.</p>
+<div class="system-message">
+<p class="system-message-title">System Message: WARNING/2 (<span class="docutils literal">/var/folders/_s/dx0xgftn3_x04rdx0_w5nq7w0000gn/T/tmpjb159ldu/6c7c4a351d3bdc60fa855e7f5fa7fcf9fa1676ae/pyclaw/examples.rst</span>, line 62)</p>
+<p>toctree glob pattern ‘gallery/*adv*’ didn’t match any documents</p>
+</div>
+<div class="system-message">
+<p class="system-message-title">System Message: WARNING/2 (<span class="docutils literal">/var/folders/_s/dx0xgftn3_x04rdx0_w5nq7w0000gn/T/tmpjb159ldu/6c7c4a351d3bdc60fa855e7f5fa7fcf9fa1676ae/pyclaw/examples.rst</span>, line 62)</p>
+<p>toctree glob pattern ‘gallery/*acoust*’ didn’t match any documents</p>
+</div>
+<div class="system-message">
+<p class="system-message-title">System Message: WARNING/2 (<span class="docutils literal">/var/folders/_s/dx0xgftn3_x04rdx0_w5nq7w0000gn/T/tmpjb159ldu/6c7c4a351d3bdc60fa855e7f5fa7fcf9fa1676ae/pyclaw/examples.rst</span>, line 62)</p>
+<p>toctree glob pattern ‘gallery/*burg*’ didn’t match any documents</p>
+</div>
+<div class="system-message">
+<p class="system-message-title">System Message: WARNING/2 (<span class="docutils literal">/var/folders/_s/dx0xgftn3_x04rdx0_w5nq7w0000gn/T/tmpjb159ldu/6c7c4a351d3bdc60fa855e7f5fa7fcf9fa1676ae/pyclaw/examples.rst</span>, line 62)</p>
+<p>toctree glob pattern ‘gallery/*shallow*’ didn’t match any documents</p>
+</div>
+<div class="system-message">
+<p class="system-message-title">System Message: WARNING/2 (<span class="docutils literal">/var/folders/_s/dx0xgftn3_x04rdx0_w5nq7w0000gn/T/tmpjb159ldu/6c7c4a351d3bdc60fa855e7f5fa7fcf9fa1676ae/pyclaw/examples.rst</span>, line 62)</p>
+<p>toctree glob pattern ‘gallery/*blast*’ didn’t match any documents</p>
+</div>
+<div class="system-message">
+<p class="system-message-title">System Message: WARNING/2 (<span class="docutils literal">/var/folders/_s/dx0xgftn3_x04rdx0_w5nq7w0000gn/T/tmpjb159ldu/6c7c4a351d3bdc60fa855e7f5fa7fcf9fa1676ae/pyclaw/examples.rst</span>, line 62)</p>
+<p>toctree glob pattern ‘gallery/*shock*’ didn’t match any documents</p>
+</div>
+<div class="system-message">
+<p class="system-message-title">System Message: WARNING/2 (<span class="docutils literal">/var/folders/_s/dx0xgftn3_x04rdx0_w5nq7w0000gn/T/tmpjb159ldu/6c7c4a351d3bdc60fa855e7f5fa7fcf9fa1676ae/pyclaw/examples.rst</span>, line 62)</p>
+<p>toctree glob pattern ‘gallery/*psystem*’ didn’t match any documents</p>
+</div>
+<div class="system-message">
+<p class="system-message-title">System Message: WARNING/2 (<span class="docutils literal">/var/folders/_s/dx0xgftn3_x04rdx0_w5nq7w0000gn/T/tmpjb159ldu/6c7c4a351d3bdc60fa855e7f5fa7fcf9fa1676ae/pyclaw/examples.rst</span>, line 62)</p>
+<p>toctree glob pattern ‘gallery/*Rossby*’ didn’t match any documents</p>
+</div>
+<div class="system-message">
+<p class="system-message-title">System Message: WARNING/2 (<span class="docutils literal">/var/folders/_s/dx0xgftn3_x04rdx0_w5nq7w0000gn/T/tmpjb159ldu/6c7c4a351d3bdc60fa855e7f5fa7fcf9fa1676ae/pyclaw/examples.rst</span>, line 62)</p>
+<p>toctree glob pattern ‘gallery/*dam*’ didn’t match any documents</p>
+</div>
+<div class="system-message">
+<p class="system-message-title">System Message: WARNING/2 (<span class="docutils literal">/var/folders/_s/dx0xgftn3_x04rdx0_w5nq7w0000gn/T/tmpjb159ldu/6c7c4a351d3bdc60fa855e7f5fa7fcf9fa1676ae/pyclaw/examples.rst</span>, line 62)</p>
+<p>toctree contains reference to nonexisting document ‘pyclaw/gallery/kpp’</p>
+</div>
+<div class="system-message">
+<p class="system-message-title">System Message: WARNING/2 (<span class="docutils literal">/var/folders/_s/dx0xgftn3_x04rdx0_w5nq7w0000gn/T/tmpjb159ldu/6c7c4a351d3bdc60fa855e7f5fa7fcf9fa1676ae/pyclaw/examples.rst</span>, line 62)</p>
+<p>toctree contains reference to nonexisting document ‘pyclaw/gallery/stegoton’</p>
+</div>
+<div class="toctree-wrapper compound">
+</div>
+</div>
+<div class="section" id="adding-new-examples">
+<h2>Adding new examples<a class="headerlink" href="#adding-new-examples" title="Permalink to this headline">¶</a></h2>
+<p>If you have used PyClaw, we’d love to add your application to the built-in scripts.
+Please contact us on the <a class="reference external" href="http://http://groups.google.com/group/claw-users">claw-users Google group</a>.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<p><a href="http://clawpack.org/">
+    <img class="logo" src= "../_static/clawlogo.jpg" alt="Logo"/>
+</a>
+<h2>Version 5.1.0</h2>
+</p>
+  <h3><a href="../contents.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Working with PyClaw’s built-in examples</a><ul>
+<li><a class="reference internal" href="#running-and-plotting-examples">Running and plotting examples</a><ul>
+<li><a class="reference internal" href="#interactively-in-ipython">Interactively in IPython</a></li>
+<li><a class="reference internal" href="#from-the-command-line">From the command line</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#list-of-built-in-examples">List of built-in examples</a></li>
+<li><a class="reference internal" href="#adding-new-examples">Adding new examples</a></li>
+</ul>
+</li>
+</ul>
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../contents.html">Documentation overview</a><ul>
+  <li><a href="index.html">Pyclaw</a><ul>
+  <li><a href="basics.html">PyClaw Basics</a><ul>
+      <li>Previous: <a href="tutorial.html" title="previous chapter">PyClaw tutorial: Solve the acoustics equations</a></li>
+      <li>Next: <a href="plotting.html" title="next chapter">Plotting PyClaw results</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+<div class="widget navlinks">
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../_sources/pyclaw/examples.rst.txt"
+            rel="nofollow"
+            target="_blank">Source .rst</a></li>
+    <li><a href="https://github.com/clawpack/doc/blob/dev/doc/pyclaw/examples.rst"
+            rel="nofollow"
+            target="_blank">Source on GitHub</a></li>
+     <li><a href="https://github.com/clawpack/doc/commits/dev/doc/pyclaw/examples.rst"
+             rel="nofollow"
+             target="_blank">History</a></li>
+    <li><a href="https://github.com/clawpack/doc/edit/dev/doc/pyclaw/examples.rst"
+            rel="nofollow"
+            target="_blank">Suggest Edits</a></li>
+     <li><a href="https://github.com/clawpack/doc/issues/new/choose"
+             rel="nofollow"
+             target="_blank">Raise an Issue</a></li>
+  </ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+<h4>Latest Version</h4>
+<ul>
+  <li><a href="../../dev/pyclaw/examples.html">dev</a></li>
+  <li><a href="../../v5.7.x/pyclaw/examples.html">v5.7.x</a></li>
+</ul>
+<h4>Older Versions</h4>
+<ul>
+  <li><a href="examples.html">v5.1.x</a></li>
+  <li><a href="../../v5.2.x/pyclaw/examples.html">v5.2.x</a></li>
+  <li><a href="../../v5.3.x/pyclaw/examples.html">v5.3.x</a></li>
+  <li><a href="../../v5.4.x/pyclaw/examples.html">v5.4.x</a></li>
+  <li><a href="../../v5.5.x/pyclaw/examples.html">v5.5.x</a></li>
+  <li><a href="../../v5.6.x/pyclaw/examples.html">v5.6.x</a></li>
+</ul>
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+  <div class="footer">
+    &copy; Copyright CC-BY 2020, The Clawpack Development Team.
+    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
+  </div>
+  <script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-44811544-1', 'auto');
+  ga('send', 'pageview');
+
+  </script>
+  
+  </body>
+</html>
