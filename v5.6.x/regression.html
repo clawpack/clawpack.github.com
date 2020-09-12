@@ -1,0 +1,392 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>Regression testing &#8212; Clawpack 5.6.1 documentation</title>
+    <link rel="stylesheet" href="_static/flasky.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/base.css" type="text/css" />
+    <link rel="stylesheet" href="_static/layout.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/graphviz.css" />
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <script async="async" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="shortcut icon" href="_static/clawicon.ico"/>
+    <link rel="author" title="About these documents" href="about.html" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Keeping track of repository versions with Git" href="git_versions.html" />
+    <link rel="prev" title="Guide for doing a Clawpack release" href="howto_release.html" /> 
+  </head><body>
+<div id="main-wrapper" class="sphinx">
+<div id="header-wrapper">
+  <section id="header">
+    <!-- <h1><a href="http://clawpack.org/">Clawpack</a></h1> -->
+    <h1><a href="http://clawpack.org/">Clawpack-5</a></h1> 
+    <nav>
+      <ul>
+        <li>
+          <a href="contents.html">Docs</a>
+        </li>
+        <li>
+          <a href="installing.html">Install</a>
+        </li>
+        <li>
+          <a class="" href="http://clawpack.org/gallery/index.html">Gallery</a>
+        </li>
+        <li>
+          <a href="about.html">Citation</a>
+        </li>
+        <li>
+          <a class="active" href="http://github.com/clawpack">GitHub</a>
+        </li>
+        <li>
+          <a class="" href="community.html">Community</a>
+        </li>
+        <li>
+          <a class="" href="developers.html">Contribute</a>
+        </li>
+      </ul>
+    </nav>
+  </section>
+<div class="decoration"></div>
+</div>
+
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="git_versions.html" title="Keeping track of repository versions with Git"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="howto_release.html" title="Guide for doing a Clawpack release"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="contents.html">Clawpack 5.6.1 documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="regression-testing">
+<span id="regression"></span><h1><a class="toc-backref" href="#id3">Regression testing</a><a class="headerlink" href="#regression-testing" title="Permalink to this headline">¶</a></h1>
+<div class="contents topic" id="contents">
+<p class="topic-title">Contents</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#regression-testing" id="id3">Regression testing</a></p>
+<ul>
+<li><p><a class="reference internal" href="#running-the-tests" id="id4">Running the tests</a></p></li>
+<li><p><a class="reference internal" href="#diff-tools-for-checking-test-output" id="id5">Diff tools for checking test output</a></p></li>
+<li><p><a class="reference internal" href="#running-and-writing-tests-in-pyclaw" id="id6">Running and writing tests in PyClaw</a></p></li>
+</ul>
+</li>
+</ul>
+</div>
+<p>Clawpack includes a number of tests that can be used to check for a working
+installation or to see whether new changes to the code have broken anything.</p>
+<div class="section" id="running-the-tests">
+<h2><a class="toc-backref" href="#id4">Running the tests</a><a class="headerlink" href="#running-the-tests" title="Permalink to this headline">¶</a></h2>
+<p>If you use multiple git branches, before running the tests you should check that
+you have checked out appropriate branches of all relevant repositories; see <a class="reference internal" href="git_versions.html#git-versions"><span class="std std-ref">Keeping track of repository versions with Git</span></a>.</p>
+<div class="section" id="pyclaw">
+<h3>PyClaw<a class="headerlink" href="#pyclaw" title="Permalink to this headline">¶</a></h3>
+<p>Regression tests can be performed via:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>cd $CLAW/pyclaw/examples
+nosetests
+</pre></div>
+</div>
+<p>For more details, see <a class="reference internal" href="#pyclaw-testing"><span class="std std-ref">Running and writing tests in PyClaw</span></a>.
+(You may need to install <a class="reference external" href="https://nose.readthedocs.io/en/latest/">nose</a>
+if <cite>nosetests</cite> is not on your system.)</p>
+</div>
+<div class="section" id="fortran-codes">
+<h3>Fortran codes<a class="headerlink" href="#fortran-codes" title="Permalink to this headline">¶</a></h3>
+<p>A few quick tests can be perfomed of the <cite>classic</cite>, <cite>amrclaw</cite>, or <cite>geoclaw</cite>
+codes by running <cite>make tests</cite> in the corresponding <cite>tests</cite> subdirectory, e.g.:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>cd $CLAW/classic/tests
+make tests
+</pre></div>
+</div>
+<p>This uses <cite>nosetests</cite> to run a few Python scripts that in turn run the
+Fortran codes and then compare a small set of values derived from the output
+of the run with values that are stored in these directories.
+If one of these tests fails then there is a problem to be investigated, but
+these tests do not provide good coverage of the code or check that
+everything is working properly.</p>
+<p>A somewhat more complete set of tests can be run by executing all of the
+codes in the <cite>examples</cite> subdirectories and comparing the resulting plots
+with those archived in the <span class="xref std std-ref">galleries</span>.  An attempt at automating this
+can be found in the <cite>$CLAW/amrclaw/examples</cite> directory, which uses the
+<cite>imagediff</cite> tool described below.  This is still under development.</p>
+</div>
+<div class="section" id="travis-continuous-integration">
+<h3>Travis continuous integration<a class="headerlink" href="#travis-continuous-integration" title="Permalink to this headline">¶</a></h3>
+<p>Most Clawpack git repositories now contain a file <cite>.travis.yml</cite> at the top
+level so that every time a pull request is issued on Github, a basic set of
+tests is run.  This uses the <a class="reference external" href="https://travis-ci.org/">Travis continuous integration</a> platform.  Shortly after a PR is issued, Travis
+will run the commands in the <cite>.travis.yml</cite> and report the results on the
+PR page.  Look for a green check mark (good) or a red X (bad) next to a commit
+hash and click on it to see the Travis output.
+<a class="reference external" href="https://travis-ci.org/clawpack/clawpack/builds/15269312">[Sample output]</a></p>
+</div>
+</div>
+<div class="section" id="diff-tools-for-checking-test-output">
+<h2><a class="toc-backref" href="#id5">Diff tools for checking test output</a><a class="headerlink" href="#diff-tools-for-checking-test-output" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="chardiff-tool-for-line-by-line-comparison-of-output-files">
+<h3>chardiff tool for line-by-line comparison of output files<a class="headerlink" href="#chardiff-tool-for-line-by-line-comparison-of-output-files" title="Permalink to this headline">¶</a></h3>
+<p>If <cite>_output_old</cite> and <cite>_output_new</cite> are two sets of output files from old and
+new versions of a code, then it is often useful to do a line by line
+comparison of all of the files in each directory and display any
+differences.  Standard tools such as <cite>xxdiff</cite> in linux or <cite>opendiff</cite> on a
+Mac are not very good for this since they try to match up blocks of lines to
+give the best match and may not compare the files line by line.</p>
+<p>The Python script <cite>$CLAW/clawutil/src/python/clawutil/chardiff.py</cite> can be
+used for this purpose:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ python $CLAW/clawutil/src/python/clawutil/chardiff.py _output_old _output_new
+</pre></div>
+</div>
+<p>will create a new directory with html files showing all differences.  It can
+also be used to compare two individual files.  See the docstring for more
+details.</p>
+</div>
+<div class="section" id="imagediff-tool-for-pixel-comparison-of-plots">
+<h3>imagediff tool for pixel comparison of plots<a class="headerlink" href="#imagediff-tool-for-pixel-comparison-of-plots" title="Permalink to this headline">¶</a></h3>
+<p>If <cite>_plots_old</cite> and <cite>_plots_new</cite> contain two sets of plots that we hope are
+identical, the Python script
+<cite>$CLAW/clawutil/src/python/clawutil/imagediff.py</cite> can be used to compare
+the corresponding images in each directory and produce html files
+that show each pair of images side by side.  If the images are not
+identical it also shows an image indicating which pixels are different
+in the two:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ python $CLAW/clawutil/src/python/clawutil/imagediff.py _plots_old _plots_new
+</pre></div>
+</div>
+<p>will create a new directory with html files showing all differences.  It can
+also be used to compare two individual files.  See the docstring for more
+details.</p>
+</div>
+</div>
+<div class="section" id="running-and-writing-tests-in-pyclaw">
+<span id="pyclaw-testing"></span><h2><a class="toc-backref" href="#id6">Running and writing tests in PyClaw</a><a class="headerlink" href="#running-and-writing-tests-in-pyclaw" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id2">
+<h3>Running the tests<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h3>
+<p>The PyClaw test suite is built around <a class="reference external" href="http://nose.readthedocs.org/en/latest/">nosetests</a> for automatic test discovery, with
+supplementary functionality from the <code class="xref py py-mod docutils literal notranslate"><span class="pre">pyclaw.util</span></code> module.  To run the
+complete test suite with helpful output, issue the following command at the
+top-level of the pyclaw source directory:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">nosetests</span> <span class="o">-</span><span class="n">vs</span>
+</pre></div>
+</div>
+<p>To run the parallel versions of the tests (if petsc4py is installed), run:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">mpirun</span> <span class="o">-</span><span class="n">n</span> <span class="mi">4</span> <span class="n">nosetests</span> <span class="o">-</span><span class="n">vs</span>
+</pre></div>
+</div>
+<p>Replace 4 with the number of processes you’d like test on.
+Try prime numbers if you’re really trying to break things!</p>
+<p>The <cite>-vs</cite> switch tells nose to be verbose and to show you stdout, which can be
+useful when debugging tests.  To run the tests with less output, omit the
+<cite>-vs</cite>.</p>
+</div>
+<div class="section" id="running-serial-tests-simultaneously">
+<h3>Running serial tests simultaneously<a class="headerlink" href="#running-serial-tests-simultaneously" title="Permalink to this headline">¶</a></h3>
+<p>When running the tests, if your machine has multiple cores you can take
+advantage of them by doing:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">nosetests</span> <span class="o">-</span><span class="n">vs</span> <span class="o">--</span><span class="n">processes</span><span class="o">=</span><span class="mi">2</span>
+</pre></div>
+</div>
+<p>(replace “2” with the number of processes you want to spawn). However, using
+large numbers of processes occasionally causes spurious failure of some tests
+due to issues with the operating system.  If you see this behavior, it’s best
+to run the tests in serial or with a small number of processes.</p>
+</div>
+<div class="section" id="running-a-specific-test">
+<h3>Running a specific test<a class="headerlink" href="#running-a-specific-test" title="Permalink to this headline">¶</a></h3>
+<p>The PyClaw tests are associated with particular applications in the examples/ sub-
+directory of the primary repository directory.  If you want to run tests for a
+specific application, simply specify the directory containing the application
+you are interested in:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">nosetests</span> <span class="o">-</span><span class="n">vs</span> <span class="n">examples</span><span class="o">/</span><span class="n">acoustics_3d_variable</span>
+</pre></div>
+</div>
+<p>You can also specify a single file to run the tests it contains.</p>
+</div>
+<div class="section" id="doctests">
+<h3>Doctests<a class="headerlink" href="#doctests" title="Permalink to this headline">¶</a></h3>
+<p>Several of the main PyClaw modules also have doctests (tests in their
+docstrings). You can run them by executing the corresponding module:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>cd $PYCLAW/src/pyclaw
+python grid.py
+python state.py
+</pre></div>
+</div>
+<p>If the tests pass, you will see no output.  You can get more output by using
+the <cite>-v</cite> option:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python</span> <span class="n">state</span><span class="o">.</span><span class="n">py</span> <span class="o">-</span><span class="n">v</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="writing-new-tests">
+<h3>Writing New Tests<a class="headerlink" href="#writing-new-tests" title="Permalink to this headline">¶</a></h3>
+<p>If you contribute new functionality to PyClaw, it is expected that you will also
+write at least one or two new tests that exercise your contribution, so that
+further changes to other parts of PyClaw or your code don’t break your feature.</p>
+<p>This section describes some functions in <cite>pyclaw.util</cite> that facilitate testing.
+You do not have to use any of the functionality offered by <cite>pyclaw.util</cite>, but it
+may simplify your test-writing and allow you to check more cases than you would
+easily specify by hand.</p>
+<p>The most important function in <code class="xref py py-mod docutils literal notranslate"><span class="pre">pyclaw.util</span></code> is
+<code class="xref py py-func docutils literal notranslate"><span class="pre">pyclaw.util.gen_variants()</span></code>, which allows you to perform combinatorial
+testing without manually specifying every feature you’d like to perform.
+Currently, <code class="xref py py-func docutils literal notranslate"><span class="pre">gen_variants()</span></code> can multiplicatively exercise
+kernel_languages (Fortran or Python) and pure PyClaw or PetClaw implementations.
+This allows you to write one function that tests four variants.</p>
+<p>Another function provided by <code class="xref py py-mod docutils literal notranslate"><span class="pre">util</span></code> is
+<code class="xref py py-func docutils literal notranslate"><span class="pre">pyclaw.util.test_app()</span></code>. The <code class="xref py py-func docutils literal notranslate"><span class="pre">test_app()</span></code> function will
+run an application as if started from the command line with the specified
+keyword arguments passed in.  This is useful for testing specific code that does
+not necessarily work with <code class="xref py py-mod docutils literal notranslate"><span class="pre">petclaw</span></code>, for example, and is not expected to.</p>
+<p>You will notice that both <code class="xref py py-func docutils literal notranslate"><span class="pre">gen_variants()</span></code> and
+<code class="xref py py-func docutils literal notranslate"><span class="pre">test_app()</span></code> require a <cite>verifier</cite> method as an argument.
+These functions both effectively run tests and verify output with the following
+function calls:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">output</span> <span class="o">=</span> <span class="n">application</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+<span class="n">check_values</span> <span class="o">=</span> <span class="n">verifier</span><span class="p">(</span><span class="n">output</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The <cite>verifier</cite> method needs to return <cite>None</cite> if there is no problem with the
+output, or a sequence of three values describing what was expected, what it
+received, and more details about the error.  A very simple <cite>verifier</cite> method
+that you can use is <code class="xref py py-func docutils literal notranslate"><span class="pre">pyclaw.util.check_diff()</span></code>, which can use either an
+absolute tolerance or a relative tolerance to compare an expected value against
+the test output from the application.</p>
+<p>See <cite>examples/acoustics_1d_homogeneous/test_acoustics.py</cite> for a comprehensive example
+of how to use <code class="xref py py-func docutils literal notranslate"><span class="pre">gen_variants()</span></code> and
+<code class="xref py py-func docutils literal notranslate"><span class="pre">check_diff()</span></code>. See <cite>examples/shallow_sphere/test_shallow_sphere.py</cite>
+for an example that uses <code class="xref py py-func docutils literal notranslate"><span class="pre">test_app()</span></code> and also loads a known
+solution from disk using numpy.</p>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<p><a href="http://clawpack.org/">
+    <img class="logo" src= "_static/clawlogo.jpg" alt="Logo"/>
+</a>
+<h2>Version 5.6.1</h2>
+</p>
+  <h3><a href="contents.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Regression testing</a><ul>
+<li><a class="reference internal" href="#running-the-tests">Running the tests</a><ul>
+<li><a class="reference internal" href="#pyclaw">PyClaw</a></li>
+<li><a class="reference internal" href="#fortran-codes">Fortran codes</a></li>
+<li><a class="reference internal" href="#travis-continuous-integration">Travis continuous integration</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#diff-tools-for-checking-test-output">Diff tools for checking test output</a><ul>
+<li><a class="reference internal" href="#chardiff-tool-for-line-by-line-comparison-of-output-files">chardiff tool for line-by-line comparison of output files</a></li>
+<li><a class="reference internal" href="#imagediff-tool-for-pixel-comparison-of-plots">imagediff tool for pixel comparison of plots</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#running-and-writing-tests-in-pyclaw">Running and writing tests in PyClaw</a><ul>
+<li><a class="reference internal" href="#id2">Running the tests</a></li>
+<li><a class="reference internal" href="#running-serial-tests-simultaneously">Running serial tests simultaneously</a></li>
+<li><a class="reference internal" href="#running-a-specific-test">Running a specific test</a></li>
+<li><a class="reference internal" href="#doctests">Doctests</a></li>
+<li><a class="reference internal" href="#writing-new-tests">Writing New Tests</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="contents.html">Documentation overview</a><ul>
+      <li>Previous: <a href="howto_release.html" title="previous chapter">Guide for doing a Clawpack release</a></li>
+      <li>Next: <a href="git_versions.html" title="next chapter">Keeping track of repository versions with Git</a></li>
+  </ul></li>
+</ul>
+<div class="widget navlinks">
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/regression.rst.txt"
+            rel="nofollow"
+            target="_blank">Source .rst</a></li>
+    <li><a href="https://github.com/clawpack/doc/blob/dev/doc/regression.rst"
+            rel="nofollow"
+            target="_blank">Source on GitHub</a></li>
+     <li><a href="https://github.com/clawpack/doc/commits/dev/doc/regression.rst"
+             rel="nofollow"
+             target="_blank">History</a></li>
+    <li><a href="https://github.com/clawpack/doc/edit/dev/doc/regression.rst"
+            rel="nofollow"
+            target="_blank">Suggest Edits</a></li>
+     <li><a href="https://github.com/clawpack/doc/issues/new/choose"
+             rel="nofollow"
+             target="_blank">Raise an Issue</a></li>
+  </ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+<h4>Latest Version</h4>
+<ul>
+  <li><a href="../dev/regression.html">dev</a></li>
+  <li><a href="../v5.7.x/regression.html">v5.7.x</a></li>
+</ul>
+<h4>Older Versions</h4>
+<ul>
+  <li><a href="../v5.1.x/regression.html">v5.1.x</a></li>
+  <li><a href="../v5.2.x/regression.html">v5.2.x</a></li>
+  <li><a href="../v5.3.x/regression.html">v5.3.x</a></li>
+  <li><a href="../v5.4.x/regression.html">v5.4.x</a></li>
+  <li><a href="../v5.5.x/regression.html">v5.5.x</a></li>
+  <li><a href="regression.html">v5.6.x</a></li>
+</ul>
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+  <div class="footer">
+    &copy; Copyright CC-BY 2020, The Clawpack Development Team.
+    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
+  </div>
+  <script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-44811544-1', 'auto');
+  ga('send', 'pageview');
+
+  </script>
+  
+  </body>
+</html>

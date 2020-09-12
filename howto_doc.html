@@ -84,8 +84,6 @@
   <div class="section" id="guide-for-updating-this-documentation">
 <span id="howto-doc"></span><h1>Guide for updating this documentation<a class="headerlink" href="#guide-for-updating-this-documentation" title="Permalink to this headline">¶</a></h1>
 <p>See also the README.md at <a class="reference external" href="https://github.com/clawpack/doc">https://github.com/clawpack/doc</a>.</p>
-<p>When updating the documentation for a new release, see also
-<a class="reference internal" href="howto_release.html#howto-release"><span class="std std-ref">Guide for doing a Clawpack release</span></a>.</p>
 <p>The <a class="reference external" href="https://github.com/clawpack/doc">clawpack/doc</a> repository is not
 included in the Clawpack distribution and must be cloned separately if you
 want to work with these files.</p>
@@ -96,6 +94,46 @@ related to the gallery are in <cite>$CLAW/doc/gallery</cite>.  As of Version
 <p>They used to be connected using
 <a class="reference external" href="http://www.sphinx-doc.org/en/stable/ext/intersphinx.html">intersphinx</a>.
 but this was dropped in v5.7.x.</p>
+<div class="section" id="git-branches-and-tags">
+<h2>Git branches and tags<a class="headerlink" href="#git-branches-and-tags" title="Permalink to this headline">¶</a></h2>
+<p>Older versions of the documentation used to be tagged for each minor
+release, e.g. <cite>v5.6.1</cite>.  Starting with v5.7.0, these are now only tagged
+with the major release, e.g. <cite>v5.7.x</cite>.</p>
+<p>The side menu on the Sphinx pages now lists only these major tags. The
+assumption is that any changes within e.g. the 5.7 version are minor enough
+that the documentation should not change substantially.</p>
+<p>There are two active <strong>branches</strong> at any time, one for the current major
+release, e.g. <cite>v5.7.x</cite>, and one named <cite>dev</cite> for the development of documenation
+for features not yet released.  When a new major release is done the
+<cite>v5.7.x</cite> branch will be retired, creating a <cite>v5.7.x</cite> tag instead along with
+a new <cite>v5.8.x</cite> branch.</p>
+<p>As documents are improved, continue to update the current release branch,
+e.g. <cite>v5.7.x</cite>, and also merge these changes in to the <cite>dev</cite> branch.  In
+general <cite>dev</cite> should be up to date with the current release branch along
+with perhaps some new documentation for features not in the current
+release.</p>
+<p>Note that the file <cite>conf.py</cite> contains the version number.  Please insure
+that the <cite>dev</cite> branch and current release branch each have the correct
+thing. This can easily get messed up when merging from one branch to the
+other.  One way to help avoid this is to always merge via, e.g.:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">git</span> <span class="n">checkout</span> <span class="n">dev</span>
+<span class="n">git</span> <span class="n">merge</span> <span class="n">v5</span><span class="o">.</span><span class="mf">7.</span><span class="n">x</span> <span class="o">--</span><span class="n">no</span><span class="o">-</span><span class="n">ff</span> <span class="o">--</span><span class="n">no</span><span class="o">-</span><span class="n">commit</span>
+</pre></div>
+</div>
+<p>and then check before doing the merge commit to make sure <cite>conf.py</cite> hasn’t
+been improperly changed.  If it has, and that’s the only change to this
+file, you can do:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">git</span> <span class="n">reset</span> <span class="n">HEAD</span> <span class="n">conf</span><span class="o">.</span><span class="n">py</span>
+<span class="n">git</span> <span class="n">checkout</span> <span class="n">conf</span><span class="o">.</span><span class="n">py</span>
+</pre></div>
+</div>
+<p>and check that it’s correct before committing via e.g.:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">git</span> <span class="n">commit</span> <span class="o">-</span><span class="n">m</span> <span class="s2">&quot;merged recent v5.7.x changes into dev&quot;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="configuration-and-style-files">
+<h2>Configuration and style files<a class="headerlink" href="#configuration-and-style-files" title="Permalink to this headline">¶</a></h2>
 <p>The general look of the documentation and various things that appear on each
 page are controlled by the following files:</p>
 <blockquote>
@@ -108,9 +146,15 @@ setting paths to extensions and various other sphinx settings.</p></li>
 <li><p><cite>_templates/index.html</cite> contains the main landing page</p></li>
 </ul>
 </div></blockquote>
+</div>
+<div class="section" id="updating-the-docs-for-a-new-release">
+<span id="howto-doc-release"></span><h2>Updating the docs for a new release<a class="headerlink" href="#updating-the-docs-for-a-new-release" title="Permalink to this headline">¶</a></h2>
+<p>When updating the documentation for a new release, see also
+<a class="reference internal" href="howto_release.html#howto-release-doc"><span class="std std-ref">Updating the documentation</span></a> for a list of necessary changes.</p>
 <p>Before proceeding, first make sure other repositories are checked out to
 master, since some pages now have literalinclude’s that bring in code
-(e.g. setaux_defaults.rst, etc).</p>
+(e.g. setaux_defaults.rst, etc).
+<strong>Note: This is no longer true.</strong></p>
 <p>To create html files from the dev branch only, for example:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>cd $CLAW/doc/doc
 git checkout dev
@@ -125,8 +169,8 @@ make html
 <p>Note that we suggest using <cite>_build1</cite> when building a single version so this
 can be quickly rebuilt when writing and editing documentation.</p>
 </div>
-<div class="section" id="to-generate-pages-with-old-clawpack-versions">
-<h1>To generate pages with old Clawpack versions<a class="headerlink" href="#to-generate-pages-with-old-clawpack-versions" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="to-generate-docs-including-previous-versions">
+<h2>To generate docs including previous versions<a class="headerlink" href="#to-generate-docs-including-previous-versions" title="Permalink to this headline">¶</a></h2>
 <p>This should be done when you are close to pushing changes to the website,
 otherwise the above approach works fine and shows the current state of the
 documentation based on files in your working directory.</p>
@@ -144,6 +188,7 @@ instead of
 committed to some branch (normally <cite>dev</cite> if you have been adding something new).</p>
 <p>And then do this:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>cd $CLAW/doc/doc
+rm -rf _build   # recommended to make sure new versions are clean
 make versions
 </pre></div>
 </div>
@@ -174,7 +219,6 @@ on <cite>dev</cite>, for example, takes you to <a class="reference external" hre
 </ul>
 <p>This can be done as follows:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>cd $CLAW/doc/doc/_build/html
-rm -f *.html         # remove the html file with bad sidebars
 cp -r v5.7.x/* .   # replacing v5.7.x with the current version
 python ../../fix_links_top_level.py
 </pre></div>
@@ -185,6 +229,7 @@ pull request to have these changes incorporated into the documentation.</p>
 main doc pages together.   Instead there are hard links to <cite>www.clawpack.org</cite>
 to go from one to the other.  So the old use of
 the environment variable <cite>SPHINX_WEB</cite> is now deprecated.</p>
+</div>
 <div class="section" id="updating-the-gallery">
 <h2>Updating the gallery<a class="headerlink" href="#updating-the-gallery" title="Permalink to this headline">¶</a></h2>
 <p>The gallery webpages are now decoupled from the main sphinx pages, and reside
@@ -269,6 +314,20 @@ webpages on the University of Washington server.  Links of this nature have
 been provided in published paper and some contain large amounts of data that
 have not been copied to Github.</p>
 </div>
+<div class="section" id="pages-from-other-clawpack-repositories">
+<h2>Pages from other clawpack repositories<a class="headerlink" href="#pages-from-other-clawpack-repositories" title="Permalink to this headline">¶</a></h2>
+<p>Some webpages are created within other clawpack repositories.
+For example, the page <a class="reference external" href="http://www.clawpack.org/geoclawdev-2020/">http://www.clawpack.org/geoclawdev-2020/</a>
+is modified by pushing changes to the master branch of the repository
+<a class="reference external" href="https://github.com/clawpack/geoclawdev-2020">geoclawdev-2020</a>.
+This is configured in that repository, in the <cite>GitHub Pages</cite> section found
+under <cite>Settings</cite>.</p>
+<p>Other repositories that create webpages include:</p>
+<ul class="simple">
+<li><p><a class="reference external" href="https://github.com/clawpack/geoclawdev-2018">geoclawdev-2018</a></p></li>
+<li><p><a class="reference external" href="https://github.com/clawpack/clawdev-2016">clawdev-2016</a></p></li>
+</ul>
+</div>
 </div>
 
 
@@ -284,11 +343,15 @@ have not been copied to Github.</p>
 </p>
   <h3><a href="contents.html">Table of Contents</a></h3>
   <ul>
-<li><a class="reference internal" href="#">Guide for updating this documentation</a></li>
-<li><a class="reference internal" href="#to-generate-pages-with-old-clawpack-versions">To generate pages with old Clawpack versions</a><ul>
+<li><a class="reference internal" href="#">Guide for updating this documentation</a><ul>
+<li><a class="reference internal" href="#git-branches-and-tags">Git branches and tags</a></li>
+<li><a class="reference internal" href="#configuration-and-style-files">Configuration and style files</a></li>
+<li><a class="reference internal" href="#updating-the-docs-for-a-new-release">Updating the docs for a new release</a></li>
+<li><a class="reference internal" href="#to-generate-docs-including-previous-versions">To generate docs including previous versions</a></li>
 <li><a class="reference internal" href="#updating-the-gallery">Updating the gallery</a></li>
 <li><a class="reference internal" href="#updating-the-webpages">Updating the webpages</a></li>
 <li><a class="reference internal" href="#extra-files-for-webpages-not-built-by-sphinx">Extra files for webpages not built by Sphinx</a></li>
+<li><a class="reference internal" href="#pages-from-other-clawpack-repositories">Pages from other clawpack repositories</a></li>
 </ul>
 </li>
 </ul>

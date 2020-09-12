@@ -1,0 +1,657 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>Ruled Rectangles &#8212; Clawpack 5.7.x documentation</title>
+    <link rel="stylesheet" href="_static/flasky.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/base.css" type="text/css" />
+    <link rel="stylesheet" href="_static/layout.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/graphviz.css" />
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <script async="async" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="shortcut icon" href="_static/clawicon.ico"/>
+    <link rel="author" title="About these documents" href="about.html" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Guiding AMR with adjoint flagging" href="adjoint.html" />
+    <link rel="prev" title="Specifying flagregions for adaptive refinement" href="flagregions.html" /> 
+  </head><body>
+<div id="main-wrapper" class="sphinx">
+<div id="header-wrapper">
+  <section id="header">
+    <!-- <h1><a href="http://clawpack.org/">Clawpack</a></h1> -->
+    <h1><a href="http://clawpack.org/">Clawpack-5</a></h1> 
+    <nav>
+      <ul>
+        <li>
+          <a href="contents.html">Docs</a>
+        </li>
+        <li>
+          <a href="installing.html">Install</a>
+        </li>
+        <li>
+          <a class="" href="http://clawpack.org/gallery/index.html">Gallery</a>
+        </li>
+        <li>
+          <a href="about.html">Citation</a>
+        </li>
+        <li>
+          <a class="active" href="http://github.com/clawpack">GitHub</a>
+        </li>
+        <li>
+          <a class="" href="community.html">Community</a>
+        </li>
+        <li>
+          <a class="" href="developers.html">Contribute</a>
+        </li>
+      </ul>
+    </nav>
+  </section>
+<div class="decoration"></div>
+</div>
+
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="adjoint.html" title="Guiding AMR with adjoint flagging"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="flagregions.html" title="Specifying flagregions for adaptive refinement"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="contents.html">Clawpack 5.7.x documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="amrclaw.html" accesskey="U">AMRClaw Description and Detailed Contents</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="ruled-rectangles">
+<span id="id1"></span><h1>Ruled Rectangles<a class="headerlink" href="#ruled-rectangles" title="Permalink to this headline">¶</a></h1>
+<p><strong>New in Version 5.7.0.</strong></p>
+<p>Adapted from <a class="reference external" href="http://www.clawpack.org/gallery/_static/apps/notebooks/amrclaw/RuledRectangles.html">this notebook</a>.</p>
+<p>In past versions of AMRClaw and GeoClaw, one could specify “refinement
+regions” as rectangles over which a <cite>minlevel</cite> and <cite>maxlevel</cite> are
+specified (perhaps over some time interval), as described in
+<span class="xref std std-ref">refinement-regions</span>.</p>
+<p>Allowing only rectangles made it very easy to check each cell for
+inclusion in a region, but is a severe restriction – often a number of
+rectangles must be used to follow a complicated coastline, for example,
+or else many points ended up being refined that did not require it (e.g.
+onshore points that never get wet in a GeoClaw simulation).</p>
+<p>We have introduced a new data structure called a “Ruled Rectangle” that
+is a special type of polygon for which it is also easy to check whether
+a given point is inside or outside, but that is much more flexible than
+a rectangle. It is a special case of a “ruled surface”, which is a
+surface in 3D that is bounded by two curves, each parameterized by
+<span class="math notranslate nohighlight">\(s\)</span> from <span class="math notranslate nohighlight">\(s_1\)</span> to <span class="math notranslate nohighlight">\(s_2\)</span>, and with the surface defined
+as the union of all the line segments connecting one curve to the other
+for each value of <span class="math notranslate nohighlight">\(s\)</span> in <span class="math notranslate nohighlight">\([s_1,s_2]\)</span>. A Ruled Rectangle is a
+special case in which each curve lies in the <span class="math notranslate nohighlight">\(x\)</span>-<span class="math notranslate nohighlight">\(y\)</span> plane
+and either <span class="math notranslate nohighlight">\(s=x\)</span> for some range of <span class="math notranslate nohighlight">\(x\)</span> values or <span class="math notranslate nohighlight">\(s=y\)</span>
+for some range of <span class="math notranslate nohighlight">\(y\)</span> values. If <span class="math notranslate nohighlight">\(s=x\)</span>, for example, then
+the line segments defining the surface are intervals
+<span class="math notranslate nohighlight">\(y_{\scriptstyle lower}(x) \leq y \leq y_{\scriptstyle upper}(x)\)</span>
+for each <span class="math notranslate nohighlight">\(x\)</span> over some range <span class="math notranslate nohighlight">\(x_1 \leq x \leq x_2\)</span>. It is
+easy to check if a given <span class="math notranslate nohighlight">\((x_c,y_c)\)</span> is in this region: it is if
+<span class="math notranslate nohighlight">\(x_1 \leq x_c \leq x_2\)</span> and in addition
+<span class="math notranslate nohighlight">\(y_{\scriptstyle lower}(x_c) \leq y_c \leq y_{\scriptstyle upper}(x_c)\)</span>.</p>
+<p>The class <code class="docutils literal notranslate"><span class="pre">clawpack.amrclaw.region_tools.RuledRectangle</span></code> supports
+a subset of ruled rectangles defined by a finite set of <span class="math notranslate nohighlight">\(s\)</span>
+values along a coordinate line, e.g. <span class="math notranslate nohighlight">\(s[0] &lt; s[1] &lt; s[2] &lt;
+\cdots &lt; s[N]\)</span> and for each <span class="math notranslate nohighlight">\(s[k]\)</span> two values <cite>lower[k]</cite> and
+<cite>upper[k]</cite>. If <cite>rr</cite> is an instance of this class then <cite>rr.s</cite>,
+<cite>rr.lower</cite>, and <cite>rr.upper</cite> contain these arrays. Whether <cite>s</cite>
+corresponds to <cite>x</cite> or <cite>y</cite> is determined by:</p>
+<ul class="simple">
+<li><p>If <cite>rr.ixy in [1, ‘x’]</cite> then <cite>s</cite> gives a set of <span class="math notranslate nohighlight">\(x\)</span> values,</p></li>
+<li><p>If <cite>rr.ixy in [2, ‘y’]</cite> then <cite>s</cite> gives a set of <span class="math notranslate nohighlight">\(y\)</span> values.</p></li>
+</ul>
+<p>The points specified can then be connected by line segments to define a
+Ruled Rectangle, and this is done if <cite>rr.method == 1</cite> (piecewise
+linear). On the other hand, if <cite>rr.method == 0</cite> (piecewise constant)
+then the values <cite>lower[k], upper[k]</cite> are used as the bounds for all
+<cite>s</cite> in the interval <span class="math notranslate nohighlight">\(s[k] \leq s \leq s[k+1]\)</span> (for
+<span class="math notranslate nohighlight">\(k = 0,~1,~\ldots,~N-1\)</span>). In this case the values
+<cite>lower[N], upper[N]</cite> are not used. This also defines a polygon, but
+one that consists of a set of <em>stacked boxes</em>. The advantage of the
+latter form is that it is slightly easier to check if a point is in the
+Ruled Rectangle since no linear interpolation is required along the
+edges. Also for some applications we want the Ruled Rectangle to exactly
+cover a contiguous set of finite volume grid cells, which has the shape
+of a set of stacked boxes.</p>
+<div class="section" id="contents">
+<h2>Contents<a class="headerlink" href="#contents" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p><a class="reference external" href="#rr-examples">Examples</a></p></li>
+<li><p><a class="reference external" href="#rr-polygons">Relation to convex polygons</a></p></li>
+<li><p><a class="reference external" href="#rr-attr">Other attributes and methods</a></p></li>
+<li><p><a class="reference external" href="#rr-rect">A simple rectangle</a></p></li>
+<li><p><a class="reference external" href="#rr-cover">Defining a Ruled Rectangle covering selected cells</a></p></li>
+</ul>
+</div>
+<div class="section" id="examples">
+<span id="rr-examples"></span><h2>Examples<a class="headerlink" href="#examples" title="Permalink to this headline">¶</a></h2>
+<p>Some simple examples follow:</p>
+<p>Define a Ruled Rectangle by specifying a set of points:</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">clawpack.amrclaw</span> <span class="kn">import</span> <span class="n">region_tools</span>
+<span class="n">rr</span> <span class="o">=</span> <span class="n">region_tools</span><span class="o">.</span><span class="n">RuledRectangle</span><span class="p">()</span>
+<span class="n">rr</span><span class="o">.</span><span class="n">ixy</span> <span class="o">=</span> <span class="mi">1</span>  <span class="c1"># so s refers to x, lower &amp; upper are limits in y</span>
+<span class="n">rr</span><span class="o">.</span><span class="n">s</span> <span class="o">=</span> <span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">6</span><span class="p">])</span>
+<span class="n">rr</span><span class="o">.</span><span class="n">lower</span> <span class="o">=</span> <span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">3</span><span class="p">])</span>
+<span class="n">rr</span><span class="o">.</span><span class="n">upper</span> <span class="o">=</span> <span class="n">array</span><span class="p">([</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">6</span><span class="p">])</span>
+</pre></div>
+</div>
+<p>Setting <cite>rr.method</cite> to 1 or 0 gives a Ruled Rectangle in which the
+points specified above are connected by lines or used to define stacked
+boxes.</p>
+<p>Both are illustrated in the figure below. Note that we use the method
+<cite>rr.vertices()</cite> to return a list of all the vertices of the polygon
+defined by <cite>rr</cite> for plotting purposes.</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="mi">5</span><span class="p">))</span>
+<span class="n">subplot</span><span class="p">(</span><span class="mi">121</span><span class="p">)</span>
+<span class="n">rr</span><span class="o">.</span><span class="n">method</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="n">xv</span><span class="p">,</span><span class="n">yv</span> <span class="o">=</span> <span class="n">rr</span><span class="o">.</span><span class="n">vertices</span><span class="p">()</span>
+<span class="n">plot</span><span class="p">(</span><span class="n">xv</span><span class="p">,</span><span class="n">yv</span><span class="p">,</span><span class="s1">&#39;b&#39;</span><span class="p">)</span>
+<span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">axis</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="mi">7</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">6</span><span class="p">])</span>
+<span class="n">title</span><span class="p">(</span><span class="s1">&#39;With method==1&#39;</span><span class="p">)</span>
+
+<span class="n">subplot</span><span class="p">(</span><span class="mi">122</span><span class="p">)</span>
+<span class="n">rr</span><span class="o">.</span><span class="n">method</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">xv</span><span class="p">,</span><span class="n">yv</span> <span class="o">=</span> <span class="n">rr</span><span class="o">.</span><span class="n">vertices</span><span class="p">()</span>
+<span class="n">plot</span><span class="p">(</span><span class="n">xv</span><span class="p">,</span><span class="n">yv</span><span class="p">,</span><span class="s1">&#39;r&#39;</span><span class="p">)</span>
+<span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">axis</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="mi">7</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">6</span><span class="p">])</span>
+<span class="n">title</span><span class="p">(</span><span class="s1">&#39;With method==0&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<img alt="_images/RuledRectangles_10_1.png" src="_images/RuledRectangles_10_1.png" />
+<p>In the plots above the <cite>s</cite> values correspond to <cite>x = 1, 2, 4, 6</cite>,
+and the <cite>lower</cite> and <cite>upper</cite> arrays define ranges in <cite>y</cite>.</p>
+<p>If we set <cite>rr.ixy = 2</cite> or <cite>‘y’</cite>, then the <cite>s</cite> values will instead
+correspond to <cite>y = 1, 2, 4, 6</cite> and the <cite>lower</cite> and <cite>upper</cite> will
+define ranges in <cite>x</cite>. This is illustrated in the plots below.</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rr</span><span class="o">.</span><span class="n">ixy</span> <span class="o">=</span> <span class="mi">2</span>  <span class="c1"># so s refers to y, lower &amp; upper are limits in x</span>
+
+<span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="mi">5</span><span class="p">))</span>
+<span class="n">subplot</span><span class="p">(</span><span class="mi">121</span><span class="p">)</span>
+<span class="n">rr</span><span class="o">.</span><span class="n">method</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="n">xv</span><span class="p">,</span><span class="n">yv</span> <span class="o">=</span> <span class="n">rr</span><span class="o">.</span><span class="n">vertices</span><span class="p">()</span>
+<span class="n">plot</span><span class="p">(</span><span class="n">xv</span><span class="p">,</span><span class="n">yv</span><span class="p">,</span><span class="s1">&#39;b&#39;</span><span class="p">)</span>
+<span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">axis</span><span class="p">([</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">6</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">7</span><span class="p">])</span>
+<span class="n">title</span><span class="p">(</span><span class="s1">&#39;With method==1&#39;</span><span class="p">)</span>
+
+<span class="n">subplot</span><span class="p">(</span><span class="mi">122</span><span class="p">)</span>
+<span class="n">rr</span><span class="o">.</span><span class="n">method</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">xv</span><span class="p">,</span><span class="n">yv</span> <span class="o">=</span> <span class="n">rr</span><span class="o">.</span><span class="n">vertices</span><span class="p">()</span>
+<span class="n">plot</span><span class="p">(</span><span class="n">xv</span><span class="p">,</span><span class="n">yv</span><span class="p">,</span><span class="s1">&#39;r&#39;</span><span class="p">)</span>
+<span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">axis</span><span class="p">([</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">6</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">7</span><span class="p">])</span>
+<span class="n">title</span><span class="p">(</span><span class="s1">&#39;With method==0&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<img alt="_images/RuledRectangles_12_1.png" src="_images/RuledRectangles_12_1.png" />
+</div>
+<div class="section" id="relation-to-convex-polygons">
+<span id="rr-polygons"></span><h2>Relation to convex polygons<a class="headerlink" href="#relation-to-convex-polygons" title="Permalink to this headline">¶</a></h2>
+<p>Note that the polygons above are not convex, but clearly some Ruled
+Rectangles would be convex. Conversely, <em>any</em> convex polygon can be
+expressed as a Ruled Rectangle — simply order the vertices so that the
+<span class="math notranslate nohighlight">\(x\)</span> values are increasing, for example, and use these as the <cite>s</cite>
+values in a <cite>RuledRectangle</cite> with <cite>ixy=’x’</cite>. Then for each <span class="math notranslate nohighlight">\(x\)</span>
+there is a connected interval of <span class="math notranslate nohighlight">\(y\)</span> values that lie within the
+polygon (by convexity), so this defines the <cite>lower</cite> and <cite>upper</cite>
+values. (Or you could start by ordering vertices by increasing <span class="math notranslate nohighlight">\(y\)</span>
+values and similarly define a <cite>RuledRectangle</cite> with <cite>ixy=’y’</cite>.)</p>
+<p>So a <cite>RuledRectangle</cite> is a nice generalization of a convex polygon for
+which it is easy to check inclusion of an arbitrary point.</p>
+</div>
+<div class="section" id="other-attributes-and-methods">
+<span id="rr-attr"></span><h2>Other attributes and methods<a class="headerlink" href="#other-attributes-and-methods" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="ds">
+<h3><cite>ds</cite><a class="headerlink" href="#ds" title="Permalink to this headline">¶</a></h3>
+<p>If the points <cite>s[k]</cite> are equally spaced then <cite>ds</cite> is the spacing
+between them. This makes it quicker to determine what two points an
+arbitrary value of <span class="math notranslate nohighlight">\(s\)</span> lies between when determining whether a
+large set of points are inside or outside the Ruled Rectangle, rather
+than having to search.</p>
+<p>The Ruled Rectangle defined above has unequally spaced points and the
+<cite>ds</cite> attribute is set to <cite>-1</cite> in this case.</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rr</span><span class="o">.</span><span class="n">ds</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-</span><span class="mi">1</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="slu">
+<h3><cite>slu</cite><a class="headerlink" href="#slu" title="Permalink to this headline">¶</a></h3>
+<p>Rather than specifying <cite>s</cite>, <cite>lower</cite>, and <cite>upper</cite> separately, you
+can specify an array <cite>slu</cite> with three columns in defining a
+<cite>RuledRectangle</cite>, and such an array is returned by the <cite>slu</cite> method:</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rr</span><span class="o">.</span><span class="n">slu</span><span class="p">()</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">array</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">4</span><span class="p">],</span>
+       <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">5</span><span class="p">],</span>
+       <span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span>
+       <span class="p">[</span><span class="mi">6</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">6</span><span class="p">]])</span>
+</pre></div>
+</div>
+<p>Here’s an example defining a <cite>RuledRectangle</cite> via <cite>slu</cite>:</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">slu</span> <span class="o">=</span> <span class="n">vstack</span><span class="p">((</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">14</span><span class="p">,</span><span class="mi">8</span><span class="p">),</span> <span class="n">zeros</span><span class="p">(</span><span class="mi">8</span><span class="p">),</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">]))</span><span class="o">.</span><span class="n">T</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;slu = </span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">slu</span><span class="p">)</span>
+
+<span class="n">rr</span> <span class="o">=</span> <span class="n">region_tools</span><span class="o">.</span><span class="n">RuledRectangle</span><span class="p">(</span><span class="n">slu</span><span class="o">=</span><span class="n">slu</span><span class="p">)</span>
+<span class="n">rr</span><span class="o">.</span><span class="n">ixy</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="n">rr</span><span class="o">.</span><span class="n">method</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="n">xv</span><span class="p">,</span><span class="n">yv</span> <span class="o">=</span> <span class="n">rr</span><span class="o">.</span><span class="n">vertices</span><span class="p">()</span>
+<span class="n">plot</span><span class="p">(</span><span class="n">xv</span><span class="p">,</span><span class="n">yv</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">slu</span> <span class="o">=</span>
+ <span class="p">[[</span> <span class="mf">0.</span>  <span class="mf">0.</span>  <span class="mf">1.</span><span class="p">]</span>
+ <span class="p">[</span> <span class="mf">2.</span>  <span class="mf">0.</span>  <span class="mf">2.</span><span class="p">]</span>
+ <span class="p">[</span> <span class="mf">4.</span>  <span class="mf">0.</span>  <span class="mf">1.</span><span class="p">]</span>
+ <span class="p">[</span> <span class="mf">6.</span>  <span class="mf">0.</span>  <span class="mf">2.</span><span class="p">]</span>
+ <span class="p">[</span> <span class="mf">8.</span>  <span class="mf">0.</span>  <span class="mf">1.</span><span class="p">]</span>
+ <span class="p">[</span><span class="mf">10.</span>  <span class="mf">0.</span>  <span class="mf">2.</span><span class="p">]</span>
+ <span class="p">[</span><span class="mf">12.</span>  <span class="mf">0.</span>  <span class="mf">1.</span><span class="p">]</span>
+ <span class="p">[</span><span class="mf">14.</span>  <span class="mf">0.</span>  <span class="mf">2.</span><span class="p">]]</span>
+</pre></div>
+</div>
+<img alt="_images/RuledRectangles_19_2.png" src="_images/RuledRectangles_19_2.png" />
+</div>
+<div class="section" id="bounding-box">
+<h3><cite>bounding_box</cite><a class="headerlink" href="#bounding-box" title="Permalink to this headline">¶</a></h3>
+<p><cite>rr.bounding_box()</cite> returns the smallest rectangle <cite>[x1,x2,y1,y2]</cite>
+containing the ruled rectangle:</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rr</span><span class="o">.</span><span class="n">bounding_box</span><span class="p">()</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">14.0</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="mask-outside">
+<h3><cite>mask_outside</cite><a class="headerlink" href="#mask-outside" title="Permalink to this headline">¶</a></h3>
+<p>If <cite>X,Y</cite> are 2D numpy arrays defining <cite>(x,y)</cite> coordinates on a grid,
+then <cite>rr.mask_outside(X,Y)</cite> returns a mask array <cite>M</cite> of the same
+shape as <cite>X,Y</cite> that is <cite>True</cite> at points outside the Ruled Rectangle.</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">x</span> <span class="o">=</span> <span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">31</span><span class="p">)</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">16</span><span class="p">,</span><span class="mi">81</span><span class="p">)</span>
+<span class="n">X</span><span class="p">,</span><span class="n">Y</span> <span class="o">=</span> <span class="n">meshgrid</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">)</span>
+<span class="n">Z</span> <span class="o">=</span> <span class="n">X</span> <span class="o">+</span> <span class="n">Y</span> <span class="c1"># sample data values to plot</span>
+
+<span class="n">M</span> <span class="o">=</span> <span class="n">rr</span><span class="o">.</span><span class="n">mask_outside</span><span class="p">(</span><span class="n">X</span><span class="p">,</span><span class="n">Y</span><span class="p">)</span>
+<span class="n">Zm</span> <span class="o">=</span> <span class="n">ma</span><span class="o">.</span><span class="n">masked_array</span><span class="p">(</span><span class="n">Z</span><span class="p">,</span><span class="n">mask</span><span class="o">=</span><span class="n">M</span><span class="p">)</span>
+<span class="n">pcolorcells</span><span class="p">(</span><span class="n">X</span><span class="p">,</span><span class="n">Y</span><span class="p">,</span><span class="n">Zm</span><span class="p">)</span>
+<span class="n">colorbar</span><span class="p">()</span>
+</pre></div>
+</div>
+<img alt="_images/RuledRectangles_23_1.png" src="_images/RuledRectangles_23_1.png" />
+</div>
+<div class="section" id="read-and-write-and-instantiating-from-a-file">
+<h3>read and write, and instantiating from a file<a class="headerlink" href="#read-and-write-and-instantiating-from-a-file" title="Permalink to this headline">¶</a></h3>
+<p><cite>rr.write(fname)</cite> writes out the <cite>slu</cite> array and other attributes to
+file <cite>fname</cite>, and <cite>rr.read(fname)</cite> can be used to read in such a
+file. You can also specify <cite>fname</cite> when instantiating a new Ruled
+Rectangle:</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rr</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;RRzigzag.data&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rr2</span> <span class="o">=</span> <span class="n">region_tools</span><span class="o">.</span><span class="n">RuledRectangle</span><span class="p">(</span><span class="s1">&#39;RRzigzag.data&#39;</span><span class="p">)</span>
+<span class="n">rr2</span><span class="o">.</span><span class="n">slu</span><span class="p">()</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">array</span><span class="p">([[</span> <span class="mf">0.</span><span class="p">,</span>  <span class="mf">0.</span><span class="p">,</span>  <span class="mf">1.</span><span class="p">],</span>
+       <span class="p">[</span> <span class="mf">2.</span><span class="p">,</span>  <span class="mf">0.</span><span class="p">,</span>  <span class="mf">2.</span><span class="p">],</span>
+       <span class="p">[</span> <span class="mf">4.</span><span class="p">,</span>  <span class="mf">0.</span><span class="p">,</span>  <span class="mf">1.</span><span class="p">],</span>
+       <span class="p">[</span> <span class="mf">6.</span><span class="p">,</span>  <span class="mf">0.</span><span class="p">,</span>  <span class="mf">2.</span><span class="p">],</span>
+       <span class="p">[</span> <span class="mf">8.</span><span class="p">,</span>  <span class="mf">0.</span><span class="p">,</span>  <span class="mf">1.</span><span class="p">],</span>
+       <span class="p">[</span><span class="mf">10.</span><span class="p">,</span>  <span class="mf">0.</span><span class="p">,</span>  <span class="mf">2.</span><span class="p">],</span>
+       <span class="p">[</span><span class="mf">12.</span><span class="p">,</span>  <span class="mf">0.</span><span class="p">,</span>  <span class="mf">1.</span><span class="p">],</span>
+       <span class="p">[</span><span class="mf">14.</span><span class="p">,</span>  <span class="mf">0.</span><span class="p">,</span>  <span class="mf">2.</span><span class="p">]])</span>
+</pre></div>
+</div>
+<p>Here’s what the file looks like:</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">lines</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;RRzigzag.data&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">readlines</span><span class="p">()</span>
+<span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">lines</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="mi">2</span>   <span class="n">ixy</span>
+<span class="mi">1</span>   <span class="n">method</span>
+<span class="mi">2</span>    <span class="n">ds</span>
+<span class="mi">8</span>    <span class="n">nrules</span>
+<span class="mf">0.000000000</span>   <span class="mf">0.000000000</span>   <span class="mf">1.000000000</span>
+<span class="mf">2.000000000</span>   <span class="mf">0.000000000</span>   <span class="mf">2.000000000</span>
+<span class="mf">4.000000000</span>   <span class="mf">0.000000000</span>   <span class="mf">1.000000000</span>
+<span class="mf">6.000000000</span>   <span class="mf">0.000000000</span>   <span class="mf">2.000000000</span>
+<span class="mf">8.000000000</span>   <span class="mf">0.000000000</span>   <span class="mf">1.000000000</span>
+<span class="mf">10.000000000</span>   <span class="mf">0.000000000</span>   <span class="mf">2.000000000</span>
+<span class="mf">12.000000000</span>   <span class="mf">0.000000000</span>   <span class="mf">1.000000000</span>
+<span class="mf">14.000000000</span>   <span class="mf">0.000000000</span>   <span class="mf">2.000000000</span>
+</pre></div>
+</div>
+<p>Note that this Ruled Rectangle has equally spaced points and so
+<cite>ds = 2</cite> is the spacing.</p>
+</div>
+<div class="section" id="make-kml">
+<h3><cite>make_kml</cite><a class="headerlink" href="#make-kml" title="Permalink to this headline">¶</a></h3>
+<p><cite>rr.make_kml()</cite> can be used to create a kml file that can be opened on
+Google Earth to show the polygon defined by <cite>rr</cite>. This assumes that
+<cite>x</cite> corresponds to longitude and <cite>y</cite> to latitude and is designed for
+GeoClaw applications. Several optional arguments can be specified:
+<cite>fname, name, color, width, verbose</cite>.</p>
+</div>
+<div class="section" id="a-geoclaw-amr-flag-region">
+<h3>A GeoClaw AMR flag region<a class="headerlink" href="#a-geoclaw-amr-flag-region" title="Permalink to this headline">¶</a></h3>
+<p>The figure below shows a Ruled Rectangle designed to cover Admiralty
+Inlet, the water way between the Kitsap Peninsula and Whidbey Island
+connecting the Strait of Juan de Fuca to lower Puget Sound. For some
+tsunami modeling problems it is important to cover this region with a
+finer grid than is needed elsewhere.</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">Image</span><span class="p">(</span><span class="s1">&#39;figs/RuledRectangle_AdmiraltyInlet.png&#39;</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">400</span><span class="p">)</span>
+</pre></div>
+</div>
+<a class="reference internal image-reference" href="_images/RuledRectangles_32_0.png"><img alt="_images/RuledRectangles_32_0.png" src="_images/RuledRectangles_32_0.png" style="width: 400px;" /></a>
+<p>The Ruled Rectangle shown above was defined by the code below:</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">slu</span> <span class="o">=</span> \
+<span class="n">array</span><span class="p">([[</span>  <span class="mf">47.851</span><span class="p">,</span> <span class="o">-</span><span class="mf">122.75</span> <span class="p">,</span> <span class="o">-</span><span class="mf">122.300</span><span class="p">],</span>
+       <span class="p">[</span>  <span class="mf">47.955</span><span class="p">,</span> <span class="o">-</span><span class="mf">122.75</span> <span class="p">,</span> <span class="o">-</span><span class="mf">122.300</span><span class="p">],</span>
+       <span class="p">[</span>  <span class="mf">48.</span>   <span class="p">,</span> <span class="o">-</span><span class="mf">122.8</span>  <span class="p">,</span> <span class="o">-</span><span class="mf">122.529</span><span class="p">],</span>
+       <span class="p">[</span>  <span class="mf">48.036</span><span class="p">,</span> <span class="o">-</span><span class="mf">122.8</span>  <span class="p">,</span> <span class="o">-</span><span class="mf">122.578</span><span class="p">],</span>
+       <span class="p">[</span>  <span class="mf">48.12</span> <span class="p">,</span> <span class="o">-</span><span class="mf">122.9</span>  <span class="p">,</span> <span class="o">-</span><span class="mf">122.577</span><span class="p">],</span>
+       <span class="p">[</span>  <span class="mf">48.187</span><span class="p">,</span> <span class="o">-</span><span class="mf">122.9</span>  <span class="p">,</span> <span class="o">-</span><span class="mf">122.623</span><span class="p">],</span>
+       <span class="p">[</span>  <span class="mf">48.191</span><span class="p">,</span> <span class="o">-</span><span class="mf">122.9</span>  <span class="p">,</span> <span class="o">-</span><span class="mf">122.684</span><span class="p">],</span>
+       <span class="p">[</span>  <span class="mf">48.221</span><span class="p">,</span> <span class="o">-</span><span class="mf">122.9</span>  <span class="p">,</span> <span class="o">-</span><span class="mf">122.755</span><span class="p">]])</span>
+
+<span class="n">rr_admiralty</span> <span class="o">=</span> <span class="n">region_tools</span><span class="o">.</span><span class="n">RuledRectangle</span><span class="p">(</span><span class="n">slu</span><span class="o">=</span><span class="n">slu</span><span class="p">)</span>
+<span class="n">rr_admiralty</span><span class="o">.</span><span class="n">ixy</span> <span class="o">=</span> <span class="s1">&#39;y&#39;</span>
+<span class="n">rr_admiralty</span><span class="o">.</span><span class="n">method</span> <span class="o">=</span> <span class="mi">1</span>
+
+<span class="n">rr_name</span> <span class="o">=</span> <span class="s1">&#39;RuledRectangle_AdmiraltyInlet&#39;</span>
+<span class="n">rr_admiralty</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">rr_name</span> <span class="o">+</span> <span class="s1">&#39;.data&#39;</span><span class="p">)</span>
+<span class="n">rr_admiralty</span><span class="o">.</span><span class="n">make_kml</span><span class="p">(</span><span class="n">fname</span><span class="o">=</span><span class="n">rr_name</span><span class="o">+</span><span class="s1">&#39;.kml&#39;</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">rr_name</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The file <cite>RuledRectangle_AdmiraltyInlet.data</cite> can then be used as a
+“flag region” in the modified GeoClaw code, see
+<a class="reference external" href="FlagRegions.ipynb">FlagRegions.ipynb</a> for more details.</p>
+<p>The file <cite>RuledRectangle_AdmiraltyInlet.kml</cite> can be opened in Google
+Earth to show the polygon, as captured in the figure above.</p>
+</div>
+</div>
+<div class="section" id="a-simple-rectangle">
+<span id="rr-rect"></span><h2>A simple rectangle<a class="headerlink" href="#a-simple-rectangle" title="Permalink to this headline">¶</a></h2>
+<p>A simple rectangle with extent <cite>[x1,x2,y1,y2]</cite> can be specified as a
+<cite>RuledRectangle</cite> via e.g. :</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rectangle</span> <span class="o">=</span> <span class="n">region_tools</span><span class="o">.</span><span class="n">RuledRectangle</span><span class="p">()</span>
+<span class="n">rectangle</span><span class="o">.</span><span class="n">ixy</span> <span class="o">=</span> <span class="s1">&#39;x&#39;</span>
+<span class="n">rectangle</span><span class="o">.</span><span class="n">s</span> <span class="o">=</span> <span class="p">[</span><span class="n">x1</span><span class="p">,</span> <span class="n">x2</span><span class="p">]</span>
+<span class="n">rectangle</span><span class="o">.</span><span class="n">lower</span> <span class="o">=</span> <span class="p">[</span><span class="n">y1</span><span class="p">,</span> <span class="n">y1</span><span class="p">]</span>
+<span class="n">rectangle</span><span class="o">.</span><span class="n">upper</span> <span class="o">=</span> <span class="p">[</span><span class="n">y2</span><span class="p">,</span> <span class="n">y2</span><span class="p">]</span>
+<span class="n">rectangle</span><span class="o">.</span><span class="n">method</span> <span class="o">=</span> <span class="mi">0</span>
+</pre></div>
+</div>
+<p>This can be done for you when instantiating a <cite>RuledRectangle</cite> using:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rectangle</span> <span class="o">=</span> <span class="n">region_tools</span><span class="o">.</span><span class="n">RuledRectangle</span><span class="p">(</span><span class="n">rect</span><span class="o">=</span><span class="p">[</span><span class="n">x1</span><span class="p">,</span><span class="n">x2</span><span class="p">,</span><span class="n">y1</span><span class="p">,</span><span class="n">y2</span><span class="p">])</span>
+</pre></div>
+</div>
+<p>For example:</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rectangle</span> <span class="o">=</span> <span class="n">region_tools</span><span class="o">.</span><span class="n">RuledRectangle</span><span class="p">(</span><span class="n">rect</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">6</span><span class="p">])</span>
+
+<span class="n">xv</span><span class="p">,</span><span class="n">yv</span> <span class="o">=</span> <span class="n">rectangle</span><span class="o">.</span><span class="n">vertices</span><span class="p">()</span>
+<span class="n">plot</span><span class="p">(</span><span class="n">xv</span><span class="p">,</span><span class="n">yv</span><span class="p">,</span><span class="s1">&#39;b&#39;</span><span class="p">)</span>
+<span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">axis</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">7</span><span class="p">]);</span>
+</pre></div>
+</div>
+<img alt="_images/RuledRectangles_37_0.png" src="_images/RuledRectangles_37_0.png" />
+</div>
+<div class="section" id="defining-a-ruled-rectangle-covering-selected-cells">
+<span id="rr-cover"></span><h2>Defining a Ruled Rectangle covering selected cells<a class="headerlink" href="#defining-a-ruled-rectangle-covering-selected-cells" title="Permalink to this headline">¶</a></h2>
+<p>The module function
+<code class="docutils literal notranslate"><span class="pre">region_tools.ruledrectangle_covering_selected_points</span></code> can be used to
+generate a Ruled Rectangle that covers a specified set of points as
+compactly as possible. This is useful for generating AMR refinement
+regions that cover a set of points where we want to enforce a fine grid
+without including too many other points.</p>
+<p>First generate some sample data:</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">x_edge</span> <span class="o">=</span> <span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mi">5</span><span class="p">,</span><span class="mi">27</span><span class="p">,</span><span class="mi">33</span><span class="p">)</span>
+<span class="n">y_edge</span> <span class="o">=</span> <span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mi">7</span><span class="p">,</span><span class="mi">7</span><span class="p">,</span><span class="mi">15</span><span class="p">)</span>
+
+<span class="n">x_center</span> <span class="o">=</span> <span class="mf">0.5</span><span class="o">*</span><span class="p">(</span><span class="n">x_edge</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">x_edge</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span>
+<span class="n">y_center</span> <span class="o">=</span> <span class="mf">0.5</span><span class="o">*</span><span class="p">(</span><span class="n">y_edge</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">y_edge</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span>
+
+<span class="n">X</span><span class="p">,</span><span class="n">Y</span> <span class="o">=</span> <span class="n">meshgrid</span><span class="p">(</span><span class="n">x_center</span><span class="p">,</span><span class="n">y_center</span><span class="p">)</span>
+<span class="n">pts_chosen</span> <span class="o">=</span> <span class="n">where</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">X</span><span class="o">-</span><span class="n">Y</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">4.</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+<span class="n">pts_chosen</span> <span class="o">=</span> <span class="n">where</span><span class="p">(</span><span class="n">logical_or</span><span class="p">(</span><span class="n">X</span><span class="o">&gt;</span><span class="mi">24</span><span class="p">,</span> <span class="n">Y</span><span class="o">&lt;-</span><span class="mi">4</span><span class="p">),</span> <span class="mi">0</span><span class="p">,</span> <span class="n">pts_chosen</span><span class="p">)</span>
+<span class="n">pcolorcells</span><span class="p">(</span><span class="n">x_edge</span><span class="p">,</span><span class="n">y_edge</span><span class="p">,</span><span class="n">pts_chosen</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="n">cm</span><span class="o">.</span><span class="n">Blues</span><span class="p">,</span>
+           <span class="n">edgecolor</span><span class="o">=</span><span class="p">[</span><span class="o">.</span><span class="mi">8</span><span class="p">,</span><span class="o">.</span><span class="mi">8</span><span class="p">,</span><span class="o">.</span><span class="mi">8</span><span class="p">],</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
+</pre></div>
+</div>
+<img alt="_images/RuledRectangles_39_1.png" src="_images/RuledRectangles_39_1.png" />
+<p>The array <cite>pts_chosen</cite> has been defined with the value 1 in the dark
+blue cells in the figure above, and 0 elsewhere.</p>
+<p>In this case the points can be covered by a Ruled Rectangle with
+<cite>ixy = ‘y’</cite> most efficiently, giving a polygon that covers only the
+selected points. Note we use <cite>method = 0</cite> to generate a Ruled
+Rectangle that covers all the grid cells:</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rr</span> <span class="o">=</span> <span class="n">region_tools</span><span class="o">.</span><span class="n">ruledrectangle_covering_selected_points</span><span class="p">(</span><span class="n">x_center</span><span class="p">,</span> <span class="n">y_center</span><span class="p">,</span>
+                                                          <span class="n">pts_chosen</span><span class="p">,</span> <span class="n">ixy</span><span class="o">=</span><span class="s1">&#39;y&#39;</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                                                          <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="n">pcolorcells</span><span class="p">(</span><span class="n">x_edge</span><span class="p">,</span><span class="n">y_edge</span><span class="p">,</span><span class="n">pts_chosen</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="n">cm</span><span class="o">.</span><span class="n">Blues</span><span class="p">,</span>
+           <span class="n">edgecolor</span><span class="o">=</span><span class="p">[</span><span class="o">.</span><span class="mi">8</span><span class="p">,</span><span class="o">.</span><span class="mi">8</span><span class="p">,</span><span class="o">.</span><span class="mi">8</span><span class="p">],</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
+<span class="n">xv</span><span class="p">,</span><span class="n">yv</span> <span class="o">=</span> <span class="n">rr</span><span class="o">.</span><span class="n">vertices</span><span class="p">()</span>
+<span class="n">plot</span><span class="p">(</span><span class="n">xv</span><span class="p">,</span><span class="n">yv</span><span class="p">,</span><span class="s1">&#39;r&#39;</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="s1">&#39;Ruled Rectangle&#39;</span><span class="p">)</span>
+<span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s1">&#39;lower right&#39;</span><span class="p">)</span>
+<span class="n">title</span><span class="p">(</span><span class="s1">&#39;With ixy=2 and method=0&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Extending</span> <span class="n">rectangles</span> <span class="n">to</span> <span class="n">cover</span> <span class="n">grid</span> <span class="n">cells</span>
+<span class="n">RuledRectangle</span> <span class="n">covers</span> <span class="mi">80</span> <span class="n">grid</span> <span class="n">points</span>
+</pre></div>
+</div>
+<img alt="_images/RuledRectangles_42_1.png" src="_images/RuledRectangles_42_1.png" />
+<p>By contrast, if we use <cite>ixy = ‘x’</cite>, the minimal Ruled Rectangle
+covering the selected cells will also cover a number of cells that were
+not selected:</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rr</span> <span class="o">=</span> <span class="n">region_tools</span><span class="o">.</span><span class="n">ruledrectangle_covering_selected_points</span><span class="p">(</span><span class="n">x_center</span><span class="p">,</span> <span class="n">y_center</span><span class="p">,</span>
+                                                          <span class="n">pts_chosen</span><span class="p">,</span> <span class="n">ixy</span><span class="o">=</span><span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                                                          <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">pcolorcells</span><span class="p">(</span><span class="n">x_edge</span><span class="p">,</span><span class="n">y_edge</span><span class="p">,</span><span class="n">pts_chosen</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="n">cm</span><span class="o">.</span><span class="n">Blues</span><span class="p">,</span>
+           <span class="n">edgecolor</span><span class="o">=</span><span class="p">[</span><span class="o">.</span><span class="mi">8</span><span class="p">,</span><span class="o">.</span><span class="mi">8</span><span class="p">,</span><span class="o">.</span><span class="mi">8</span><span class="p">],</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
+<span class="n">xv</span><span class="p">,</span><span class="n">yv</span> <span class="o">=</span> <span class="n">rr</span><span class="o">.</span><span class="n">vertices</span><span class="p">()</span>
+<span class="n">plot</span><span class="p">(</span><span class="n">xv</span><span class="p">,</span><span class="n">yv</span><span class="p">,</span><span class="s1">&#39;r&#39;</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="s1">&#39;Ruled Rectangle&#39;</span><span class="p">)</span>
+<span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s1">&#39;lower right&#39;</span><span class="p">)</span>
+<span class="n">title</span><span class="p">(</span><span class="s1">&#39;With ixy=1 and method=0&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Extending</span> <span class="n">rectangles</span> <span class="n">to</span> <span class="n">cover</span> <span class="n">grid</span> <span class="n">cells</span>
+<span class="n">RuledRectangle</span> <span class="n">covers</span> <span class="mi">129</span> <span class="n">grid</span> <span class="n">points</span>
+</pre></div>
+</div>
+<img alt="_images/RuledRectangles_44_1.png" src="_images/RuledRectangles_44_1.png" />
+<p>Note that if we use <cite>method = 1</cite> then the Ruled Rectangle covers the
+center of each cell but not the entire grid cell for cells near the
+boundary:</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rr</span> <span class="o">=</span> <span class="n">region_tools</span><span class="o">.</span><span class="n">ruledrectangle_covering_selected_points</span><span class="p">(</span><span class="n">x_center</span><span class="p">,</span> <span class="n">y_center</span><span class="p">,</span>
+                                                          <span class="n">pts_chosen</span><span class="p">,</span> <span class="n">ixy</span><span class="o">=</span><span class="s1">&#39;y&#39;</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+                                                          <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="n">pcolorcells</span><span class="p">(</span><span class="n">x_edge</span><span class="p">,</span><span class="n">y_edge</span><span class="p">,</span><span class="n">pts_chosen</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="n">cm</span><span class="o">.</span><span class="n">Blues</span><span class="p">,</span>
+           <span class="n">edgecolor</span><span class="o">=</span><span class="p">[</span><span class="o">.</span><span class="mi">8</span><span class="p">,</span><span class="o">.</span><span class="mi">8</span><span class="p">,</span><span class="o">.</span><span class="mi">8</span><span class="p">],</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
+<span class="n">xv</span><span class="p">,</span><span class="n">yv</span> <span class="o">=</span> <span class="n">rr</span><span class="o">.</span><span class="n">vertices</span><span class="p">()</span>
+<span class="n">plot</span><span class="p">(</span><span class="n">xv</span><span class="p">,</span><span class="n">yv</span><span class="p">,</span><span class="s1">&#39;r&#39;</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="s1">&#39;Ruled Rectangle&#39;</span><span class="p">)</span>
+<span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s1">&#39;lower right&#39;</span><span class="p">)</span>
+<span class="n">title</span><span class="p">(</span><span class="s1">&#39;With ixy=2 and method=1&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">RuledRectangle</span> <span class="n">covers</span> <span class="mi">63</span> <span class="n">grid</span> <span class="n">points</span>
+</pre></div>
+</div>
+<img alt="_images/RuledRectangles_46_1.png" src="_images/RuledRectangles_46_1.png" />
+<p>With <cite>ixy=’x’</cite> and <cite>method=1</cite> the Ruled Rectangle degenerates in the
+upper right corner to a line segment that covers only the cell centers:</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rr</span> <span class="o">=</span> <span class="n">region_tools</span><span class="o">.</span><span class="n">ruledrectangle_covering_selected_points</span><span class="p">(</span><span class="n">x_center</span><span class="p">,</span> <span class="n">y_center</span><span class="p">,</span>
+                                                          <span class="n">pts_chosen</span><span class="p">,</span> <span class="n">ixy</span><span class="o">=</span><span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+                                                          <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">pcolorcells</span><span class="p">(</span><span class="n">x_edge</span><span class="p">,</span><span class="n">y_edge</span><span class="p">,</span><span class="n">pts_chosen</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="n">cm</span><span class="o">.</span><span class="n">Blues</span><span class="p">,</span>
+           <span class="n">edgecolor</span><span class="o">=</span><span class="p">[</span><span class="o">.</span><span class="mi">8</span><span class="p">,</span><span class="o">.</span><span class="mi">8</span><span class="p">,</span><span class="o">.</span><span class="mi">8</span><span class="p">],</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
+<span class="n">xv</span><span class="p">,</span><span class="n">yv</span> <span class="o">=</span> <span class="n">rr</span><span class="o">.</span><span class="n">vertices</span><span class="p">()</span>
+<span class="n">plot</span><span class="p">(</span><span class="n">xv</span><span class="p">,</span><span class="n">yv</span><span class="p">,</span><span class="s1">&#39;r&#39;</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="s1">&#39;Ruled Rectangle&#39;</span><span class="p">)</span>
+<span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s1">&#39;lower right&#39;</span><span class="p">)</span>
+<span class="n">title</span><span class="p">(</span><span class="s1">&#39;With ixy=1 and method=1&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">RuledRectangle</span> <span class="n">covers</span> <span class="mi">100</span> <span class="n">grid</span> <span class="n">points</span>
+</pre></div>
+</div>
+<img alt="_images/RuledRectangles_48_1.png" src="_images/RuledRectangles_48_1.png" />
+<div class="section" id="example-covering-the-continental-shelf">
+<h3>Example covering the continental shelf<a class="headerlink" href="#example-covering-the-continental-shelf" title="Permalink to this headline">¶</a></h3>
+<p>The figure below shows a Ruled Rectangle that roughly covers the
+continental shelf offshore of Vancouver Island and Washington state. The
+region may need to be refined to a higher level than the deeper ocean in
+order to capture shoaling tsunami waves interacting with the shelf
+topography. This region was defined by first selecting a set of points
+from etopo1 topography satisfying certain constraints on elevation using
+the marching front algorithm described in <a class="reference internal" href="marching_front.html#marching-front"><span class="std std-ref">Marching Front algorithm</span></a>,
+and then using the <code class="docutils literal notranslate"><span class="pre">region_tools.ruledrectangle_covering_selected_points</span></code>
+function to build a Ruled Rectangle covering these points.</p>
+<a class="reference internal image-reference" href="_images/RuledRectangles_50_0.png"><img alt="_images/RuledRectangles_50_0.png" src="_images/RuledRectangles_50_0.png" style="width: 400px;" /></a>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<p><a href="http://clawpack.org/">
+    <img class="logo" src= "_static/clawlogo.jpg" alt="Logo"/>
+</a>
+<h2>Version 5.7.x</h2>
+</p>
+  <h3><a href="contents.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Ruled Rectangles</a><ul>
+<li><a class="reference internal" href="#contents">Contents</a></li>
+<li><a class="reference internal" href="#examples">Examples</a></li>
+<li><a class="reference internal" href="#relation-to-convex-polygons">Relation to convex polygons</a></li>
+<li><a class="reference internal" href="#other-attributes-and-methods">Other attributes and methods</a><ul>
+<li><a class="reference internal" href="#ds"><cite>ds</cite></a></li>
+<li><a class="reference internal" href="#slu"><cite>slu</cite></a></li>
+<li><a class="reference internal" href="#bounding-box"><cite>bounding_box</cite></a></li>
+<li><a class="reference internal" href="#mask-outside"><cite>mask_outside</cite></a></li>
+<li><a class="reference internal" href="#read-and-write-and-instantiating-from-a-file">read and write, and instantiating from a file</a></li>
+<li><a class="reference internal" href="#make-kml"><cite>make_kml</cite></a></li>
+<li><a class="reference internal" href="#a-geoclaw-amr-flag-region">A GeoClaw AMR flag region</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#a-simple-rectangle">A simple rectangle</a></li>
+<li><a class="reference internal" href="#defining-a-ruled-rectangle-covering-selected-cells">Defining a Ruled Rectangle covering selected cells</a><ul>
+<li><a class="reference internal" href="#example-covering-the-continental-shelf">Example covering the continental shelf</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="contents.html">Documentation overview</a><ul>
+  <li><a href="amrclaw.html">AMRClaw Description and Detailed Contents</a><ul>
+      <li>Previous: <a href="flagregions.html" title="previous chapter">Specifying flagregions for adaptive refinement</a></li>
+      <li>Next: <a href="adjoint.html" title="next chapter">Guiding AMR with adjoint flagging</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+<div class="widget navlinks">
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/ruled_rectangles.rst.txt"
+            rel="nofollow"
+            target="_blank">Source .rst</a></li>
+    <li><a href="https://github.com/clawpack/doc/blob/dev/doc/ruled_rectangles.rst"
+            rel="nofollow"
+            target="_blank">Source on GitHub</a></li>
+     <li><a href="https://github.com/clawpack/doc/commits/dev/doc/ruled_rectangles.rst"
+             rel="nofollow"
+             target="_blank">History</a></li>
+    <li><a href="https://github.com/clawpack/doc/edit/dev/doc/ruled_rectangles.rst"
+            rel="nofollow"
+            target="_blank">Suggest Edits</a></li>
+     <li><a href="https://github.com/clawpack/doc/issues/new/choose"
+             rel="nofollow"
+             target="_blank">Raise an Issue</a></li>
+  </ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+<h4>Latest Version</h4>
+<ul>
+  <li><a href="../dev/ruled_rectangles.html">dev</a></li>
+  <li><a href="ruled_rectangles.html">v5.7.x</a></li>
+</ul>
+<h4>Older Versions</h4>
+<ul>
+  <li><a href="../v5.1.x/index.html">v5.1.x</a></li>
+  <li><a href="../v5.2.x/index.html">v5.2.x</a></li>
+  <li><a href="../v5.3.x/index.html">v5.3.x</a></li>
+  <li><a href="../v5.4.x/index.html">v5.4.x</a></li>
+  <li><a href="../v5.5.x/index.html">v5.5.x</a></li>
+  <li><a href="../v5.6.x/index.html">v5.6.x</a></li>
+</ul>
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+  <div class="footer">
+    &copy; Copyright CC-BY 2020, The Clawpack Development Team.
+    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
+  </div>
+  <script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-44811544-1', 'auto');
+  ga('send', 'pageview');
+
+  </script>
+  
+  </body>
+</html>

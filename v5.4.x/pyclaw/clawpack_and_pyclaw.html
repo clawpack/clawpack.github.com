@@ -1,0 +1,308 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>Porting a problem from Clawpack 4.6.x to PyClaw &#8212; Clawpack 5.4.1 documentation</title>
+    <link rel="stylesheet" href="../_static/flasky.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/base.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/layout.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script async="async" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="shortcut icon" href="../_static/clawicon.ico"/>
+    <link rel="author" title="About these documents" href="../about.html" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Using PyClaw’s solvers: Classic and SharpClaw" href="solvers.html" />
+    <link rel="prev" title="Setting up your own problem" href="problem.html" /> 
+  </head><body>
+<div id="main-wrapper" class="sphinx">
+<div id="header-wrapper">
+  <section id="header">
+    <!-- <h1><a href="http://clawpack.org/">Clawpack</a></h1> -->
+    <h1><a href="http://clawpack.org/">Clawpack-5</a></h1> 
+    <nav>
+      <ul>
+        <li>
+          <a href="../contents.html">Docs</a>
+        </li>
+        <li>
+          <a href="../installing.html">Install</a>
+        </li>
+        <li>
+          <a class="" href="http://clawpack.org/gallery/index.html">Gallery</a>
+        </li>
+        <li>
+          <a href="../about.html">Citation</a>
+        </li>
+        <li>
+          <a class="active" href="http://github.com/clawpack">GitHub</a>
+        </li>
+        <li>
+          <a class="" href="../community.html">Community</a>
+        </li>
+        <li>
+          <a class="" href="../developers.html">Contribute</a>
+        </li>
+      </ul>
+    </nav>
+  </section>
+<div class="decoration"></div>
+</div>
+
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="solvers.html" title="Using PyClaw’s solvers: Classic and SharpClaw"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="problem.html" title="Setting up your own problem"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../contents.html">Clawpack 5.4.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" >Pyclaw</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="going_further.html" accesskey="U">Going Further</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="porting-a-problem-from-clawpack-4-6-x-to-pyclaw">
+<span id="port-example"></span><span id="clawpack-and-pyclaw"></span><h1>Porting a problem from Clawpack 4.6.x to PyClaw<a class="headerlink" href="#porting-a-problem-from-clawpack-4-6-x-to-pyclaw" title="Permalink to this headline">¶</a></h1>
+<p>The script <cite>pyclaw/development/clawdata2pyclaw.py</cite> is intended to aid
+in converting a Clawpack 4.6 problem setup to PyClaw.  However,
+some manual conversion is necessary, especially if the problem
+includes custom fortran routines.</p>
+<p>In PyClaw, the high-level portions of the Fortran routines are reorganized in
+an object-oriented Python framework, while the low-level ones are bound through
+the Fortran to Python interface generator <a class="reference external" href="http://www.scipy.org/F2py">f2py</a>.
+Therefore, for simple problems you won’t need to call f2py directly. However, if
+you want to reutilize some problem-specific fortran routines that were set up and
+tested in a Clawpack problem, you can easily do it. Indeed, if those routines
+are complicated and/or computationally intensive,
+you should consider directly using the f2py
+interface in the initialization script (see <a class="reference internal" href="problem.html#problem-setup"><span class="std std-ref">Setting up your own problem</span></a>).
+The example in <cite>clawpack/pyclaw/examples/shallow_sphere</cite>, which
+solves the shallow water equations on the surface of a sphere, is a
+complete example that relies heavily on the use of problem-specific Fortran routines.
+In that problem setup, a few Fortran routines have been used to provide the
+following functionality:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Initialize the solution <code class="docutils literal notranslate"><span class="pre">state.q[:,:,:]</span></code></p></li>
+<li><p>Provide the mapping from a uniform Cartesian domain to the desired
+physical domain, i.e. the mapc2p function</p></li>
+<li><p>Setup the auxiliary variables <code class="docutils literal notranslate"><span class="pre">state.aux[:,:,:]</span></code></p></li>
+<li><p>Compute the (non-hyperbolic) contribution of a source term</p></li>
+<li><p>Impose custom boundary conditions to both solution and auxiliary
+variables</p></li>
+</ul>
+</div></blockquote>
+<p>The first step to succesfully interface the Fortran functions with PyClaw
+is to automate the extension module generation of these routines through f2py.
+You can use <cite>clawpack/pyclaw/examples/shallow_sphere/Makefile</cite> as a template:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span># Problem&#39;s source Fortran files
+INITIALIZE_SOURCE = mapc2p.f setaux.f qinit.f src2.f
+problem.so: $(INITIALIZE_SOURCE)
+    $(F2PY) -m problem -c $^
+</pre></div>
+</div>
+<p>The code above, calls f2py to compile a set of Fortran routines
+and build a module
+(<code class="docutils literal notranslate"><span class="pre">problem.so</span></code>) which can then be imported as a function in Python.
+The argument following the ‘’-m’’ flag is the name the python module should have (i.e.
+the name of the target). f2py uses the <code class="docutils literal notranslate"><span class="pre">numpy.distutils</span></code> module from NumPy
+that supports a number of major Fortran compilers. For more information
+see <a class="reference external" href="http://www.scipy.org/F2py">http://www.scipy.org/F2py</a>.</p>
+<p>After compilation, it is useful to check the signature of each
+function contained in <code class="docutils literal notranslate"><span class="pre">problem.so</span></code>, which may be different than
+that of the original Fortran function, since f2py eliminates dummy variables.
+One can easily achieve that by using the following commands:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ ipython
+&gt;&gt;&gt; import problem
+&gt;&gt;&gt; problem?
+</pre></div>
+</div>
+<p>The last command queries the content of the module and outputs the functions’
+signature that must be used in the initialization script to correctly call the
+fortran functions. In the shallow water equations on a sphere example, we get
+the following output:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">Type</span><span class="p">:</span>           <span class="n">module</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Base</span> <span class="n">Class</span><span class="p">:</span>     <span class="o">&lt;</span><span class="nb">type</span> <span class="s1">&#39;module&#39;</span><span class="o">&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">String</span> <span class="n">Form</span><span class="p">:</span>    <span class="o">&lt;</span><span class="n">module</span> <span class="s1">&#39;problem&#39;</span> <span class="kn">from</span> <span class="s1">&#39;problem.so&#39;</span><span class="o">&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Namespace</span><span class="p">:</span>      <span class="n">Interactive</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">File</span><span class="p">:</span>           <span class="o">/</span><span class="n">Users</span><span class="o">/../../../</span><span class="n">clawpack</span><span class="o">/</span><span class="n">pyclaw</span><span class="o">/</span><span class="n">examples</span><span class="o">/</span><span class="n">shallow</span><span class="o">-</span><span class="n">sphere</span><span class="o">/</span><span class="n">problem</span><span class="o">.</span><span class="n">so</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Docstring</span><span class="p">:</span>
+<span class="go">    This module &#39;problem&#39; is auto-generated with f2py (version:1).</span>
+<span class="go">    Functions:</span>
+<span class="go">    mapc2p(x1,y1,xp,yp,zp,rsphere)</span>
+<span class="go">    aux = setaux(maxmx,maxmy,num_ghost,mx,my,xlower,ylower,dxc,dyc,aux,rsphere,num_aux=shape(aux,0))</span>
+<span class="go">    q = qinit(maxmx,maxmy,num_ghost,mx,my,xlower,ylower,dx,dy,q,aux,rsphere,num_eqn=shape(q,0),num_aux=shape(aux,0))</span>
+<span class="go">    q = src2(maxmx,maxmy,num_ghost,xlower,ylower,dx,dy,q,aux,t,dt,rsphere,num_eqn=shape(q,0),mx=shape(q,1),my=shape(q,2),num_aux=shape(aux,0))</span>
+</pre></div>
+</div>
+<p>For instance, the function <code class="docutils literal notranslate"><span class="pre">src2</span></code>, which computes the contribution of the
+(non-hyperbolic) source term, has the following intent variables:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cf2py</span> <span class="n">integer</span> <span class="n">intent</span><span class="p">(</span><span class="ow">in</span><span class="p">)</span> <span class="n">maxmx</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cf2py</span> <span class="n">integer</span> <span class="n">intent</span><span class="p">(</span><span class="ow">in</span><span class="p">)</span> <span class="n">maxmy</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cf2py</span> <span class="n">integer</span> <span class="n">optional</span><span class="p">,</span> <span class="n">intent</span><span class="p">(</span><span class="ow">in</span><span class="p">)</span> <span class="n">num_eqn</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cf2py</span> <span class="n">integer</span> <span class="n">intent</span><span class="p">(</span><span class="ow">in</span><span class="p">)</span> <span class="n">num_ghost</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cf2py</span> <span class="n">integer</span> <span class="n">intent</span><span class="p">(</span><span class="ow">in</span><span class="p">)</span> <span class="n">mx</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cf2py</span> <span class="n">integer</span> <span class="n">intent</span><span class="p">(</span><span class="ow">in</span><span class="p">)</span> <span class="n">my</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cf2py</span> <span class="n">double</span> <span class="n">precision</span> <span class="n">intent</span><span class="p">(</span><span class="ow">in</span><span class="p">)</span> <span class="n">xlower</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cf2py</span> <span class="n">double</span> <span class="n">precision</span> <span class="n">intent</span><span class="p">(</span><span class="ow">in</span><span class="p">)</span> <span class="n">ylower</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cf2py</span> <span class="n">double</span> <span class="n">precision</span> <span class="n">intent</span><span class="p">(</span><span class="ow">in</span><span class="p">)</span> <span class="n">dx</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cf2py</span> <span class="n">double</span> <span class="n">precision</span> <span class="n">intent</span><span class="p">(</span><span class="ow">in</span><span class="p">)</span> <span class="n">dy</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cf2py</span> <span class="n">intent</span><span class="p">(</span><span class="ow">in</span><span class="p">,</span><span class="n">out</span><span class="p">)</span> <span class="n">q</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cf2py</span> <span class="n">integer</span> <span class="n">optional</span><span class="p">,</span> <span class="n">intent</span><span class="p">(</span><span class="ow">in</span><span class="p">)</span>  <span class="n">num_aux</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cf2py</span> <span class="n">intent</span><span class="p">(</span><span class="ow">in</span><span class="p">)</span> <span class="n">aux</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cf2py</span> <span class="n">double</span> <span class="n">precision</span> <span class="n">intent</span><span class="p">(</span><span class="ow">in</span><span class="p">)</span> <span class="n">t</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cf2py</span> <span class="n">double</span> <span class="n">precision</span> <span class="n">intent</span><span class="p">(</span><span class="ow">in</span><span class="p">)</span> <span class="n">dt</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cf2py</span> <span class="n">double</span> <span class="n">precision</span> <span class="n">intent</span><span class="p">(</span><span class="ow">in</span><span class="p">)</span> <span class="n">Rsphere</span>
+</pre></div>
+</div>
+<p>Note that <code class="docutils literal notranslate"><span class="pre">num_eqn</span></code>, <code class="docutils literal notranslate"><span class="pre">mx</span></code>, <code class="docutils literal notranslate"><span class="pre">my</span></code> <code class="docutils literal notranslate"><span class="pre">num_aux</span></code> are identified by f2py as optional
+arguments since their values can be retrieved by looking at the dimensions of
+other multidimensional arrays, i.e. <code class="docutils literal notranslate"><span class="pre">q</span></code> and <code class="docutils literal notranslate"><span class="pre">aux</span></code>.</p>
+<p>We are now ready to call and use the Fortran functions in the initialization
+script. For instance, the <code class="docutils literal notranslate"><span class="pre">src2</span></code> function is called in the
+<a class="reference external" href="http://numerics.kaust.edu.sa/pyclaw/examples/shallow-sphere/shallow_4_Rossby_Haurwitz_wave.py">script</a> by using a fortran_src_wrapper function whose main part reads:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Call src2 function</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">problem</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">state</span><span class="o">.</span><span class="n">q</span> <span class="o">=</span> <span class="n">problem</span><span class="o">.</span><span class="n">src2</span><span class="p">(</span><span class="n">mx</span><span class="p">,</span><span class="n">my</span><span class="p">,</span><span class="n">num_ghost</span><span class="p">,</span><span class="n">xlowerg</span><span class="p">,</span><span class="n">ylowerg</span><span class="p">,</span><span class="n">dx</span><span class="p">,</span><span class="n">dy</span><span class="p">,</span><span class="n">q</span><span class="p">,</span><span class="n">aux</span><span class="p">,</span><span class="n">t</span><span class="p">,</span><span class="n">dt</span><span class="p">,</span><span class="n">Rsphere</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>A similar approach is used to call other wrapped Fortran functions like
+<code class="docutils literal notranslate"><span class="pre">qinit</span></code>, <code class="docutils literal notranslate"><span class="pre">setaux</span></code>, etc.</p>
+<p>An important feature that makes PyClaw more flexible is the
+capability to replace the standard low-level Fortran routines whith some
+problem-specific routines. Binding new low-level functions and replacing the
+standard ones is very easy; the user just needs to modify the problem-specific
+Makefile. The shallow water equations on a sphere is again a
+typical example that uses this nice feature. Indeed, to run correctly the problem an
+ad-hoc <code class="docutils literal notranslate"><span class="pre">step2</span></code> function (i.e. the <code class="docutils literal notranslate"><span class="pre">step2qcor</span></code>) is required. For that problem
+the interesting part of the <a class="reference external" href="http://numerics.kaust.edu.sa/pyclaw/examples/shallow-sphere/shallow_4_Rossby_Haurwitz_wave.py">Makefile</a>
+reads:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span># Override step2.f with a new function that contains a call to an additional
+# function, i.e. qcor.f
+# ==========================================================================
+override TWO_D_CLASSIC_SOURCES = step2qcor.f qcor.o flux2.o limiter.o philim.o
+
+qcor.o: qcor.f
+    $(FC) $(FFLAGS) -o qcor.o -c qcor.f
+</pre></div>
+</div>
+<p>The user has just to override <code class="docutils literal notranslate"><span class="pre">step2.f</span></code> with the new function <code class="docutils literal notranslate"><span class="pre">step2qcor.f</span></code>
+and provide new:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">output_filenames</span> <span class="p">:</span> <span class="n">input_filenames</span>
+    <span class="n">actions</span>
+</pre></div>
+</div>
+<p>rules to create the targets required by the new Fortran routine.
+Similar changes to the problem-specific Makefile can be used to replace other
+low-level Fortran routines.</p>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<p><a href="http://clawpack.org/">
+    <img class="logo" src= "../_static/clawlogo.jpg" alt="Logo"/>
+</a>
+<h2>Version 5.4.1</h2>
+</p><h3>Related Topics</h3>
+<ul>
+  <li><a href="../contents.html">Documentation overview</a><ul>
+  <li><a href="index.html">Pyclaw</a><ul>
+  <li><a href="going_further.html">Going Further</a><ul>
+      <li>Previous: <a href="problem.html" title="previous chapter">Setting up your own problem</a></li>
+      <li>Next: <a href="solvers.html" title="next chapter">Using PyClaw’s solvers: Classic and SharpClaw</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+<div class="widget navlinks">
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../_sources/pyclaw/clawpack_and_pyclaw.rst.txt"
+            rel="nofollow"
+            target="_blank">Source .rst</a></li>
+    <li><a href="https://github.com/clawpack/doc/blob/dev/doc/pyclaw/clawpack_and_pyclaw.rst"
+            rel="nofollow"
+            target="_blank">Source on GitHub</a></li>
+     <li><a href="https://github.com/clawpack/doc/commits/dev/doc/pyclaw/clawpack_and_pyclaw.rst"
+             rel="nofollow"
+             target="_blank">History</a></li>
+    <li><a href="https://github.com/clawpack/doc/edit/dev/doc/pyclaw/clawpack_and_pyclaw.rst"
+            rel="nofollow"
+            target="_blank">Suggest Edits</a></li>
+     <li><a href="https://github.com/clawpack/doc/issues/new/choose"
+             rel="nofollow"
+             target="_blank">Raise an Issue</a></li>
+  </ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+<h4>Latest Version</h4>
+<ul>
+  <li><a href="../../dev/pyclaw/clawpack_and_pyclaw.html">dev</a></li>
+  <li><a href="../../v5.7.x/pyclaw/clawpack_and_pyclaw.html">v5.7.x</a></li>
+</ul>
+<h4>Older Versions</h4>
+<ul>
+  <li><a href="../../v5.1.x/pyclaw/clawpack_and_pyclaw.html">v5.1.x</a></li>
+  <li><a href="../../v5.2.x/pyclaw/clawpack_and_pyclaw.html">v5.2.x</a></li>
+  <li><a href="../../v5.3.x/pyclaw/clawpack_and_pyclaw.html">v5.3.x</a></li>
+  <li><a href="clawpack_and_pyclaw.html">v5.4.x</a></li>
+  <li><a href="../../v5.5.x/pyclaw/clawpack_and_pyclaw.html">v5.5.x</a></li>
+  <li><a href="../../v5.6.x/pyclaw/clawpack_and_pyclaw.html">v5.6.x</a></li>
+</ul>
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+  <div class="footer">
+    &copy; Copyright CC-BY 2020, The Clawpack Development Team.
+    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
+  </div>
+  <script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-44811544-1', 'auto');
+  ga('send', 'pageview');
+
+  </script>
+  
+  </body>
+</html>
