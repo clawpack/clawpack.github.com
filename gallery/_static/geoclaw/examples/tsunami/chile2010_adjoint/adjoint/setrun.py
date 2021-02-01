@@ -11,6 +11,7 @@ from __future__ import print_function
 import os
 import numpy as np
 
+
 try:
     CLAW = os.environ['CLAW']
 except:
@@ -83,8 +84,8 @@ def setrun(claw_pkg='geoclaw'):
 
 
     # Number of grid cells: Coarsest grid
-    clawdata.num_cells[0] = 240
-    clawdata.num_cells[1] = 240
+    clawdata.num_cells[0] = 120
+    clawdata.num_cells[1] = 120
 
     # ---------------
     # Size of system:
@@ -280,7 +281,7 @@ def setrun(claw_pkg='geoclaw'):
     amrdata = rundata.amrdata
 
     # max number of refinement levels:
-    amrdata.amr_levels_max = 1
+    amrdata.amr_levels_max = 2
 
     # List of refinement ratios at each level (length at least mxnest-1)
     amrdata.refinement_ratios_x = [2,6]
@@ -298,7 +299,7 @@ def setrun(claw_pkg='geoclaw'):
     # Flag using refinement routine flag2refine rather than richardson error
     amrdata.flag_richardson = False    # use Richardson?
     amrdata.flag_richardson_tol = 0.002  # Richardson tolerance
-    amrdata.flag2refine = False
+    amrdata.flag2refine = True
 
     # steps to take on each level L between regriddings of level L+1:
     amrdata.regrid_interval = 3
@@ -335,6 +336,39 @@ def setrun(claw_pkg='geoclaw'):
     rundata.regiondata.regions = []
     # to specify regions of refinement append lines of the form
     #  [minlevel,maxlevel,t1,t2,x1,x2,y1,y2]
+
+
+    # ---------------
+    # NEW flagregions
+    # ---------------
+
+    flagregions = rundata.flagregiondata.flagregions  # initialized to []
+
+    # now append as many flagregions as desired to this list:
+    from clawpack.amrclaw.data import FlagRegion
+
+    # allow 2 levels anywhere:
+    flagregion = FlagRegion(num_dim=2)
+    flagregion.name = 'Region_domain'
+    flagregion.minlevel = 1
+    flagregion.maxlevel = 2
+    flagregion.t1 = 0.
+    flagregion.t2 = 1e9
+    flagregion.spatial_region_type = 1  # Rectangle
+    flagregion.spatial_region = [-120,-60,-60,0]
+    flagregions.append(flagregion)
+
+    # force 2 levels initially around qinit hump for adjoint:
+    flagregion = FlagRegion(num_dim=2)
+    flagregion.name = 'Region_qinit'
+    flagregion.minlevel = 2
+    flagregion.maxlevel = 2
+    flagregion.t1 = 0.
+    flagregion.t2 = 1800.
+    flagregion.spatial_region_type = 1  # Rectangle
+    flagregion.spatial_region = [-90,-82,-19,-16]
+    flagregions.append(flagregion)
+
 
     # ---------------
     # Gauges:
@@ -381,28 +415,26 @@ def setgeo(rundata):
     refinement_data = rundata.refinement_data
     refinement_data.variable_dt_refinement_ratios = True
     refinement_data.wave_tolerance = 1.e-1
-    refinement_data.deep_depth = 1e2
-    refinement_data.max_level_deep = 3
 
     # == settopo.data values ==
     topo_data = rundata.topo_data
     # for topography, append lines of the form
-    #    [topotype, minlevel, maxlevel, t1, t2, fname]
+    #    [topotype, fname]
     topo_path = os.path.join(scratch_dir, 'etopo10min120W60W60S0S.asc')
-    topo_data.topofiles.append([2, 1, 3, 0., 1.e10, topo_path])
+    topo_data.topofiles.append([2, topo_path])
 
     # == setdtopo.data values ==
     dtopo_data = rundata.dtopo_data
     # for moving topography, append lines of the form :   (<= 1 allowed for now!)
-    #   [topotype, minlevel,maxlevel,fname]
+    #   [topotype, fname]
 
 
     # == setqinit.data values ==
     rundata.qinit_data.qinit_type = 4
     rundata.qinit_data.qinitfiles = []
     # for qinit perturbations, append lines of the form: (<= 1 allowed for now!)
-    #   [minlev, maxlev, fname]
-    rundata.qinit_data.qinitfiles.append([1, 1, 'hump.xyz'])
+    #   [fname]
+    rundata.qinit_data.qinitfiles.append(['hump.xyz'])
 
 
     # == setfixedgrids.data values ==

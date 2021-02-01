@@ -347,11 +347,48 @@ def setrun(claw_pkg='geoclaw'):
     # to specify regions of refinement append lines of the form
     #  [minlevel,maxlevel,t1,t2,x1,x2,y1,y2]
 
-    # all 3 levels anywhere, based on flagging:
-    rundata.regiondata.regions.append([1, 3, 0., 1e9, -220,0,-90,90])
+    # Regions can still be specified this way for backward compatibility,
+    # but the new flagregions approach below is preferable so this is 
+    # no longer used here.
+
+    # allow 3 levels anywhere, based on flagging:
+    #rundata.regiondata.regions.append([1, 3, 0., 1e9, -220,0,-90,90])
 
     # earthquake source region - force refinement initially:
-    rundata.regiondata.regions.append([3, 3, 0., 200., -85,-70,-38,-25])
+    #rundata.regiondata.regions.append([3, 3, 0., 200., -85,-70,-38,-25])
+
+    # ---------------
+    # NEW flagregions
+    # ---------------
+
+    flagregions = rundata.flagregiondata.flagregions  # initialized to []
+
+    # now append as many flagregions as desired to this list:
+    from clawpack.amrclaw.data import FlagRegion
+
+    # Allow 3 levels over entire domain:
+    flagregion = FlagRegion(num_dim=2)
+    flagregion.name = 'Region_domain'
+    flagregion.minlevel = 1
+    flagregion.maxlevel = 3
+    flagregion.t1 = 0.
+    flagregion.t2 = 1e9
+    flagregion.spatial_region_type = 1  # Rectangle
+    flagregion.spatial_region = [clawdata.lower[0],clawdata.upper[0],
+                                 clawdata.lower[1],clawdata.upper[1]]
+    flagregions.append(flagregion)
+
+    # Force 2 levels around source region initially:
+    flagregion = FlagRegion(num_dim=2)
+    flagregion.name = 'Region_source'
+    flagregion.minlevel = 2
+    flagregion.maxlevel = 2
+    flagregion.t1 = 0.
+    flagregion.t2 = 200.
+    flagregion.spatial_region_type = 1  # Rectangle
+    flagregion.spatial_region = [-85,-70,-38,-25]
+    flagregions.append(flagregion)
+
 
     # ---------------
     # Gauges:
@@ -427,22 +464,20 @@ def setgeo(rundata):
     refinement_data = rundata.refinement_data
     refinement_data.variable_dt_refinement_ratios = True
     refinement_data.wave_tolerance = 1.e-1  # not used for adjoint flagging
-    refinement_data.deep_depth = 1e2
-    refinement_data.max_level_deep = 3
 
     # == settopo.data values ==
     topo_data = rundata.topo_data
     # for topography, append lines of the form
-    #    [topotype, minlevel, maxlevel, t1, t2, fname]
+    #    [topotype, fname]
     topo_path = os.path.join(scratch_dir, 'etopo10min120W60W60S0S.asc')
-    topo_data.topofiles.append([2, 1, 3, 0., 1.e10, topo_path])
+    topo_data.topofiles.append([2, topo_path])
 
     # == setdtopo.data values ==
     dtopo_data = rundata.dtopo_data
     # for moving topography, append lines of the form :   (<= 1 allowed for now!)
-    #   [topotype, minlevel,maxlevel,fname]
+    #   [topotype, fname]
     dtopo_path = os.path.join(scratch_dir, 'dtopo_usgs100227.tt3')
-    dtopo_data.dtopofiles.append([3,3,3,dtopo_path])
+    dtopo_data.dtopofiles.append([3,dtopo_path])
     dtopo_data.dt_max_dtopo = 0.2
 
 
@@ -450,7 +485,7 @@ def setgeo(rundata):
     rundata.qinit_data.qinit_type = 0
     rundata.qinit_data.qinitfiles = []
     # for qinit perturbations, append lines of the form: (<= 1 allowed for now!)
-    #   [minlev, maxlev, fname]
+    #   [fname]
 
     # == setfixedgrids.data values ==
     fixed_grids = rundata.fixed_grid_data

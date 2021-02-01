@@ -15,7 +15,7 @@
            <font FACE="HELVETICA,ARIAL">
            
 <!-- Created from the file /Users/rjl/clawpack_src/clawpack_master/geoclaw/examples/tsunami/chile2010_adjoint/adjoint/setrun.py -->
-<!-- Date: Sat Apr 18 2020 at 12:37:36 -->
+<!-- Date: Sun Jan 17 2021 at 15:44:16 -->
 
 <table bgcolor="#FFEE99"> <tr> <td>
 &nbsp;<font size=6> setrun.py.html </font> </td>
@@ -27,7 +27,7 @@
 </td></tr><tr><td>
 &nbsp;Directory:  &nbsp; /Users/rjl/clawpack_src/clawpack_master/geoclaw/examples/tsunami/chile2010_adjoint/adjoint 
 </td></tr><tr><td>
-&nbsp;Converted:  &nbsp; Sat Apr 18 2020 at 12:37:36 
+&nbsp;Converted:  &nbsp; Sun Jan 17 2021 at 15:44:16 
 &nbsp; using <a href="http://www.clawpack.org//doc/application_documentation.html#clawcode2html">clawcode2html</a>
 </td></tr><tr><td>
 <font color="#BB3300"> &nbsp;This documentation file will 
@@ -47,6 +47,7 @@ from __future__ import absolute_import
 from __future__ import print_function
 import os
 import numpy as np
+
 
 try:
     CLAW = os.environ['CLAW']
@@ -120,8 +121,8 @@ def setrun(claw_pkg='geoclaw'):
 
 
     <font color="blue"># Number of grid cells: Coarsest grid</font>
-    clawdata.num_cells[0] = 240
-    clawdata.num_cells[1] = 240
+    clawdata.num_cells[0] = 120
+    clawdata.num_cells[1] = 120
 
     <font color="blue"># ---------------</font>
     <font color="blue"># Size of system:</font>
@@ -317,7 +318,7 @@ def setrun(claw_pkg='geoclaw'):
     amrdata = rundata.amrdata
 
     <font color="blue"># max number of refinement levels:</font>
-    amrdata.amr_levels_max = 1
+    amrdata.amr_levels_max = 2
 
     <font color="blue"># List of refinement ratios at each level (length at least mxnest-1)</font>
     amrdata.refinement_ratios_x = [2,6]
@@ -335,7 +336,7 @@ def setrun(claw_pkg='geoclaw'):
     <font color="blue"># Flag using refinement routine flag2refine rather than richardson error</font>
     amrdata.flag_richardson = False    <font color="blue"># use Richardson?</font>
     amrdata.flag_richardson_tol = 0.002  <font color="blue"># Richardson tolerance</font>
-    amrdata.flag2refine = False
+    amrdata.flag2refine = True
 
     <font color="blue"># steps to take on each level L between regriddings of level L+1:</font>
     amrdata.regrid_interval = 3
@@ -372,6 +373,39 @@ def setrun(claw_pkg='geoclaw'):
     rundata.regiondata.regions = []
     <font color="blue"># to specify regions of refinement append lines of the form</font>
     <font color="blue">#  [minlevel,maxlevel,t1,t2,x1,x2,y1,y2]</font>
+
+
+    <font color="blue"># ---------------</font>
+    <font color="blue"># NEW flagregions</font>
+    <font color="blue"># ---------------</font>
+
+    flagregions = rundata.flagregiondata.flagregions  <font color="blue"># initialized to []</font>
+
+    <font color="blue"># now append as many flagregions as desired to this list:</font>
+    from clawpack.amrclaw.data import FlagRegion
+
+    <font color="blue"># allow 2 levels anywhere:</font>
+    flagregion = FlagRegion(num_dim=2)
+    flagregion.name = 'Region_domain'
+    flagregion.minlevel = 1
+    flagregion.maxlevel = 2
+    flagregion.t1 = 0.
+    flagregion.t2 = 1e9
+    flagregion.spatial_region_type = 1  <font color="blue"># Rectangle</font>
+    flagregion.spatial_region = [-120,-60,-60,0]
+    flagregions.append(flagregion)
+
+    <font color="blue"># force 2 levels initially around qinit hump for adjoint:</font>
+    flagregion = FlagRegion(num_dim=2)
+    flagregion.name = 'Region_qinit'
+    flagregion.minlevel = 2
+    flagregion.maxlevel = 2
+    flagregion.t1 = 0.
+    flagregion.t2 = 1800.
+    flagregion.spatial_region_type = 1  <font color="blue"># Rectangle</font>
+    flagregion.spatial_region = [-90,-82,-19,-16]
+    flagregions.append(flagregion)
+
 
     <font color="blue"># ---------------</font>
     <font color="blue"># Gauges:</font>
@@ -418,28 +452,26 @@ def setgeo(rundata):
     refinement_data = rundata.refinement_data
     refinement_data.variable_dt_refinement_ratios = True
     refinement_data.wave_tolerance = 1.e-1
-    refinement_data.deep_depth = 1e2
-    refinement_data.max_level_deep = 3
 
     <font color="blue"># == settopo.data values ==</font>
     topo_data = rundata.topo_data
     <font color="blue"># for topography, append lines of the form</font>
-    <font color="blue">#    [topotype, minlevel, maxlevel, t1, t2, fname]</font>
+    <font color="blue">#    [topotype, fname]</font>
     topo_path = os.path.join(scratch_dir, 'etopo10min120W60W60S0S.asc')
-    topo_data.topofiles.append([2, 1, 3, 0., 1.e10, topo_path])
+    topo_data.topofiles.append([2, topo_path])
 
     <font color="blue"># == setdtopo.data values ==</font>
     dtopo_data = rundata.dtopo_data
     <font color="blue"># for moving topography, append lines of the form :   (<= 1 allowed for now!)</font>
-    <font color="blue">#   [topotype, minlevel,maxlevel,fname]</font>
+    <font color="blue">#   [topotype, fname]</font>
 
 
     <font color="blue"># == setqinit.data values ==</font>
     rundata.qinit_data.qinit_type = 4
     rundata.qinit_data.qinitfiles = []
     <font color="blue"># for qinit perturbations, append lines of the form: (<= 1 allowed for now!)</font>
-    <font color="blue">#   [minlev, maxlev, fname]</font>
-    rundata.qinit_data.qinitfiles.append([1, 1, 'hump.xyz'])
+    <font color="blue">#   [fname]</font>
+    rundata.qinit_data.qinitfiles.append(['hump.xyz'])
 
 
     <font color="blue"># == setfixedgrids.data values ==</font>

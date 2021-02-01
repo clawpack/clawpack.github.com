@@ -246,7 +246,52 @@ done at this level or coarser.  Set to 0 to suppress regridding output.</p>
 <code class="sig-name descname">regions : list</code></dt>
 <dd><p>List of lists of the form
 <cite>[minlevel,maxlevel,t1,t2,x1,x2,y1,y2]</cite>.
-See <a class="reference internal" href="refinement.html#refinement-regions"><span class="std std-ref">Specifying AMR regions</span></a></p>
+See <a class="reference internal" href="refinement.html#refinement-regions"><span class="std std-ref">Specifying AMR regions</span></a>.
+This attribute may be phased out in the future in favor of <cite>flagregions</cite>,
+but currently both are supported.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="sig-name descname">flagregions : list</code></dt>
+<dd><p>(Introduced in v5.7.0)
+List of objects of class <cite>clawpack.amrclaw.data.FlagRegion</cite> that specify
+regions where further adaptive refinement is either forced or forbiddne.
+These objects are more flexible than the
+older <cite>regions</cite> lists and are now preferred.  See <a class="reference internal" href="flagregions.html#flagregions"><span class="std std-ref">Specifying flagregions for adaptive refinement</span></a>.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="sig-name descname">max1d : int</code></dt>
+<dd><p>The maximum size (in each spatial dimension) of any grid patch.  If
+a larger region must be refined then it it split into multiple patches.
+This can be tuned if desired based on cache size and OMP efficiency
+(recall that multiple patches can be advanced in time in parallel).
+For debugging it may also be useful to vary this parameter.
+For most cases the default values work fine: 500 in 1D, 60 in 2D, 32 in 3D.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="sig-name descname">memsize : int</code></dt>
+<dd><p>The initial length of the <cite>alloc</cite> array used internally in AMRClaw for
+dynamic allocation of grid patch data.  The default values depend on
+the number of space dimensions and may be large enough.  If the
+<cite>alloc</cite> array is not long enough, then Fortran’s dynamic memory
+allocation will be used to double the size of this array and copy over
+all previous data, so it is not necessary to specify a value unless you
+are running a large problem and are concerned about the time spent
+repeatedly doubling and copying.  The default values are:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="mi">2</span><span class="o">**</span><span class="mi">20</span> <span class="o">-</span> <span class="mi">1</span> <span class="o">=</span> <span class="mi">1048575</span> <span class="ow">in</span> <span class="mi">1</span><span class="n">D</span><span class="p">,</span>
+<span class="mi">2</span><span class="o">**</span><span class="mi">22</span> <span class="o">-</span> <span class="mi">1</span> <span class="o">=</span> <span class="mi">4194303</span> <span class="ow">in</span> <span class="mi">2</span><span class="n">D</span><span class="p">,</span>
+<span class="mi">2</span><span class="o">**</span><span class="mi">23</span> <span class="o">-</span> <span class="mi">1</span> <span class="o">=</span> <span class="mi">8388607</span> <span class="ow">in</span> <span class="mi">3</span><span class="n">D</span><span class="o">.</span>
+</pre></div>
+</div>
+<p>These are chosen so that repeated doubling can get as close to <cite>2**30 - 1</cite> as
+possible, the limit of <cite>int*4</cite> array indices.  The code will crash if
+more memory is needed, in which case you may have to recompile with
+<cite>int*8</cite> index variables.</p>
 </dd></dl>
 
 </div>

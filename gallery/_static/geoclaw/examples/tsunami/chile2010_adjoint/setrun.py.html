@@ -15,7 +15,7 @@
            <font FACE="HELVETICA,ARIAL">
            
 <!-- Created from the file /Users/rjl/clawpack_src/clawpack_master/geoclaw/examples/tsunami/chile2010_adjoint/setrun.py -->
-<!-- Date: Sat Apr 18 2020 at 12:38:12 -->
+<!-- Date: Sun Jan 17 2021 at 15:44:54 -->
 
 <table bgcolor="#FFEE99"> <tr> <td>
 &nbsp;<font size=6> setrun.py.html </font> </td>
@@ -27,7 +27,7 @@
 </td></tr><tr><td>
 &nbsp;Directory:  &nbsp; /Users/rjl/clawpack_src/clawpack_master/geoclaw/examples/tsunami/chile2010_adjoint 
 </td></tr><tr><td>
-&nbsp;Converted:  &nbsp; Sat Apr 18 2020 at 12:38:12 
+&nbsp;Converted:  &nbsp; Sun Jan 17 2021 at 15:44:54 
 &nbsp; using <a href="http://www.clawpack.org//doc/application_documentation.html#clawcode2html">clawcode2html</a>
 </td></tr><tr><td>
 <font color="#BB3300"> &nbsp;This documentation file will 
@@ -384,11 +384,48 @@ def setrun(claw_pkg='geoclaw'):
     <font color="blue"># to specify regions of refinement append lines of the form</font>
     <font color="blue">#  [minlevel,maxlevel,t1,t2,x1,x2,y1,y2]</font>
 
-    <font color="blue"># all 3 levels anywhere, based on flagging:</font>
-    rundata.regiondata.regions.append([1, 3, 0., 1e9, -220,0,-90,90])
+    <font color="blue"># Regions can still be specified this way for backward compatibility,</font>
+    <font color="blue"># but the new flagregions approach below is preferable so this is </font>
+    <font color="blue"># no longer used here.</font>
+
+    <font color="blue"># allow 3 levels anywhere, based on flagging:</font>
+    <font color="blue">#rundata.regiondata.regions.append([1, 3, 0., 1e9, -220,0,-90,90])</font>
 
     <font color="blue"># earthquake source region - force refinement initially:</font>
-    rundata.regiondata.regions.append([3, 3, 0., 200., -85,-70,-38,-25])
+    <font color="blue">#rundata.regiondata.regions.append([3, 3, 0., 200., -85,-70,-38,-25])</font>
+
+    <font color="blue"># ---------------</font>
+    <font color="blue"># NEW flagregions</font>
+    <font color="blue"># ---------------</font>
+
+    flagregions = rundata.flagregiondata.flagregions  <font color="blue"># initialized to []</font>
+
+    <font color="blue"># now append as many flagregions as desired to this list:</font>
+    from clawpack.amrclaw.data import FlagRegion
+
+    <font color="blue"># Allow 3 levels over entire domain:</font>
+    flagregion = FlagRegion(num_dim=2)
+    flagregion.name = 'Region_domain'
+    flagregion.minlevel = 1
+    flagregion.maxlevel = 3
+    flagregion.t1 = 0.
+    flagregion.t2 = 1e9
+    flagregion.spatial_region_type = 1  <font color="blue"># Rectangle</font>
+    flagregion.spatial_region = [clawdata.lower[0],clawdata.upper[0],
+                                 clawdata.lower[1],clawdata.upper[1]]
+    flagregions.append(flagregion)
+
+    <font color="blue"># Force 2 levels around source region initially:</font>
+    flagregion = FlagRegion(num_dim=2)
+    flagregion.name = 'Region_source'
+    flagregion.minlevel = 2
+    flagregion.maxlevel = 2
+    flagregion.t1 = 0.
+    flagregion.t2 = 200.
+    flagregion.spatial_region_type = 1  <font color="blue"># Rectangle</font>
+    flagregion.spatial_region = [-85,-70,-38,-25]
+    flagregions.append(flagregion)
+
 
     <font color="blue"># ---------------</font>
     <font color="blue"># Gauges:</font>
@@ -464,22 +501,20 @@ def setgeo(rundata):
     refinement_data = rundata.refinement_data
     refinement_data.variable_dt_refinement_ratios = True
     refinement_data.wave_tolerance = 1.e-1  <font color="blue"># not used for adjoint flagging</font>
-    refinement_data.deep_depth = 1e2
-    refinement_data.max_level_deep = 3
 
     <font color="blue"># == settopo.data values ==</font>
     topo_data = rundata.topo_data
     <font color="blue"># for topography, append lines of the form</font>
-    <font color="blue">#    [topotype, minlevel, maxlevel, t1, t2, fname]</font>
+    <font color="blue">#    [topotype, fname]</font>
     topo_path = os.path.join(scratch_dir, 'etopo10min120W60W60S0S.asc')
-    topo_data.topofiles.append([2, 1, 3, 0., 1.e10, topo_path])
+    topo_data.topofiles.append([2, topo_path])
 
     <font color="blue"># == setdtopo.data values ==</font>
     dtopo_data = rundata.dtopo_data
     <font color="blue"># for moving topography, append lines of the form :   (<= 1 allowed for now!)</font>
-    <font color="blue">#   [topotype, minlevel,maxlevel,fname]</font>
+    <font color="blue">#   [topotype, fname]</font>
     dtopo_path = os.path.join(scratch_dir, 'dtopo_usgs100227.tt3')
-    dtopo_data.dtopofiles.append([3,3,3,dtopo_path])
+    dtopo_data.dtopofiles.append([3,dtopo_path])
     dtopo_data.dt_max_dtopo = 0.2
 
 
@@ -487,7 +522,7 @@ def setgeo(rundata):
     rundata.qinit_data.qinit_type = 0
     rundata.qinit_data.qinitfiles = []
     <font color="blue"># for qinit perturbations, append lines of the form: (<= 1 allowed for now!)</font>
-    <font color="blue">#   [minlev, maxlev, fname]</font>
+    <font color="blue">#   [fname]</font>
 
     <font color="blue"># == setfixedgrids.data values ==</font>
     fixed_grids = rundata.fixed_grid_data

@@ -1,0 +1,179 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>Tohoku tsunami and comparison with gauge data in Hawaii &#8212; Clawpack 5.7.x documentation</title>
+    <link rel="stylesheet" href="../../../../_static/flasky.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../_static/base.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../_static/layout.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css" />
+    <script id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
+    <script src="../../../../_static/jquery.js"></script>
+    <script src="../../../../_static/underscore.js"></script>
+    <script src="../../../../_static/doctools.js"></script>
+    <script src="../../../../_static/language_data.js"></script>
+    <script async="async" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="shortcut icon" href="../../../../_static/clawicon.ico"/>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+  </head><body>
+<div id="main-wrapper" class="sphinx">
+<div id="header-wrapper">
+  <section id="header">
+    <!-- <h1><a href="http://clawpack.org/">Clawpack</a></h1> -->
+    <h1><a href="http://clawpack.org/">Clawpack-5</a></h1> 
+    <nav>
+      <ul>
+        <li>
+          <a href="http://clawpack.org/contents.html">Docs</a>
+        </li>
+        <li>
+          <a href="http://clawpack.org/installing.html">Install</a>
+        </li>
+        <li>
+          <a class="" href="../../../../index.html">Gallery</a>
+        </li>
+        <li>
+          <a href="http://clawpack.org/about.html">Citation</a>
+        </li>
+        <li>
+          <a class="active" href="http://github.com/clawpack">Github</a>
+        </li>
+        <li>
+          <a href="http://clawpack.org/community.html">Community</a>
+        </li>
+        <li>
+          <a href="http://clawpack.org/developers.html">Contribute</a>
+        </li>
+      </ul>
+    </nav>
+  </section>
+<div class="decoration"></div>
+</div>
+
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../../index.html">Clawpack 5.7.x documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="tohoku-tsunami-and-comparison-with-gauge-data-in-hawaii">
+<span id="tsunami-examples-tohoku2011-hawaii-currents"></span><h1>Tohoku tsunami and comparison with gauge data in Hawaii<a class="headerlink" href="#tohoku-tsunami-and-comparison-with-gauge-data-in-hawaii" title="Permalink to this headline">¶</a></h1>
+<p>This example is set up to replicate some of the results from
+<a class="reference external" href="http://dx.doi.org/10.1007/s00024-014-0980-y">this paper</a>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">M</span><span class="o">.</span> <span class="n">Arcos</span> <span class="ow">and</span> <span class="n">R</span><span class="o">.</span> <span class="n">J</span><span class="o">.</span> <span class="n">LeVeque</span><span class="p">,</span> <span class="n">Validating</span> <span class="n">Velocities</span> <span class="ow">in</span> <span class="n">the</span> <span class="n">GeoClaw</span> <span class="n">Tsunami</span>
+<span class="n">Model</span> <span class="n">using</span> <span class="n">Observations</span> <span class="n">Near</span> <span class="n">Hawaii</span> <span class="kn">from</span> <span class="nn">the</span> <span class="mi">2011</span> <span class="n">Tohoku</span> <span class="n">Tsunami</span><span class="p">,</span>
+<span class="n">Pure</span> <span class="ow">and</span> <span class="n">Applied</span> <span class="n">Geophysics</span><span class="p">,</span> <span class="mf">2015.</span>  <span class="n">DOI</span> <span class="mf">10.1007</span><span class="o">/</span><span class="n">s00024</span><span class="o">-</span><span class="mi">014</span><span class="o">-</span><span class="mi">0980</span><span class="o">-</span><span class="n">y</span>
+</pre></div>
+</div>
+<p>For more details see the Jupyter notebook <cite>compare_results.ipynb</cite>.</p>
+<p>This example uses the dtopo file <cite>fujii.txydz</cite>, which is downloaded from the
+script <cite>maketopo.py</cite>.  This can be run via:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">make</span> <span class="n">topo</span>
+</pre></div>
+</div>
+<p>at the command line, which also downloads a topo file for the ocean bathymetry.
+This bathymetry originally came from the NOAA National Geophysical Data
+Center (NGDC), now NCEI (see <a class="reference external" href="http://www.clawpack.org/tsunamidata.html">Sources of tsunami data</a>).</p>
+<p>To run the code and produce plots:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">make</span> <span class="o">.</span><span class="n">plots</span>
+</pre></div>
+</div>
+<p>This produces plots of the surface and velocity at two gauges 1123 and 5680.
+These gauges are at locations corresponding to the ADCP gauge HAI1123 (an
+acoustic Doppler current profiler that was in place to record currents) and
+the tide gauge in the Kahului Harbor.</p>
+<p>To better view the gauge results and also plot comparisons with observations
+at these gauges, run the Jupyter notebook <cite>compare_results.ipynb</cite>.</p>
+<p><strong>A rendered version of the Jupyter notebook</strong> for this example (with output
+and plots) can be viewed from the <a class="reference external" href="http://www.clawpack.org/gallery/_static/??/README.html">Clawpack gallery version of this file.</a></p>
+<p>Note that <cite>setrun.py</cite> has:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">amrdata</span><span class="o">.</span><span class="n">amr_levels_max</span> <span class="o">=</span> <span class="mi">5</span>
+</pre></div>
+</div>
+<p>so that the code runs quickly (about 15 minutes of CPU time on a MacBook Pro).
+Setting this to 6 gives another level refined by an additional factor 30
+around Kahului Harbor, which agrees with the resolution used in the
+original paper.  Running this way takes about 2 hours of CPU time.</p>
+<div class="section" id="version">
+<h2>Version<a class="headerlink" href="#version" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p>Developed using v5.7.0 in July, 2020.</p></li>
+</ul>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<p><a href="http://clawpack.org/">
+    <img class="logo" src= "../../../../_static/clawlogo.jpg" alt="Logo"/>
+</a>
+<h2>Version 5.7.x</h2>
+</p>
+  <h3><a href="../../../../index.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Tohoku tsunami and comparison with gauge data in Hawaii</a><ul>
+<li><a class="reference internal" href="#version">Version</a></li>
+</ul>
+</li>
+</ul>
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../../index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../../../../_sources/gallery/apps/tsunami-examples/tohoku2011_hawaii_currents/README.rst.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+  <div class="footer">
+    &copy; Copyright CC-BY 2020, The Clawpack Development Team.
+    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
+  </div>
+  <script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-44811544-1', 'auto');
+  ga('send', 'pageview');
+
+  </script>
+  
+  </body>
+</html>

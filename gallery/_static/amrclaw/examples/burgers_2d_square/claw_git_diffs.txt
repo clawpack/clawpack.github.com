@@ -1,6 +1,57 @@
 Clawpack git diffs...
 
 ===========
+clawpack
+===========
+/Users/rjl/clawpack_src/clawpack_master/
+
+diff --git a/amrclaw b/amrclaw
+--- a/amrclaw
++++ b/amrclaw
+@@ -1 +1 @@
+-Subproject commit 7d3e82fc7c4f138dcaa762b1ee5d1c09b79e43be
++Subproject commit 7d3e82fc7c4f138dcaa762b1ee5d1c09b79e43be-dirty
+diff --git a/classic b/classic
+--- a/classic
++++ b/classic
+@@ -1 +1 @@
+-Subproject commit 13f06a2342255c012b24ec594a4724c0e78409d8
++Subproject commit 13f06a2342255c012b24ec594a4724c0e78409d8-dirty
+diff --git a/clawutil b/clawutil
+--- a/clawutil
++++ b/clawutil
+@@ -1 +1 @@
+-Subproject commit 116ffb792e889fbf0854d7ac599657039d7b1f3e
++Subproject commit 116ffb792e889fbf0854d7ac599657039d7b1f3e-dirty
+diff --git a/geoclaw b/geoclaw
+index ec5966d..3b17a37 160000
+--- a/geoclaw
++++ b/geoclaw
+@@ -1 +1 @@
+-Subproject commit ec5966d4aeb1564d760ea3a8321ecbdd7ec8bc97
++Subproject commit 3b17a37c7d458c3f6d61b2299987cea90f11b6a1-dirty
+diff --git a/pyclaw b/pyclaw
+index a85a01a..feab1b5 160000
+--- a/pyclaw
++++ b/pyclaw
+@@ -1 +1 @@
+-Subproject commit a85a01a5f20be1a18dde70b7bb37dc1cdcbd0b26
++Subproject commit feab1b5eb19d50adb89195a891d2062cc2ad13c2
+diff --git a/riemann b/riemann
+--- a/riemann
++++ b/riemann
+@@ -1 +1 @@
+-Subproject commit 597824c051d56fa0c8818e00d740867283329b24
++Subproject commit 597824c051d56fa0c8818e00d740867283329b24-dirty
+diff --git a/visclaw b/visclaw
+--- a/visclaw
++++ b/visclaw
+@@ -1 +1 @@
+-Subproject commit b03b0d40aeab7706e99bea7d207f0cabd933ecdb
++Subproject commit b03b0d40aeab7706e99bea7d207f0cabd933ecdb-dirty
+
+
+===========
 classic
 ===========
 /Users/rjl/clawpack_src/clawpack_master/classic
@@ -19,157 +70,6 @@ clawutil
 ===========
 /Users/rjl/clawpack_src/clawpack_master/clawutil
 
-diff --git a/src/python/clawutil/make_all.py b/src/python/clawutil/make_all.py
-index 0654d8b..c6e444c 100644
---- a/src/python/clawutil/make_all.py
-+++ b/src/python/clawutil/make_all.py
-@@ -90,6 +90,8 @@ def make_all(examples_dir = '.',make_clean_first=False, env=None):
-     import subprocess
-     for directory in dir_list:
- 
-+        print("=====> %s" % directory)
-+
-         fout.write("\n=============================================\n")
-         fout.write(directory)
-         fout.write("\n=============================================\n")
-@@ -162,15 +164,16 @@ def make_notebook_htmls(examples_dir = '.',make_clean_first=False, env=None):
- 
-     current_dir = os.getcwd()
- 
--    dir_list = list_examples(examples_dir)
-+    #dir_list = list_examples(examples_dir)
-     print("Found the following Jupyter notebooks:")
-     nb_dir_list = []
--    for d in dir_list:
--        notebooks = glob.glob(d + '/*.ipynb')
--        if len(notebooks) != 0:
--            nb_dir_list.append(d)
--        for nbfile in notebooks:
--            print(nbfile)
-+    for (dirpath, subdirs, files) in os.walk('.',topdown=False):
-+        if '.ipynb_checkpoints' not in dirpath:
-+            notebooks = glob.glob(dirpath + '/*.ipynb')
-+            if len(notebooks) != 0:
-+                nb_dir_list.append(os.path.abspath(dirpath))
-+            for nbfile in notebooks:
-+                print(nbfile)
-             
-     if len(nb_dir_list) == 0:
-         print("  none")
-@@ -201,6 +204,8 @@ def make_notebook_htmls(examples_dir = '.',make_clean_first=False, env=None):
-     import subprocess
-     for directory in nb_dir_list:
- 
-+        print("=====> %s" % directory)
-+
-         fout.write("\n=============================================\n")
-         fout.write(directory)
-         fout.write("\n=============================================\n")
-diff --git a/src/python/clawutil/nbtools.py b/src/python/clawutil/nbtools.py
-index ad5652e..ef6f796 100644
---- a/src/python/clawutil/nbtools.py
-+++ b/src/python/clawutil/nbtools.py
-@@ -4,7 +4,10 @@ Useful tools for running Clawpack from an IPython notebook.
- 
- from __future__ import absolute_import
- from __future__ import print_function
-+import os
-+
- from IPython.core.display import display
-+
- try:
-     from IPython.display import FileLink
- except:
-@@ -87,7 +90,7 @@ def make_exe(new=False, env=None, verbose=True):
-     make_driver(args, env, outfile, verbose)
- 
-     
--def make_output(label=None, env=None, verbose=True):
-+def make_output(label=None, env=None, outdir_base='_output', verbose=True):
-     """Perform 'make output' and display link."""
-     
-     if label is None: 
-@@ -95,7 +98,7 @@ def make_output(label=None, env=None, verbose=True):
-     else:
-         if label[0] != '_':
-             label = '_' + label
--    outdir = '_output%s' % str(label)
-+    outdir = '%s%s' % (outdir_base,str(label))
-     outfile = 'run_output%s.txt' % str(label)
- 
-     args = 'output OUTDIR=%s' % outdir
-@@ -104,7 +107,8 @@ def make_output(label=None, env=None, verbose=True):
-     return outdir
- 
-     
--def make_plots(label=None, env=None, verbose=True):
-+def make_plots(label=None, env=None, outdir_base='_output', 
-+               plotdir_base='_plots', verbose=True):
-     """Perform 'make plots' and display links"""
- 
-     if label is None: 
-@@ -112,29 +116,42 @@ def make_plots(label=None, env=None, verbose=True):
-     else:
-         if label[0] != '_':
-             label = '_' + label
--    outdir = '_output%s' % str(label)
--    plotdir = '_plots%s' % str(label)
-+    outdir = '%s%s' % (outdir_base,str(label))
-+    plotdir = '%s%s' % (plotdir_base,str(label))
-     outfile = 'plot_output%s.txt' % str(label)
- 
-     args = 'plots OUTDIR=%s PLOTDIR=%s' % (outdir,plotdir)
-     make_driver(args, env, outfile, verbose)
- 
-     if verbose:
--        index_file = FileLink('%s/_PlotIndex.html' % plotdir)
-+        print('+++ ',os.getcwd())
-+        plotindex_path = '%s/PlotIndex.html' % plotdir
-+        index_file = FileLink(plotindex_path)
-         print("View plots created at this link:")
-         display(index_file)
- 
-+        plotindex_path = os.path.join(os.getcwd(), '%s/PlotIndex.html' % plotdir)
-+        plotindex_path = 'file://' + plotindex_path
-+        print('Note that some links may not work when opened on Juptyer')
-+        print('If you are running this locally, you should also be able to view')
-+        print('plots by copying and pasting this link into a new browser tab:')
-+        print('    ',plotindex_path)
-+
-     return plotdir
-     
- 
--def make_output_and_plots(label=None, env=None, verbose=True):
-+def make_output_and_plots(label=None, env=None, 
-+                outdir_base='_output', plotdir_base='_plots', verbose=True):
- 
--    outdir = make_output(label,env,verbose)
--    plotdir = make_plots(label,env,verbose)
-+    outdir = make_output(label,env,outdir_base=outdir_base,verbose=verbose)
-+    plotdir = make_plots(label,env,outdir_base=outdir_base,
-+                         plotdir_base=plotdir_base,verbose=verbose)
-     return outdir,plotdir
- 
- 
--def make_all(label=None, env=None, verbose=True):
-+def make_all(label=None, env=None,
-+             outdir_base='_output', plotdir_base='_plots', verbose=True):
-+
-     """Perform 'make all' and display links"""
- 
-     if label is None: 
-@@ -150,7 +167,10 @@ def make_all(label=None, env=None, verbose=True):
-     make_driver(args, env, outfile, verbose)
- 
-     if verbose:
--        index_file = FileLink('%s/_PlotIndex.html' % plotdir)
-+        print('+++ ',os.getcwd())
-+        plotindex_path = os.path.join(os.getcwd(), '%s/PlotIndex.html' % plotdir)
-+        print('+++ ',plotindex_path)
-+        index_file = FileLink(plotindex_path)
-         print("View plots created at this link:")
-         display(index_file)
- 
 
 
 ===========
