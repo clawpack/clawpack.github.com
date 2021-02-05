@@ -1,0 +1,333 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>Adaptive mesh refinement (AMR) algorithms &#8212; Clawpack 5.8.x documentation</title>
+    <link rel="stylesheet" href="_static/flasky.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/base.css" type="text/css" />
+    <link rel="stylesheet" href="_static/layout.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/graphviz.css" />
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <script async="async" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="shortcut icon" href="_static/clawicon.ico"/>
+    <link rel="author" title="About these documents" href="about.html" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="AMR refinement criteria" href="refinement.html" />
+    <link rel="prev" title="Sample setrun.py module for AMRClaw" href="setrun_amrclaw_sample.html" /> 
+  </head><body>
+<div id="main-wrapper" class="sphinx">
+<div id="header-wrapper">
+  <section id="header">
+    <!-- <h1><a href="http://clawpack.org/">Clawpack</a></h1> -->
+    <h1><a href="http://clawpack.org/">Clawpack-5</a></h1> 
+    <nav>
+      <ul>
+        <li>
+          <a href="contents.html">Docs</a>
+        </li>
+        <li>
+          <a href="installing.html">Install</a>
+        </li>
+        <li>
+          <a class="" href="http://clawpack.org/gallery/index.html">Gallery</a>
+        </li>
+        <li>
+          <a href="about.html">Citation</a>
+        </li>
+        <li>
+          <a class="active" href="http://github.com/clawpack">GitHub</a>
+        </li>
+        <li>
+          <a class="" href="community.html">Community</a>
+        </li>
+        <li>
+          <a class="" href="developers.html">Contribute</a>
+        </li>
+      </ul>
+    </nav>
+  </section>
+<div class="decoration"></div>
+</div>
+
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="refinement.html" title="AMR refinement criteria"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="setrun_amrclaw_sample.html" title="Sample setrun.py module for AMRClaw"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="contents.html">Clawpack 5.8.x documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="amrclaw.html" accesskey="U">AMRClaw Description and Detailed Contents</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="adaptive-mesh-refinement-amr-algorithms">
+<span id="amr-algorithm"></span><h1>Adaptive mesh refinement (AMR) algorithms<a class="headerlink" href="#adaptive-mesh-refinement-amr-algorithms" title="Permalink to this headline">¶</a></h1>
+<p>The basic adaptive refinment strategy used in <a class="reference internal" href="amrclaw.html#amrclaw"><span class="std std-ref">AMRClaw Description and Detailed Contents</span></a> is
+to refine on logically rectangular patches.  A single Level 1 grid covers
+the entire domain (usually — if it is too large it may be split into
+multiple Level 1 grids).  Some rectangular portions of this grid are covered
+by Level 2 grids refined by some refinement factor <em>R</em> in each direction
+(anisotropic refinement is now allowed too — see <a class="reference internal" href="setrun_amrclaw.html#setrun-amrclaw"><span class="std std-ref">Specifying AMRClaw run-time parameters in setrun.py</span></a>).
+Regions of each Level 2 grid may be covered by Level 3 grids, that are
+further refined (perhaps with a different refinement ratio).  And so on.</p>
+<p>For the hyperbolic solvers in Clawpack the time step is limited by the
+Courant number (see Section <span class="xref std std-ref">cfl</span>), and so if the spatial resolution is
+refined by a factor of <em>R</em> in each direction then the time step will
+generally have to be reduced by a factor <em>R</em> as well.</p>
+<p>The AMR code thus proceeds as follows:</p>
+<blockquote>
+<div><ul>
+<li><p>In each time step on the Level 1 grid(s), the values in all grid cells
+(including those covered by finer grids) are advanced one time step.
+Before this time step is taken, ghost cells around the boundary of the
+full computational domain are filled based on the boundary conditions
+specified in the library routine <em>bcNamr.f</em> (where <em>N</em> is the number of
+space dimensions).  Check the <em>Makefile</em> of an application to see where
+this file can be found.</p></li>
+<li><p>After a step on the Level 1 grid, <em>R</em> time steps must be taken on each
+Level 2 grid, where <em>R</em> denotes the desired refinement ratio in
+time from Level 1 to Level 2.</p>
+<p>For each of these time step, ghost cell
+values must be filled in around all boundaries of each Level 2 grid.
+This procedure is defined below in <a class="reference internal" href="#amr-bc"><span class="std std-ref">Ghost cells and boundary conditions for AMR</span></a>.</p>
+</li>
+<li><p>After taking <em>R</em> steps on Level 2 grids, values on the Level 1 grid are
+updated to be consistent with the Level 2 grids.  Any cell on Level 1
+that is covered by a Level 2 grid has its <em>q</em> value replaced by the
+average of all the Level 2 grid cells lying within this cell.  This gives
+a cell average that should be a better approximation to the true cell
+average than the original value.</p></li>
+<li><p>The updating just described can lead to a change in the total mass
+calculated on the Level 1 grid.  In order to restore global conservation,
+it is necessary to do a conservation fix up.  (To be described…)</p></li>
+</ul>
+</div></blockquote>
+<p>This style of AMR is often called <em>Berger-Oliger-Colella</em> adaptive
+refinement, after the papers of Berger and Oliger <a class="reference internal" href="biblio.html#bergeroliger84" id="id1"><span>[BergerOliger84]</span></a> and
+<a class="reference internal" href="biblio.html#bergercolella89" id="id2"><span>[BergerColella89]</span></a>.</p>
+<p>The Fortran code in <a class="reference external" href="claw/amrclaw">$CLAW/amrclaw</a> is based on code
+originally written by Marsha Berger for gas dynamics, and merged in Clawpack
+in the early days of Clawpack development by MJB and RJL.  The algorithms
+used in AMRClaw are described more fully in <a class="reference internal" href="biblio.html#bergerleveque98" id="id3"><span>[BergerLeVeque98]</span></a>.</p>
+<div class="section" id="ghost-cells-and-boundary-conditions-for-amr">
+<span id="amr-bc"></span><h2>Ghost cells and boundary conditions for AMR<a class="headerlink" href="#ghost-cells-and-boundary-conditions-for-amr" title="Permalink to this headline">¶</a></h2>
+<p>Consider a Level <em>k &gt; 1</em> grid for which we need ghost cells all around the
+boundary at the start of each time step on this level.  The same procedure
+is used at other levels.</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Some Level k grids will be adjacent to other Level k grids and so any
+ghost cell that is equivalent to a Level k cell on some other grid has
+values copied from this this grid.</p></li>
+<li><p>Some ghost cells will be in the interior of the full computational domain
+but in regions where there is no adjacent Level k grid.  There will be
+a Level k-1 grid covering that region, however.  In this case the ghost
+cells are obtained by space-time interpolation from values on the Level
+k-1 grid.</p></li>
+<li><p>Some ghost cells will lie outside the full computational domain, where
+the boundary of the Level k grid lies along the boundary of the full
+domain.  For these cells the subroutine <em>bcNamr</em>
+(where <em>N</em> is the number of space dimensions) is used to fill ghost cell
+values with the proper user-specified boundary conditions, unless
+periodic boundary conditions are specified (see below).</p></li>
+</ul>
+</div></blockquote>
+<p>For many standard boundary conditions it is not necessary for the user to do
+anything beyond setting appropriate parameters in <em>setrun.py</em> (see
+<a class="reference internal" href="setrun.html#setrun"><span class="std std-ref">Specifying classic run-time parameters in setrun.py</span></a>).  Only if user-specified boundary conditions are
+specified is it necessary to modify the library
+routine <em>bcNamr.f</em> (after copying to your application directory so as not to
+damage the library version, and modifying the <em>Makefile</em> to point to the new
+version).</p>
+<p>There some differences between the <em>bcNamr.f</em> routine and the <em>bcN.f</em>
+routine used for the single-grid classic Clawpack routines (which are found in
+<em>$CLAW/classic/src/Nd/bcN.f</em>).   In particular, it is necessary to check
+whether a ghost cell actually lies outside the full computational domain
+and only set ghost cell values for those that do.  It should be clear how to
+do this from the library version of the routine.</p>
+<p>If <strong>periodic boundary
+conditions</strong> are specified, this is handled by the AMRClaw software along
+with all internal boundaries, rather than in <em>bcNamr.f</em>.  With AMR it is not
+so easy to apply periodic boundary conditions as it is in the case of a
+single grid, since it is necessary to determine whether there is a grid at
+the same refinement level at the opposite side of the domain to copy ghost
+cell values from, and if so which grid and what index corresponds to the
+desired location.</p>
+</div>
+<div class="section" id="choosing-and-initializing-finer-grids">
+<span id="amr-cluster-fill"></span><h2>Choosing and initializing finer grids<a class="headerlink" href="#choosing-and-initializing-finer-grids" title="Permalink to this headline">¶</a></h2>
+<p>Every few time steps on the coarsest level it is generally necessary to
+revise modify the regions of refinement at all levels, for example to follow
+a propagating shock wave.  This is done by</p>
+<blockquote>
+<div><ol class="arabic simple">
+<li><p>Flagging cells that need refinement according to some criteria.</p></li>
+<li><p>Clustering the flagged cells into rectangular patches that will form the
+new set of grids at the next higher level.</p></li>
+<li><p>Creating the new grids and initializing the values of <em>q</em> and also any
+<em>aux</em> arrays for each new grid.</p></li>
+</ol>
+</div></blockquote>
+<p>Clustering is done using and algorithm developed by Berger and Rigoutsis
+<a class="reference internal" href="biblio.html#bergerrigoutsis91" id="id4"><span>[BergerRigoutsis91]</span></a> that finds a nonoverlapping set of rectangles that
+cover all flagged points and balances the following conflicting goals:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Cover as few points as possible that are not flagged,
+to reduce the number of grid cells that must be advanced in each time
+step.</p></li>
+<li><p>Create as few new grids as possible, to minimize the overhead associated
+with filling ghost cells and doing the conservation fix-up around edges
+of grids.</p></li>
+</ul>
+</div></blockquote>
+<p>A parameter <em>cutoff</em> can be specified (see <a class="reference internal" href="setrun_amrclaw.html#setrun-amrclaw"><span class="std std-ref">Specifying AMRClaw run-time parameters in setrun.py</span></a>) to control
+clustering.  The algorithm will choose the grids in such a way that at least
+this fraction of all the grid points in all the new grids will be in cells
+that were flagged as needing refinement.  Usually <em>cutoff = 0.7</em> is used, so
+at least 70% of all grid cells in a computation are in regions where they
+are really needed.</p>
+<p>Initializing the new grids at Level k+1 is done as follows:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>At points where there was already a Level k+1 grid present, this value is
+copied over.</p></li>
+<li><p>At points where there was not previously a Level k+1 grid, bilinear
+interpolation is performed based on the Level k grids.</p></li>
+</ul>
+</div></blockquote>
+</div>
+<div class="section" id="flagging-cells-for-refinement">
+<span id="amr-flag"></span><h2>Flagging cells for refinement<a class="headerlink" href="#flagging-cells-for-refinement" title="Permalink to this headline">¶</a></h2>
+<p>The user can control the criteria used for flagging cells for refinement.</p>
+<p>See <a class="reference internal" href="refinement.html#refinement"><span class="std std-ref">AMR refinement criteria</span></a> for details.</p>
+</div>
+<div class="section" id="for-more-details">
+<h2>For more details<a class="headerlink" href="#for-more-details" title="Permalink to this headline">¶</a></h2>
+<p>See</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="amrclaw_doxygen.html#amrclaw-doxygen"><span class="std std-ref">Doxygen documentation of AMRClaw</span></a>.</p></li>
+<li><p><a class="reference internal" href="amrclaw_flowcharts.html#amrclaw-flowcharts"><span class="std std-ref">AMRClaw Flowcharts</span></a>.</p></li>
+</ul>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<p><a href="http://clawpack.org/">
+    <img class="logo" src= "_static/clawlogo.jpg" alt="Logo"/>
+</a>
+<h2>Version 5.8.x</h2>
+</p>
+  <h3><a href="contents.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Adaptive mesh refinement (AMR) algorithms</a><ul>
+<li><a class="reference internal" href="#ghost-cells-and-boundary-conditions-for-amr">Ghost cells and boundary conditions for AMR</a></li>
+<li><a class="reference internal" href="#choosing-and-initializing-finer-grids">Choosing and initializing finer grids</a></li>
+<li><a class="reference internal" href="#flagging-cells-for-refinement">Flagging cells for refinement</a></li>
+<li><a class="reference internal" href="#for-more-details">For more details</a></li>
+</ul>
+</li>
+</ul>
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="contents.html">Documentation overview</a><ul>
+  <li><a href="amrclaw.html">AMRClaw Description and Detailed Contents</a><ul>
+      <li>Previous: <a href="setrun_amrclaw_sample.html" title="previous chapter">Sample <cite>setrun.py</cite> module for AMRClaw</a></li>
+      <li>Next: <a href="refinement.html" title="next chapter">AMR refinement criteria</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+<div class="widget navlinks">
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/amr_algorithm.rst.txt"
+            rel="nofollow"
+            target="_blank">Source .rst</a></li>
+    <li><a href="https://github.com/clawpack/doc/blob/dev/doc/amr_algorithm.rst"
+            rel="nofollow"
+            target="_blank">Source on GitHub</a></li>
+     <li><a href="https://github.com/clawpack/doc/commits/dev/doc/amr_algorithm.rst"
+             rel="nofollow"
+             target="_blank">History</a></li>
+    <li><a href="https://github.com/clawpack/doc/edit/dev/doc/amr_algorithm.rst"
+            rel="nofollow"
+            target="_blank">Suggest Edits</a></li>
+     <li><a href="https://github.com/clawpack/doc/issues/new/choose"
+             rel="nofollow"
+             target="_blank">Raise an Issue</a></li>
+  </ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+<h4>Latest Version</h4>
+<ul>
+  <li><a href="../dev/amr_algorithm.html">dev</a></li>
+  <li><a href="amr_algorithm.html">v5.8.x</a></li>
+</ul>
+<h4>Older Versions</h4>
+<ul>
+  <li><a href="../v5.1.x/amr_algorithm.html">v5.1.x</a></li>
+  <li><a href="../v5.2.x/amr_algorithm.html">v5.2.x</a></li>
+  <li><a href="../v5.3.x/amr_algorithm.html">v5.3.x</a></li>
+  <li><a href="../v5.4.x/amr_algorithm.html">v5.4.x</a></li>
+  <li><a href="../v5.5.x/amr_algorithm.html">v5.5.x</a></li>
+  <li><a href="../v5.6.x/amr_algorithm.html">v5.6.x</a></li>
+  <li><a href="../v5.7.x/amr_algorithm.html">v5.7.x</a></li>
+</ul>
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+  <div class="footer">
+    &copy; Copyright CC-BY 2020, The Clawpack Development Team.
+    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
+  </div>
+  <script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-44811544-1', 'auto');
+  ga('send', 'pageview');
+
+  </script>
+  
+  </body>
+</html>

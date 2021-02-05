@@ -1,0 +1,620 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>Marching Front algorithm &#8212; Clawpack 5.8.x documentation</title>
+    <link rel="stylesheet" href="_static/flasky.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/base.css" type="text/css" />
+    <link rel="stylesheet" href="_static/layout.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/graphviz.css" />
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <script async="async" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="shortcut icon" href="_static/clawicon.ico"/>
+    <link rel="author" title="About these documents" href="about.html" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Force Cells to be Dry Initially" href="force_dry.html" />
+    <link rel="prev" title="Sources for Storm Surge Data" href="surgedata.html" /> 
+  </head><body>
+<div id="main-wrapper" class="sphinx">
+<div id="header-wrapper">
+  <section id="header">
+    <!-- <h1><a href="http://clawpack.org/">Clawpack</a></h1> -->
+    <h1><a href="http://clawpack.org/">Clawpack-5</a></h1> 
+    <nav>
+      <ul>
+        <li>
+          <a href="contents.html">Docs</a>
+        </li>
+        <li>
+          <a href="installing.html">Install</a>
+        </li>
+        <li>
+          <a class="" href="http://clawpack.org/gallery/index.html">Gallery</a>
+        </li>
+        <li>
+          <a href="about.html">Citation</a>
+        </li>
+        <li>
+          <a class="active" href="http://github.com/clawpack">GitHub</a>
+        </li>
+        <li>
+          <a class="" href="community.html">Community</a>
+        </li>
+        <li>
+          <a class="" href="developers.html">Contribute</a>
+        </li>
+      </ul>
+    </nav>
+  </section>
+<div class="decoration"></div>
+</div>
+
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="force_dry.html" title="Force Cells to be Dry Initially"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="surgedata.html" title="Sources for Storm Surge Data"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="contents.html">Clawpack 5.8.x documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="geoclaw.html" accesskey="U">GeoClaw Description and Detailed Contents</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="marching-front-algorithm">
+<span id="marching-front"></span><h1>Marching Front algorithm<a class="headerlink" href="#marching-front-algorithm" title="Permalink to this headline">¶</a></h1>
+<p><strong>New in Version 5.7.0.</strong></p>
+<p>Adapted from <a class="reference external" href="http://www.clawpack.org/gallery/_static/apps/notebooks/geoclaw/MarchingFront.html">this notebook</a>.</p>
+<p>The module <cite>clawpack.geoclaw.marching_front</cite> defines a function
+<cite>select_by_flooding</cite> that takes as input an array <cite>Ztopo</cite> containing
+topography elevations on a rectangular grid and returns an array
+<cite>pt_chosen</cite> of the same shape with values 1 (if chosen) or 0 (if not
+chosen). Other inputs specify the criteria used to choose points, as
+described below.</p>
+<p>The basic idea is that chosen points satisfy certain elevation
+requirements along with connectivity to the coast. This was originally
+developed to identify points in a topography DEM where the topography
+value <span class="math notranslate nohighlight">\(Z\)</span> is below MHW, but that should be initialized as dry land
+because they are in regions protected by dikes or levies. In this
+situation, the marching algorithm is used by initializing points well
+offshore (e.g. with <span class="math notranslate nohighlight">\(Z &lt; -5\)</span> meters) as <em>wet</em> and other points to
+<em>unset</em>. Then the front between <em>wet/unset</em> points is advanced by
+marking neighboring points as <em>dry</em> if <span class="math notranslate nohighlight">\(Z\geq0\)</span> or as <em>wet</em> if
+<span class="math notranslate nohighlight">\(Z&lt;0\)</span>. This is repeated iteratively for each new front until there
+are no more <em>wet</em> points with <em>unset</em> neighbors. At this point any
+points still <em>unset</em> are entirely buffered by <em>dry</em> points and must lie
+behind dikes, so these are also set to <em>dry</em>.</p>
+<p>The use of such a <cite>force_dry_array</cite> in GeoClaw is explained in
+<a class="reference internal" href="force_dry.html#force-dry"><span class="std std-ref">Force Cells to be Dry Initially</span></a>.</p>
+<p>Other applications are also described below along with some examples.</p>
+<div class="section" id="contents">
+<h2>Contents<a class="headerlink" href="#contents" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p><a class="reference external" href="#mf-args">Function arguments</a></p></li>
+<li><p><a class="reference external" href="#mf-output">Output array</a></p></li>
+<li><p><a class="reference external" href="#mf-mask">The mask argument</a></p></li>
+<li><p><a class="reference external" href="#mf-prev">The previous_pts_chosen argument</a></p></li>
+<li><p><a class="reference external" href="#mf-examples">Examples</a></p>
+<ul>
+<li><p><a class="reference external" href="#mf-find-Zlow">Finding points below a given elevation</a></p></li>
+<li><p><a class="reference external" href="#mf-find-nearshore">Choose points only near shore</a></p></li>
+<li><p><a class="reference external" href="#mf-fgmax-file">Write out the masked array indicating fgmax
+points</a></p></li>
+<li><p><a class="reference external" href="#mf-amr-flag">Creating an AMR flag region</a></p></li>
+<li><p><a class="reference external" href="#mf-dry">Determining dry areas below MHW</a></p></li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="section" id="function-arguments">
+<h2>Function arguments<a class="headerlink" href="#function-arguments" title="Permalink to this headline">¶</a></h2>
+<p>The main function in the <cite>marching_front.py</cite> module is
+<cite>select_by_flooding</cite>.</p>
+<p>The function is defined by:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">select_by_flooding</span><span class="p">(</span><span class="n">Ztopo</span><span class="p">,</span> <span class="n">mask</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">prev_pts_chosen</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                       <span class="n">Z1</span><span class="o">=-</span><span class="mf">5.</span><span class="p">,</span> <span class="n">Z2</span><span class="o">=</span><span class="mf">0.</span><span class="p">,</span> <span class="n">max_iters</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+</pre></div>
+</div>
+<p>If <cite>Z1 &lt;= Z2</cite> then points where <cite>Ztopo &lt; Z1</cite> are first selected and
+then a marching algorithm is used to select neighboring points that
+satisfy <cite>Ztopo &lt; Z2</cite>.</p>
+<p>Think of chosen points as “wet” and unchosen points as “dry” and new
+points are flooded if at least one neighbor is “wet” and the topography
+is low enough. Starting from deep water (e.g. <cite>Z1 = -5</cite>) this allows
+flooding up to MHW (<cite>Z2 = 0</cite>) without going past dikes that protect
+dry land with lower elevation.</p>
+<p>However, this can also be called with <cite>Z1 &gt; Z2</cite>, in which case points
+where <cite>Ztopo &gt;= Z1</cite> are first selected and then the marching algorithm
+is used to select neighboring points that satisfy <cite>Ztopo &gt; Z2</cite>. This
+is useful to select offshore points where the water is shallow, (and
+that are connected to the shore by a path of shallow points) e.g. to
+identify points on the continental shelf to set up a flag region for
+refinement.</p>
+<p>If <cite>max_iters=None</cite> then iterate to convergence. Otherwise, at most
+<cite>max_iters</cite> iterations are taken, so setting this to a small value
+only selects points within this many grid points of where
+<cite>Ztopo &lt;= Z1</cite>, useful for buffering or selecting a few onshore points
+along the coast regardless of elevation.</p>
+<p>If <cite>prev_pts_chosen</cite> is None we are starting from scratch, otherwise
+we possibly add additional chosen points to an existing array. Points
+where <cite>prev_pts_chosen[i,j]==1</cite> won’t change but those <cite>==0</cite> may be
+changed to 1 based on the new criteria.</p>
+<p>If <cite>mask==None</cite> or <cite>mask==False</cite> then the entire array is subject to
+selection. If <cite>mask</cite> is an array with <cite>mask[i,j]==True</cite> at some
+points, then either: - these masked points are marked as not selected
+(<cite>pts_chosen[i,j]=0</cite>) if <cite>prev_pts_chosen==None</cite>, or - these masked
+points are not touched if <cite>prev_pts_chosen</cite> is an array (so previous
+0/1 values are preserved).</p>
+<p>These arguments are described in more detail below with examples of how
+they might be used.</p>
+</div>
+<div class="section" id="output-array">
+<span id="mf-output"></span><h2>output array<a class="headerlink" href="#output-array" title="Permalink to this headline">¶</a></h2>
+<p>The function returns an array <cite>pt_chosen</cite> with the same shape as
+<cite>Ztopo</cite> and has the value 1 at points chosen and 0 at points not
+chosen.</p>
+<div class="section" id="creating-a-masked-array">
+<h3>creating a masked array<a class="headerlink" href="#creating-a-masked-array" title="Permalink to this headline">¶</a></h3>
+<p>This array can be used to define a masked array from <cite>Ztopo</cite> that
+masks out the points not chosen via:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="n">ma</span> <span class="c1"># masked array module</span>
+<span class="n">Zmasked</span> <span class="o">=</span> <span class="n">ma</span><span class="o">.</span><span class="n">masked_array</span><span class="p">(</span><span class="n">Ztopo</span><span class="p">,</span> <span class="n">mask</span><span class="o">=</span><span class="n">logical_not</span><span class="p">(</span><span class="n">pt_chosen</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>This could be used to plot only the points chosen using the matplotlib
+function <cite>pcolormesh</cite>, for example, or the function now defined in
+<cite>geoclaw.visclaw.plottools.pcolorcells</cite> that better plots finite
+volume grid cell data with proper alignment and boundary cells. See
+<span class="xref std std-ref">pcolorcells</span>.</p>
+</div>
+<div class="section" id="topofile-mask-for-initializing-dry-points">
+<h3>topofile mask for initializing dry points<a class="headerlink" href="#topofile-mask-for-initializing-dry-points" title="Permalink to this headline">¶</a></h3>
+<p>The array <cite>pt_chosen</cite> can be used to create a file that is read in by
+GeoClaw to identify points where <cite>Ztopo</cite> is below MHW but where there
+is dry land because of protection by dikes or levies. This is done by
+defining a <cite>geoclaw.topotools.Topography</cite> object and setting its <cite>Z</cite>
+attribute based on <cite>pt_chosen</cite>, and then writing this as a topofile
+with <cite>topo_type==3</cite>. Then in <cite>setrun.py</cite> this file can be specified
+as a mask that is read in and used when initializing grid cells. There
+are some subtleties in how this is done, described in more detail in
+<a class="reference internal" href="force_dry.html#force-dry"><span class="std std-ref">Force Cells to be Dry Initially</span></a>.</p>
+</div>
+<div class="section" id="fgmax-points">
+<h3>fgmax points<a class="headerlink" href="#fgmax-points" title="Permalink to this headline">¶</a></h3>
+<p>The chosen points might be used as fgmax points, as described below.</p>
+</div>
+<div class="section" id="flag-regions">
+<h3>flag regions<a class="headerlink" href="#flag-regions" title="Permalink to this headline">¶</a></h3>
+<p>The output array could also be used to define an AMR flag region as a
+ruled rectangle, using the function
+<cite>region_tools.ruledrectangle_covering_selected_points</cite> described in
+<a class="reference internal" href="ruled_rectangles.html#ruled-rectangles"><span class="std std-ref">Ruled Rectangles</span></a>.  This would give a
+minimal ruled rectangle covering all the chosen points. An example is
+given <a class="reference external" href="#amr-flag">below</a>.</p>
+</div>
+</div>
+<div class="section" id="the-mask-argument">
+<span id="mf-mask"></span><h2>The <cite>mask</cite> argument<a class="headerlink" href="#the-mask-argument" title="Permalink to this headline">¶</a></h2>
+<p><cite>mask</cite> can be <cite>False</cite> or <cite>None</cite>, or else must be an array of the
+same shape as <cite>Ztopo</cite>.</p>
+<p>The <cite>Ztopo</cite> array input must be a rectangular array, but sometimes we
+want to select points covering only a subset of these points, e.g. when
+defining fgmax points along some stretch of coastline. In this case
+<cite>mask</cite> can be used to mask out values we do not want to select. Set
+<cite>mask[i,j] = True</cite> at points that should <em>not</em> be chosen.</p>
+<p>To mask out points that lie outside some ruled rectangle that has been
+defined as <cite>rr</cite>, you can use the <cite>rr.mask_outside</cite> function to
+define the mask. See <a class="reference internal" href="ruled_rectangles.html#ruled-rectangles"><span class="std std-ref">Ruled Rectangles</span></a>.</p>
+</div>
+<div class="section" id="the-previous-pts-chosen-argument">
+<span id="mf-prev"></span><h2>The <cite>previous_pts_chosen</cite> argument<a class="headerlink" href="#the-previous-pts-chosen-argument" title="Permalink to this headline">¶</a></h2>
+<p>This argument is useful if you want to apply a sequence of different
+criteria to choose points. For example, suppose you first want to choose
+all grid points within 5 points of the coast (as can be done using
+<cite>max_iters</cite>) and then supplement this will all grid points below a
+specified elevation that are farther inland from the coast.</p>
+<p>Examples are given below, also of how the <cite>mask</cite> array works in
+conjunction with <cite>previous_pts_chosen</cite>.</p>
+</div>
+<div class="section" id="examples">
+<span id="mf-examples"></span><h2>Examples<a class="headerlink" href="#examples" title="Permalink to this headline">¶</a></h2>
+<p>First import some needed modules and set up color maps.</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">os</span><span class="o">,</span><span class="nn">sys</span>
+<span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="n">ma</span> <span class="c1"># masked arrays</span>
+<span class="kn">from</span> <span class="nn">clawpack.visclaw</span> <span class="kn">import</span> <span class="n">colormaps</span>
+<span class="kn">from</span> <span class="nn">clawpack.geoclaw</span> <span class="kn">import</span> <span class="n">topotools</span><span class="p">,</span> <span class="n">marching_front</span>
+<span class="kn">from</span> <span class="nn">clawpack.amrclaw</span> <span class="kn">import</span> <span class="n">region_tools</span>
+<span class="kn">from</span> <span class="nn">clawpack.visclaw.plottools</span> <span class="kn">import</span> <span class="n">pcolorcells</span>
+
+<span class="n">zmin</span> <span class="o">=</span> <span class="o">-</span><span class="mf">60.</span>
+<span class="n">zmax</span> <span class="o">=</span> <span class="mf">40.</span>
+
+<span class="n">cmap_land</span> <span class="o">=</span> <span class="n">colormaps</span><span class="o">.</span><span class="n">make_colormap</span><span class="p">({</span> <span class="mf">0.0</span><span class="p">:[</span><span class="mf">0.1</span><span class="p">,</span><span class="mf">0.4</span><span class="p">,</span><span class="mf">0.0</span><span class="p">],</span>
+                                     <span class="mf">0.25</span><span class="p">:[</span><span class="mf">0.0</span><span class="p">,</span><span class="mf">1.0</span><span class="p">,</span><span class="mf">0.0</span><span class="p">],</span>
+                                      <span class="mf">0.5</span><span class="p">:[</span><span class="mf">0.8</span><span class="p">,</span><span class="mf">1.0</span><span class="p">,</span><span class="mf">0.5</span><span class="p">],</span>
+                                      <span class="mf">1.0</span><span class="p">:[</span><span class="mf">0.8</span><span class="p">,</span><span class="mf">0.5</span><span class="p">,</span><span class="mf">0.2</span><span class="p">]})</span>
+
+<span class="n">cmap_sea</span> <span class="o">=</span> <span class="n">colormaps</span><span class="o">.</span><span class="n">make_colormap</span><span class="p">({</span> <span class="mf">0.0</span><span class="p">:[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span> <span class="mf">1.</span><span class="p">:[</span><span class="o">.</span><span class="mi">8</span><span class="p">,</span><span class="o">.</span><span class="mi">8</span><span class="p">,</span><span class="mi">1</span><span class="p">]})</span>
+
+<span class="n">cmap_topo</span><span class="p">,</span> <span class="n">norm_topo</span> <span class="o">=</span> <span class="n">colormaps</span><span class="o">.</span><span class="n">add_colormaps</span><span class="p">((</span><span class="n">cmap_land</span><span class="p">,</span> <span class="n">cmap_sea</span><span class="p">),</span>
+                                     <span class="n">data_limits</span><span class="o">=</span><span class="p">(</span><span class="n">zmin</span><span class="p">,</span><span class="n">zmax</span><span class="p">),</span>
+                                     <span class="n">data_break</span><span class="o">=</span><span class="mf">0.</span><span class="p">)</span>
+
+<span class="n">cmap_sea_dry</span> <span class="o">=</span> <span class="n">colormaps</span><span class="o">.</span><span class="n">make_colormap</span><span class="p">({</span> <span class="mf">0.0</span><span class="p">:[</span><span class="mf">1.0</span><span class="p">,</span><span class="mf">0.7</span><span class="p">,</span><span class="mf">0.7</span><span class="p">],</span> <span class="mf">1.</span><span class="p">:[</span><span class="mf">1.0</span><span class="p">,</span><span class="mf">0.7</span><span class="p">,</span><span class="mf">0.7</span><span class="p">]})</span>
+<span class="n">cmap_dry</span><span class="p">,</span> <span class="n">norm_dry</span> <span class="o">=</span> <span class="n">colormaps</span><span class="o">.</span><span class="n">add_colormaps</span><span class="p">((</span><span class="n">cmap_land</span><span class="p">,</span> <span class="n">cmap_sea_dry</span><span class="p">),</span>
+                                     <span class="n">data_limits</span><span class="o">=</span><span class="p">(</span><span class="n">zmin</span><span class="p">,</span><span class="n">zmax</span><span class="p">),</span>
+                                     <span class="n">data_break</span><span class="o">=</span><span class="mf">0.</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="sample-topography-from-a-1-3-arcsecond-dem">
+<h2>Sample topography from a 1/3 arcsecond DEM<a class="headerlink" href="#sample-topography-from-a-1-3-arcsecond-dem" title="Permalink to this headline">¶</a></h2>
+<p>We consider a small region on the SW coast of Whidbey Island north of
+Maxwelton Beach as an example:</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">region1_png</span> <span class="o">=</span> <span class="n">imread</span><span class="p">(</span><span class="s1">&#39;region1.png&#39;</span><span class="p">)</span>
+<span class="n">extent</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mf">122.46</span><span class="p">,</span> <span class="o">-</span><span class="mf">122.38</span><span class="p">,</span> <span class="mf">47.93</span><span class="p">,</span> <span class="mf">47.96</span><span class="p">]</span>
+
+<span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span><span class="mi">6</span><span class="p">))</span>
+<span class="n">imshow</span><span class="p">(</span><span class="n">region1_png</span><span class="p">,</span> <span class="n">extent</span><span class="o">=</span><span class="n">extent</span><span class="p">)</span>
+<span class="n">gca</span><span class="p">()</span><span class="o">.</span><span class="n">set_aspect</span><span class="p">(</span><span class="mf">1.</span><span class="o">/</span><span class="n">cos</span><span class="p">(</span><span class="mi">48</span><span class="o">*</span><span class="n">pi</span><span class="o">/</span><span class="mf">180.</span><span class="p">))</span>
+</pre></div>
+</div>
+<img alt="_images/output_13_01.png" src="_images/output_13_01.png" />
+<p>We read this small portion of the 1/3 arcsecond Puget Sound DEM,
+available from the NCEI thredds server:</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">path</span> <span class="o">=</span> <span class="s1">&#39;https://www.ngdc.noaa.gov/thredds/dodsC/regional/puget_sound_13_mhw_2014.nc&#39;</span>
+<span class="n">topo</span> <span class="o">=</span> <span class="n">topotools</span><span class="o">.</span><span class="n">read_netcdf</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">extent</span><span class="o">=</span><span class="n">extent</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span><span class="mi">6</span><span class="p">))</span>
+<span class="n">pcolorcells</span><span class="p">(</span><span class="n">topo</span><span class="o">.</span><span class="n">X</span><span class="p">,</span> <span class="n">topo</span><span class="o">.</span><span class="n">Y</span><span class="p">,</span> <span class="n">topo</span><span class="o">.</span><span class="n">Z</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="n">cmap</span><span class="p">,</span> <span class="n">norm</span><span class="o">=</span><span class="n">norm</span><span class="p">)</span>
+<span class="n">colorbar</span><span class="p">(</span><span class="n">extend</span><span class="o">=</span><span class="s1">&#39;both&#39;</span><span class="p">)</span>
+<span class="n">gca</span><span class="p">()</span><span class="o">.</span><span class="n">set_aspect</span><span class="p">(</span><span class="mf">1.</span><span class="o">/</span><span class="n">cos</span><span class="p">(</span><span class="mi">48</span><span class="o">*</span><span class="n">pi</span><span class="o">/</span><span class="mf">180.</span><span class="p">))</span>
+</pre></div>
+</div>
+<img alt="_images/output_16_0.png" src="_images/output_16_0.png" />
+<p>This plot shows that there is a region with elevation below MHW (0 in
+the DEM) where the Google Earth image shows wetland that should not be
+initialized as a lake. This problem is discussed in <a class="reference internal" href="force_dry.html#force-dry"><span class="std std-ref">Force Cells to be Dry Initially</span></a>.</p>
+<p>Here we show how to choose only the DEM points that are close to the
+shore and/or below a given elevation.</p>
+<div class="section" id="finding-all-points-below-a-given-elevation">
+<span id="mf-find-zlow"></span><h3>Finding all points below a given elevation<a class="headerlink" href="#finding-all-points-below-a-given-elevation" title="Permalink to this headline">¶</a></h3>
+<p>First we choose all points with elevation below 15 m and that are
+connected to the coast over this topography extent. Note the latter
+requirement will eliminate the low lying area at the bottom of the
+figure above near longitude -122.4 (which is connected to the coast
+through Cultus Bay, but not by points in this extent).</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pts_chosen</span> <span class="o">=</span> <span class="n">marching_front</span><span class="o">.</span><span class="n">select_by_flooding</span><span class="p">(</span><span class="n">topo</span><span class="o">.</span><span class="n">Z</span><span class="p">,</span> <span class="n">Z1</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">Z2</span><span class="o">=</span><span class="mf">15.</span><span class="p">,</span> <span class="n">max_iters</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Selecting</span> <span class="n">points</span> <span class="k">with</span> <span class="n">Z1</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">Z2</span> <span class="o">=</span> <span class="mi">15</span><span class="p">,</span> <span class="n">max_iters</span><span class="o">=</span><span class="mi">279936</span>
+<span class="n">Done</span> <span class="n">after</span> <span class="mi">183</span> <span class="n">iterations</span> <span class="k">with</span> <span class="mi">89871</span> <span class="n">points</span> <span class="n">chosen</span>
+</pre></div>
+</div>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">Zmasked</span> <span class="o">=</span> <span class="n">ma</span><span class="o">.</span><span class="n">masked_array</span><span class="p">(</span><span class="n">topo</span><span class="o">.</span><span class="n">Z</span><span class="p">,</span> <span class="n">logical_not</span><span class="p">(</span><span class="n">pts_chosen</span><span class="p">))</span>
+
+<span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span><span class="mi">6</span><span class="p">))</span>
+<span class="n">pcolorcells</span><span class="p">(</span><span class="n">topo</span><span class="o">.</span><span class="n">X</span><span class="p">,</span> <span class="n">topo</span><span class="o">.</span><span class="n">Y</span><span class="p">,</span> <span class="n">Zmasked</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="n">cmap</span><span class="p">,</span> <span class="n">norm</span><span class="o">=</span><span class="n">norm</span><span class="p">)</span>
+<span class="n">colorbar</span><span class="p">(</span><span class="n">extend</span><span class="o">=</span><span class="s1">&#39;both&#39;</span><span class="p">)</span>
+<span class="n">gca</span><span class="p">()</span><span class="o">.</span><span class="n">set_aspect</span><span class="p">(</span><span class="mf">1.</span><span class="o">/</span><span class="n">cos</span><span class="p">(</span><span class="mi">48</span><span class="o">*</span><span class="n">pi</span><span class="o">/</span><span class="mf">180.</span><span class="p">))</span>
+</pre></div>
+</div>
+<img alt="_images/output_22_0.png" src="_images/output_22_0.png" />
+</div>
+<div class="section" id="create-a-buffer-zone-along-shore">
+<h3>Create a buffer zone along shore<a class="headerlink" href="#create-a-buffer-zone-along-shore" title="Permalink to this headline">¶</a></h3>
+<p>To select more points along the shore where the topography is steep, we
+could have first used <cite>max_iters</cite>.</p>
+<p>To illustrate this, we start again and fist use <cite>max_iters = 20</cite> so
+that at least 20 grid points are selected near the coast, also setting
+<cite>Z2 = 1e6</cite> (a huge value) so that the arbitrarily high regions will be
+included if they are within 20 points of the coast:</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pts_chosen</span> <span class="o">=</span> <span class="n">marching_front</span><span class="o">.</span><span class="n">select_by_flooding</span><span class="p">(</span><span class="n">topo</span><span class="o">.</span><span class="n">Z</span><span class="p">,</span> <span class="n">Z1</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">Z2</span><span class="o">=</span><span class="mf">1e6</span><span class="p">,</span> <span class="n">max_iters</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Selecting</span> <span class="n">points</span> <span class="k">with</span> <span class="n">Z1</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">Z2</span> <span class="o">=</span> <span class="mf">1e+06</span><span class="p">,</span> <span class="n">max_iters</span><span class="o">=</span><span class="mi">20</span>
+<span class="n">Done</span> <span class="n">after</span> <span class="mi">20</span> <span class="n">iterations</span> <span class="k">with</span> <span class="mi">84800</span> <span class="n">points</span> <span class="n">chosen</span>
+</pre></div>
+</div>
+<p>Plot what we have so far:</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">Zmasked</span> <span class="o">=</span> <span class="n">ma</span><span class="o">.</span><span class="n">masked_array</span><span class="p">(</span><span class="n">topo</span><span class="o">.</span><span class="n">Z</span><span class="p">,</span> <span class="n">logical_not</span><span class="p">(</span><span class="n">pts_chosen</span><span class="p">))</span>
+
+<span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span><span class="mi">6</span><span class="p">))</span>
+<span class="n">pcolorcells</span><span class="p">(</span><span class="n">topo</span><span class="o">.</span><span class="n">X</span><span class="p">,</span> <span class="n">topo</span><span class="o">.</span><span class="n">Y</span><span class="p">,</span> <span class="n">Zmasked</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="n">cmap</span><span class="p">,</span> <span class="n">norm</span><span class="o">=</span><span class="n">norm</span><span class="p">)</span>
+<span class="n">colorbar</span><span class="p">(</span><span class="n">extend</span><span class="o">=</span><span class="s1">&#39;both&#39;</span><span class="p">)</span>
+<span class="n">gca</span><span class="p">()</span><span class="o">.</span><span class="n">set_aspect</span><span class="p">(</span><span class="mf">1.</span><span class="o">/</span><span class="n">cos</span><span class="p">(</span><span class="mi">48</span><span class="o">*</span><span class="n">pi</span><span class="o">/</span><span class="mf">180.</span><span class="p">))</span>
+</pre></div>
+</div>
+<img alt="_images/output_27_0.png" src="_images/output_27_0.png" />
+<p>Then we augment the points already chosen with any points below 15 m and
+connected to the coast:</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pts_chosen</span> <span class="o">=</span> <span class="n">marching_front</span><span class="o">.</span><span class="n">select_by_flooding</span><span class="p">(</span><span class="n">topo</span><span class="o">.</span><span class="n">Z</span><span class="p">,</span> <span class="n">Z1</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">Z2</span><span class="o">=</span><span class="mf">15.</span><span class="p">,</span>
+                                               <span class="n">prev_pts_chosen</span><span class="o">=</span><span class="n">pts_chosen</span><span class="p">,</span>
+                                               <span class="n">max_iters</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Selecting</span> <span class="n">points</span> <span class="k">with</span> <span class="n">Z1</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">Z2</span> <span class="o">=</span> <span class="mi">15</span><span class="p">,</span> <span class="n">max_iters</span><span class="o">=</span><span class="mi">279936</span>
+<span class="n">Done</span> <span class="n">after</span> <span class="mi">163</span> <span class="n">iterations</span> <span class="k">with</span> <span class="mi">94297</span> <span class="n">points</span> <span class="n">chosen</span>
+</pre></div>
+</div>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">Zmasked</span> <span class="o">=</span> <span class="n">ma</span><span class="o">.</span><span class="n">masked_array</span><span class="p">(</span><span class="n">topo</span><span class="o">.</span><span class="n">Z</span><span class="p">,</span> <span class="n">logical_not</span><span class="p">(</span><span class="n">pts_chosen</span><span class="p">))</span>
+
+<span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span><span class="mi">6</span><span class="p">))</span>
+<span class="n">pcolorcells</span><span class="p">(</span><span class="n">topo</span><span class="o">.</span><span class="n">X</span><span class="p">,</span> <span class="n">topo</span><span class="o">.</span><span class="n">Y</span><span class="p">,</span> <span class="n">Zmasked</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="n">cmap</span><span class="p">,</span> <span class="n">norm</span><span class="o">=</span><span class="n">norm</span><span class="p">)</span>
+<span class="n">colorbar</span><span class="p">(</span><span class="n">extend</span><span class="o">=</span><span class="s1">&#39;both&#39;</span><span class="p">)</span>
+<span class="n">gca</span><span class="p">()</span><span class="o">.</span><span class="n">set_aspect</span><span class="p">(</span><span class="mf">1.</span><span class="o">/</span><span class="n">cos</span><span class="p">(</span><span class="mi">48</span><span class="o">*</span><span class="n">pi</span><span class="o">/</span><span class="mf">180.</span><span class="p">))</span>
+</pre></div>
+</div>
+<img alt="_images/output_30_0.png" src="_images/output_30_0.png" />
+</div>
+<div class="section" id="choose-points-only-near-shore">
+<span id="mf-find-nearshore"></span><h3>Choose points only near shore<a class="headerlink" href="#choose-points-only-near-shore" title="Permalink to this headline">¶</a></h3>
+<p>We can set <cite>Z1 = 0</cite> and <cite>Z2 = -15</cite> to select points that have
+elevation <em>greater than</em> -15 m and are connected to the coast:</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pts_chosen_shallow</span> <span class="o">=</span> <span class="n">marching_front</span><span class="o">.</span><span class="n">select_by_flooding</span><span class="p">(</span><span class="n">topo</span><span class="o">.</span><span class="n">Z</span><span class="p">,</span> <span class="n">Z1</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">Z2</span><span class="o">=-</span><span class="mf">15.</span><span class="p">,</span> <span class="n">max_iters</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Selecting</span> <span class="n">points</span> <span class="k">with</span> <span class="n">Z1</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">Z2</span> <span class="o">=</span> <span class="o">-</span><span class="mi">15</span><span class="p">,</span> <span class="n">max_iters</span><span class="o">=</span><span class="mi">279936</span>
+<span class="n">Done</span> <span class="n">after</span> <span class="mi">177</span> <span class="n">iterations</span> <span class="k">with</span> <span class="mi">249577</span> <span class="n">points</span> <span class="n">chosen</span>
+</pre></div>
+</div>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">Zshallow</span> <span class="o">=</span> <span class="n">ma</span><span class="o">.</span><span class="n">masked_array</span><span class="p">(</span><span class="n">topo</span><span class="o">.</span><span class="n">Z</span><span class="p">,</span> <span class="n">logical_not</span><span class="p">(</span><span class="n">pts_chosen_shallow</span><span class="p">))</span>
+
+<span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span><span class="mi">6</span><span class="p">))</span>
+<span class="n">pcolorcells</span><span class="p">(</span><span class="n">topo</span><span class="o">.</span><span class="n">X</span><span class="p">,</span> <span class="n">topo</span><span class="o">.</span><span class="n">Y</span><span class="p">,</span> <span class="n">Zshallow</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="n">cmap</span><span class="p">,</span> <span class="n">norm</span><span class="o">=</span><span class="n">norm</span><span class="p">)</span>
+<span class="n">colorbar</span><span class="p">(</span><span class="n">extend</span><span class="o">=</span><span class="s1">&#39;both&#39;</span><span class="p">)</span>
+<span class="n">gca</span><span class="p">()</span><span class="o">.</span><span class="n">set_aspect</span><span class="p">(</span><span class="mf">1.</span><span class="o">/</span><span class="n">cos</span><span class="p">(</span><span class="mi">48</span><span class="o">*</span><span class="n">pi</span><span class="o">/</span><span class="mf">180.</span><span class="p">))</span>
+</pre></div>
+</div>
+<img alt="_images/output_34_0.png" src="_images/output_34_0.png" />
+<p>Note that this chooses <em>all</em> onshore points in addition to offshore
+points with elevation greater than -15 m.</p>
+<p>We can take the intersection of this set of points with the onshore
+points previously chosen to get only the points that lie near the coast:</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pts_chosen_nearshore</span> <span class="o">=</span> <span class="n">logical_and</span><span class="p">(</span><span class="n">pts_chosen</span><span class="p">,</span> <span class="n">pts_chosen_shallow</span><span class="p">)</span>
+<span class="n">Znearshore</span> <span class="o">=</span> <span class="n">ma</span><span class="o">.</span><span class="n">masked_array</span><span class="p">(</span><span class="n">topo</span><span class="o">.</span><span class="n">Z</span><span class="p">,</span> <span class="n">logical_not</span><span class="p">(</span><span class="n">pts_chosen_nearshore</span><span class="p">))</span>
+
+<span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span><span class="mi">6</span><span class="p">))</span>
+<span class="n">pcolorcells</span><span class="p">(</span><span class="n">topo</span><span class="o">.</span><span class="n">X</span><span class="p">,</span> <span class="n">topo</span><span class="o">.</span><span class="n">Y</span><span class="p">,</span> <span class="n">Znearshore</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="n">cmap</span><span class="p">,</span> <span class="n">norm</span><span class="o">=</span><span class="n">norm</span><span class="p">)</span>
+<span class="n">colorbar</span><span class="p">(</span><span class="n">extend</span><span class="o">=</span><span class="s1">&#39;both&#39;</span><span class="p">)</span>
+<span class="n">gca</span><span class="p">()</span><span class="o">.</span><span class="n">set_aspect</span><span class="p">(</span><span class="mf">1.</span><span class="o">/</span><span class="n">cos</span><span class="p">(</span><span class="mi">48</span><span class="o">*</span><span class="n">pi</span><span class="o">/</span><span class="mf">180.</span><span class="p">))</span>
+</pre></div>
+</div>
+<img alt="_images/output_37_0.png" src="_images/output_37_0.png" />
+</div>
+</div>
+<div class="section" id="write-out-the-masked-array-indicating-fgmax-points">
+<span id="mf-fgmax-file"></span><h2>Write out the masked array indicating fgmax points<a class="headerlink" href="#write-out-the-masked-array-indicating-fgmax-points" title="Permalink to this headline">¶</a></h2>
+<p>One we have selected the desired fgmax points, these can be output in
+the style of a <cite>topo_type=3</cite> topography file, with a header followed
+point values at all points on a uniform grid. The values are simply the
+integer 1 for points that should be used as fgmax points and 0 for other
+points. Note that format <cite>%1i</cite> is used for compactness.</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fname_fgmax_mask</span> <span class="o">=</span> <span class="s1">&#39;fgmax_pts_topostyle.data&#39;</span>
+<span class="n">topo_fgmax_mask</span> <span class="o">=</span> <span class="n">topotools</span><span class="o">.</span><span class="n">Topography</span><span class="p">()</span>
+<span class="n">topo_fgmax_mask</span><span class="o">.</span><span class="n">_x</span> <span class="o">=</span> <span class="n">topo</span><span class="o">.</span><span class="n">x</span>
+<span class="n">topo_fgmax_mask</span><span class="o">.</span><span class="n">_y</span> <span class="o">=</span> <span class="n">topo</span><span class="o">.</span><span class="n">y</span>
+<span class="n">topo_fgmax_mask</span><span class="o">.</span><span class="n">_Z</span> <span class="o">=</span> <span class="n">where</span><span class="p">(</span><span class="n">pts_chosen_nearshore</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>  <span class="c1"># change boolean to 1/0</span>
+<span class="n">topo_fgmax_mask</span><span class="o">.</span><span class="n">generate_2d_coordinates</span><span class="p">()</span>
+
+<span class="n">topo_fgmax_mask</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">fname_fgmax_mask</span><span class="p">,</span> <span class="n">topo_type</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">Z_format</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">%1i</span><span class="s1">&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Created </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">fname_fgmax_mask</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Created</span> <span class="n">fgmax_pts_topostyle</span><span class="o">.</span><span class="n">data</span>
+</pre></div>
+</div>
+<p>This file <cite>fgmax_pts_topostyle.data</cite> can then be read into GeoClaw,
+using the new capability of specifying fgmax grids in this manner, using
+<cite>point_style == 4</cite> as described in
+<a class="reference internal" href="fgmax.html#fgmax"><span class="std std-ref">Fixed grid monitoring</span></a>.</p>
+</div>
+<div class="section" id="creating-an-amr-flag-region">
+<span id="mf-amr-flag"></span><h2>Creating an AMR flag region<a class="headerlink" href="#creating-an-amr-flag-region" title="Permalink to this headline">¶</a></h2>
+<p>Once a set of points has been selected, it can be used to define a ruled
+rectangle that might be used as an adaptive mesh refinement flag region,
+for example. See <a class="reference internal" href="ruled_rectangles.html#ruled-rectangles"><span class="std std-ref">Ruled Rectangles</span></a> and <a class="reference internal" href="flagregions.html#flagregions"><span class="std std-ref">Specifying flagregions for adaptive refinement</span></a>.</p>
+<p>You might want to try both <cite>ixy = ‘x’</cite> and <cite>ixy = ‘y’</cite> in creating
+the ruled rectangle to see which one covers fewer non-selected points.
+In this case <cite>ixy = ‘x’</cite> is better:</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span><span class="mi">5</span><span class="p">))</span>
+<span class="n">subplot</span><span class="p">(</span><span class="mi">121</span><span class="p">)</span>
+
+<span class="n">rr</span> <span class="o">=</span> <span class="n">region_tools</span><span class="o">.</span><span class="n">ruledrectangle_covering_selected_points</span><span class="p">(</span><span class="n">topo</span><span class="o">.</span><span class="n">X</span><span class="p">,</span> <span class="n">topo</span><span class="o">.</span><span class="n">Y</span><span class="p">,</span> <span class="n">pts_chosen_nearshore</span><span class="p">,</span>
+                                                          <span class="n">ixy</span><span class="o">=</span><span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                                                          <span class="n">padding</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">xv</span><span class="p">,</span><span class="n">yv</span> <span class="o">=</span> <span class="n">rr</span><span class="o">.</span><span class="n">vertices</span><span class="p">()</span>
+<span class="n">pcolorcells</span><span class="p">(</span><span class="n">topo</span><span class="o">.</span><span class="n">X</span><span class="p">,</span> <span class="n">topo</span><span class="o">.</span><span class="n">Y</span><span class="p">,</span> <span class="n">Znearshore</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="n">cmap</span><span class="p">,</span> <span class="n">norm</span><span class="o">=</span><span class="n">norm</span><span class="p">)</span>
+<span class="n">axis</span><span class="p">([</span><span class="o">-</span><span class="mf">122.47</span><span class="p">,</span> <span class="o">-</span><span class="mf">122.40</span><span class="p">,</span> <span class="mf">47.925</span><span class="p">,</span> <span class="mf">47.965</span><span class="p">])</span>
+<span class="n">gca</span><span class="p">()</span><span class="o">.</span><span class="n">set_aspect</span><span class="p">(</span><span class="mf">1.</span><span class="o">/</span><span class="n">cos</span><span class="p">(</span><span class="mi">48</span><span class="o">*</span><span class="n">pi</span><span class="o">/</span><span class="mf">180.</span><span class="p">))</span>
+<span class="n">plot</span><span class="p">(</span><span class="n">xv</span><span class="p">,</span> <span class="n">yv</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span>
+<span class="n">title</span><span class="p">(</span><span class="s2">&quot;With ixy = &#39;x&#39;&quot;</span><span class="p">)</span>
+
+<span class="n">subplot</span><span class="p">(</span><span class="mi">122</span><span class="p">)</span>
+<span class="n">rr</span> <span class="o">=</span> <span class="n">region_tools</span><span class="o">.</span><span class="n">ruledrectangle_covering_selected_points</span><span class="p">(</span><span class="n">topo</span><span class="o">.</span><span class="n">X</span><span class="p">,</span> <span class="n">topo</span><span class="o">.</span><span class="n">Y</span><span class="p">,</span> <span class="n">pts_chosen_nearshore</span><span class="p">,</span>
+                                                          <span class="n">ixy</span><span class="o">=</span><span class="s1">&#39;y&#39;</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                                                          <span class="n">padding</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">xv</span><span class="p">,</span><span class="n">yv</span> <span class="o">=</span> <span class="n">rr</span><span class="o">.</span><span class="n">vertices</span><span class="p">()</span>
+<span class="n">pcolorcells</span><span class="p">(</span><span class="n">topo</span><span class="o">.</span><span class="n">X</span><span class="p">,</span> <span class="n">topo</span><span class="o">.</span><span class="n">Y</span><span class="p">,</span> <span class="n">Znearshore</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="n">cmap</span><span class="p">,</span> <span class="n">norm</span><span class="o">=</span><span class="n">norm</span><span class="p">)</span>
+<span class="n">axis</span><span class="p">([</span><span class="o">-</span><span class="mf">122.47</span><span class="p">,</span> <span class="o">-</span><span class="mf">122.40</span><span class="p">,</span> <span class="mf">47.925</span><span class="p">,</span> <span class="mf">47.965</span><span class="p">])</span>
+<span class="n">gca</span><span class="p">()</span><span class="o">.</span><span class="n">set_aspect</span><span class="p">(</span><span class="mf">1.</span><span class="o">/</span><span class="n">cos</span><span class="p">(</span><span class="mi">48</span><span class="o">*</span><span class="n">pi</span><span class="o">/</span><span class="mf">180.</span><span class="p">))</span>
+<span class="n">plot</span><span class="p">(</span><span class="n">xv</span><span class="p">,</span> <span class="n">yv</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span>
+<span class="n">title</span><span class="p">(</span><span class="s2">&quot;With ixy = &#39;y&#39;&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Extending</span> <span class="n">rectangles</span> <span class="n">to</span> <span class="n">cover</span> <span class="n">grid</span> <span class="n">cells</span>
+<span class="n">RuledRectangle</span> <span class="n">covers</span> <span class="mi">69788</span> <span class="n">grid</span> <span class="n">points</span>
+<span class="n">Extending</span> <span class="n">rectangles</span> <span class="n">to</span> <span class="n">cover</span> <span class="n">grid</span> <span class="n">cells</span>
+<span class="n">RuledRectangle</span> <span class="n">covers</span> <span class="mi">76005</span> <span class="n">grid</span> <span class="n">points</span>
+</pre></div>
+</div>
+<img alt="_images/output_42_2.png" src="_images/output_42_2.png" />
+</div>
+<div class="section" id="determining-dry-areas-below-mhw">
+<span id="mf-dry"></span><h2>Determining dry areas below MHW<a class="headerlink" href="#determining-dry-areas-below-mhw" title="Permalink to this headline">¶</a></h2>
+<p>Note the blue region in the above plot that is inland from the coast and
+behind a green barrier. Examining Google Earth shows that this is
+wetland area that probably should not be initialized as a lake. We can
+identify this by using the marching front algorithm to start at
+<cite>Z1 = -5</cite> m and fill in up to <cite>Z2 = 0</cite> (MHW).</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">wet_points</span> <span class="o">=</span> <span class="n">marching_front</span><span class="o">.</span><span class="n">select_by_flooding</span><span class="p">(</span><span class="n">topo</span><span class="o">.</span><span class="n">Z</span><span class="p">,</span> <span class="n">Z1</span><span class="o">=-</span><span class="mf">5.</span><span class="p">,</span> <span class="n">Z2</span><span class="o">=</span><span class="mf">0.</span><span class="p">,</span> <span class="n">max_iters</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Selecting</span> <span class="n">points</span> <span class="k">with</span> <span class="n">Z1</span> <span class="o">=</span> <span class="o">-</span><span class="mi">5</span><span class="p">,</span> <span class="n">Z2</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">max_iters</span><span class="o">=</span><span class="mi">279936</span>
+<span class="n">Done</span> <span class="n">after</span> <span class="mi">112</span> <span class="n">iterations</span> <span class="k">with</span> <span class="mi">59775</span> <span class="n">points</span> <span class="n">chosen</span>
+</pre></div>
+</div>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">Zdry</span> <span class="o">=</span> <span class="n">ma</span><span class="o">.</span><span class="n">masked_array</span><span class="p">(</span><span class="n">topo</span><span class="o">.</span><span class="n">Z</span><span class="p">,</span> <span class="n">wet_points</span><span class="p">)</span>
+
+<span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span><span class="mi">6</span><span class="p">))</span>
+<span class="n">pcolorcells</span><span class="p">(</span><span class="n">topo</span><span class="o">.</span><span class="n">X</span><span class="p">,</span> <span class="n">topo</span><span class="o">.</span><span class="n">Y</span><span class="p">,</span> <span class="n">Zdry</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="n">cmap</span><span class="p">,</span> <span class="n">norm</span><span class="o">=</span><span class="n">norm</span><span class="p">)</span>
+<span class="n">colorbar</span><span class="p">(</span><span class="n">extend</span><span class="o">=</span><span class="s1">&#39;both&#39;</span><span class="p">)</span>
+<span class="n">gca</span><span class="p">()</span><span class="o">.</span><span class="n">set_aspect</span><span class="p">(</span><span class="mf">1.</span><span class="o">/</span><span class="n">cos</span><span class="p">(</span><span class="mi">48</span><span class="o">*</span><span class="n">pi</span><span class="o">/</span><span class="mf">180.</span><span class="p">))</span>
+<span class="n">title</span><span class="p">(</span><span class="s1">&#39;Dry land&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+<img alt="_images/output_46_1.png" src="_images/output_46_1.png" />
+<p>Now the blue region above is properly identified as being dry land.</p>
+<p>See <a class="reference internal" href="force_dry.html#force-dry"><span class="std std-ref">Force Cells to be Dry Initially</span></a> for more
+discussion of this example, showing how to create an array for
+GeoClaw in order to indicate that this region should be initialized as dry in
+spite of being below MHW.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<p><a href="http://clawpack.org/">
+    <img class="logo" src= "_static/clawlogo.jpg" alt="Logo"/>
+</a>
+<h2>Version 5.8.x</h2>
+</p>
+  <h3><a href="contents.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Marching Front algorithm</a><ul>
+<li><a class="reference internal" href="#contents">Contents</a></li>
+<li><a class="reference internal" href="#function-arguments">Function arguments</a></li>
+<li><a class="reference internal" href="#output-array">output array</a><ul>
+<li><a class="reference internal" href="#creating-a-masked-array">creating a masked array</a></li>
+<li><a class="reference internal" href="#topofile-mask-for-initializing-dry-points">topofile mask for initializing dry points</a></li>
+<li><a class="reference internal" href="#fgmax-points">fgmax points</a></li>
+<li><a class="reference internal" href="#flag-regions">flag regions</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#the-mask-argument">The <cite>mask</cite> argument</a></li>
+<li><a class="reference internal" href="#the-previous-pts-chosen-argument">The <cite>previous_pts_chosen</cite> argument</a></li>
+<li><a class="reference internal" href="#examples">Examples</a></li>
+<li><a class="reference internal" href="#sample-topography-from-a-1-3-arcsecond-dem">Sample topography from a 1/3 arcsecond DEM</a><ul>
+<li><a class="reference internal" href="#finding-all-points-below-a-given-elevation">Finding all points below a given elevation</a></li>
+<li><a class="reference internal" href="#create-a-buffer-zone-along-shore">Create a buffer zone along shore</a></li>
+<li><a class="reference internal" href="#choose-points-only-near-shore">Choose points only near shore</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#write-out-the-masked-array-indicating-fgmax-points">Write out the masked array indicating fgmax points</a></li>
+<li><a class="reference internal" href="#creating-an-amr-flag-region">Creating an AMR flag region</a></li>
+<li><a class="reference internal" href="#determining-dry-areas-below-mhw">Determining dry areas below MHW</a></li>
+</ul>
+</li>
+</ul>
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="contents.html">Documentation overview</a><ul>
+  <li><a href="geoclaw.html">GeoClaw Description and Detailed Contents</a><ul>
+      <li>Previous: <a href="surgedata.html" title="previous chapter">Sources for Storm Surge Data</a></li>
+      <li>Next: <a href="force_dry.html" title="next chapter">Force Cells to be Dry Initially</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+<div class="widget navlinks">
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/marching_front.rst.txt"
+            rel="nofollow"
+            target="_blank">Source .rst</a></li>
+    <li><a href="https://github.com/clawpack/doc/blob/dev/doc/marching_front.rst"
+            rel="nofollow"
+            target="_blank">Source on GitHub</a></li>
+     <li><a href="https://github.com/clawpack/doc/commits/dev/doc/marching_front.rst"
+             rel="nofollow"
+             target="_blank">History</a></li>
+    <li><a href="https://github.com/clawpack/doc/edit/dev/doc/marching_front.rst"
+            rel="nofollow"
+            target="_blank">Suggest Edits</a></li>
+     <li><a href="https://github.com/clawpack/doc/issues/new/choose"
+             rel="nofollow"
+             target="_blank">Raise an Issue</a></li>
+  </ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+<h4>Latest Version</h4>
+<ul>
+  <li><a href="../dev/marching_front.html">dev</a></li>
+  <li><a href="marching_front.html">v5.8.x</a></li>
+</ul>
+<h4>Older Versions</h4>
+<ul>
+  <li><a href="../v5.1.x/index.html">v5.1.x</a></li>
+  <li><a href="../v5.2.x/index.html">v5.2.x</a></li>
+  <li><a href="../v5.3.x/index.html">v5.3.x</a></li>
+  <li><a href="../v5.4.x/index.html">v5.4.x</a></li>
+  <li><a href="../v5.5.x/index.html">v5.5.x</a></li>
+  <li><a href="../v5.6.x/index.html">v5.6.x</a></li>
+  <li><a href="../v5.7.x/marching_front.html">v5.7.x</a></li>
+</ul>
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+  <div class="footer">
+    &copy; Copyright CC-BY 2020, The Clawpack Development Team.
+    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
+  </div>
+  <script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-44811544-1', 'auto');
+  ga('send', 'pageview');
+
+  </script>
+  
+  </body>
+</html>
