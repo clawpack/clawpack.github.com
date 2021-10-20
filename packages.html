@@ -86,10 +86,10 @@
 <p>Clawpack includes a number of related hyperbolic PDE solvers:</p>
 <blockquote>
 <div><ul class="simple">
-<li><p>Classic</p></li>
-<li><p><a class="reference internal" href="amrclaw.html#amrclaw"><span class="std std-ref">AMRClaw Description and Detailed Contents</span></a></p></li>
-<li><p><a class="reference internal" href="geoclaw.html#geoclaw"><span class="std std-ref">GeoClaw Description and Detailed Contents</span></a></p></li>
-<li><p><a class="reference internal" href="pyclaw/index.html#pyclaw"><span class="std std-ref">Pyclaw</span></a></p></li>
+<li><p>Classic (single grid solvers in Fortran)</p></li>
+<li><p><a class="reference internal" href="amrclaw.html#amrclaw"><span class="std std-ref">AMRClaw Description and Detailed Contents</span></a> (adaptive mesh refinement in Fortran)</p></li>
+<li><p><a class="reference internal" href="geoclaw.html#geoclaw"><span class="std std-ref">GeoClaw Description and Detailed Contents</span></a> (geophysical flows with AMR, in Fortran)</p></li>
+<li><p><a class="reference internal" href="pyclaw/index.html#pyclaw"><span class="std std-ref">PyClaw</span></a>  (Python version of solvers)</p></li>
 </ul>
 </div></blockquote>
 <p>All of them are built on common algorithmic
@@ -98,25 +98,29 @@ for visualization.  If you’re not sure which solver to use, here you will find
 the main differences between them.</p>
 <div class="section" id="installation-and-user-interface">
 <h2>Installation and user interface<a class="headerlink" href="#installation-and-user-interface" title="Permalink to this headline">¶</a></h2>
-<p>The AMRClaw, GeoClaw, and Classic solvers are Fortran-based
+<p>The <a class="reference internal" href="contents.html#contents-fortcodes"><span class="std std-ref">Classic, AMRClaw, and GeoClaw</span></a> solvers are Fortran-based
 packages and rely on Makefiles and environment variables.  Problems are
 specified partially through Python scripts at run time (<cite>setrun.py</cite>) and partially
 through custom Fortran code at compile time (to set initial conditions, for instance).</p>
-<p>With PyClaw, problems are specified entirely at run time through
+<p>With <a class="reference internal" href="pyclaw/index.html#pyclaw"><span class="std std-ref">PyClaw</span></a>, problems are specified entirely at run time through
 Python script files, or
 interactively (e.g., in IPython or Jupyter notebooks).
 Typically, the user does not need to
 write any Fortran code (though custom routines can be written in Fortran
-when necessary for performance reasons).
-PyClaw uses much of the same library of Fortran code, but that code is
+when necessary for performance reasons).</p>
+<p>PyClaw uses much of the same library of Fortran code, but that code is
 compiled during installation so that it can be imported dynamically within
-Python programs.</p>
+Python programs.  In particular, Fortran versions of all the <a class="reference internal" href="riemann.html#riemann"><span class="std std-ref">Riemann solvers</span></a>
+available in Classic or AMRClaw are also exposed in PyClaw.  These are
+converted using <a class="reference external" href="https://numpy.org/doc/stable/f2py/">f2py</a>, a step
+that sometimes causes problems and is not required if you are only using
+Fortran versions of the solvers.</p>
 </div>
 <div class="section" id="algorithmic-differences">
 <h2>Algorithmic differences<a class="headerlink" href="#algorithmic-differences" title="Permalink to this headline">¶</a></h2>
 <p>All of the Clawpack solvers include the <em>classic</em> algorithms described in
 <a class="reference internal" href="biblio.html#leveque-fvmhp" id="id1"><span>[LeVeque-FVMHP]</span></a>; if you only require those, it’s easiest to use Classic or
-<a class="reference internal" href="pyclaw/index.html#pyclaw"><span class="std std-ref">Pyclaw</span></a>.  Most of the packages contain additional algorithms:</p>
+<a class="reference internal" href="pyclaw/index.html#pyclaw"><span class="std std-ref">PyClaw</span></a>.  Most of the packages contain additional algorithms:</p>
 <blockquote>
 <div><ul class="simple">
 <li><p><strong>AMRClaw</strong> includes block-structured adaptive mesh refinement that allows one

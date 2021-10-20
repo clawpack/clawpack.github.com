@@ -20,7 +20,7 @@
     <link rel="author" title="About these documents" href="about.html" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Additional options for installing Clawpack" href="installing_more_options.html" />
+    <link rel="next" title="Options for installing Clawpack Fortran codes" href="installing_fortcodes.html" />
     <link rel="prev" title="Installing Clawpack" href="installing.html" /> 
   </head><body>
 <div id="main-wrapper" class="sphinx">
@@ -67,7 +67,7 @@
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="installing_more_options.html" title="Additional options for installing Clawpack"
+          <a href="installing_fortcodes.html" title="Options for installing Clawpack Fortran codes"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="installing.html" title="Installing Clawpack"
@@ -83,88 +83,90 @@
             
   <div class="section" id="pip-install-instructions">
 <span id="installing-pip"></span><h1>pip install instructions<a class="headerlink" href="#pip-install-instructions" title="Permalink to this headline">¶</a></h1>
-<p>For other installation options, see <a class="reference internal" href="installing.html#installing"><span class="std std-ref">Installing Clawpack</span></a>.</p>
-<p>See also:</p>
-<ul class="simple">
-<li><p><a class="reference internal" href="packages.html#clawpack-packages"><span class="std std-ref">Which Clawpack solver should I use?</span></a></p></li>
-<li><p><a class="reference internal" href="releases.html#releases"><span class="std std-ref">Releases of Clawpack and release notes</span></a></p></li>
-<li><p><a class="reference internal" href="trouble.html#trouble-installation"><span class="std std-ref">Troubleshooting Installation</span></a></p></li>
-</ul>
-<p><strong>Register:</strong> Please <a class="reference external" href="http://depts.washington.edu/clawpack/register/index.html">register</a>
-if you have not already done so.  This is very useful in helping
-us track the extent of usage, and important to the <a class="reference internal" href="about.html#funding"><span class="std std-ref">Funding</span></a> agencies
-who support this work.</p>
+<p><strong>Note:</strong> If you only plan to use the Fortran versions of the solvers
+(rather than <a class="reference internal" href="pyclaw/index.html#pyclaw"><span class="std std-ref">PyClaw</span></a>), and you run into problems with pip,
+then you might want to try <a class="reference internal" href="installing_fortcodes.html#installing-fortcodes"><span class="std std-ref">Options for installing Clawpack Fortran codes</span></a>.</p>
+<div class="section" id="quick-installation-of-pyclaw-with-pip">
+<span id="install-quick-pyclaw"></span><h2>Quick Installation of PyClaw with pip<a class="headerlink" href="#quick-installation-of-pyclaw-with-pip" title="Permalink to this headline">¶</a></h2>
+<p>Please see <a class="reference internal" href="packages.html#clawpack-packages"><span class="std std-ref">Which Clawpack solver should I use?</span></a> before installing, particularly
+if you are not sure whether you will
+be using the Fortran versions of the PDE solvers
+(<a class="reference internal" href="contents.html#contents-fortcodes"><span class="std std-ref">Classic, AMRClaw, and GeoClaw</span></a>) or the <a class="reference internal" href="pyclaw/index.html#pyclaw"><span class="std std-ref">PyClaw</span></a> version of the PDE solvers.
+See <a class="reference internal" href="installing.html#installing"><span class="std std-ref">Installing Clawpack</span></a> for other installation options.</p>
 <p><strong>Prerequisites:</strong> Before installing, check that you have the <a class="reference internal" href="prereqs.html#prereqs"><span class="std std-ref">Installation Prerequisites</span></a>.</p>
-<p><em>Installing</em> Clawpack requires downloading some version and then setting
-paths so that Python import statements (and possibly Fortran Makefiles) find
-the desired version.  <cite>pip</cite> can be used to reset Python paths as well as to
-download a new version of Clawpack and set the path appropriately.  See
-<a class="reference internal" href="python_path.html#python-path"><span class="std std-ref">Python path</span></a> for more information.</p>
-<div class="section" id="quick-installation-of-all-packages">
-<span id="install-quick-all"></span><h2>Quick Installation of all packages<a class="headerlink" href="#quick-installation-of-all-packages" title="Permalink to this headline">¶</a></h2>
+<p>If you only want to use PyClaw (and associated Python
+tools, e.g. VisClaw for visualization), then the simplest way to install
+Clawpack is via:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="o">--</span><span class="n">user</span> <span class="n">clawpack</span>
+</pre></div>
+</div>
+<p>or, more specifically,</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="o">--</span><span class="n">user</span> <span class="n">clawpack</span><span class="o">==</span><span class="n">v5</span><span class="o">.</span><span class="mf">8.1</span>
+</pre></div>
+</div>
+<p>or you can choose a previous version from the <a class="reference external" href="https://pypi.org/project/clawpack/#history">PyPi history</a>.</p>
+<p>However, note that this does not download the Fortran codes in a way that they
+can be used for <a class="reference internal" href="contents.html#contents-fortcodes"><span class="std std-ref">Classic, AMRClaw, and GeoClaw</span></a>.</p>
+<p>If you think you might want to use the Fortran packages as well
+(Classic, AMRClaw, GeoClaw) and/or want easier access to the Python source
+code, it is recommended that you follow the pip instructions below.</p>
+</div>
+<div class="section" id="quick-installation-of-all-packages-with-pip">
+<span id="install-quick-all"></span><h2>Quick Installation of all packages with pip<a class="headerlink" href="#quick-installation-of-all-packages-with-pip" title="Permalink to this headline">¶</a></h2>
 <p>The recommended way to install the latest release of Clawpack, for
-using PyClaw and/or the Fortran packages, is to give the following pip
-install command
+using both PyClaw and the Fortran packages, is to use pip, e.g. with the
+following command
 <strong>(you might want to first read the notes below to see if you
 want to change anything in this command)</strong>:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>pip install --src=$HOME/clawpack_src --user -e \
-    git+https://github.com/clawpack/clawpack.git@v5.8.0#egg=clawpack-v5.8.0
-</pre></div>
-</div>
-<p>This will download Clawpack (via a git clone) into the directory
-<cite>$HOME/clawpack_src/clawpack-v5.8.0</cite>.  The top
-installation directory can be changed by modifying the <code class="docutils literal notranslate"><span class="pre">--src</span></code> target
-(or omit this part to put it in your current working directory).
-If you have already downloaded Clawpack via a different mechanism then
-see <a class="reference internal" href="#pip-switch-version"><span class="std std-ref">Using pip to install a different version</span></a> rather than using the above command.</p>
-<p>See <a class="reference internal" href="clawpack_components.html#clawpack-components"><span class="std std-ref">Clawpack components</span></a> for a list of what’s included in this top
-level directory.</p>
-<p><strong>Note:</strong> Using pip to install will also check some python
-<a class="reference internal" href="prereqs.html#prereqs"><span class="std std-ref">Installation Prerequisites</span></a> and may update these on your system, and will use f2py to
-convert Fortran Riemann solvers to Python versions.  See
-<a class="reference internal" href="installing.html#installing-options"><span class="std std-ref">Other Installation Options</span></a> if you want more control.</p>
-<p>The <code class="docutils literal notranslate"><span class="pre">--user</span></code> flag is necessary if you are installing on a shared computer
-where you do not have root access.  If you do have root access and want it
-to be available to all users, you can omit this flag.  See notes below for
-more information.</p>
-<p>The <code class="docutils literal notranslate"><span class="pre">-e</span></code> flag makes it an “editable” install, leaving the source code in
-place and allowing you to modify it if desired.
-(Otherwise, by default, pip would move the python code to some
-<cite>site-packages</cite> directory and delete everything else.)</p>
-<p>In order to use the Fortran codes within Clawpack (<cite>classic</cite>,
-<cite>amrclaw</cite>, or <cite>geoclaw</cite>), you should then set the environment
-variable <cite>CLAW</cite> to point to the <cite>clawpack-v5.8.0</cite> directory within
-the installation directory <cite>$HOME/clawpack_src</cite>, and <cite>FC</cite> to point
-to the desired Fortran compiler, e.g. in the bash shell:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>export CLAW=$HOME/clawpack_src/clawpack-v5.8.0
-export FC=gfortran
+    git+https://github.com/clawpack/clawpack.git@v5.8.1#egg=clawpack-v5.8.1 \
+    --use-deprecated=legacy-resolver
 </pre></div>
 </div>
 <p><strong>Notes:</strong></p>
-<p>You may want to set <cite>CLAW</cite> even if you are only using PyClaw, since <cite>$CLAW</cite> is
+<ul>
+<li><p>With older versions of <cite>pip</cite>, the flag
+<cite>–use-deprecated=legacy-resolver</cite>
+may not be recognized and is not needed.</p></li>
+<li><p>Using pip to install will also check some python
+<a class="reference internal" href="prereqs.html#prereqs"><span class="std std-ref">Installation Prerequisites</span></a> and may update these on your system, and will use f2py to
+convert Fortran Riemann solvers to Python versions.  See
+<span class="xref std std-ref">installing_options</span> if you want more control.</p></li>
+<li><p>This will download Clawpack (via a git clone) into the directory
+<cite>$HOME/clawpack_src/clawpack-v5.8.1</cite>.  The top
+installation directory can be changed by modifying the <code class="docutils literal notranslate"><span class="pre">--src</span></code> target
+(or omit this part to put it in your current working directory).
+If you have already downloaded Clawpack via a different mechanism then
+see <a class="reference internal" href="#pip-switch-version"><span class="std std-ref">Using pip to install a different version</span></a> rather than using the above command.</p></li>
+<li><p>See <a class="reference internal" href="clawpack_components.html#clawpack-components"><span class="std std-ref">Clawpack components</span></a> for a list of what’s included in this top
+level directory.</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">--user</span></code> flag is necessary if you are installing on a shared computer
+where you do not have root access.  If you do have root access and want it
+to be available to all users, you can omit this flag.  See notes below for
+more information.</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">-e</span></code> flag makes it an “editable” install, leaving the source code in
+place and allowing you to modify it if desired.
+(Otherwise, by default, pip would move the python code to some
+<cite>site-packages</cite> directory and delete everything else.)</p></li>
+<li><p>In order to use the Fortran codes within Clawpack (<cite>classic</cite>,
+<cite>amrclaw</cite>, or <cite>geoclaw</cite>), you should then set the environment
+variable <cite>CLAW</cite> to point to the <cite>clawpack-v5.8.1</cite> directory within
+the installation directory <cite>$HOME/clawpack_src</cite>, and <cite>FC</cite> to point
+to the desired Fortran compiler, e.g. in the bash shell:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>export CLAW=$HOME/clawpack_src/clawpack-v5.8.1
+export FC=gfortran
+</pre></div>
+</div>
+</li>
+<li><p>You may want to set <cite>CLAW</cite> even if you are only using PyClaw, since <cite>$CLAW</cite> is
 sometimes used in this documentation to indicate the top level of the
-Clawpack source directory structure.</p>
+Clawpack source directory structure.</p></li>
+</ul>
 <p>Installing with <cite>pip</cite> also compiles Riemann solvers written in Fortran for
 use in PyClaw.  If you get a Fortran error message when installing, see
 <a class="reference internal" href="trouble.html#trouble-f2py"><span class="std std-ref">Setting the Fortran compiler to be used by f2py (pip)</span></a>.</p>
 <p>See <a class="reference internal" href="setenv.html#setenv"><span class="std std-ref">Set environment variables</span></a> for more information, and <a class="reference internal" href="python_path.html#python-path"><span class="std std-ref">Python path</span></a> if you are
 having problems with importing Python modules.</p>
-</div>
-<div class="section" id="quick-installation-of-only-pyclaw">
-<span id="install-quick-pyclaw"></span><h2>Quick Installation of only PyClaw<a class="headerlink" href="#quick-installation-of-only-pyclaw" title="Permalink to this headline">¶</a></h2>
-<p>If you only want to use PyClaw (and associated Python
-tools, e.g. VisClaw for visualization), they you could do:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="o">--</span><span class="n">user</span> <span class="n">clawpack</span>
-</pre></div>
-</div>
-<p>or, more specifically,</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="o">--</span><span class="n">user</span> <span class="n">clawpack</span><span class="o">==</span><span class="n">v5</span><span class="o">.</span><span class="mf">8.0</span>
-</pre></div>
-</div>
-<p>However, if you think you might want to use the Fortran packages as well
-(Classic, AMRClaw, GeoClaw) and/or want easier access to the Python source
-code, it is recommended that you follow the instructions above for
-<a class="reference internal" href="#install-quick-all"><span class="std std-ref">Quick Installation of all packages</span></a> (or see other <a class="reference internal" href="installing_more_options.html#installing-more-options"><span class="std std-ref">Additional options for installing Clawpack</span></a>).</p>
 <div class="section" id="next-steps">
 <h3>Next steps:<a class="headerlink" href="#next-steps" title="Permalink to this headline">¶</a></h3>
 <p>Once Clawpack is installed, you can go to one of the following pages to get
@@ -172,6 +174,7 @@ started:</p>
 <ul class="simple">
 <li><p><a class="reference internal" href="first_run_pyclaw.html#first-run-pyclaw"><span class="std std-ref">Testing a PyClaw installation and running an example</span></a></p></li>
 <li><p><a class="reference internal" href="first_run_fortran.html#first-run-fortran"><span class="std std-ref">Testing your Fortran installation and running an example</span></a></p></li>
+<li><p><a class="reference internal" href="trouble.html#trouble-installation"><span class="std std-ref">Troubleshooting Installation</span></a></p></li>
 </ul>
 </div>
 <div class="section" id="using-pip-to-install-a-different-version">
@@ -257,8 +260,8 @@ what went wrong.</p>
   <h3><a href="contents.html">Table of Contents</a></h3>
   <ul>
 <li><a class="reference internal" href="#">pip install instructions</a><ul>
-<li><a class="reference internal" href="#quick-installation-of-all-packages">Quick Installation of all packages</a></li>
-<li><a class="reference internal" href="#quick-installation-of-only-pyclaw">Quick Installation of only PyClaw</a><ul>
+<li><a class="reference internal" href="#quick-installation-of-pyclaw-with-pip">Quick Installation of PyClaw with pip</a></li>
+<li><a class="reference internal" href="#quick-installation-of-all-packages-with-pip">Quick Installation of all packages with pip</a><ul>
 <li><a class="reference internal" href="#next-steps">Next steps:</a></li>
 <li><a class="reference internal" href="#using-pip-to-install-a-different-version">Using pip to install a different version</a></li>
 <li><a class="reference internal" href="#experimenting-with-code-in-the-examples-directories">Experimenting with code in the examples directories</a></li>
@@ -272,7 +275,7 @@ what went wrong.</p>
 <ul>
   <li><a href="contents.html">Documentation overview</a><ul>
       <li>Previous: <a href="installing.html" title="previous chapter">Installing Clawpack</a></li>
-      <li>Next: <a href="installing_more_options.html" title="next chapter">Additional options for installing Clawpack</a></li>
+      <li>Next: <a href="installing_fortcodes.html" title="next chapter">Options for installing Clawpack Fortran codes</a></li>
   </ul></li>
 </ul>
 <div class="widget navlinks">
