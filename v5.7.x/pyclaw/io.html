@@ -215,7 +215,15 @@ by the header data.</p></li>
 <dl class="function">
 <dt id="clawpack.pyclaw.fileio.ascii.read_t">
 <code class="sig-prename descclassname">clawpack.pyclaw.fileio.ascii.</code><code class="sig-name descname">read_t</code><span class="sig-paren">(</span><em class="sig-param">frame</em>, <em class="sig-param">path='./'</em>, <em class="sig-param">file_prefix='fort'</em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.pyclaw.fileio.ascii.read_t" title="Permalink to this definition">¶</a></dt>
-<dd><p>Read only the fort.t file and return the data</p>
+<dd><p>Read only the fort.t file and return the data.</p>
+<p>Note this file is always ascii and now contains a line that tells
+the file_format, so we can read this file before importing the 
+appropriate read function for the solution data.</p>
+<p>For backward compatibility, if file_format line is missing then
+return None and handle this where it is called.</p>
+<p>This version also reads in num_ghost so that if the data is binary,
+we can extract only the data that’s relevant (since ghost cells are
+included).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Input</dt>
 <dd class="field-odd"><ul class="simple">
@@ -231,8 +239,10 @@ by the header data.</p></li>
 <li><p><em>t</em> - (int) Time of frame</p></li>
 <li><p><em>num_eqn</em> - (int) Number of equations in the frame</p></li>
 <li><p><em>nstates</em> - (int) Number of states</p></li>
-<li><p><em>num_aux</em> - (int) Auxillary value in the frame</p></li>
+<li><p><em>num_aux</em> - (int) Auxiliary value in the frame</p></li>
 <li><p><em>num_dim</em> - (int) Number of dimensions in q and aux</p></li>
+<li><p><em>num_ghost</em> - (int) Number of ghost cells on each side</p></li>
+<li><p><em>file_format</em> - (str) ‘ascii’, ‘binary32’, ‘binary64’</p></li>
 </ul>
 </dd>
 </dl>
@@ -531,7 +541,7 @@ use HDF5.</p>
       <div class="clearer"></div>
     </div>
   <div class="footer">
-    &copy; Copyright CC-BY 2020, The Clawpack Development Team.
+    &copy; Copyright CC-BY 2022, The Clawpack Development Team.
     Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
   </div>
   <script>

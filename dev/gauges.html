@@ -101,6 +101,17 @@ comparing to curves that give the solution as a function of time often reveals
 more clearly differences in accuracy or nonphysical oscillations.</p></li>
 </ol>
 </div></blockquote>
+<p><strong>Note:</strong> The capability of using <a class="reference internal" href="lagrangian_gauges.html#lagrangian-gauges"><span class="std std-ref">Lagrangian gauges for particle tracking</span></a> has been added to
+GeoClaw in Version 5.7.0 (it is not available in AMRClaw at this time).</p>
+<p><strong>Note:</strong> One can also use the <a class="reference internal" href="fgout.html#fgout"><span class="std std-ref">Fixed grid output</span></a> capabilities added to
+GeoClaw in Version 5.9.0 in order to capture the solution over a specified
+fixed grid at frequent output times.  If this output is frequent enough,
+then it is also possible to sample these outputs at a fixed location to give
+a time series similar to a gauge output, but with the advantage that the
+points need not be specified prior to the run (at least for any point that
+can be spatially interpolated from the fgout grid(s) captured in the run).
+The temporal resolution will be that specified for the fgout grids.
+See <a class="reference internal" href="fgout.html#fgout"><span class="std std-ref">Fixed grid output</span></a> for more details.</p>
 <div class="section" id="gauge-parameters-in-setrun">
 <span id="setrun-guages"></span><h2>Gauge parameters in setrun<a class="headerlink" href="#gauge-parameters-in-setrun" title="Permalink to this headline">¶</a></h2>
 <p>See also <a class="reference internal" href="setrun_amrclaw.html#setrun-amrclaw"><span class="std std-ref">Specifying AMRClaw run-time parameters in setrun.py</span></a>.</p>
@@ -132,6 +143,8 @@ file have the form:</p>
 <p>where level is the AMR level used to determine the q values at this time.
 Internally the finest level available at each gauge is used, with bilinear
 interpolation to the gauge locations from the 4 nearest cell centers.</p>
+<p><strong>Note:</strong> In GeoClaw, zero-order interpolation is used instead of piecewise
+linear interpolation; see <a class="reference internal" href="nearshore_interp.html#nearshore-interp"><span class="std std-ref">Nearshore interpolation</span></a>.</p>
 <p><strong>New in 5.4.0.</strong>
 The output that is in the gauge files can be controlled by a variety of
 parameters.  These can be specified on a per gauge basis or set for all gauges
@@ -387,7 +400,7 @@ and <cite>$CLAW/geoclaw/examples/</cite> contain the specification of gauges.</p
       <div class="clearer"></div>
     </div>
   <div class="footer">
-    &copy; Copyright CC-BY 2020, The Clawpack Development Team.
+    &copy; Copyright CC-BY 2022, The Clawpack Development Team.
     Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
   </div>
   <script>

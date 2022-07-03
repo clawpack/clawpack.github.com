@@ -96,17 +96,18 @@
 on a specified “fixed grid” by interpolating from the AMR grids active at each
 output time.</p>
 <p>This complements the normal output frame capabilities of Clawpack,
-and has several advantages for some applications, particularly when making animations or when using the GeoClaw solution as input to another process,
-such as particle tracking:</p>
+and has several advantages for some applications, particularly when
+making animations or when using the GeoClaw solution as input to
+another process, such as particle tracking:</p>
 <blockquote>
 <div><p>1. The solution is output on a fixed uniform grid at each fgout
 time, independent of the AMR structure.  This is useful in order
 to produce a set of frames for an animation that are all the same
-size array.</p>
+resolution with the same size array.</p>
 <p>2. It is possible to produce fgout outputs at times that do not
 coincide with the time steps of the computation, whereas standard
-frame output can only occur at the end of a time step on all
-levels.  Thus it does not require reducing the time step to hit
+frame output can only occur at the end of a time step on coarsest
+level.  Thus it does not require reducing the time step to hit
 the fgout times exactly, which would cause significant increase in
 computing time and possible degradation of the computed solution
 if the coarse grid time steps had to be greatly reduced to match
@@ -115,7 +116,8 @@ frequent output times in a finely resolved region.</p>
 small portion of the computational domain, it is possible to
 create an fgout grid that only covers this region at the desired
 resolution and does not require output of the entire AMR structure
-over the entire computational domain at each output time.</p>
+over the entire computational domain at each output time.
+This can <em>greatly</em> reduce the size of the output in some cases.</p>
 <p>4. If an fgout grid is output with sufficiently fine temporal resolution,
 then this set of data can be used to explore the solution in various ways
 using post-processing.  For example, it is possible to spatially
@@ -126,29 +128,34 @@ interest after the fact, whereas standard gauages must be specified in
 advance of the GeoClaw run (see <a class="reference internal" href="gauges.html#gauges"><span class="std std-ref">Gauges</span></a>).  Similarly, the fluid
 velocities computed from GeoClaw can be used to track particles (as
 massless tracer particles for visualization purposes, or with more
-complex dynamics for debris tracking). The module <span class="xref std std-ref">fgout_module</span>
-provides some tools for interpolating from fgout frames to arbitrary
-points <cite>(x,y,t)</cite>.</p>
+complex dynamics for debris tracking). The Python module
+<a class="reference internal" href="fgout_tools_module.html#fgout-tools-module"><span class="std std-ref">fgout_tools module for working with fgout grids</span></a> provides some tools for interpolating
+from fgout frames to arbitrary points <cite>(x,y,t)</cite>.</p>
 </div></blockquote>
-<p>The original version of this from Clawpack 4.6 existed through v5.8.x, but has
+<p>The original version of this, capability, originally called <cite>fixedgrid
+output</cite> in Clawpack 4.6 was carried over and existed through v5.8.x, but has
 been removed as of Version 5.9.0.</p>
 <p>An improved version for monitoring maximum values and arrival times was
 added in v5.7.0, referred to as <cite>fgmax grids</cite>; see <a class="reference internal" href="fgmax.html#fgmax"><span class="std std-ref">Fixed grid monitoring</span></a>.</p>
-<p>An improved version of of the capability to output on a fixed grid at more
+<p>An improved version of the capability to output on a fixed grid at more
 frequent times than the standard AMR output is being introduced in v5.9.0,
-and these are now called <cite>fgout grids</cite> to complement the <cite>fgmax grids</cite>.</p>
+and these are now called <cite>fgout grids</cite> to complement the <cite>fgmax grids</cite>.
+These <cite>fgout grids</cite> are described further below.</p>
 <div class="section" id="input-file-specification">
 <span id="fgout-input"></span><h2>Input file specification<a class="headerlink" href="#input-file-specification" title="Permalink to this headline">¶</a></h2>
 <p>The GeoClaw Fortran code reads in one or more files that specify fgout grids
 grid(s) for writing out the solution on a fixed grid throughout
 the computation.</p>
-<p>The fgout grid(s) are specified to GeoClaw in
-<cite>setrun.py</cite> by setting <cite>rundata.fgout_data.fgout_grids</cite>
-to be a list of objects of class <cite>fgout_tools.FGoutGrid</cite>.
-The output appears in files such as <cite>_output/fgmax0001.txt</cite>.</p>
-<p>You can assign numbers to each fgout grid
-using the <cite>fgno</cite> attribute, described below, rather than being numbered
-sequentially by order specified in the <cite>setrun.py</cite> file.</p>
+<p>The desired fgout grid(s) are specified to GeoClaw in <cite>setrun.py</cite>,
+by setting <cite>rundata.fgout_data.fgout_grids</cite> to be a list of objects
+of class <cite>fgout_tools.FGoutGrid</cite>.
+After doing <cite>make data</cite> or <cite>make .output</cite>, these are written out
+to <cite>fgout_grids.data</cite>, the file that is read by the Fortran code at runtime.</p>
+<p>More than one fgout grid can be specified, and an integer label with at
+most 4 digits can be assigned to each grid.  You can assign numbers
+to each fgout grid using the <cite>fgno</cite> attribute, described below.
+If you do not assign numbers, they will be numbered sequentially (1,2, etc.)
+based on the order they are specified in the <cite>setrun.py</cite> file.</p>
 </div>
 <div class="section" id="a-simple-example">
 <h2>A simple example<a class="headerlink" href="#a-simple-example" title="Permalink to this headline">¶</a></h2>
@@ -159,7 +166,7 @@ sequentially by order specified in the <cite>setrun.py</cite> file.</p>
 
 <span class="n">fgout</span> <span class="o">=</span> <span class="n">fgout_tools</span><span class="o">.</span><span class="n">FGoutGrid</span><span class="p">()</span>
 <span class="n">fgout</span><span class="o">.</span><span class="n">fgno</span> <span class="o">=</span> <span class="mi">1</span>
-<span class="n">fgout</span><span class="o">.</span><span class="n">output_format</span> <span class="o">=</span> <span class="s1">&#39;binary&#39;</span>
+<span class="n">fgout</span><span class="o">.</span><span class="n">output_format</span> <span class="o">=</span> <span class="s1">&#39;binary32&#39;</span>
 <span class="n">fgout</span><span class="o">.</span><span class="n">nx</span> <span class="o">=</span> <span class="mi">200</span>
 <span class="n">fgout</span><span class="o">.</span><span class="n">ny</span> <span class="o">=</span> <span class="mi">250</span>
 <span class="n">fgout</span><span class="o">.</span><span class="n">x1</span> <span class="o">=</span> <span class="o">-</span><span class="mf">115.</span>
@@ -173,12 +180,21 @@ sequentially by order specified in the <cite>setrun.py</cite> file.</p>
 </pre></div>
 </div>
 <p>This specifies output on a 200 by 250 grid of equally spaced points on the
-rectangle <cite>[-115, -70] x [-55, -10]</cite>.  (Note that these points are viewed
-as cell centers of a grid with these edges, so the actual points will
-be displaced from these edges.  See <a class="reference internal" href="#fgout-registration"><span class="std std-ref">fgout grid registration</span></a> below.)</p>
+rectangle <cite>[-115, -70] x [-55, -10]</cite>.  (Note that these values are cell
+edges, the actual fgout points will be at cell centers,
+displaced from these edges.  See <a class="reference internal" href="#fgout-registration"><span class="std std-ref">fgout grid registration</span></a> below.)</p>
 <p>The output times are equally spaced
 from <cite>tstart = 0</cite> to <cite>tend = 6*3600</cite> (6 hours).
 There will be 37 total outputs, so one every 10 minutes.</p>
+<p>The parameter <cite>fgout.output_format</cite> can be set to <cite>‘ascii’</cite>, <cite>‘binary32’</cite>,
+or <cite>‘binary64’</cite>, the same options as supported for the standard output in
+geoclaw as of v5.9.0.
+Usually`’binary32’` is best, which truncates the float64 (kind=8)
+computated values in the fortran code to float32 (kind=4) before dumping the
+raw binary.  This is almost always sufficient precision for plotting or
+post-processing needs, and results in smaller files than either of the other
+options.  This may be particularly important if hundreds of fgout frames
+are saved for making an animation or doing particle tracking.</p>
 </div>
 <div class="section" id="format-of-fgout-output">
 <span id="fgout-format"></span><h2>Format of fgout output<a class="headerlink" href="#format-of-fgout-output" title="Permalink to this headline">¶</a></h2>
@@ -187,8 +203,9 @@ files of this form for each fgout grid:</p>
 <blockquote>
 <div><ul class="simple">
 <li><p><cite>fgout0001.t0000</cite>  # containing info about this output time</p></li>
-<li><p><cite>fgout0001.q0000</cite>  # header (and also data if output_format==’ascii’)</p></li>
-<li><p><cite>fgout0001.b0000</cite>  # data in binary format (only if output_format==’binary’)</p></li>
+<li><p><cite>fgout0001.q0000</cite>  # header (and also data if <cite>output_format==’ascii’</cite>)</p></li>
+<li><p><cite>fgout0001.b0000</cite>  # data in binary format (only if
+<cite>output_format==’binary32’</cite> or <cite>‘binary64’</cite>)</p></li>
 </ul>
 </div></blockquote>
 <p>These would be for fgout grid number <cite>fgno = 1</cite> at the first output time.</p>
@@ -210,41 +227,65 @@ manner as for standard output.  The only difference is that it is necessary
 to specify that the file names start with <cite>fgout…</cite> rather than <cite>fort.</cite>.
 This can be done in <cite>setplot.py</cite> via:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">plotdata</span><span class="o">.</span><span class="n">file_prefix</span> <span class="o">=</span> <span class="s1">&#39;fgout0001&#39;</span>  <span class="c1"># for fgout grid fgno==1</span>
-<span class="n">plotdata</span><span class="o">.</span><span class="n">format</span> <span class="o">=</span> <span class="s1">&#39;binary&#39;</span>    <span class="c1"># &#39;ascii&#39; or &#39;binary&#39; to match fgout</span>
+<span class="n">plotdata</span><span class="o">.</span><span class="n">format</span> <span class="o">=</span> <span class="s1">&#39;binary32&#39;</span>    <span class="c1"># set to match fgout.output_format</span>
 </pre></div>
 </div>
-<p id="fgout-plotting">Alternatively, since every output frame consists of only a single uniform
-grid of data, it is much easier to manipulate or plot directly than
-general AMR data.  The <cite>fgout_tools.py</cite> module described at
+<p>An example is provided in
+<cite>$CLAW/geoclaw/examples/tsunami/chile2010_fgmax-fgout</cite>.</p>
+</div>
+<div class="section" id="reading-and-plotting-fgout-arrays-directly">
+<span id="fgout-plotting"></span><h2>Reading and plotting fgout arrays directly<a class="headerlink" href="#reading-and-plotting-fgout-arrays-directly" title="Permalink to this headline">¶</a></h2>
+<p>Alternatively, since every output frame consists of only a single uniform
+grid of data, it is much easier to manipulate or plot this data directly than
+for general AMR data.  The <cite>fgout_tools.py</cite> module described at
 <a class="reference internal" href="fgout_tools_module.html#fgout-tools-module"><span class="std std-ref">fgout_tools module for working with fgout grids</span></a> provides tools for reading frames and producing
-arrays that can then be worked with directly.</p>
+arrays that can then be worked with directly. It also contains tools for
+interpolating within these grids in both space and time.</p>
 <p>For example, here’s how to read a frame 5 of an fgout grid set up as above:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">fgno</span> <span class="o">=</span> <span class="mi">1</span>
 <span class="n">outdir</span> <span class="o">=</span> <span class="s1">&#39;_output&#39;</span>
-<span class="n">output_format</span> <span class="o">=</span> <span class="s1">&#39;binary&#39;</span>  <span class="c1"># format of fgout grid output</span>
+<span class="n">output_format</span> <span class="o">=</span> <span class="s1">&#39;binary32&#39;</span>  <span class="c1"># format of fgout grid output</span>
 <span class="n">fgout_grid</span> <span class="o">=</span> <span class="n">fgout_tools</span><span class="o">.</span><span class="n">FGoutGrid</span><span class="p">(</span><span class="n">fgno</span><span class="p">,</span> <span class="n">outdir</span><span class="p">,</span> <span class="n">output_format</span><span class="p">)</span>
 
 <span class="n">fgframe</span> <span class="o">=</span> <span class="mi">5</span>
 <span class="n">fgout</span> <span class="o">=</span> <span class="n">fgout_grid</span><span class="o">.</span><span class="n">read_frame</span><span class="p">(</span><span class="n">fgframe</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>Then <cite>fgout.X</cite> and <cite>fgout.Y</cite> are 2-dimensional arrays with defining the grid
+<p>Then <cite>fgout.X</cite> and <cite>fgout.Y</cite> are 2-dimensional arrays defining the grid
 and <cite>fgout.q</cite> defines the standard GeoClaw <cite>q</cite> array, with <cite>q[0:4,:,:]</cite>
 corresponding to <cite>h, hu, hv, eta</cite>, where <cite>eta = h+B</cite> and <cite>B</cite> is the topography.
-Additional attributes are defined using lazy evaluation only if requested
-by the user, for convenience, including <cite>h, hu, hv, eta, u, v, s, hss</cite>,
-where <cite>s</cite> is the speed and <cite>hss</cite> is the momentum flux.</p>
-<p>For some examples, see <cite>$CLAW/geoclaw/examples/tsunami/chile2010_fgmax-fgout</cite>.</p>
+For convenience, additional attributes are defined using lazy
+evaluation only if requested by the user, including
+<cite>h, hu, hv, eta, u, v, s, hss</cite>, where <cite>s</cite> is the speed and
+<cite>hss</cite> is the momentum flux.</p>
+<p>The values in <cite>fgout.X</cite> and <cite>fgout.Y</cite> are the cell centers of the fgout
+grid, and if you want to plot the <cite>q</cite> values on this grid you should use
+<cite>clawpack.visclaw.plottools.pcolorcells</cite>, as described at
+<span class="xref std std-ref">pcolorcells</span>.  For example, here’s a minimalist example of plotting
+the water surface eta on top of topography for a single frame of fgout data
+as read above:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">clawpack.visclaw</span> <span class="kn">import</span> <span class="n">plottools</span><span class="p">,</span> <span class="n">geoplot</span>
+<span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="n">ma</span>
+
+<span class="n">plottools</span><span class="o">.</span><span class="n">pcolorcells</span><span class="p">(</span><span class="n">fgout</span><span class="o">.</span><span class="n">X</span><span class="p">,</span><span class="n">fgout</span><span class="o">.</span><span class="n">Y</span><span class="p">,</span><span class="n">fgout</span><span class="o">.</span><span class="n">B</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="n">geoplot</span><span class="o">.</span><span class="n">land_colors</span><span class="p">)</span>
+<span class="n">eta</span> <span class="o">=</span> <span class="n">ma</span><span class="o">.</span><span class="n">masked_where</span><span class="p">(</span><span class="n">fgout</span><span class="o">.</span><span class="n">h</span><span class="o">&lt;</span><span class="mf">0.001</span><span class="p">,</span> <span class="n">fgout</span><span class="o">.</span><span class="n">eta</span><span class="p">)</span>
+<span class="n">eta_plot</span> <span class="o">=</span> <span class="n">plottools</span><span class="o">.</span><span class="n">pcolorcells</span><span class="p">(</span><span class="n">fgout</span><span class="o">.</span><span class="n">X</span><span class="p">,</span><span class="n">fgout</span><span class="o">.</span><span class="n">Y</span><span class="p">,</span><span class="n">eta</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="n">geoplot</span><span class="o">.</span><span class="n">tsunami_colormap</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>For more detailed examples of plotting, including making animations,
+see <cite>$CLAW/geoclaw/examples/tsunami/chile2010_fgmax-fgout</cite>.</p>
 </div>
 <div class="section" id="fgout-grid-registration">
 <span id="fgout-registration"></span><h2>fgout grid registration<a class="headerlink" href="#fgout-grid-registration" title="Permalink to this headline">¶</a></h2>
 <p>Note above that fgout points are specified by setting e.g. <cite>fgout.x1,
 fgout.x2</cite> and <cite>fgout.nx</cite> in <cite>setrun.py</cite>.  For consistency with the way the
-finite volume computational grid is set (and written to the output files),
+finite volume computational grid is specified in <cite>setrun.py</cite>
+(and written to the output files),
 the values <cite>x1, x2</cite> are viewed as cell edges and <cite>nx</cite> is the desired number
 of cells (in the <cite>x</cite> direction).  The actual fgout points will be at the
 cell centers.  So the cell width (= distance between points)
-is <cite>dx = (x2-x1)/nx</cite>, and the first cell will have <cite>x</cite> coordinate <cite>x1 + dx/2</cite>.</p>
+is <cite>dx = (x2-x1)/nx</cite>, and the first fgout point (cell center)
+will have <cite>x</cite> coordinate <cite>x1 + dx/2</cite>.</p>
 <p>Solution values at these points are interpolated from the finite volume
 GeoClaw solution as described in the next section.</p>
 </div>
@@ -257,13 +298,14 @@ covering each fgout point, at both the last time step before the fgout time
 and the first time step after the fgout time.</p>
 <p>The default spatial interpolation method used to assign values to fgout points
 at each time step is to assume the computational solution is constant in each
-finite volume cell and simply evaluate this value in the cell that includes
+finite volume cell and simply evaluate this value in the finest AMR level
+grid cell that includes
 the fgout point.  This is controlled by the parameter <cite>method = 0</cite> in
 subroutine <cite>fgout_interp</cite> in <cite>$CLAW/geoclaw/src/2d/shallow/fgout_module.f90</cite>.
 This is generally recommended rather than setting <cite>method = 1</cite>, which gives
 linear interpolation between finite volume cell centers, because interpolating
 <cite>h</cite>, <cite>B</cite>, and <cite>eta</cite> separately near the shore can lead to unphysically large
-values of <cite>h</cite> and/or <cite>eta</cite>.</p>
+values of <cite>h</cite> and/or <cite>eta</cite> (see <a class="reference internal" href="nearshore_interp.html#nearshore-interp"><span class="std std-ref">Nearshore interpolation</span></a>).</p>
 <p>Similarly, the temporal intepolation between the two neighboring time steps is
 done by simply using the value at the later time step, as controlled by the
 parameter <cite>method = 0</cite> in the
@@ -271,7 +313,10 @@ subroutine <cite>fgout_write</cite> in <cite>$CLAW/geoclaw/src/2d/shallow/fgout_
 This is generally recommended rather than setting <cite>method = 1</cite>, which gives
 linear interpolation between the times, because interpolating
 <cite>h</cite>, <cite>B</cite>, and <cite>eta</cite> separately near the shore can lead to unphysically large
-values of <cite>h</cite> and/or <cite>eta</cite>.</p>
+values of <cite>h</cite> and/or <cite>eta</cite> (see <a class="reference internal" href="nearshore_interp.html#nearshore-interp"><span class="std std-ref">Nearshore interpolation</span></a>).</p>
+<p>If you want to change one of these methods, you can make your own version of
+<cite>fgout_module.f90</cite> and point to this in the <cite>Makefile</cite> under <cite>MODULES=</cite>
+(see <a class="reference internal" href="makefiles_library.html#makefiles-replace"><span class="std std-ref">Replacing files with the same name as library files</span></a>).</p>
 </div>
 </div>
 
@@ -293,6 +338,7 @@ values of <cite>h</cite> and/or <cite>eta</cite>.</p>
 <li><a class="reference internal" href="#a-simple-example">A simple example</a></li>
 <li><a class="reference internal" href="#format-of-fgout-output">Format of fgout output</a></li>
 <li><a class="reference internal" href="#using-setplot-py-to-produce-plots">Using <cite>setplot.py</cite> to produce plots</a></li>
+<li><a class="reference internal" href="#reading-and-plotting-fgout-arrays-directly">Reading and plotting fgout arrays directly</a></li>
 <li><a class="reference internal" href="#fgout-grid-registration">fgout grid registration</a></li>
 <li><a class="reference internal" href="#choice-of-interpolation-procedure">Choice of interpolation procedure</a></li>
 </ul>
@@ -358,7 +404,7 @@ values of <cite>h</cite> and/or <cite>eta</cite>.</p>
       <div class="clearer"></div>
     </div>
   <div class="footer">
-    &copy; Copyright CC-BY 2020, The Clawpack Development Team.
+    &copy; Copyright CC-BY 2022, The Clawpack Development Team.
     Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
   </div>
   <script>
