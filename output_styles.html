@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>Output data formats &#8212; Clawpack 5.9.x documentation</title>
+    <title>Output data sytles and formats &#8212; Clawpack 5.9.x documentation</title>
     <link rel="stylesheet" href="_static/flasky.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="stylesheet" href="_static/base.css" type="text/css" />
@@ -81,23 +81,60 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <div class="section" id="output-data-formats">
-<span id="output-styles"></span><h1>Output data formats<a class="headerlink" href="#output-data-formats" title="Permalink to this headline">¶</a></h1>
-<p>In <a class="reference internal" href="setrun.html#setrun"><span class="std std-ref">Specifying classic run-time parameters in setrun.py</span></a>, the format for the output data (solutions) can be
-specified by setting the parameter <cite>output_style</cite>.</p>
+  <div class="section" id="output-data-sytles-and-formats">
+<span id="output-styles"></span><h1>Output data sytles and formats<a class="headerlink" href="#output-data-sytles-and-formats" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="output-style">
+<h2>Output style<a class="headerlink" href="#output-style" title="Permalink to this headline">¶</a></h2>
+<p>In <a class="reference internal" href="setrun.html#setrun"><span class="std std-ref">Specifying classic run-time parameters in setrun.py</span></a>, the style of specifying output times can be
+specified by setting the parameter <cite>output_style</cite>.  This can be illustrated
+by a typical example from a <cite>setrun.py</cite> file:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">clawdata</span><span class="o">.</span><span class="n">output_style</span> <span class="o">=</span> <span class="mi">1</span>
+
+<span class="k">if</span> <span class="n">clawdata</span><span class="o">.</span><span class="n">output_style</span><span class="o">==</span><span class="mi">1</span><span class="p">:</span>
+    <span class="c1"># Output nout frames at equally spaced times up to tfinal:</span>
+    <span class="n">clawdata</span><span class="o">.</span><span class="n">num_output_times</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="n">clawdata</span><span class="o">.</span><span class="n">tfinal</span> <span class="o">=</span> <span class="mi">2</span><span class="o">*</span><span class="mf">3600.</span>
+    <span class="n">clawdata</span><span class="o">.</span><span class="n">output_t0</span> <span class="o">=</span> <span class="kc">True</span>  <span class="c1"># output at initial (or restart) time?</span>
+
+<span class="k">elif</span> <span class="n">clawdata</span><span class="o">.</span><span class="n">output_style</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+    <span class="c1"># Specify a list of output times.</span>
+    <span class="n">clawdata</span><span class="o">.</span><span class="n">output_times</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1800</span><span class="p">,</span> <span class="mi">7200</span><span class="p">]</span>
+
+<span class="k">elif</span> <span class="n">clawdata</span><span class="o">.</span><span class="n">output_style</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+    <span class="c1"># Output every iout timesteps with a total of ntot time steps:</span>
+    <span class="n">clawdata</span><span class="o">.</span><span class="n">output_step_interval</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">clawdata</span><span class="o">.</span><span class="n">total_steps</span> <span class="o">=</span> <span class="mi">3</span>
+    <span class="n">clawdata</span><span class="o">.</span><span class="n">output_t0</span> <span class="o">=</span> <span class="kc">False</span>
+</pre></div>
+</div>
+<p>In this case setting <cite>clawdata.output_style==1</cite> results in outputs at times
+<cite>clawdata.t0</cite>, 1800, and 3600 (equally spaced in time).
+Setting <cite>clawdata.output_style==2</cite> results in outputs at times
+0, 1800, and 7200 (not necessarily equally spaced).
+Setting <cite>clawdata.output_style==3</cite> results in outputs after 1, 2, and 3
+time steps on the coarsest grid (used primarily for debugging, or in cases
+where you do not want the time steps to be adjusted to hit specific output
+times).</p>
+</div>
+<div class="section" id="output-data-formats">
+<span id="output-formats"></span><h2>Output data formats<a class="headerlink" href="#output-data-formats" title="Permalink to this headline">¶</a></h2>
+<p>In AMRClaw and GeoClaw, the format for the output data (solutions) can be
+specified by setting the parameter <cite>output_format</cite> to <cite>‘ascii’</cite>,
+<cite>‘binary64’</cite>, or <cite>‘binary32’</cite>.  (The single-grid
+<cite>classic</cite> code only supports ASCII output at this time.)</p>
 <p>To read the solution stored in these files into Python for plotting or other
 postprocessing purposes, utilities are provided that are described in
-<span class="xref std std-ref">python_io</span>.</p>
-<p>Setting <cite>output_style = ‘ascii’</cite> gives ASCII text output.  The data files
+<a class="reference internal" href="pyclaw/io.html#pyclaw-io"><span class="std std-ref">Pyclaw Input/Output Package</span></a>.</p>
+<p>Setting <cite>output_format = ‘ascii’</cite> gives ASCII text output.  The data files
 can then be viewed with any standard text editor, which is particularly
 useful for debugging.  However, ASCII files are generally much larger than
 is necessary to store the original data in binary form, and so when grid
 have many grid cells or when many output frames are saved it is often better
-to use some form of binary output, e.g. <a class="reference internal" href="#output-binary"><span class="std std-ref">Raw binary output data format</span></a> or
-<a class="reference internal" href="#output-netcdf"><span class="std std-ref">NetCDF output data format</span></a>.</p>
-<p>In AMRClaw, ASCII and binary output are both written by the library routine
-<cite>valout.f</cite>.  The aux arrays are also dumped if requested, see
-<a class="reference internal" href="#output-aux"><span class="std std-ref">Output of aux arrays</span></a>.</p>
+to use some form of binary output, see <a class="reference internal" href="#output-binary"><span class="std std-ref">Raw binary output data formats</span></a>.</p>
+<p>In AMRClaw and GeoClaw, ASCII and binary output are both written
+by the library routine <cite>valout.f90</cite>.  The aux arrays are also dumped
+if requested, see <a class="reference internal" href="#output-aux"><span class="std std-ref">Output of aux arrays</span></a>.</p>
+</div>
 <div class="section" id="ascii-output-data-format">
 <span id="output-ascii"></span><h2>ASCII output data format<a class="headerlink" href="#ascii-output-data-format" title="Permalink to this headline">¶</a></h2>
 <p>Two output files are created at each output time (each frame).  The frames
@@ -106,16 +143,18 @@ example, are called <cite>fort.t0002</cite> and <cite>fort.q0002</cite>.</p>
 <div class="section" id="fort-t0002">
 <h3><cite>fort.t0002</cite><a class="headerlink" href="#fort-t0002" title="Permalink to this headline">¶</a></h3>
 <p>This file has the typical form:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span> <span class="mf">0.40000000E+00</span>    <span class="n">time</span>
- <span class="mi">1</span>                 <span class="n">meqn</span>
-<span class="mi">36</span>                 <span class="n">ngrids</span>
- <span class="mi">0</span>                 <span class="n">naux</span>
- <span class="mi">2</span>                 <span class="n">ndim</span>
- <span class="mi">2</span>                 <span class="n">nghost</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>   <span class="mf">0.40000000E+00</span>    <span class="n">time</span>
+   <span class="mi">1</span>                 <span class="n">meqn</span>
+  <span class="mi">36</span>                 <span class="n">ngrids</span>
+   <span class="mi">0</span>                 <span class="n">naux</span>
+   <span class="mi">2</span>                 <span class="n">ndim</span>
+   <span class="mi">2</span>                 <span class="n">nghost</span>
+<span class="n">ascii</span>                <span class="nb">format</span>
 </pre></div>
 </div>
-<p>This file contains only 6 lines with information about the current time the
-number of AMR patches at this time.</p>
+<p>This file contains only 7 lines with information about the current time and the
+number of AMR patches at this time, along with other metadata needed for
+reading the AMR data properly.</p>
 <p>In the above example, Frame 2 contains 36 patches.
 If you are using the classic code
 or PyClaw with only a single patch, then <cite>ngrids</cite> would be 1.</p>
@@ -154,10 +193,18 @@ Each patch has a unique <cite>grid_number</cite> that usually isn’t needed for
 visualization purposes.</p>
 </div>
 </div>
-<div class="section" id="raw-binary-output-data-format">
-<span id="output-binary"></span><h2>Raw binary output data format<a class="headerlink" href="#raw-binary-output-data-format" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="raw-binary-output-data-formats">
+<span id="output-binary"></span><h2>Raw binary output data formats<a class="headerlink" href="#raw-binary-output-data-formats" title="Permalink to this headline">¶</a></h2>
+<p><strong>New in v5.9.0:</strong> Previously the user could specify <cite>output_format=’binary’</cite>
+for binary format. Starting in v5.9.0, the user can specify either
+<cite>output_format=’binary64’</cite> or <cite>output_format=’binary32’</cite>.  For backward
+compatibility, the former is equivalent to specifying <cite>output_format=’binary’</cite>
+and dumps full 8-byte precision values.  The new <cite>‘binary32’</cite> option
+truncates the solution values to 4-bytes before writing, cutting the file
+size in half.  For <em>most</em> applications, this should still give sufficient
+precision for plotting purposes.</p>
 <p>The files for each frame are numbered as for the ASCII file and the
-<cite>fort.t0002</cite> file, for example, is still an ASCII file with 6 lines of
+<cite>fort.t0002</cite> file, for example, is still an ASCII file with 7 lines of
 metadata.  There are also ASCII files such as <cite>fort.q0002</cite>, but these now
 contain only the headers for each grid patch and not the solution on each
 patch.  In addition there are files such as
@@ -170,11 +217,19 @@ block of memory is dumped for each patch with a single <cite>write</cite> statem
 </div>
 <div class="section" id="netcdf-output-data-format">
 <span id="output-netcdf"></span><h2>NetCDF output data format<a class="headerlink" href="#netcdf-output-data-format" title="Permalink to this headline">¶</a></h2>
-<p>See <a class="reference internal" href="pyclaw/io.html#netcdf"><span class="std std-ref">pyclaw.fileio.netcdf</span></a>.</p>
+<p>NetCDF output is not currently supported in Clawpack. This is not a suitable
+format for AMR style data.</p>
 </div>
 <div class="section" id="output-of-aux-arrays">
 <span id="output-aux"></span><h2>Output of aux arrays<a class="headerlink" href="#output-of-aux-arrays" title="Permalink to this headline">¶</a></h2>
-<p>Describe…</p>
+<p>The contents of <cite>aux</cite> arrays can also be output along with each time frame.
+Which components are output is controlled by the setrun variable
+<cite>clawdata.output_aux_components</cite>, which can be <cite>‘none’</cite> (default) or <cite>‘all’</cite>
+currently.  The values, if desired, will go into files <cite>fort.aXXXX</cite> that
+have the same format as the <cite>q</cite> data, as
+specifed by <cite>output_format</cite>. Set <cite>output_aux_onlyonce</cite> to
+<cite>True</cite> if the <cite>aux</cite> arrays do not change with time and you only want to
+output these arrays once.</p>
 </div>
 </div>
 
@@ -191,13 +246,15 @@ block of memory is dumped for each patch with a single <cite>write</cite> statem
 </p>
   <h3><a href="contents.html">Table of Contents</a></h3>
   <ul>
-<li><a class="reference internal" href="#">Output data formats</a><ul>
+<li><a class="reference internal" href="#">Output data sytles and formats</a><ul>
+<li><a class="reference internal" href="#output-style">Output style</a></li>
+<li><a class="reference internal" href="#output-data-formats">Output data formats</a></li>
 <li><a class="reference internal" href="#ascii-output-data-format">ASCII output data format</a><ul>
 <li><a class="reference internal" href="#fort-t0002"><cite>fort.t0002</cite></a></li>
 <li><a class="reference internal" href="#fort-q0002"><cite>fort.q0002</cite></a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#raw-binary-output-data-format">Raw binary output data format</a></li>
+<li><a class="reference internal" href="#raw-binary-output-data-formats">Raw binary output data formats</a></li>
 <li><a class="reference internal" href="#netcdf-output-data-format">NetCDF output data format</a></li>
 <li><a class="reference internal" href="#output-of-aux-arrays">Output of aux arrays</a></li>
 </ul>

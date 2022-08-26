@@ -88,6 +88,7 @@
 <blockquote>
 <div><ul class="simple">
 <li><p><a class="reference internal" href="#ascii">ASCII</a> - ASCII file I/O, supports traditional clawpack format files</p></li>
+<li><p><a class="reference internal" href="#binary">BINARY</a> - for reading binary output files containing 32 or 64 byte floats</p></li>
 <li><p><a class="reference internal" href="#hdf5">HDF5</a> - HDF5 file I/O</p></li>
 <li><p><a class="reference internal" href="#netcdf">NetCDF</a> - NetCDF file I/O, support for NetCDF3 and NetCDF4 files</p></li>
 </ul>
@@ -284,6 +285,41 @@ the format being written.  <code class="docutils literal notranslate"><span clas
 </dd></dl>
 
 </div>
+<div class="section" id="module-clawpack.pyclaw.fileio.binary">
+<span id="pyclaw-fileio-binary"></span><span id="binary"></span><h2><code class="xref py py-mod docutils literal notranslate"><span class="pre">pyclaw.fileio.binary</span></code><a class="headerlink" href="#module-clawpack.pyclaw.fileio.binary" title="Permalink to this headline">¶</a></h2>
+<p>Routines for reading a raw binary output file from AMRClaw.
+Note that there is no corresponding output option in PyClaw,
+which is why there is no “write” function here (the code that
+writes these files is in AMRClaw, in Fortran).</p>
+<dl class="function">
+<dt id="clawpack.pyclaw.fileio.binary.read">
+<code class="sig-prename descclassname">clawpack.pyclaw.fileio.binary.</code><code class="sig-name descname">read</code><span class="sig-paren">(</span><em class="sig-param">solution</em>, <em class="sig-param">frame</em>, <em class="sig-param">path='./'</em>, <em class="sig-param">file_prefix='fort'</em>, <em class="sig-param">read_aux=False</em>, <em class="sig-param">options={}</em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.pyclaw.fileio.binary.read" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read in a set of raw binary files</p>
+<p>This routine reads the binary formatted files 
+fort.txxxx contains info about frame
+fort.qxxxx still contains headers for each grid patch
+fort.bxxxx is binary dump of data from all patches.
+fort.axxxx is binary dump of aux arrays from all patches.</p>
+<p>Note that the fort prefix can be changed.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Input</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><em>solution</em> - (<code class="xref py py-class docutils literal notranslate"><span class="pre">Solution</span></code>) Solution object to 
+read the data into.</p></li>
+<li><p><em>frame</em> - (int) Frame number to be read in</p></li>
+<li><p><em>path</em> - (string) Path to the current directory of the file</p></li>
+<li><p><em>file_prefix</em> - (string) Prefix of the files to be read in.  
+<code class="docutils literal notranslate"><span class="pre">default</span> <span class="pre">=</span> <span class="pre">'fort'</span></code></p></li>
+<li><p><em>read_aux</em> (bool) Whether or not to read auxiliary data from fort.axxxx.
+<code class="docutils literal notranslate"><span class="pre">default</span> <span class="pre">=</span> <span class="pre">False</span></code></p></li>
+<li><p><em>options</em> - (dict) Dictionary of optional arguments dependent on 
+the format being read in.  <code class="docutils literal notranslate"><span class="pre">default</span> <span class="pre">=</span> <span class="pre">{}</span></code></p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
 <div class="section" id="pyclaw-fileio-hdf5">
 <span id="hdf5"></span><h2><code class="xref py py-mod docutils literal notranslate"><span class="pre">pyclaw.fileio.hdf5</span></code><a class="headerlink" href="#pyclaw-fileio-hdf5" title="Permalink to this headline">¶</a></h2>
 </div>
@@ -476,6 +512,7 @@ use HDF5.</p>
   <ul>
 <li><a class="reference internal" href="#">Pyclaw Input/Output Package</a><ul>
 <li><a class="reference internal" href="#module-clawpack.pyclaw.fileio.ascii"><code class="xref py py-mod docutils literal notranslate"><span class="pre">pyclaw.fileio.ascii</span></code></a></li>
+<li><a class="reference internal" href="#module-clawpack.pyclaw.fileio.binary"><code class="xref py py-mod docutils literal notranslate"><span class="pre">pyclaw.fileio.binary</span></code></a></li>
 <li><a class="reference internal" href="#pyclaw-fileio-hdf5"><code class="xref py py-mod docutils literal notranslate"><span class="pre">pyclaw.fileio.hdf5</span></code></a></li>
 <li><a class="reference internal" href="#module-clawpack.pyclaw.fileio.netcdf"><code class="xref py py-mod docutils literal notranslate"><span class="pre">pyclaw.fileio.netcdf</span></code></a></li>
 </ul>
