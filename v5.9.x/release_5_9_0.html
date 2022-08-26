@@ -1,0 +1,309 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>v5.9.0 release notes &#8212; Clawpack 5.9.x documentation</title>
+    <link rel="stylesheet" href="_static/flasky.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/base.css" type="text/css" />
+    <link rel="stylesheet" href="_static/layout.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/graphviz.css" />
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <script async="async" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="shortcut icon" href="_static/clawicon.ico"/>
+    <link rel="author" title="About these documents" href="about.html" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+  </head><body>
+<div id="main-wrapper" class="sphinx">
+<div id="header-wrapper">
+  <section id="header">
+    <!-- <h1><a href="http://clawpack.org/">Clawpack</a></h1> -->
+    <h1><a href="http://clawpack.org/">Clawpack-5</a></h1> 
+    <nav>
+      <ul>
+        <li>
+          <a href="contents.html">Docs</a>
+        </li>
+        <li>
+          <a href="installing.html">Install</a>
+        </li>
+        <li>
+          <a class="" href="http://clawpack.org/gallery/index.html">Gallery</a>
+        </li>
+        <li>
+          <a href="about.html">Citation</a>
+        </li>
+        <li>
+          <a class="active" href="http://github.com/clawpack">GitHub</a>
+        </li>
+        <li>
+          <a class="" href="community.html">Community</a>
+        </li>
+        <li>
+          <a class="" href="developers.html">Contribute</a>
+        </li>
+      </ul>
+    </nav>
+  </section>
+<div class="decoration"></div>
+</div>
+
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="contents.html">Clawpack 5.9.x documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="v5-9-0-release-notes">
+<span id="release-5-9-0"></span><h1>v5.9.0 release notes<a class="headerlink" href="#v5-9-0-release-notes" title="Permalink to this headline">¶</a></h1>
+<p>Clawpack 5.9.0 was released on August 26, 2022. See <a class="reference internal" href="installing.html#installing"><span class="std std-ref">Installing Clawpack</span></a>.</p>
+<p>Permanent DOI: <a class="reference external" href="http://doi.org/10.5281/zenodo.7026045">http://doi.org/10.5281/zenodo.7026045</a></p>
+<p>Changes relative to Clawpack 5.8.2 (December 14, 2021) are shown below.</p>
+<p>To see more recent changes that are in the the master branch but not yet
+released, see <a class="reference internal" href="changes_to_master.html#changes-to-master"><span class="std std-ref">Changes to master since v5.9.0</span></a>.</p>
+<p>Follow the links to see changes that have been made to the master branch of
+each repository since the last release (v5.9.0) on August 26, 2022.</p>
+<p>These changes should appear in the next release.  If you need them now,
+see <a class="reference internal" href="developers.html#developers"><span class="std std-ref">Developers’ Guide</span></a> for instructions on cloning and installing from the
+master branch.</p>
+<p>To see documentation that has already been developed to accompany any new
+features listed below, click on the “dev” branch of the documentation, in
+the menu on the left hand side of this page.</p>
+<div class="section" id="changes-that-are-not-backward-compatible">
+<h2>Changes that are not backward compatible<a class="headerlink" href="#changes-that-are-not-backward-compatible" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="general-changes">
+<h2>General changes<a class="headerlink" href="#general-changes" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p><cite>‘binary32</cite>’ added as an <cite>output_format</cite> option in both amrclaw and
+geoclaw. (So far classic only supports <cite>‘ascii’</cite> output.) The old
+<cite>‘binary’</cite> option now defaults to <cite>‘binary64’</cite>, which dumps the raw
+binary of the full float64 (kind=8) Fortran variables.  The new
+<cite>‘binary32’</cite> option trucates to float32 (kind=4) before dumping, and
+results in binary output files that are only half as large.  Since
+float32 values have about 8 significant figures, this is generally
+sufficient for most plotting and post-processing needs.  These files
+are also much smaller than the files created with the <cite>‘ascii’</cite>
+option, which is generally recommended only for debugging if you need to
+examine the output files directly.</p></li>
+<li><p>Adding support for <cite>‘binary32’</cite> required changes in the pyclaw, clawutil
+and visclaw repositories as well.</p></li>
+<li><p>A new <cite>fgout</cite> capability was added to geoclaw (see below and <a class="reference internal" href="fgout.html#fgout"><span class="std std-ref">Fixed grid output</span></a>),
+which also required additional changes to other repositories.</p></li>
+</ul>
+</div>
+<div class="section" id="changes-to-classic">
+<h2>Changes to classic<a class="headerlink" href="#changes-to-classic" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p>Comments in some sample <cite>setrun.py</cite> files were changed to make it clear
+that only <cite>output_format = ‘ascii’</cite> is supported so far in classic.</p></li>
+</ul>
+<p>See <a class="reference external" href="https://github.com/clawpack/classic/compare/v5.8.2...v5.9.0">classic diffs</a></p>
+</div>
+<div class="section" id="changes-to-clawutil">
+<h2>Changes to clawutil<a class="headerlink" href="#changes-to-clawutil" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p>Support for <cite>‘binary32’</cite> and <cite>fgout</cite> grids added.</p></li>
+</ul>
+<p>See <a class="reference external" href="https://github.com/clawpack/clawutil/compare/v5.8.2...v5.9.0">clawutil diffs</a></p>
+</div>
+<div class="section" id="changes-to-visclaw">
+<h2>Changes to visclaw<a class="headerlink" href="#changes-to-visclaw" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p>Support for <cite>‘binary32’</cite> and <cite>fgout</cite> grids added.</p></li>
+<li><p><cite>pcolor</cite> plots are now rasterized by default, which greatly reduces the
+file size in some cases.  When e.g. <cite>savefig(‘filename.svg’)</cite> is used
+the labels are still vector graphics but the flow field is rasterized.
+Passing the option <cite>pcolor_kwargs = {“rasterized”:False}</cite> in setplot
+turns this off. See <cite>&lt;https://github.com/clawpack/visclaw/pull/286&gt;</cite>.</p></li>
+<li><p>The <cite>JSAnimation</cite> subdirectory was removed, since we now use
+<cite>anim.to_jshtml</cite> instead.</p></li>
+</ul>
+<p>See <a class="reference external" href="https://github.com/clawpack/visclaw/compare/v5.8.2...v5.9.0">visclaw diffs</a></p>
+</div>
+<div class="section" id="changes-to-riemann">
+<h2>Changes to riemann<a class="headerlink" href="#changes-to-riemann" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p>None.</p></li>
+</ul>
+<p>See <a class="reference external" href="https://github.com/clawpack/riemann/compare/v5.8.2...v5.9.0">riemann diffs</a></p>
+</div>
+<div class="section" id="changes-to-amrclaw">
+<h2>Changes to amrclaw<a class="headerlink" href="#changes-to-amrclaw" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p>Support for <cite>output_format=’binary32’</cite> added for both output frames and
+gauges.</p></li>
+</ul>
+<p>See <a class="reference external" href="https://github.com/clawpack/amrclaw/compare/v5.8.2...v5.9.0">amrclaw diffs</a></p>
+</div>
+<div class="section" id="changes-to-geoclaw">
+<h2>Changes to geoclaw<a class="headerlink" href="#changes-to-geoclaw" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p>Support for <cite>output_format=’binary32’</cite> added for both output frames and
+gauges.</p></li>
+<li><p>New <cite>fgout</cite> grid capabilities added, as described at <a class="reference internal" href="fgout.html#fgout"><span class="std std-ref">Fixed grid output</span></a>.
+This allows specifying one or more fixed resolution rectangular grids on
+which the AMR solution will be interpolated (in both space and time)
+at each time in a specified set of times.  This does not affect the
+time steps used in the computation and allows frequent output on a
+fixed portion of the domain for making animations or doing
+post-processing, such as particle tracking based on the velocity field.</p></li>
+<li><p>The new <cite>fgout</cite> capability (together with <a class="reference internal" href="fgmax.html#fgmax"><span class="std std-ref">Fixed grid monitoring</span></a>)
+replaces the very old <cite>fixedgrid</cite> capability,
+which has now been further deprecated.</p></li>
+<li><p><cite>$CLAW/geoclaw/examples/tsunami/chile2010_fgmax</cite> has been replaced by
+<cite>$CLAW/geoclaw/examples/tsunami/chile2010_fgmax-fgout</cite>.  This example
+now also shows how to plot results on fgout grids either by
+using a special <cite>setplot</cite> function or by reading them directly.
+It also shows how to make an animation from the fgout results.</p></li>
+</ul>
+<p>See <a class="reference external" href="https://github.com/clawpack/geoclaw/compare/v5.8.2...v5.9.0">geoclaw diffs</a></p>
+</div>
+<div class="section" id="changes-to-pyclaw">
+<h2>Changes to PyClaw<a class="headerlink" href="#changes-to-pyclaw" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p>Support for reading fgout frames added, by passing the parameter
+<cite>file_prefix</cite> more consistently (which can be e.g. <cite>fgout</cite> rather than
+<cite>fort</cite>, as used for output frames).</p></li>
+<li><p>Support for reading binary output files with format <cite>‘binary32’</cite> or
+<cite>‘binary64’</cite>.  Added for both output frames and gauges.  The old <cite>‘binary’</cite>
+format is equivalent to <cite>‘binary64’</cite>.</p></li>
+<li><p>Support reading <cite>file_format</cite> from the <cite>fort.t</cite> files, now one of <cite>ascii</cite>,
+<cite>binary32</cite>, or <cite>binary64</cite>.  See General Changes above for more details.</p></li>
+</ul>
+<p>See <a class="reference external" href="https://github.com/clawpack/pyclaw/compare/v5.8.2...v5.9.0">pyclaw diffs</a></p>
+<p>For older changes in PyClaw, see also the <a class="reference external" href="https://github.com/clawpack/pyclaw/blob/master/CHANGES.md">PyClaw changelog</a>.</p>
+</div>
+</div>
+<div class="section" id="other-clawpack-repositories">
+<h1>Other Clawpack Repositories<a class="headerlink" href="#other-clawpack-repositories" title="Permalink to this headline">¶</a></h1>
+<p>The repositories below are not included in the Clawpack tarfile or pip
+install, but changes to these repositories may also be of interest.</p>
+<ul class="simple">
+<li><p><a class="reference external" href="https://github.com/clawpack/apps/compare/v5.8.2...v5.9.0">apps diffs</a></p></li>
+<li><p><a class="reference external" href="https://github.com/clawpack/doc/compare/v5.9.x...dev">doc diffs</a>
+shows changes in the <cite>dev</cite> branch not yet in the main version of the
+documentation.</p></li>
+<li><p><a class="reference external" href="https://github.com/clawpack/docker-files/compare/v5.8.2...v5.9.0">docker-files diffs</a></p></li>
+</ul>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<p><a href="http://clawpack.org/">
+    <img class="logo" src= "_static/clawlogo.jpg" alt="Logo"/>
+</a>
+<h2>Version 5.9.x</h2>
+</p>
+  <h3><a href="contents.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">v5.9.0 release notes</a><ul>
+<li><a class="reference internal" href="#changes-that-are-not-backward-compatible">Changes that are not backward compatible</a></li>
+<li><a class="reference internal" href="#general-changes">General changes</a></li>
+<li><a class="reference internal" href="#changes-to-classic">Changes to classic</a></li>
+<li><a class="reference internal" href="#changes-to-clawutil">Changes to clawutil</a></li>
+<li><a class="reference internal" href="#changes-to-visclaw">Changes to visclaw</a></li>
+<li><a class="reference internal" href="#changes-to-riemann">Changes to riemann</a></li>
+<li><a class="reference internal" href="#changes-to-amrclaw">Changes to amrclaw</a></li>
+<li><a class="reference internal" href="#changes-to-geoclaw">Changes to geoclaw</a></li>
+<li><a class="reference internal" href="#changes-to-pyclaw">Changes to PyClaw</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#other-clawpack-repositories">Other Clawpack Repositories</a></li>
+</ul>
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="contents.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+<div class="widget navlinks">
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/release_5_9_0.rst.txt"
+            rel="nofollow"
+            target="_blank">Source .rst</a></li>
+    <li><a href="https://github.com/clawpack/doc/blob/dev/doc/release_5_9_0.rst"
+            rel="nofollow"
+            target="_blank">Source on GitHub</a></li>
+     <li><a href="https://github.com/clawpack/doc/commits/dev/doc/release_5_9_0.rst"
+             rel="nofollow"
+             target="_blank">History</a></li>
+    <li><a href="https://github.com/clawpack/doc/edit/dev/doc/release_5_9_0.rst"
+            rel="nofollow"
+            target="_blank">Suggest Edits</a></li>
+     <li><a href="https://github.com/clawpack/doc/issues/new/choose"
+             rel="nofollow"
+             target="_blank">Raise an Issue</a></li>
+  </ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+<h4>Latest Version</h4>
+<ul>
+  <li><a href="../dev/release_5_9_0.html">dev</a></li>
+  <li><a href="release_5_9_0.html">v5.9.x</a></li>
+</ul>
+<h4>Older Versions</h4>
+<ul>
+  <li><a href="../v5.1.x/index.html">v5.1.x</a></li>
+  <li><a href="../v5.2.x/index.html">v5.2.x</a></li>
+  <li><a href="../v5.3.x/index.html">v5.3.x</a></li>
+  <li><a href="../v5.4.x/index.html">v5.4.x</a></li>
+  <li><a href="../v5.5.x/index.html">v5.5.x</a></li>
+  <li><a href="../v5.6.x/index.html">v5.6.x</a></li>
+  <li><a href="../v5.7.x/index.html">v5.7.x</a></li>
+  <li><a href="../v5.8.x/index.html">v5.8.x</a></li>
+</ul>
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+  <div class="footer">
+    &copy; Copyright CC-BY 2022, The Clawpack Development Team.
+    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
+  </div>
+  <script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-44811544-1', 'auto');
+  ga('send', 'pageview');
+
+  </script>
+  
+  </body>
+</html>

@@ -1,0 +1,272 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>Set Eta Init – spatially varying initial surface elevation &#8212; Clawpack 5.9.x documentation</title>
+    <link rel="stylesheet" href="_static/flasky.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/base.css" type="text/css" />
+    <link rel="stylesheet" href="_static/layout.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/graphviz.css" />
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <script async="async" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="shortcut icon" href="_static/clawicon.ico"/>
+    <link rel="author" title="About these documents" href="about.html" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Lagrangian gauges for particle tracking" href="lagrangian_gauges.html" />
+    <link rel="prev" title="Setting sea_level" href="sealevel.html" /> 
+  </head><body>
+<div id="main-wrapper" class="sphinx">
+<div id="header-wrapper">
+  <section id="header">
+    <!-- <h1><a href="http://clawpack.org/">Clawpack</a></h1> -->
+    <h1><a href="http://clawpack.org/">Clawpack-5</a></h1> 
+    <nav>
+      <ul>
+        <li>
+          <a href="contents.html">Docs</a>
+        </li>
+        <li>
+          <a href="installing.html">Install</a>
+        </li>
+        <li>
+          <a class="" href="http://clawpack.org/gallery/index.html">Gallery</a>
+        </li>
+        <li>
+          <a href="about.html">Citation</a>
+        </li>
+        <li>
+          <a class="active" href="http://github.com/clawpack">GitHub</a>
+        </li>
+        <li>
+          <a class="" href="community.html">Community</a>
+        </li>
+        <li>
+          <a class="" href="developers.html">Contribute</a>
+        </li>
+      </ul>
+    </nav>
+  </section>
+<div class="decoration"></div>
+</div>
+
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="lagrangian_gauges.html" title="Lagrangian gauges for particle tracking"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="sealevel.html" title="Setting sea_level"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="contents.html">Clawpack 5.9.x documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="geoclaw.html" accesskey="U">GeoClaw Description and Detailed Contents</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="set-eta-init-spatially-varying-initial-surface-elevation">
+<span id="set-eta-init"></span><h1>Set Eta Init – spatially varying initial surface elevation<a class="headerlink" href="#set-eta-init-spatially-varying-initial-surface-elevation" title="Permalink to this headline">¶</a></h1>
+<p>Prior to Version 5.7.0,
+GeoClaw had a single scalar parameter <cite>sea_level</cite> and the water
+surface is initialized to this value in every cell where the GeoClaw
+cell-averaged topography value <cite>B</cite> is smaller, i.e., the water depth
+in each cell is initialized to:</p>
+<p><cite>h[i,j] = max(0, sea_level - B[i,j])</cite>.</p>
+<p>In some cases it is desirable to initialize the depth so that the
+surface is spatially varying.</p>
+<p>Starting in v5.7.0, the library routine
+<cite>$CLAW/geoclaw/src/2d/shallow/set_eta_init.f90</cite> can be used to set
+the desired initial water surface <cite>eta = B + h</cite> in a spacially varying
+manner.  In order to invoke this routine, in <cite>setrun.py</cite> you should set:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rundata</span><span class="o">.</span><span class="n">qinit_data</span><span class="o">.</span><span class="n">variable_eta_init</span> <span class="o">=</span> <span class="kc">True</span>
+</pre></div>
+</div>
+<div class="section" id="default-behavior-adjusting-sea-level-by-seismic-deformation">
+<h2>Default behavior, adjusting sea level by seismic deformation<a class="headerlink" href="#default-behavior-adjusting-sea-level-by-seismic-deformation" title="Permalink to this headline">¶</a></h2>
+<p>The default library routine
+<cite>$CLAW/geoclaw/src/2d/shallow/set_eta_init.f90</cite>
+is set up for the use case in which a region subsides or is uplifted by a
+local earthquake.
+In tsunami modeling of a nearfield event, the seafloor
+deformation due to the earthquake often extends onto shore in the region
+being modeled. If the coastal region subsides, for example, then the
+land drops near the shore and the water adjacent drops as well. If a
+grid patch was initialized before the deformation specified in the dtopo
+file by the formula above, then the depth <cite>h[i,j]</cite> does not decrease
+during the subsidence, which is the correct behavior.</p>
+<p>However, in some
+cases the tsunami does not arrive at the shore quickly and so it is
+desirable to use coarser grids in early stages of the computation,
+introducing highly refined grids only after some specified time. When
+new levels of refinement are first introduced into a simulation then the
+formula given above is used to initialize cells near the coast. But if the
+coast subsided (or is uplifted), the the formula above should be replaced by:</p>
+<p><cite>h[i,j] = max(0, sea_level + dz[i,j] - B[i,j])</cite></p>
+<p>where <cite>dz[i,j]</cite> is obtained by interpolating the co-seismic
+deformation specified in the dtopo file to the cell center. Failure to
+do this can sometimes result in large areas being flooded by the
+initialization that should not be flooded by the tsunami.</p>
+<p>The default version of <cite>$CLAW/geoclaw/src/2d/shallow/set_eta_init.f90</cite>
+loops over all (possibly time-dependent)
+dtopo files and interpolates from these
+files to the points on the grid patch, at the specified time, to adjust the
+initial constant <cite>sea_level</cite> value at each point on the patch.</p>
+<p>Note that this <cite>set_eta_init</cite> function is only called when a grid cell is
+first initialized at a given AMR level. It is called from <cite>qinit.f90</cite> to
+initialize any patches that exist at the initial time (which may be before
+the earthquake starts, in which case no adjustment to <cite>sea_level</cite> would be
+made).</p>
+<p>It is also called if a region is refined to a higher level than
+previously, but the resulting value is used only in cells where the
+the water surface level <cite>h+B</cite> cannot be interpolated from coarser levels, due
+to the fact that one or more neighboring cells was dry (in which case
+<cite>h+B=B</cite> may be huge if the land rises steeply, and using this value in an
+interpolation of the sea surface would lead to artificially high surface
+elevation, and hence incorrect depth <cite>h</cite> when this is computed as <cite>eta - B</cite>.
+So such cells near the coast must be filled with water up to the value
+specified by <cite>set_eta_init</cite>.  In previous versions they were always filled
+to the level specified by <cite>sea_level</cite>, but this was incorrect
+in regions where the water level subsided (or was uplifted) along with the
+land.</p>
+<p>As noted above,
+this is particularly important in coastal regions where there is seismic
+deformation but it takes some time for the tsunami to arrive and so the fine
+grids needed to resolve the region are not introduced until some time after the
+seismic deformation.</p>
+</div>
+<div class="section" id="other-use-cases">
+<h2>Other use cases<a class="headerlink" href="#other-use-cases" title="Permalink to this headline">¶</a></h2>
+<p>For other uses one can copy the library routine
+<cite>$CLAW/geoclaw/src/2d/shallow/set_eta_init.f90</cite>
+to the application directory and modify it as desired (and change the
+<cite>Makefile</cite> to point to the modified version).</p>
+<p>For example, there may be <strong>onshore lakes</strong> whose initial surface elevation
+should be different than <cite>sea_level</cite>.  This could be added to the existing
+routine, so that siesmic displacement of both the offshore water and onshore
+lakes is also handled, or the dtopo adjustments can be removed if not needed.</p>
+<p>When modeling <strong>dam break problems,</strong> there may one or more lakes
+of interest at different initial elevations.
+As an example, to develop a custom routine in the case
+where a lake behind a dam is desired to be set to one elevation while
+everywhere else there should be no water, this routine could check the
+<cite>(x,y)</cite> location of each cell and set <cite>eta_init</cite> either to the lake
+elevation, if in a specified region,
+or to a very negative value lower than any topography (to force <cite>h = 0</cite>),
+when outside the region covered by the lake.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<p><a href="http://clawpack.org/">
+    <img class="logo" src= "_static/clawlogo.jpg" alt="Logo"/>
+</a>
+<h2>Version 5.9.x</h2>
+</p>
+  <h3><a href="contents.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Set Eta Init – spatially varying initial surface elevation</a><ul>
+<li><a class="reference internal" href="#default-behavior-adjusting-sea-level-by-seismic-deformation">Default behavior, adjusting sea level by seismic deformation</a></li>
+<li><a class="reference internal" href="#other-use-cases">Other use cases</a></li>
+</ul>
+</li>
+</ul>
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="contents.html">Documentation overview</a><ul>
+  <li><a href="geoclaw.html">GeoClaw Description and Detailed Contents</a><ul>
+      <li>Previous: <a href="sealevel.html" title="previous chapter">Setting sea_level</a></li>
+      <li>Next: <a href="lagrangian_gauges.html" title="next chapter">Lagrangian gauges for particle tracking</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+<div class="widget navlinks">
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/set_eta_init.rst.txt"
+            rel="nofollow"
+            target="_blank">Source .rst</a></li>
+    <li><a href="https://github.com/clawpack/doc/blob/dev/doc/set_eta_init.rst"
+            rel="nofollow"
+            target="_blank">Source on GitHub</a></li>
+     <li><a href="https://github.com/clawpack/doc/commits/dev/doc/set_eta_init.rst"
+             rel="nofollow"
+             target="_blank">History</a></li>
+    <li><a href="https://github.com/clawpack/doc/edit/dev/doc/set_eta_init.rst"
+            rel="nofollow"
+            target="_blank">Suggest Edits</a></li>
+     <li><a href="https://github.com/clawpack/doc/issues/new/choose"
+             rel="nofollow"
+             target="_blank">Raise an Issue</a></li>
+  </ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+<h4>Latest Version</h4>
+<ul>
+  <li><a href="../dev/set_eta_init.html">dev</a></li>
+  <li><a href="set_eta_init.html">v5.9.x</a></li>
+</ul>
+<h4>Older Versions</h4>
+<ul>
+  <li><a href="../v5.1.x/index.html">v5.1.x</a></li>
+  <li><a href="../v5.2.x/index.html">v5.2.x</a></li>
+  <li><a href="../v5.3.x/index.html">v5.3.x</a></li>
+  <li><a href="../v5.4.x/index.html">v5.4.x</a></li>
+  <li><a href="../v5.5.x/index.html">v5.5.x</a></li>
+  <li><a href="../v5.6.x/index.html">v5.6.x</a></li>
+  <li><a href="../v5.7.x/set_eta_init.html">v5.7.x</a></li>
+  <li><a href="../v5.8.x/set_eta_init.html">v5.8.x</a></li>
+</ul>
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+  <div class="footer">
+    &copy; Copyright CC-BY 2022, The Clawpack Development Team.
+    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
+  </div>
+  <script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-44811544-1', 'auto');
+  ga('send', 'pageview');
+
+  </script>
+  
+  </body>
+</html>

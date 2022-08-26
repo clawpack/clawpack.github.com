@@ -1,0 +1,468 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>fgout_tools module for working with fgout grids &#8212; Clawpack 5.9.x documentation</title>
+    <link rel="stylesheet" href="_static/flasky.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/base.css" type="text/css" />
+    <link rel="stylesheet" href="_static/layout.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/graphviz.css" />
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <script async="async" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="shortcut icon" href="_static/clawicon.ico"/>
+    <link rel="author" title="About these documents" href="about.html" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+  </head><body>
+<div id="main-wrapper" class="sphinx">
+<div id="header-wrapper">
+  <section id="header">
+    <!-- <h1><a href="http://clawpack.org/">Clawpack</a></h1> -->
+    <h1><a href="http://clawpack.org/">Clawpack-5</a></h1> 
+    <nav>
+      <ul>
+        <li>
+          <a href="contents.html">Docs</a>
+        </li>
+        <li>
+          <a href="installing.html">Install</a>
+        </li>
+        <li>
+          <a class="" href="http://clawpack.org/gallery/index.html">Gallery</a>
+        </li>
+        <li>
+          <a href="about.html">Citation</a>
+        </li>
+        <li>
+          <a class="active" href="http://github.com/clawpack">GitHub</a>
+        </li>
+        <li>
+          <a class="" href="community.html">Community</a>
+        </li>
+        <li>
+          <a class="" href="developers.html">Contribute</a>
+        </li>
+      </ul>
+    </nav>
+  </section>
+<div class="decoration"></div>
+</div>
+
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="contents.html">Clawpack 5.9.x documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="fgout-tools-module-for-working-with-fgout-grids">
+<span id="fgout-tools-module"></span><h1>fgout_tools module for working with fgout grids<a class="headerlink" href="#fgout-tools-module-for-working-with-fgout-grids" title="Permalink to this headline">¶</a></h1>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="fgout.html#fgout"><span class="std std-ref">Fixed grid output</span></a></p></li>
+</ul>
+</div>
+<div class="section" id="module-clawpack.geoclaw.fgout_tools">
+<span id="documentation-auto-generated-from-the-module-docstrings"></span><h2>Documentation auto-generated from the module docstrings<a class="headerlink" href="#module-clawpack.geoclaw.fgout_tools" title="Permalink to this headline">¶</a></h2>
+<p>fgout_tools module: $CLAW/geoclaw/src/python/geoclaw/fgout_tools.py</p>
+<p>Tools to specify and work with fgout grids, used to output GeoClaw solutions
+on a fixed grid at a sequence of times, regardless of the AMR structure.</p>
+<p>Includes:</p>
+<ul class="simple">
+<li><p>class FGoutFrame: used to hold a single frame of fgout output data</p></li>
+<li><dl class="simple">
+<dt>class FGoutGrid: used to specify and store info about an fgout grid, with</dt><dd><p>methods to read and write info to fgout_grids.data</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>function make_fgout_fcn_xy: Takes an FGoutFrame object and produces an</dt><dd><p>interpolating function that can be evaluated for any (x,y).</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>function make_fgout_fcn_xyt: Takes 2 FGoutFrame objects and produces an</dt><dd><p>interpolating function that can be evaluated for any (x,y,t)
+at intermediate times.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>function write_netcdf: Write a specified set of qoi’s from a list of</dt><dd><p>fgout frames, as a single netCDF file</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>function read_netcdf: Read a netCDF file and return a list of fgout frames,</dt><dd><p>assuming the file contains all the qoi’s needed to reconstruct q.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>function read_netcdf_arrays: Read a netCDF file and extract the </dt><dd><p>requested quantities of interest as numpy arrays.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>print_netcdf_info: Print info about the contents of a netCDF file containing</dt><dd><p>some fgout frames.</p>
+</dd>
+</dl>
+</li>
+</ul>
+<dl class="class">
+<dt id="clawpack.geoclaw.fgout_tools.FGoutFrame">
+<em class="property">class </em><code class="sig-prename descclassname">clawpack.geoclaw.fgout_tools.</code><code class="sig-name descname">FGoutFrame</code><span class="sig-paren">(</span><em class="sig-param">fgout_grid</em>, <em class="sig-param">frameno=None</em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.geoclaw.fgout_tools.FGoutFrame" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class to hold a single frame of fgout data at one output time.
+Several attributes are defined as properties that can be evaluated
+and stored only when needed by the user.</p>
+<dl class="method">
+<dt id="clawpack.geoclaw.fgout_tools.FGoutFrame.B">
+<em class="property">property </em><code class="sig-name descname">B</code><a class="headerlink" href="#clawpack.geoclaw.fgout_tools.FGoutFrame.B" title="Permalink to this definition">¶</a></dt>
+<dd><p>topography</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="clawpack.geoclaw.fgout_tools.FGoutFrame.eta">
+<em class="property">property </em><code class="sig-name descname">eta</code><a class="headerlink" href="#clawpack.geoclaw.fgout_tools.FGoutFrame.eta" title="Permalink to this definition">¶</a></dt>
+<dd><p>surface eta = h+B</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="clawpack.geoclaw.fgout_tools.FGoutFrame.h">
+<em class="property">property </em><code class="sig-name descname">h</code><a class="headerlink" href="#clawpack.geoclaw.fgout_tools.FGoutFrame.h" title="Permalink to this definition">¶</a></dt>
+<dd><p>depth</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="clawpack.geoclaw.fgout_tools.FGoutFrame.hss">
+<em class="property">property </em><code class="sig-name descname">hss</code><a class="headerlink" href="#clawpack.geoclaw.fgout_tools.FGoutFrame.hss" title="Permalink to this definition">¶</a></dt>
+<dd><p>momentum flux h*s**2</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="clawpack.geoclaw.fgout_tools.FGoutFrame.hu">
+<em class="property">property </em><code class="sig-name descname">hu</code><a class="headerlink" href="#clawpack.geoclaw.fgout_tools.FGoutFrame.hu" title="Permalink to this definition">¶</a></dt>
+<dd><p>momentum h*u</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="clawpack.geoclaw.fgout_tools.FGoutFrame.hv">
+<em class="property">property </em><code class="sig-name descname">hv</code><a class="headerlink" href="#clawpack.geoclaw.fgout_tools.FGoutFrame.hv" title="Permalink to this definition">¶</a></dt>
+<dd><p>momentum h*v</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="clawpack.geoclaw.fgout_tools.FGoutFrame.s">
+<em class="property">property </em><code class="sig-name descname">s</code><a class="headerlink" href="#clawpack.geoclaw.fgout_tools.FGoutFrame.s" title="Permalink to this definition">¶</a></dt>
+<dd><p>speed s = sqrt(u**2 + v**2)</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="clawpack.geoclaw.fgout_tools.FGoutFrame.u">
+<em class="property">property </em><code class="sig-name descname">u</code><a class="headerlink" href="#clawpack.geoclaw.fgout_tools.FGoutFrame.u" title="Permalink to this definition">¶</a></dt>
+<dd><p>speed u, computed as hu/h or set to 0 if h&lt;self.drytol</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="clawpack.geoclaw.fgout_tools.FGoutFrame.v">
+<em class="property">property </em><code class="sig-name descname">v</code><a class="headerlink" href="#clawpack.geoclaw.fgout_tools.FGoutFrame.v" title="Permalink to this definition">¶</a></dt>
+<dd><p>speed v, computed as hv/h or set to 0 if h&lt;self.drytol</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="clawpack.geoclaw.fgout_tools.FGoutGrid">
+<em class="property">class </em><code class="sig-prename descclassname">clawpack.geoclaw.fgout_tools.</code><code class="sig-name descname">FGoutGrid</code><span class="sig-paren">(</span><em class="sig-param">fgno=None</em>, <em class="sig-param">outdir=None</em>, <em class="sig-param">output_format=None</em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.geoclaw.fgout_tools.FGoutGrid" title="Permalink to this definition">¶</a></dt>
+<dd><p>New class introduced in 5.9.0 to keep store information both about the
+fgout input data and the output generated by a GeoClaw run.</p>
+<dl class="method">
+<dt id="clawpack.geoclaw.fgout_tools.FGoutGrid.X">
+<em class="property">property </em><code class="sig-name descname">X</code><a class="headerlink" href="#clawpack.geoclaw.fgout_tools.FGoutGrid.X" title="Permalink to this definition">¶</a></dt>
+<dd><p>2D array X of longitudes (cell centers)</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="clawpack.geoclaw.fgout_tools.FGoutGrid.Y">
+<em class="property">property </em><code class="sig-name descname">Y</code><a class="headerlink" href="#clawpack.geoclaw.fgout_tools.FGoutGrid.Y" title="Permalink to this definition">¶</a></dt>
+<dd><p>2D array Y of latitudes (cell centers)</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="clawpack.geoclaw.fgout_tools.FGoutGrid.extent_centers">
+<em class="property">property </em><code class="sig-name descname">extent_centers</code><a class="headerlink" href="#clawpack.geoclaw.fgout_tools.FGoutGrid.extent_centers" title="Permalink to this definition">¶</a></dt>
+<dd><p>Extent of cell centers [xmin,xmax,ymin,ymax]</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="clawpack.geoclaw.fgout_tools.FGoutGrid.extent_edges">
+<em class="property">property </em><code class="sig-name descname">extent_edges</code><a class="headerlink" href="#clawpack.geoclaw.fgout_tools.FGoutGrid.extent_edges" title="Permalink to this definition">¶</a></dt>
+<dd><p>Extent of cell edges [xmin,xmax,ymin,ymax]</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="clawpack.geoclaw.fgout_tools.FGoutGrid.read_fgout_grids_data">
+<code class="sig-name descname">read_fgout_grids_data</code><span class="sig-paren">(</span><em class="sig-param">fgno=None</em>, <em class="sig-param">data_file='fgout_grids.data'</em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.geoclaw.fgout_tools.FGoutGrid.read_fgout_grids_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read input info for fgout grid number fgno from the data file
+fgout_grids.data, which should have been created by setrun.py.
+This file now contains info about all fgout grids.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="clawpack.geoclaw.fgout_tools.FGoutGrid.read_frame">
+<code class="sig-name descname">read_frame</code><span class="sig-paren">(</span><em class="sig-param">frameno</em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.geoclaw.fgout_tools.FGoutGrid.read_frame" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read a single frame of fgout data.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="clawpack.geoclaw.fgout_tools.FGoutGrid.set_plotdata">
+<code class="sig-name descname">set_plotdata</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.geoclaw.fgout_tools.FGoutGrid.set_plotdata" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a plotdata, assuming attributes fgno, outdir, output_format
+have all been set.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="clawpack.geoclaw.fgout_tools.FGoutGrid.write_to_fgout_data">
+<code class="sig-name descname">write_to_fgout_data</code><span class="sig-paren">(</span><em class="sig-param">fid</em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.geoclaw.fgout_tools.FGoutGrid.write_to_fgout_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert fgout data specified in setrun.py to file <cite>fgout_grids.data</cite>
+read in by GeoClaw fortran code.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="clawpack.geoclaw.fgout_tools.FGoutGrid.x">
+<em class="property">property </em><code class="sig-name descname">x</code><a class="headerlink" href="#clawpack.geoclaw.fgout_tools.FGoutGrid.x" title="Permalink to this definition">¶</a></dt>
+<dd><p>1D array x of longitudes (cell centers)</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="clawpack.geoclaw.fgout_tools.FGoutGrid.y">
+<em class="property">property </em><code class="sig-name descname">y</code><a class="headerlink" href="#clawpack.geoclaw.fgout_tools.FGoutGrid.y" title="Permalink to this definition">¶</a></dt>
+<dd><p>1D array y of latitudes (cell centers)</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="clawpack.geoclaw.fgout_tools.get_as_array">
+<code class="sig-prename descclassname">clawpack.geoclaw.fgout_tools.</code><code class="sig-name descname">get_as_array</code><span class="sig-paren">(</span><em class="sig-param">var</em>, <em class="sig-param">rootgrp</em>, <em class="sig-param">verbose=True</em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.geoclaw.fgout_tools.get_as_array" title="Permalink to this definition">¶</a></dt>
+<dd><p>Utility function to retrieve variable from netCDF file and convert to 
+numpy array.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="clawpack.geoclaw.fgout_tools.make_fgout_fcn_xy">
+<code class="sig-prename descclassname">clawpack.geoclaw.fgout_tools.</code><code class="sig-name descname">make_fgout_fcn_xy</code><span class="sig-paren">(</span><em class="sig-param">fgout</em>, <em class="sig-param">qoi</em>, <em class="sig-param">method='nearest'</em>, <em class="sig-param">bounds_error=False</em>, <em class="sig-param">fill_value=nan</em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.geoclaw.fgout_tools.make_fgout_fcn_xy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a function that can be called at (x,y) and return the qoi
+interpolated in space from the fgout array.</p>
+<p>qoi should be a string (e.g. ‘h’, ‘u’ or ‘v’) corresponding to 
+an attribute of fgout.</p>
+<p>The function returned takes arguments x,y that can be floats or 
+(equal length) 1D arrays of values that lie within the spatial
+extent of fgout.</p>
+<p>bounds_error and fill_value determine the behavior if (x,y) is not in 
+the bounds of the data, as in scipy.interpolate.RegularGridInterpolator.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="clawpack.geoclaw.fgout_tools.make_fgout_fcn_xyt">
+<code class="sig-prename descclassname">clawpack.geoclaw.fgout_tools.</code><code class="sig-name descname">make_fgout_fcn_xyt</code><span class="sig-paren">(</span><em class="sig-param">fgout1</em>, <em class="sig-param">fgout2</em>, <em class="sig-param">qoi</em>, <em class="sig-param">method_xy='nearest'</em>, <em class="sig-param">method_t='linear'</em>, <em class="sig-param">bounds_error=False</em>, <em class="sig-param">fill_value=nan</em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.geoclaw.fgout_tools.make_fgout_fcn_xyt" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a function that can be called at (x,y,t) and return the qoi
+interpolated in space and time between the two frames fgout1 and fgout2.</p>
+<p>qoi should be a string (e.g. ‘h’, ‘u’ or ‘v’) corresponding to 
+an attribute of fgout.</p>
+<p>method_xy is the method used in creating the spatial interpolator,
+and is passed to make_fgout_fcn_xy.</p>
+<p>method_t is the method used for interpolation in time, currently only
+‘linear’ is supported, which linearly interpolates.</p>
+<p>bounds_error and fill_value determine the behavior if (x,y,t) is not in 
+the bounds of the data.</p>
+<p>The function returned takes arguments x,y (floats or equal-length 1D arrays)
+of values that lie within the spatial extent of fgout1, fgout2
+(which are assumed to cover the same uniform grid at different times)
+and t should be a float that lies between fgout1.t and fgout2.t.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="clawpack.geoclaw.fgout_tools.print_netcdf_info">
+<code class="sig-prename descclassname">clawpack.geoclaw.fgout_tools.</code><code class="sig-name descname">print_netcdf_info</code><span class="sig-paren">(</span><em class="sig-param">fname_nc</em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.geoclaw.fgout_tools.print_netcdf_info" title="Permalink to this definition">¶</a></dt>
+<dd><p>Print out info about the contents of a netCDF file contining fgout frames,
+written using write_netcdf.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="clawpack.geoclaw.fgout_tools.read_netcdf">
+<code class="sig-prename descclassname">clawpack.geoclaw.fgout_tools.</code><code class="sig-name descname">read_netcdf</code><span class="sig-paren">(</span><em class="sig-param">fname_nc</em>, <em class="sig-param">fgout_grid=None</em>, <em class="sig-param">verbose=True</em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.geoclaw.fgout_tools.read_netcdf" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read a netCDF file and return a list of FGoutFrame instances.
+This will only be possible if the netCDF file contains at least
+the qoi’s ‘h’,’hu’,’hv’,’eta’ required to reconstruct the q array
+as output by GeoClaw.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="clawpack.geoclaw.fgout_tools.read_netcdf_arrays">
+<code class="sig-prename descclassname">clawpack.geoclaw.fgout_tools.</code><code class="sig-name descname">read_netcdf_arrays</code><span class="sig-paren">(</span><em class="sig-param">fname_nc</em>, <em class="sig-param">qois</em>, <em class="sig-param">verbose=True</em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.geoclaw.fgout_tools.read_netcdf_arrays" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read a netCDF file and extract the quantities of interest denoted by
+strings in the list qois, which can include:</p>
+<blockquote>
+<div><p>‘h’, ‘eta’, ‘hu’, ‘hv’, ‘u’, ‘v’, ‘s’, ‘hss’, ‘B’.</p>
+</div></blockquote>
+<p>qois can also include the time-independent ‘B0’ and/or ‘Bfinal’</p>
+<p>Returns</p>
+<blockquote>
+<div><p>x, y, t, qoi_arrays</p>
+</div></blockquote>
+<p>where x,y define the longitude, latitudes, t is the times of the frames,
+and qoi_arrays is a dictionary indexed by the strings from qois.</p>
+<p>Each dict element is an array with shape (len(t), len(x), len(y))
+for time-dependent qoi’s, or (len(x), len(y)) for B0 or Bfinal,
+or None if that qoi was not found in the netCDF file.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="clawpack.geoclaw.fgout_tools.write_netcdf">
+<code class="sig-prename descclassname">clawpack.geoclaw.fgout_tools.</code><code class="sig-name descname">write_netcdf</code><span class="sig-paren">(</span><em class="sig-param">fgout_frames, fname_nc='fgout_frames.nc', qois=['h', 'hu', 'hv', 'eta'], datatype='f4', include_B0=False, include_Bfinal=False, description='', verbose=True</em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.geoclaw.fgout_tools.write_netcdf" title="Permalink to this definition">¶</a></dt>
+<dd><p>Write a list of fgout frames (at different times on the same rectangular
+grid) to a single netCDF file, with some metadata and the topography,
+if desired.</p>
+<p>fgout_frames should be a list of FGoutFrame objects, all of the same size
+and at increasing times.</p>
+<p>fname_nc is the name of the file to write.</p>
+<dl>
+<dt>qois is a list of strings, the quantities of interest to include in file.</dt><dd><p>This could include any of:</p>
+<blockquote>
+<div><p>‘h’, ‘eta’, ‘hu’, ‘hv’, ‘u’, ‘v’, ‘s’, ‘hss’, ‘B’.</p>
+</div></blockquote>
+<p>All other quantities can be computed from h, hu, hv, eta,
+the original fgout variables from GeoClaw, but for some applications
+you might only want to save ‘h’ and ‘s’, for example.</p>
+</dd>
+<dt>datatype should be ‘f4’ [default] or ‘f8’, specifying bytes per qoi value.</dt><dd><p>‘f8’ has full precision of the original data, but the file will be
+twice as large and may not be needed for downstream applications.</p>
+</dd>
+</dl>
+<p>Note that the topography B = eta - h, so it is not necessary to store all
+three of these.  Also, B is often the same for all frames, so rather than
+storing B at each frame as a qoi, two other options are also provided
+(and then storing eta or h for all frames allows calculating the other):</p>
+<p>include_Bfinal: If True, include the topography B array from the final frame
+as the Bfinal array.</p>
+<p>include_B0: If True, include the topography B array from the first frame
+as the B0 array.  This is only useful if, e.g., the first frame is initial 
+topography before co-seismic deformation, and at later times the topography
+is always equal to Bfinal.</p>
+<p><cite>description</cite> is a string that will be added as metadata.
+A metadata field <cite>history</cite> will also be added, which includes the 
+time the file was created and the path to the directory where it was made.</p>
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<p><a href="http://clawpack.org/">
+    <img class="logo" src= "_static/clawlogo.jpg" alt="Logo"/>
+</a>
+<h2>Version 5.9.x</h2>
+</p>
+  <h3><a href="contents.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">fgout_tools module for working with fgout grids</a><ul>
+<li><a class="reference internal" href="#module-clawpack.geoclaw.fgout_tools">Documentation auto-generated from the module docstrings</a></li>
+</ul>
+</li>
+</ul>
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="contents.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+<div class="widget navlinks">
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/fgout_tools_module.rst.txt"
+            rel="nofollow"
+            target="_blank">Source .rst</a></li>
+    <li><a href="https://github.com/clawpack/doc/blob/dev/doc/fgout_tools_module.rst"
+            rel="nofollow"
+            target="_blank">Source on GitHub</a></li>
+     <li><a href="https://github.com/clawpack/doc/commits/dev/doc/fgout_tools_module.rst"
+             rel="nofollow"
+             target="_blank">History</a></li>
+    <li><a href="https://github.com/clawpack/doc/edit/dev/doc/fgout_tools_module.rst"
+            rel="nofollow"
+            target="_blank">Suggest Edits</a></li>
+     <li><a href="https://github.com/clawpack/doc/issues/new/choose"
+             rel="nofollow"
+             target="_blank">Raise an Issue</a></li>
+  </ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+<h4>Latest Version</h4>
+<ul>
+  <li><a href="../dev/fgout_tools_module.html">dev</a></li>
+  <li><a href="fgout_tools_module.html">v5.9.x</a></li>
+</ul>
+<h4>Older Versions</h4>
+<ul>
+  <li><a href="../v5.1.x/index.html">v5.1.x</a></li>
+  <li><a href="../v5.2.x/index.html">v5.2.x</a></li>
+  <li><a href="../v5.3.x/index.html">v5.3.x</a></li>
+  <li><a href="../v5.4.x/index.html">v5.4.x</a></li>
+  <li><a href="../v5.5.x/index.html">v5.5.x</a></li>
+  <li><a href="../v5.6.x/index.html">v5.6.x</a></li>
+  <li><a href="../v5.7.x/index.html">v5.7.x</a></li>
+  <li><a href="../v5.8.x/index.html">v5.8.x</a></li>
+</ul>
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+  <div class="footer">
+    &copy; Copyright CC-BY 2022, The Clawpack Development Team.
+    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
+  </div>
+  <script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-44811544-1', 'auto');
+  ga('send', 'pageview');
+
+  </script>
+  
+  </body>
+</html>

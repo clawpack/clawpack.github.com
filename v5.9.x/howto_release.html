@@ -1,0 +1,423 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>Guide for doing a Clawpack release &#8212; Clawpack 5.9.x documentation</title>
+    <link rel="stylesheet" href="_static/flasky.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/base.css" type="text/css" />
+    <link rel="stylesheet" href="_static/layout.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/graphviz.css" />
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <script async="async" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="shortcut icon" href="_static/clawicon.ico"/>
+    <link rel="author" title="About these documents" href="about.html" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Regression testing" href="regression.html" />
+    <link rel="prev" title="Guide for updating this documentation" href="howto_doc.html" /> 
+  </head><body>
+<div id="main-wrapper" class="sphinx">
+<div id="header-wrapper">
+  <section id="header">
+    <!-- <h1><a href="http://clawpack.org/">Clawpack</a></h1> -->
+    <h1><a href="http://clawpack.org/">Clawpack-5</a></h1> 
+    <nav>
+      <ul>
+        <li>
+          <a href="contents.html">Docs</a>
+        </li>
+        <li>
+          <a href="installing.html">Install</a>
+        </li>
+        <li>
+          <a class="" href="http://clawpack.org/gallery/index.html">Gallery</a>
+        </li>
+        <li>
+          <a href="about.html">Citation</a>
+        </li>
+        <li>
+          <a class="active" href="http://github.com/clawpack">GitHub</a>
+        </li>
+        <li>
+          <a class="" href="community.html">Community</a>
+        </li>
+        <li>
+          <a class="" href="developers.html">Contribute</a>
+        </li>
+      </ul>
+    </nav>
+  </section>
+<div class="decoration"></div>
+</div>
+
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="regression.html" title="Regression testing"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="howto_doc.html" title="Guide for updating this documentation"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="contents.html">Clawpack 5.9.x documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="pyclaw/index.html" >PyClaw</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="developers.html" accesskey="U">Developers’ Guide</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="guide-for-doing-a-clawpack-release">
+<span id="howto-release"></span><h1>Guide for doing a Clawpack release<a class="headerlink" href="#guide-for-doing-a-clawpack-release" title="Permalink to this headline">¶</a></h1>
+<p>This is the procedure used to do a new official release of Clawpack.</p>
+<div class="section" id="preparation">
+<h2>Preparation<a class="headerlink" href="#preparation" title="Permalink to this headline">¶</a></h2>
+<p>Make sure all your subrepositories are up to date and clean:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>cd $CLAW
+git co master
+git pull
+source pull_all.sh  # to make sure all subrepos are up to date
+
+python $CLAW/clawutil/src/python/claw_git_status.py
+</pre></div>
+</div>
+<p>Check the output of this last commands in the files <cite>claw_git_status.txt</cite>
+and <cite>claw_git_diffs.txt</cite> to make sure you don’t have any uncommitted changes.</p>
+<p>Run all the examples as described in <a class="reference external" href="https://github.com/clawpack/doc/blob/master/gallery/README.md">CLAW/doc/gallery/README.md</a>
+as required for building the galleries, and check all the resulting plots to
+make sure everything looks correct.</p>
+</div>
+<div class="section" id="version-numbers">
+<h2>Version numbers<a class="headerlink" href="#version-numbers" title="Permalink to this headline">¶</a></h2>
+<p>Change the version number in <cite>clawpack/clawpack/__init__.py</cite>.
+Initially set it to e.g. v5.4.1rc-alpha, then to the final release number.</p>
+<p>The version number is also set in <cite>clawpack/setup.py</cite> and should be changed
+there to be consistent with <cite>clawpack/clawpack/__init__.py</cite></p>
+</div>
+<div class="section" id="release-candidates">
+<h2>Release candidates<a class="headerlink" href="#release-candidates" title="Permalink to this headline">¶</a></h2>
+<p>Make sure all repositories are checked out to the master branch and are up to
+date with the main Clawpack repositories and clean, as described in the
+preparation step above.</p>
+<p>After following the preparation instructions above, do the following:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>cd $CLAW
+git checkout -b v5.4.1rc-alpha    # change to appropriate name for this rc
+git add -u .
+git commit -m &quot;v5.4.1rc-alpha release candidate&quot;
+git push &lt;your fork&gt;
+</pre></div>
+</div>
+<p>Then do a PR on <a class="reference external" href="https://github.com/clawpack/clawpack">https://github.com/clawpack/clawpack</a>.</p>
+</div>
+<div class="section" id="create-a-tar-file-and-a-github-release">
+<h2>Create a tar file and a Github release<a class="headerlink" href="#create-a-tar-file-and-a-github-release" title="Permalink to this headline">¶</a></h2>
+<p>We generally do this step for a release candidate first, and then
+do the same for the final release.  For release candidates, modify the
+version number to include <cite>5.4.1rc-alpha</cite>, for example.</p>
+<p><strong>NOTE:</strong> Once one or more release candidates have been tested, the final
+such PR  should contain a change of the version number in the file
+<cite>$CLAW/setup.py</cite> and in <cite>$CLAW/clawpack/__init__.py</cite> to the full version,
+e.g. <cite>5.4.1</cite>.</p>
+<p>Once the PR has been merged:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>cd $CLAW
+git co master
+git pull
+source pull_all.sh  # to make sure all subrepos are up to date
+</pre></div>
+</div>
+<p>Create tar file (first install <a class="reference external" href="https://github.com/Kentzo/git-archive-all">https://github.com/Kentzo/git-archive-all</a>):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>cd $CLAW
+git-archive-all --prefix clawpack-v5.x.x/ clawpack-v5.x.x.tar
+gzip clawpack-v5.x.x.tar
+</pre></div>
+</div>
+<p>(Note: best to use v5.x.x rather than just 5.x.x to be consistent with the
+directory name created if following <a class="reference internal" href="installing_pip.html#installing-pip"><span class="std std-ref">pip install instructions</span></a>.)</p>
+<p>Draft a new release on the webpage
+<a class="reference external" href="https://github.com/clawpack/clawpack/releases">https://github.com/clawpack/clawpack/releases</a>.
+Indicate that it is pre-release if desired.</p>
+<p>As a comment, add text such as:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Download</span> <span class="n">the</span> <span class="n">clawpack</span><span class="o">-</span><span class="n">v5</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">tar</span><span class="o">.</span><span class="n">gz</span> <span class="n">file</span> <span class="n">below</span><span class="p">,</span> <span class="ow">not</span> <span class="n">the</span> <span class="n">other</span> <span class="n">tar</span>
+<span class="n">file</span> <span class="n">of</span> <span class="nb">zip</span> <span class="n">file</span><span class="o">.</span> <span class="n">Those</span> <span class="n">only</span> <span class="n">include</span> <span class="n">the</span> <span class="n">top</span><span class="o">-</span><span class="n">level</span> <span class="n">Clawpack</span> <span class="n">directories</span> <span class="ow">and</span>
+<span class="ow">not</span> <span class="nb">all</span> <span class="n">the</span> <span class="n">submodules</span><span class="o">.</span>
+</pre></div>
+</div>
+<p>Then attach the tar file <cite>clawpack-v5.x.x.tar.gz</cite> to be
+included in the release by using the link “Attach binaries…” before
+finalizing the release.  (You can go back and “Edit release” if necessary.)</p>
+</div>
+<div class="section" id="final-release">
+<h2>Final release<a class="headerlink" href="#final-release" title="Permalink to this headline">¶</a></h2>
+<p>After the release has been finalized, <strong>tag all repositories</strong>.  In the commands
+below, it is assumed the remote <cite>upstream</cite> points to the main Github repos
+(not your fork) and that you have push permission.  Change <cite>5.x.x</cite> to the
+appropriate version number in these commands:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>cd $CLAW
+git checkout master; git pull # make sure up to date!
+git tag v5.x.x
+git push upstream v5.x.x
+
+cd ../pyclaw
+git checkout master; git pull # make sure up to date!
+git tag v5.x.x
+git push upstream v5.x.x
+</pre></div>
+</div>
+<p>Do the same in all other repos (classic, amrclaw, geoclaw, clawutil, visclaw,
+riemann).</p>
+<p>Note these tags are used in the documentation for pages like
+<a class="reference internal" href="changes_to_master.html#changes-to-master"><span class="std std-ref">Changes to master since v5.9.0</span></a> which generate diffs between the latest version and
+the current master branch of each repository.</p>
+</div>
+<div class="section" id="pypi">
+<h2>Pypi<a class="headerlink" href="#pypi" title="Permalink to this headline">¶</a></h2>
+<p>To release on the pypi server (for installation via pip) we have to do a bit
+of trickery.  We can’t just follow the directions at <a class="reference external" href="https://packaging.python.org/tutorials/packaging-projects/">https://packaging.python.org/tutorials/packaging-projects/</a>
+because we have a very non-Pythonic directory structure; in particular,
+the subdirectories <cite>clawpack/x/</cite> do not have an <cite>__init__.py</cite>.</p>
+<p>Here’s what to do:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>cd $CLAW
+git-archive-all --prefix clawpack-x.x.x/ clawpack-x.x.x.tar
+</pre></div>
+</div>
+<p>Then unpack the resulting tarball in another location.  Next:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>cd $CLAW
+python setup.py sdist
+cd dist
+</pre></div>
+</div>
+<p>Now extract that resulting tarball.  Then copy the file PKG-INFO from this second tarball
+to the first one.  Finally, repack the first tarball and put it in <cite>$CLAW/dist</cite>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>tar  -cvf clawpack-x.x.x.tar clawpack-x.x.x
+gzip clawpack-x.x.x.tar
+mv clawpack-x.x.x.tar $CLAW/dist
+</pre></div>
+</div>
+<p>Upload to the testpypi server for testing (you will need to have created an account there):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">cd</span> <span class="o">..</span>
+<span class="n">twine</span> <span class="n">upload</span> <span class="o">--</span><span class="n">repository</span><span class="o">-</span><span class="n">url</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">test</span><span class="o">.</span><span class="n">pypi</span><span class="o">.</span><span class="n">org</span><span class="o">/</span><span class="n">legacy</span><span class="o">/</span> <span class="n">dist</span><span class="o">/*</span>
+</pre></div>
+</div>
+<p>Test it:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>pip3 uninstall clawpack
+pip3 install —no-cache—dir —index-url https://test.pypi.org/simple/ clawpack
+</pre></div>
+</div>
+<p>Once that works, do the real upload to pypi:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">twine</span> <span class="n">upload</span> <span class="n">dist</span><span class="o">/*</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="zenodo">
+<h2>Zenodo<a class="headerlink" href="#zenodo" title="Permalink to this headline">¶</a></h2>
+<p>Go to the <a class="reference external" href="https://zenodo.org/">the Zenodo page</a>
+and create a new upload for the latest tar file, following the framework of
+<a class="reference external" href="https://doi.org/10.5281/zenodo.820730">https://doi.org/10.5281/zenodo.820730</a>, for example.  This will issue a new
+DOI, which should be added to the page <cite>$CLAW/doc/doc/releases.rst</cite>.</p>
+<p>Note that the Github repository is not linked to Zenodo for automatic uploading
+on release since that would only archive a zip file of the main <cite>clawpack</cite>
+repository.  Instead we want to archive the tar file containing all
+subrepositories too.</p>
+</div>
+<div class="section" id="open-science-framework-osf">
+<h2>Open Science Framework (OSF)<a class="headerlink" href="#open-science-framework-osf" title="Permalink to this headline">¶</a></h2>
+<p>Go to <a class="reference external" href="https://osf.io/kmw6h/files/">https://osf.io/kmw6h/files/</a> and upload the latest tarfile to the set
+of versions that can be accessed with the single DOI
+<a class="reference external" href="https://doi.org/10.17605/osf.io/kmw6h">10.17605/osf.io/kmw6h</a>.</p>
+</div>
+<div class="section" id="updating-the-documentation">
+<span id="howto-release-doc"></span><h2>Updating the documentation<a class="headerlink" href="#updating-the-documentation" title="Permalink to this headline">¶</a></h2>
+<p>See <a class="reference internal" href="howto_doc.html#howto-doc"><span class="std std-ref">Guide for updating this documentation</span></a> for general instructions on building the documentation
+and galleries using Sphinx, and for how to push changes to Github so they
+show up on the web.</p>
+<p>Note that in the <cite>clawpack/doc</cite> repository there is no <cite>master</cite> branch.
+There should be one corresponding to the latest release and
+also a branch <cite>dev</cite> that has changes since the last release. For a new
+release create a new branch from the <cite>dev</cite> branch with the version number,
+and update <cite>conf.py</cite> for the new version.</p>
+<p>When making changes for a new release, the following pages in the directory
+<cite>$CLAW/doc/doc</cite> need to be updated:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>A page like <a class="reference internal" href="release_5_4_0.html#release-5-4-0"><span class="std std-ref">v5.4.0 release notes</span></a> needs to be created.  Copy
+<cite>changes_to_master.rst</cite> to <cite>release_5_x_x.rst</cite> for a new release <cite>5.x.x</cite>
+and then change <cite>master</cite> to <cite>5_x_x</cite> in each link to Github, so they have
+the form <cite>v5.4.0…v5.4.1</cite>, for example when going from 5.4.0 to 5.4.1.</p></li>
+<li><p>Add to this page a brief summary of the major changes from the last
+release, using the diffs that show up in <cite>changes_to_master.rst</cite> as a guide.</p></li>
+<li><p>Add and commit this new page, and also add a link to it to the file
+<cite>releases.rst</cite> (to show up in <a class="reference internal" href="releases.html#releases"><span class="std std-ref">Releases of Clawpack and release notes</span></a>).</p></li>
+<li><p>Modify the page <cite>changes_to_master.rst</cite> by replacing the previous version
+number (e.g. <cite>5.y.y</cite>) by the version number of the new release
+(e.g. <cite>5.x.x</cite>) so that links are comparing e.g. <cite>v5.x.x…master</cite></p></li>
+<li><p>Update <cite>releases.rst</cite> to include a link to the new version on Zenodo.
+Also update the bibtex and recommended citation in <cite>about.rst</cite>.</p></li>
+<li><p>Modify several other files to point to the new version number, in particular
+<cite>installing_pip.rst</cite>, <cite>installing_fortcodes.rst</cite>,
+<cite>contents.rst</cite>, <cite>docker_image.rst</cite>.</p></li>
+<li><p>Modify the main landing page <cite>_templates/index.html</cite> to cite the
+proper version number and DOI.
+(No longer necessary – This page has been changed to be more generic.)</p></li>
+<li><p>Update <cite>conf.py</cite> to the new version number, and also
+<cite>$CLAW/doc/gallery/conf.py</cite>  (For a major release.)</p></li>
+</ul>
+</div></blockquote>
+</div>
+<div class="section" id="updating-the-apps-repository">
+<h2>Updating the apps repository<a class="headerlink" href="#updating-the-apps-repository" title="Permalink to this headline">¶</a></h2>
+<p>Ideally all the apps in the <a class="reference internal" href="apps.html#apps"><span class="std std-ref">Clawpack Applications repository</span></a> should be rerun with the new release
+and any issues fixed.  If old apps are modified, add a note to the
+<cite>README.rst</cite> file in the directory that indicates when it was last updated
+and to what release.  Some apps already have a section at the end of this
+file of the form:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Version</span> <span class="n">history</span><span class="p">:</span>
+<span class="o">----------------</span>
+
+<span class="o">-</span> <span class="n">Updated</span> <span class="k">for</span> <span class="n">Clawpack</span> <span class="mf">5.3</span><span class="o">.</span><span class="mi">0</span> <span class="n">on</span> <span class="mi">15</span> <span class="n">Sept</span> <span class="mi">2015</span>
+
+<span class="o">-</span> <span class="n">Updated</span> <span class="k">for</span> <span class="n">Clawpack</span> <span class="mf">5.4</span><span class="o">.</span><span class="mi">0</span> <span class="n">on</span> <span class="mi">4</span> <span class="n">Jan</span> <span class="mi">2017</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="updating-the-dockerfile">
+<h2>Updating the Dockerfile<a class="headerlink" href="#updating-the-dockerfile" title="Permalink to this headline">¶</a></h2>
+<p>See <a class="reference internal" href="docker_image.html#docker-image"><span class="std std-ref">Docker for Clawpack</span></a> for instructions on using the docker image.</p>
+<p>Note that unlike the tar file for a new release, the docker image includes
+a clone of the <cite>apps</cite> repository, so it would be best to first update that
+repository if necessary.</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Clone the repository <a class="reference external" href="https://github.com/clawpack/docker-files">https://github.com/clawpack/docker-files</a></p></li>
+<li><p>Make a new <cite>Dockerfile</cite> for the new version by copying an old one
+and changing the version numbers in it.  Make any other changes needed
+for this new release.</p></li>
+<li><p>See the <cite>README.md</cite> file in that repo for instructions on building an
+image and pushing it to dockerhub (which requires push permission).</p></li>
+</ul>
+</div></blockquote>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<p><a href="http://clawpack.org/">
+    <img class="logo" src= "_static/clawlogo.jpg" alt="Logo"/>
+</a>
+<h2>Version 5.9.x</h2>
+</p>
+  <h3><a href="contents.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Guide for doing a Clawpack release</a><ul>
+<li><a class="reference internal" href="#preparation">Preparation</a></li>
+<li><a class="reference internal" href="#version-numbers">Version numbers</a></li>
+<li><a class="reference internal" href="#release-candidates">Release candidates</a></li>
+<li><a class="reference internal" href="#create-a-tar-file-and-a-github-release">Create a tar file and a Github release</a></li>
+<li><a class="reference internal" href="#final-release">Final release</a></li>
+<li><a class="reference internal" href="#pypi">Pypi</a></li>
+<li><a class="reference internal" href="#zenodo">Zenodo</a></li>
+<li><a class="reference internal" href="#open-science-framework-osf">Open Science Framework (OSF)</a></li>
+<li><a class="reference internal" href="#updating-the-documentation">Updating the documentation</a></li>
+<li><a class="reference internal" href="#updating-the-apps-repository">Updating the apps repository</a></li>
+<li><a class="reference internal" href="#updating-the-dockerfile">Updating the Dockerfile</a></li>
+</ul>
+</li>
+</ul>
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="contents.html">Documentation overview</a><ul>
+  <li><a href="pyclaw/index.html">PyClaw</a><ul>
+  <li><a href="developers.html">Developers’ Guide</a><ul>
+      <li>Previous: <a href="howto_doc.html" title="previous chapter">Guide for updating this documentation</a></li>
+      <li>Next: <a href="regression.html" title="next chapter">Regression testing</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+<div class="widget navlinks">
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/howto_release.rst.txt"
+            rel="nofollow"
+            target="_blank">Source .rst</a></li>
+    <li><a href="https://github.com/clawpack/doc/blob/dev/doc/howto_release.rst"
+            rel="nofollow"
+            target="_blank">Source on GitHub</a></li>
+     <li><a href="https://github.com/clawpack/doc/commits/dev/doc/howto_release.rst"
+             rel="nofollow"
+             target="_blank">History</a></li>
+    <li><a href="https://github.com/clawpack/doc/edit/dev/doc/howto_release.rst"
+            rel="nofollow"
+            target="_blank">Suggest Edits</a></li>
+     <li><a href="https://github.com/clawpack/doc/issues/new/choose"
+             rel="nofollow"
+             target="_blank">Raise an Issue</a></li>
+  </ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+<h4>Latest Version</h4>
+<ul>
+  <li><a href="../dev/howto_release.html">dev</a></li>
+  <li><a href="howto_release.html">v5.9.x</a></li>
+</ul>
+<h4>Older Versions</h4>
+<ul>
+  <li><a href="../v5.1.x/index.html">v5.1.x</a></li>
+  <li><a href="../v5.2.x/index.html">v5.2.x</a></li>
+  <li><a href="../v5.3.x/index.html">v5.3.x</a></li>
+  <li><a href="../v5.4.x/howto_release.html">v5.4.x</a></li>
+  <li><a href="../v5.5.x/howto_release.html">v5.5.x</a></li>
+  <li><a href="../v5.6.x/howto_release.html">v5.6.x</a></li>
+  <li><a href="../v5.7.x/howto_release.html">v5.7.x</a></li>
+  <li><a href="../v5.8.x/howto_release.html">v5.8.x</a></li>
+</ul>
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+  <div class="footer">
+    &copy; Copyright CC-BY 2022, The Clawpack Development Team.
+    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
+  </div>
+  <script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-44811544-1', 'auto');
+  ga('send', 'pageview');
+
+  </script>
+  
+  </body>
+</html>

@@ -1,0 +1,248 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>Fortran version &#8212; Clawpack 5.9.x documentation</title>
+    <link rel="stylesheet" href="_static/flasky.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/base.css" type="text/css" />
+    <link rel="stylesheet" href="_static/layout.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/graphviz.css" />
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <script async="async" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="shortcut icon" href="_static/clawicon.ico"/>
+    <link rel="author" title="About these documents" href="about.html" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Fortran Compilers" href="fortran_compilers.html" />
+    <link rel="prev" title="Testing your Fortran installation and running an example" href="first_run_fortran.html" /> 
+  </head><body>
+<div id="main-wrapper" class="sphinx">
+<div id="header-wrapper">
+  <section id="header">
+    <!-- <h1><a href="http://clawpack.org/">Clawpack</a></h1> -->
+    <h1><a href="http://clawpack.org/">Clawpack-5</a></h1> 
+    <nav>
+      <ul>
+        <li>
+          <a href="contents.html">Docs</a>
+        </li>
+        <li>
+          <a href="installing.html">Install</a>
+        </li>
+        <li>
+          <a class="" href="http://clawpack.org/gallery/index.html">Gallery</a>
+        </li>
+        <li>
+          <a href="about.html">Citation</a>
+        </li>
+        <li>
+          <a class="active" href="http://github.com/clawpack">GitHub</a>
+        </li>
+        <li>
+          <a class="" href="community.html">Community</a>
+        </li>
+        <li>
+          <a class="" href="developers.html">Contribute</a>
+        </li>
+      </ul>
+    </nav>
+  </section>
+<div class="decoration"></div>
+</div>
+
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="fortran_compilers.html" title="Fortran Compilers"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="first_run_fortran.html" title="Testing your Fortran installation and running an example"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="contents.html">Clawpack 5.9.x documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="fortran-version">
+<span id="fortran"></span><h1>Fortran version<a class="headerlink" href="#fortran-version" title="Permalink to this headline">¶</a></h1>
+<p>Input parameters are generally specified in a Python script <code class="file docutils literal notranslate"><span class="pre">setrun.py</span></code>
+and then:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ make .data
+</pre></div>
+</div>
+<p>creates the <code class="file docutils literal notranslate"><span class="pre">*.data</span></code> files that the Fortran code requires.</p>
+<div class="section" id="makefiles">
+<h2>Makefiles<a class="headerlink" href="#makefiles" title="Permalink to this headline">¶</a></h2>
+<p>Most example directories contain a <code class="file docutils literal notranslate"><span class="pre">Makefile</span></code> that offers several
+options.  Type:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ make help
+</pre></div>
+</div>
+<p>for a list.
+Often:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ make .plots
+</pre></div>
+</div>
+<p>is all you need to type to create the data files,
+compile the code, run it, and produce plots as png and html files.</p>
+<p>Or, if you just want to run the code and produce output without making
+all the plots (and then do the plotting interactively, for example):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ make .output
+</pre></div>
+</div>
+<p>Note: There is a dot before <code class="docutils literal notranslate"><span class="pre">plots</span></code> and <code class="docutils literal notranslate"><span class="pre">output</span></code> in the above
+commands.</p>
+<p>The directory where output and plots are stored is specified in the Makefile.</p>
+<p>The Makefile in most directories includes a common Makefile found at
+<cite>$CLAW/clawutil/src/Makefile.common</cite> that does most of the work.
+If you get the error message:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Makefile</span><span class="p">:</span>  <span class="o">/</span><span class="n">clawutil</span><span class="o">/</span><span class="n">src</span><span class="o">/</span><span class="n">Makefile</span><span class="o">.</span><span class="n">common</span><span class="p">:</span> <span class="n">No</span> <span class="n">such</span> <span class="n">file</span> <span class="ow">or</span> <span class="n">directory</span>
+</pre></div>
+</div>
+<p>then the environment variable <cite>CLAW</cite> is not set properly.
+See <a class="reference internal" href="setenv.html#setenv"><span class="std std-ref">Set environment variables</span></a>.</p>
+</div>
+<div class="section" id="more-tips">
+<h2>More tips<a class="headerlink" href="#more-tips" title="Permalink to this headline">¶</a></h2>
+<ul>
+<li><p>The “make .output”
+command runs the code and stores the name of the output directory in the
+file <code class="docutils literal notranslate"><span class="pre">.output</span></code> and it is the modification time of this file that is checked
+relative to the dependencies. (Note: the unix command ls generally does
+not display files that start with a dot so this file may be invisible
+unless you use “ls -a”.)</p>
+<p>If you want to re-run the code and encounter:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ make .output
+$ make: `.output&#39; is up to date.
+</pre></div>
+</div>
+<p>you can remove the file <code class="docutils literal notranslate"><span class="pre">.output</span></code> to force the code to be run again.</p>
+</li>
+<li><p>Similarly, remove the file <code class="docutils literal notranslate"><span class="pre">.plots</span></code> to force the plots to be recreated.</p></li>
+<li><p>If you change the compiler flags FFLAGS in the Makefile or as an
+environment variable, then you should
+make sure that all files used are recompiled with the new flags.  The
+Makefiles as written do not catch this dependency and will not recompile
+all the .o files when the Makefile changes.  To force recompilation,
+use:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ make new
+</pre></div>
+</div>
+<p>See <a class="reference internal" href="fortran_compilers.html#fortran-compilers"><span class="std std-ref">Fortran Compilers</span></a> for more about compiler flags.</p>
+</li>
+</ul>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<p><a href="http://clawpack.org/">
+    <img class="logo" src= "_static/clawlogo.jpg" alt="Logo"/>
+</a>
+<h2>Version 5.9.x</h2>
+</p>
+  <h3><a href="contents.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Fortran version</a><ul>
+<li><a class="reference internal" href="#makefiles">Makefiles</a></li>
+<li><a class="reference internal" href="#more-tips">More tips</a></li>
+</ul>
+</li>
+</ul>
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="contents.html">Documentation overview</a><ul>
+      <li>Previous: <a href="first_run_fortran.html" title="previous chapter">Testing your Fortran installation and running an example</a></li>
+      <li>Next: <a href="fortran_compilers.html" title="next chapter">Fortran Compilers</a></li>
+  </ul></li>
+</ul>
+<div class="widget navlinks">
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/fortran.rst.txt"
+            rel="nofollow"
+            target="_blank">Source .rst</a></li>
+    <li><a href="https://github.com/clawpack/doc/blob/dev/doc/fortran.rst"
+            rel="nofollow"
+            target="_blank">Source on GitHub</a></li>
+     <li><a href="https://github.com/clawpack/doc/commits/dev/doc/fortran.rst"
+             rel="nofollow"
+             target="_blank">History</a></li>
+    <li><a href="https://github.com/clawpack/doc/edit/dev/doc/fortran.rst"
+            rel="nofollow"
+            target="_blank">Suggest Edits</a></li>
+     <li><a href="https://github.com/clawpack/doc/issues/new/choose"
+             rel="nofollow"
+             target="_blank">Raise an Issue</a></li>
+  </ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+<h4>Latest Version</h4>
+<ul>
+  <li><a href="../dev/fortran.html">dev</a></li>
+  <li><a href="fortran.html">v5.9.x</a></li>
+</ul>
+<h4>Older Versions</h4>
+<ul>
+  <li><a href="../v5.1.x/fortran.html">v5.1.x</a></li>
+  <li><a href="../v5.2.x/fortran.html">v5.2.x</a></li>
+  <li><a href="../v5.3.x/fortran.html">v5.3.x</a></li>
+  <li><a href="../v5.4.x/fortran.html">v5.4.x</a></li>
+  <li><a href="../v5.5.x/fortran.html">v5.5.x</a></li>
+  <li><a href="../v5.6.x/fortran.html">v5.6.x</a></li>
+  <li><a href="../v5.7.x/fortran.html">v5.7.x</a></li>
+  <li><a href="../v5.8.x/fortran.html">v5.8.x</a></li>
+</ul>
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+  <div class="footer">
+    &copy; Copyright CC-BY 2022, The Clawpack Development Team.
+    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
+  </div>
+  <script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-44811544-1', 'auto');
+  ga('send', 'pageview');
+
+  </script>
+  
+  </body>
+</html>

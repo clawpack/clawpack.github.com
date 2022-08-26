@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>Specifying GeoClaw parameters in setrun.py &#8212; Clawpack 5.8.x documentation</title>
+    <title>Specifying GeoClaw parameters in setrun.py &#8212; Clawpack 5.9.x documentation</title>
     <link rel="stylesheet" href="_static/flasky.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="stylesheet" href="_static/base.css" type="text/css" />
@@ -72,7 +72,7 @@
         <li class="right" >
           <a href="kmltools_module.html" title="kmltools module of utility functions"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="contents.html">Clawpack 5.8.x documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="contents.html">Clawpack 5.9.x documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="geoclaw.html" accesskey="U">GeoClaw Description and Detailed Contents</a> &#187;</li> 
       </ul>
     </div>  
@@ -148,33 +148,33 @@ would refine to level 4.</p>
 <p><cite>rundata.geo_data</cite> has the following additional attributes:</p>
 <dl class="attribute">
 <dt>
-<code class="sig-name descname">gravity : float</code></dt>
+<code class="sig-name descname">rundata.geo_data.gravity : float</code></dt>
 <dd><p>gravitational constant in m/s**2, e.g.  <em>gravity = 9.81</em>.</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt>
-<code class="sig-name descname">coordinate_system : integer</code></dt>
+<code class="sig-name descname">rundata.geo_data.coordinate_system : integer</code></dt>
 <dd><p><em>coordinate_system = 1</em> for Cartesian x-y in meters,</p>
 <p><em>coordinate_system = 2</em> for latitude-longitude on the sphere.</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt>
-<code class="sig-name descname">earth_radius : float</code></dt>
+<code class="sig-name descname">rundata.geo_data.earth_radius : float</code></dt>
 <dd><p>radius of the earth in meters, e.g.  <em>earth_radius = 6367.5e3</em>.</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt>
-<code class="sig-name descname">coriolis_forcing : bool</code></dt>
+<code class="sig-name descname">rundata.geo_data.coriolis_forcing : bool</code></dt>
 <dd><p><em>coriolis_forcing = True</em> to include Coriolis terms in momentum equations</p>
 <p><em>coriolis_forcing = False</em> to omit Coriolis terms (usually fine for tsunami modeling)</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt>
-<code class="sig-name descname">sea_level : float</code></dt>
+<code class="sig-name descname">rundata.geo_data.sea_level : float</code></dt>
 <dd><p>sea level (often <em>sea_level = 0.</em>)
 This is relative to the 0 vertical datum of the topography files used.
 It is important to set this properly for tsunami applications, see
@@ -183,14 +183,14 @@ It is important to set this properly for tsunami applications, see
 
 <dl class="attribute">
 <dt>
-<code class="sig-name descname">friction_forcing : bool</code></dt>
+<code class="sig-name descname">rundata.geo_data.friction_forcing : bool</code></dt>
 <dd><p>Whether to apply friction source terms in momentum equations.
 See <a class="reference internal" href="manning.html#manning"><span class="std std-ref">Manning friction term</span></a> for more discussion of the next three parameters.</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt>
-<code class="sig-name descname">friction_depth : float</code></dt>
+<code class="sig-name descname">rundata.geo_data.friction_depth : float</code></dt>
 <dd><p>Friction source terms are only applied in water shallower than this,
 i.e. if <cite>h &lt; friction_depth</cite>,
 assuming they have negligible effect in deeper water.</p>
@@ -198,7 +198,7 @@ assuming they have negligible effect in deeper water.</p>
 
 <dl class="attribute">
 <dt>
-<code class="sig-name descname">manning_coefficient : float or list of floats</code></dt>
+<code class="sig-name descname">rundata.geo_data.manning_coefficient : float or list of floats</code></dt>
 <dd><p>For friction source terms, the Manning coefficient.  If a single value
 is given, this value will be used where ever h &lt; friction_depth.
 If a list of values is given, then the next parameter delineates the
@@ -207,7 +207,7 @@ regions where each is used based on values of the topography B.</p>
 
 <dl class="attribute">
 <dt>
-<code class="sig-name descname">manning_break : list of floats</code></dt>
+<code class="sig-name descname">rundata.geo_data.manning_break : list of floats</code></dt>
 <dd><p>If manning_coefficient is a list of length N, then this should be a
 monotonically increasing list
 of length N-1 giving break points in the topo B used to determine where
@@ -302,7 +302,7 @@ value (or smaller) to insure that the first time step is sufficiently small.</p>
 described at <a class="reference internal" href="topo.html#qinit-file"><span class="std std-ref">qinit data file</span></a>.</p>
 <dl class="attribute">
 <dt>
-<code class="sig-name descname">qinit_type : integer</code></dt>
+<code class="sig-name descname">rundata.qinit_data.qinit_type : integer</code></dt>
 <dd><p>Specifies what type of perturbation is stored in the <em>qinitfile</em>,
 see <a class="reference internal" href="topo.html#qinit-file"><span class="std std-ref">qinit data file</span></a> for more information.  Valid values for <em>qinit_type</em>
 are</p>
@@ -319,7 +319,7 @@ are</p>
 
 <dl class="attribute">
 <dt>
-<code class="sig-name descname">qinitfiles : list of lists</code></dt>
+<code class="sig-name descname">rundata.qinit_data.qinitfiles : list of lists</code></dt>
 <dd><p><em>qinitfiles</em> should be a list of the form <em>[]</em> or <em>[file1info]</em>
 where each element (currently at most 1 is allowed!)
 is itself a list of the form</p>
@@ -343,60 +343,71 @@ For more about controlling AMR in various regions, see <a class="reference inter
 
 <p>See <a class="reference internal" href="topo.html#qinit-file"><span class="std std-ref">qinit data file</span></a> for more details about the format.</p>
 </div>
+<div class="section" id="force-some-cells-to-be-initially-dry">
+<h2>Force some cells to be initially dry<a class="headerlink" href="#force-some-cells-to-be-initially-dry" title="Permalink to this headline">¶</a></h2>
+<dl class="attribute">
+<dt>
+<code class="sig-name descname">rundata.qinit_data.force_dry_list: list of `clawpack.geoclaw.data.ForceDry` objects</code></dt>
+<dd></dd></dl>
+
+<p>Normally the finite volume cells with topography values below sea level (as
+specified by <cite>rundata.geo_data.sea_level</cite>) are initialized as wet, with the
+depth of water <cite>h</cite> needed to bring the surface eta to sea level.  If the
+computational domain includes regions where there is dry land below sea level
+(e.g. behind a dike or levy), then these regions can be specified via this
+attribute. See <a class="reference internal" href="force_dry.html#force-dry"><span class="std std-ref">Force Cells to be Dry Initially</span></a>.</p>
+</div>
+<div class="section" id="adjust-sea-level-in-some-regions">
+<h2>Adjust sea level in some regions<a class="headerlink" href="#adjust-sea-level-in-some-regions" title="Permalink to this headline">¶</a></h2>
+<dl class="attribute">
+<dt>
+<code class="sig-name descname">rundata.qinit_data.variable_eta_init: logical</code></dt>
+<dd></dd></dl>
+
+<p>Normally a single constant value of sea level
+(specified by <cite>rundata.geo_data.sea_level</cite>) is used to initialize the
+depth of water required to bring the surface eta to sea level.
+Sometimes sea level should have different values in different locations,
+e.g. for an inland lake with surface level above the ocean level, or in
+regions where coseismic uplift or subsidence moves the original water
+vertically.  If so, set this attribute to <cite>True</cite> and see <a class="reference internal" href="set_eta_init.html#set-eta-init"><span class="std std-ref">Set Eta Init – spatially varying initial surface elevation</span></a>
+for more discussion on how to proceed.</p>
+</div>
 <div class="section" id="amr-refinement-region-parameters">
 <span id="setrun-regions"></span><h2>AMR refinement region parameters<a class="headerlink" href="#amr-refinement-region-parameters" title="Permalink to this headline">¶</a></h2>
 <blockquote>
 <div><p>As in AMRClaw (see <a class="reference internal" href="setrun_amrclaw.html#setrun-amrclaw"><span class="std std-ref">Specifying AMRClaw run-time parameters in setrun.py</span></a>),
 one can specify <cite>regions</cite> and/or <cite>flagregions</cite> to control flagging cells
-for refinement to the next level.  The old style <cite>regions</cite> is a list
-of lists while the new <cite>flagregions</cite> is a list of
-<cite>clawpack.amrclaw.data.FlagRegion</cite> objects.
+for refinement to the next level.
 See <a class="reference internal" href="refinement.html#refinement-regions"><span class="std std-ref">Specifying AMR regions</span></a> and <a class="reference internal" href="flagregions.html#flagregions"><span class="std std-ref">Specifying flagregions for adaptive refinement</span></a> for more details.</p>
 </div></blockquote>
-</div>
-<div class="section" id="fixed-grid-output-parameters">
-<span id="setrun-fixedgrids"></span><h2>Fixed grid output parameters<a class="headerlink" href="#fixed-grid-output-parameters" title="Permalink to this headline">¶</a></h2>
 <dl class="attribute">
 <dt>
-<code class="sig-name descname">fixedgrids : list of lists</code></dt>
-<dd><p>This can be used to specify a set of grids where output should be
-produced at the specified resolution regardless of how the AMR grids look
-at each time.  Interpolation from the best available grid near each point
-is used.  This is useful for comparing AMR output to results obtained
-with other codes that use a fixed grid.</p>
-<p><em>fixedgrids</em> should be a list of the form <em>[grid1info, grid2info, etc.]</em>
-where each element is itself a list of the form</p>
+<code class="sig-name descname">rundata.regiondata.regions: list of regions</code></dt>
+<dd><p>An old style <cite>region</cite> is a list of the form</p>
 <blockquote>
-<div><p>[t1, t2, x1, x2, y1, y2, xpoints, ypoints]</p>
+<div><p><cite>[minlevel,maxlevel,t1,t2,x1,x2,y1,y2]</cite></p>
 </div></blockquote>
-<p>with values</p>
-<blockquote>
-<div><p><em>t1, t2</em> : floats</p>
-<blockquote>
-<div><p>the time interval over which output should be written for this grid.</p>
-</div></blockquote>
-<p><em>x1, x2, y1, y2</em> : floats</p>
-<blockquote>
-<div><p>the spacial extent of this grid.</p>
-</div></blockquote>
-<p><em>xpoints, ypoints</em> : floats</p>
-<blockquote>
-<div><p>the number of grid points in the x and y directions (the grid will
-include <em>x1</em>, <em>x2</em> and <em>xpoints-2</em> points in between, for example).</p>
-</div></blockquote>
-<p><em>ioutarrivaltimes</em> : int</p>
-<blockquote>
-<div><p><strong>Deprecated feature.</strong>  This should generally be set to 0.  If you want to
-keep track of arrival times, it is recommended to use the new <cite>fgmax</cite>
-parameters described below.</p>
-</div></blockquote>
-<p><em>ioutsurfacemax</em> :</p>
-<blockquote>
-<div><p><strong>Deprecated feature.</strong>  This should generally be set to 0.  If you want to
-keep track of surface or depth maxima, it is recommended to use the new
-<cite>fgmax</cite> parameters described below.</p>
-</div></blockquote>
-</div></blockquote>
+<p>See <a class="reference internal" href="refinement.html#refinement-regions"><span class="std std-ref">Specifying AMR regions</span></a> for more details.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="sig-name descname">rundata.regiondata.flagregions: list of flagregions</code></dt>
+<dd><p>A new style <cite>flagregion</cite> is an object of class
+<cite>clawpack.amrclaw.data.FlagRegion</cite>.
+See <a class="reference internal" href="flagregions.html#flagregions"><span class="std std-ref">Specifying flagregions for adaptive refinement</span></a> for more details.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="deprecated-fixedgrid-output-parameters">
+<span id="setrun-fixedgrids"></span><h2>Deprecated Fixedgrid output parameters<a class="headerlink" href="#deprecated-fixedgrid-output-parameters" title="Permalink to this headline">¶</a></h2>
+<dl class="attribute">
+<dt>
+<code class="sig-name descname">rundata.fixedgrids : list of lists</code></dt>
+<dd><p><strong>Removed from GeoClaw as of v5.9.0.</strong>
+Use <a class="reference internal" href="#setrun-fgmax"><span class="std std-ref">Fixed grid maximum monitoring / arrival times</span></a> and/or <a class="reference internal" href="#setrun-fgout"><span class="std std-ref">Fixed grid output</span></a> instead,
+see below.</p>
 </dd></dl>
 
 </div>
@@ -404,27 +415,57 @@ keep track of surface or depth maxima, it is recommended to use the new
 <span id="setrun-fgmax"></span><h2>Fixed grid maximum monitoring / arrival times<a class="headerlink" href="#fixed-grid-maximum-monitoring-arrival-times" title="Permalink to this headline">¶</a></h2>
 <dl class="attribute">
 <dt>
-<code class="sig-name descname">fgmax_files : list of strings</code></dt>
+<code class="sig-name descname">rundata.fgmax_grids : list of clawpack.geoclaw.fgmax_tools.FGoutGrid</code></dt>
+<dt>
+<code class="sig-name descname">objects.</code></dt>
 <dd><p>This can be used to specify a set of grids on which to monitor the
 maximum flow depth (or other quantities) observed over the course of
 the computation, and/or the arrival time of the flow or wave.</p>
-<p>This works better than using the older <cite>fixedgrids</cite> approach since it now
-correctly interpolates when a grid point lies near the junction of two
-grid patches, which was not always handled properly before.</p>
 <p>The “grids” also do not have to be rectangular grids aligned with the
 coordinate directions, but can consist of an arbitrary list of points
 that could also be points along a one-dimensional transect or points
 following a coastline, for example.</p>
-<p><em>fgmax_files</em> should be a list of strings specifying the file names of
-files that list the points on each grid and additional information
-required for each grid, as described at <a class="reference internal" href="fgmax.html#fgmax"><span class="std std-ref">Fixed grid monitoring</span></a>.</p>
+<p>You can set these via e.g.:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">clawpack.geoclaw</span> <span class="kn">import</span> <span class="n">fgmax_tools</span>
+<span class="n">fgmax_grids</span> <span class="o">=</span> <span class="n">rundata</span><span class="o">.</span><span class="n">fgmax_data</span><span class="o">.</span><span class="n">fgmax_grids</span>  <span class="c1"># empty list initially</span>
+
+<span class="n">fgmax</span> <span class="o">=</span> <span class="n">fgmax_tools</span><span class="o">.</span><span class="n">FGmaxGrid</span><span class="p">()</span>
+<span class="c1"># set fgmax attributes</span>
+<span class="n">fgmax_grids</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">fgmax</span><span class="p">)</span>    <span class="c1"># written to fgmax_grids.data</span>
+
+<span class="c1"># repeat for additional fgout grids if desired</span>
+</pre></div>
+</div>
+<p>See <a class="reference internal" href="fgmax.html#fgmax"><span class="std std-ref">Fixed grid monitoring</span></a> for more details.</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt>
-<code class="sig-name descname">fgmax_data.num_fgmax_val : int</code></dt>
+<code class="sig-name descname">rundata.fgmax_data.num_fgmax_val : int</code></dt>
 <dd><p>Should take the value 1, 2, or 5 and indicates how many values to monitor.
 See <a class="reference internal" href="fgmax.html#fgmax"><span class="std std-ref">Fixed grid monitoring</span></a> for more details.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="fixed-grid-output">
+<span id="setrun-fgout"></span><h2>Fixed grid output<a class="headerlink" href="#fixed-grid-output" title="Permalink to this headline">¶</a></h2>
+<dl class="attribute">
+<dt>
+<code class="sig-name descname">rundata.fgout_grids : list of clawpack.geoclaw.fgout_tools.FGoutGrid</code></dt>
+<dt>
+<code class="sig-name descname">objects.</code></dt>
+<dd><p>You can set these via e.g.:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">clawpack.geoclaw</span> <span class="kn">import</span> <span class="n">fgout_tools</span>
+<span class="n">fgout_grids</span> <span class="o">=</span> <span class="n">rundata</span><span class="o">.</span><span class="n">fgout_data</span><span class="o">.</span><span class="n">fgout_grids</span>  <span class="c1"># empty list initially</span>
+
+<span class="n">fgout</span> <span class="o">=</span> <span class="n">fgout_tools</span><span class="o">.</span><span class="n">FGoutGrid</span><span class="p">()</span>
+<span class="c1"># set fgout attributes</span>
+<span class="n">fgout_grids</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">fgout</span><span class="p">)</span>    <span class="c1"># written to fgout_grids.data</span>
+
+<span class="c1"># repeat for additional fgout grids if desired</span>
+</pre></div>
+</div>
+<p>See <a class="reference internal" href="fgout.html#fgout"><span class="std std-ref">Fixed grid output</span></a> for more details.</p>
 </dd></dl>
 
 </div>
@@ -538,7 +579,7 @@ data.</p>
 <p><a href="http://clawpack.org/">
     <img class="logo" src= "_static/clawlogo.jpg" alt="Logo"/>
 </a>
-<h2>Version 5.8.x</h2>
+<h2>Version 5.9.x</h2>
 </p>
   <h3><a href="contents.html">Table of Contents</a></h3>
   <ul>
@@ -547,9 +588,12 @@ data.</p>
 <li><a class="reference internal" href="#general-geo-parameters">General geo parameters</a></li>
 <li><a class="reference internal" href="#topography-data-file-parameters">Topography data file parameters</a></li>
 <li><a class="reference internal" href="#qinit-data-file-parameters">qinit data file parameters</a></li>
+<li><a class="reference internal" href="#force-some-cells-to-be-initially-dry">Force some cells to be initially dry</a></li>
+<li><a class="reference internal" href="#adjust-sea-level-in-some-regions">Adjust sea level in some regions</a></li>
 <li><a class="reference internal" href="#amr-refinement-region-parameters">AMR refinement region parameters</a></li>
-<li><a class="reference internal" href="#fixed-grid-output-parameters">Fixed grid output parameters</a></li>
+<li><a class="reference internal" href="#deprecated-fixedgrid-output-parameters">Deprecated Fixedgrid output parameters</a></li>
 <li><a class="reference internal" href="#fixed-grid-maximum-monitoring-arrival-times">Fixed grid maximum monitoring / arrival times</a></li>
+<li><a class="reference internal" href="#fixed-grid-output">Fixed grid output</a></li>
 <li><a class="reference internal" href="#storm-specification-data">Storm Specification Data</a></li>
 </ul>
 </li>
@@ -596,7 +640,7 @@ data.</p>
 <h4>Latest Version</h4>
 <ul>
   <li><a href="./dev/setrun_geoclaw.html">dev</a></li>
-  <li><a href="setrun_geoclaw.html">v5.8.x</a></li>
+  <li><a href="setrun_geoclaw.html">v5.9.x</a></li>
 </ul>
 <h4>Older Versions</h4>
 <ul>
@@ -607,6 +651,7 @@ data.</p>
   <li><a href="./v5.5.x/setrun_geoclaw.html">v5.5.x</a></li>
   <li><a href="./v5.6.x/setrun_geoclaw.html">v5.6.x</a></li>
   <li><a href="./v5.7.x/setrun_geoclaw.html">v5.7.x</a></li>
+  <li><a href="./v5.8.x/setrun_geoclaw.html">v5.8.x</a></li>
 </ul>
 
         </div>
