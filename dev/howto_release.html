@@ -191,30 +191,43 @@ the current master branch of each repository.</p>
 of trickery.  We can’t just follow the directions at <a class="reference external" href="https://packaging.python.org/tutorials/packaging-projects/">https://packaging.python.org/tutorials/packaging-projects/</a>
 because we have a very non-Pythonic directory structure; in particular,
 the subdirectories <cite>clawpack/x/</cite> do not have an <cite>__init__.py</cite>.</p>
-<p>Here’s what to do:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>cd $CLAW
-git-archive-all --prefix clawpack-x.x.x/ clawpack-x.x.x.tar
+<p>Here’s what to do, starting with a clean clone in some directory
+referred to below as <cite>$TEMP</cite> (replace <cite>5.x.x</cite> by the new version number):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>cd $TEMP
+git clone https://github.com/clawpack/clawpack.git
+cd clawpack    # should now be in $TEMP/clawpack
+source pull_all.sh
+git submodule update --init --recursive
+git-archive-all --prefix clawpack-5.x.x/ clawpack-5.x.x.tar
+
+mv clawpack-5.x.x.tar ..
+cd ..
+tar -xf clawpack-5.x.x.tar  # creates $TEMP/clawpack-5.x.x
+
+cd clawpack
+python3 setup.py sdist  # creates $TEMP/clawpack/dist/clawpack-5.x.x.tar.gz
+cd dist     # should be in $TEMP/clawpack/dist
+tar -xzf clawpack-5.x.x.tar.gz
+
+cp clawpack-5.x.x/PKG-INFO ../../clawpack-5.x.x
+rm -rf clawpack-5.x.x
+
+cd ../..   # should be in $TEMP
+rm clawpack-5.x.x.tar
+tar -cf clawpack-5.x.x.tar clawpack-5.x.x
+gzip clawpack-5.x.x.tar
+mv clawpack-5.x.x.tar.gz clawpack/dist
 </pre></div>
 </div>
-<p>Then unpack the resulting tarball in another location.  Next:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>cd $CLAW
-python setup.py sdist
-cd dist
-</pre></div>
-</div>
-<p>Now extract that resulting tarball.  Then copy the file PKG-INFO from this second tarball
-to the first one.  Finally, repack the first tarball and put it in <cite>$CLAW/dist</cite>:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>tar  -cvf clawpack-x.x.x.tar clawpack-x.x.x
-gzip clawpack-x.x.x.tar
-mv clawpack-x.x.x.tar $CLAW/dist
-</pre></div>
-</div>
-<p>Upload to the testpypi server for testing (you will need to have created an account there):</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">cd</span> <span class="o">..</span>
+<p>Upload to the testpypi server for testing
+(you will need to have created an account there):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">cd</span> <span class="n">clawpack</span>   <span class="c1"># should be in $TEMP/clawpack</span>
 <span class="n">twine</span> <span class="n">upload</span> <span class="o">--</span><span class="n">repository</span><span class="o">-</span><span class="n">url</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">test</span><span class="o">.</span><span class="n">pypi</span><span class="o">.</span><span class="n">org</span><span class="o">/</span><span class="n">legacy</span><span class="o">/</span> <span class="n">dist</span><span class="o">/*</span>
+
+<span class="n">credentials</span><span class="p">:</span> <span class="p">[[</span><span class="n">test</span> <span class="n">pypi</span><span class="p">]]</span>
 </pre></div>
 </div>
-<p>Test it:</p>
+<p>Click the link and check that it looks okay.  You can also test via:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>pip3 uninstall clawpack
 pip3 install —no-cache—dir —index-url https://test.pypi.org/simple/ clawpack
 </pre></div>
