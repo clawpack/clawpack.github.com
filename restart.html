@@ -1,23 +1,21 @@
 
 <!DOCTYPE html>
 
-<html lang="en">
+<html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
-
     <title>Checkpointing and restarting &#8212; Clawpack 5.9.x documentation</title>
+    <link rel="stylesheet" href="_static/flasky.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="stylesheet" href="_static/base.css" type="text/css" />
     <link rel="stylesheet" href="_static/layout.css" type="text/css" />
-    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="_static/flasky.css" />
     <link rel="stylesheet" type="text/css" href="_static/graphviz.css" />
-    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
     <script src="_static/jquery.js"></script>
     <script src="_static/underscore.js"></script>
-    <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="_static/doctools.js"></script>
-    <script src="_static/sphinx_highlight.js"></script>
+    <script src="_static/language_data.js"></script>
+    <script async="async" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="shortcut icon" href="_static/clawicon.ico"/>
     <link rel="author" title="About these documents" href="about.html" />
     <link rel="index" title="Index" href="genindex.html" />
@@ -74,8 +72,7 @@
         <li class="right" >
           <a href="mapc2p.html" title="The mapc2p function"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="contents.html">Clawpack 5.9.x documentation</a> &#187;</li>
-        <li class="nav-item nav-item-this"><a href="">Checkpointing and restarting</a></li> 
+        <li class="nav-item nav-item-0"><a href="contents.html">Clawpack 5.9.x documentation</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -84,15 +81,15 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <section id="checkpointing-and-restarting">
-<span id="restart"></span><h1>Checkpointing and restarting<a class="headerlink" href="#checkpointing-and-restarting" title="Permalink to this heading">¶</a></h1>
+  <div class="section" id="checkpointing-and-restarting">
+<span id="restart"></span><h1>Checkpointing and restarting<a class="headerlink" href="#checkpointing-and-restarting" title="Permalink to this headline">¶</a></h1>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
 <p>These instructions currently only apply to <cite>amrclaw</cite> and
 <cite>geoclaw</cite> codes.</p>
 </div>
-<section id="checkpointing-a-computation">
-<span id="restart-checkpt"></span><h2>Checkpointing a computation<a class="headerlink" href="#checkpointing-a-computation" title="Permalink to this heading">¶</a></h2>
+<div class="section" id="checkpointing-a-computation">
+<span id="restart-checkpt"></span><h2>Checkpointing a computation<a class="headerlink" href="#checkpointing-a-computation" title="Permalink to this headline">¶</a></h2>
 <p>In this section <cite>clawdata</cite> refers to the <cite>rundata.clawdata</cite> attribute
 of an object of class <cite>ClawRunData</cite>, as is generally set at the top
 of a <cite>setrun.py</cite> file.</p>
@@ -104,9 +101,9 @@ output, with file names of the form <cite>fort.tchkNNNNN</cite> (a small ASCII f
 <cite>fort.chkNNNNN</cite> (a large binary file)  where <cite>NNNNN</cite> is the
 step number on the coarsest level.  These files containt all the information
 needed to restart the computation at this point.</p>
-</section>
-<section id="restarting-a-computation">
-<span id="restart-restart"></span><h2>Restarting a computation<a class="headerlink" href="#restarting-a-computation" title="Permalink to this heading">¶</a></h2>
+</div>
+<div class="section" id="restarting-a-computation">
+<span id="restart-restart"></span><h2>Restarting a computation<a class="headerlink" href="#restarting-a-computation" title="Permalink to this headline">¶</a></h2>
 <p>To restart a computation from any point where checkpoint files have been saved,
 modify <cite>setrun.py</cite> to set:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">clawdata</span><span class="o">.</span><span class="n">restart</span> <span class="o">=</span> <span class="kc">True</span>
@@ -135,17 +132,17 @@ to avoid this.</p>
 output times and only those times greater than or equal to
 the restart time will be used as output times.</p></li>
 </ul>
-</section>
-<section id="modifying-the-makefile-for-a-restart">
-<span id="restart-makefile"></span><h2>Modifying the Makefile for a restart<a class="headerlink" href="#modifying-the-makefile-for-a-restart" title="Permalink to this heading">¶</a></h2>
+</div>
+<div class="section" id="modifying-the-makefile-for-a-restart">
+<span id="restart-makefile"></span><h2>Modifying the Makefile for a restart<a class="headerlink" href="#modifying-the-makefile-for-a-restart" title="Permalink to this headline">¶</a></h2>
 <p><strong>New in 5.4.0.</strong> It is no longer necessary to set the <cite>Makefile</cite> variable
 <cite>RESTART</cite> to <cite>True</cite> or <cite>False</cite>.  Instead you can set it to <cite>None</cite> (or omit
 setting it at all, since this is the default), in which case the <cite>setrun.py</cite>
 file will be used to determine if this is a restart run (in which case
 the previous output directory should be added to, rather than replaced).</p>
-</section>
-<section id="output-files-after-a-restart">
-<span id="restart-output"></span><h2>Output files after a restart<a class="headerlink" href="#output-files-after-a-restart" title="Permalink to this heading">¶</a></h2>
+</div>
+<div class="section" id="output-files-after-a-restart">
+<span id="restart-output"></span><h2>Output files after a restart<a class="headerlink" href="#output-files-after-a-restart" title="Permalink to this headline">¶</a></h2>
 <p>After running the restarted computation,
 the original set of output files should still be in the output directory
 along with a new set from the second run.  Note that one output time may
@@ -163,11 +160,10 @@ and data from these output files may have to be adjusted to account
 for this.  If multiple restarts are performed from the same checkpoint
 file then gauge data will accumulate in an undesirable fashion, but
 for most purposes this does the right thing.</p>
-</section>
-</section>
+</div>
+</div>
 
 
-            <div class="clearer"></div>
           </div>
         </div>
       </div>
@@ -178,9 +174,8 @@ for most purposes this does the right thing.</p>
 </a>
 <h2>Version 5.9.x</h2>
 </p>
-  <div>
-    <h3><a href="contents.html">Table of Contents</a></h3>
-    <ul>
+  <h3><a href="contents.html">Table of Contents</a></h3>
+  <ul>
 <li><a class="reference internal" href="#">Checkpointing and restarting</a><ul>
 <li><a class="reference internal" href="#checkpointing-a-computation">Checkpointing a computation</a></li>
 <li><a class="reference internal" href="#restarting-a-computation">Restarting a computation</a></li>
@@ -189,8 +184,7 @@ for most purposes this does the right thing.</p>
 </ul>
 </li>
 </ul>
-
-  </div><h3>Related Topics</h3>
+<h3>Related Topics</h3>
 <ul>
   <li><a href="contents.html">Documentation overview</a><ul>
       <li>Previous: <a href="mapc2p.html" title="previous chapter">The mapc2p function</a></li>
@@ -221,12 +215,12 @@ for most purposes this does the right thing.</p>
   <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="text" name="q" aria-labelledby="searchlabel" />
       <input type="submit" value="Go" />
     </form>
     </div>
 </div>
-<script>document.getElementById('searchbox').style.display = "block"</script>
+<script>$('#searchbox').show(0);</script>
 <h4>Latest Version</h4>
 <ul>
   <li><a href="./dev/restart.html">dev</a></li>
@@ -234,6 +228,12 @@ for most purposes this does the right thing.</p>
 </ul>
 <h4>Older Versions</h4>
 <ul>
+  <li><a href="./v5.1.x/restart.html">v5.1.x</a></li>
+  <li><a href="./v5.2.x/restart.html">v5.2.x</a></li>
+  <li><a href="./v5.3.x/restart.html">v5.3.x</a></li>
+  <li><a href="./v5.4.x/restart.html">v5.4.x</a></li>
+  <li><a href="./v5.5.x/restart.html">v5.5.x</a></li>
+  <li><a href="./v5.6.x/restart.html">v5.6.x</a></li>
   <li><a href="./v5.7.x/restart.html">v5.7.x</a></li>
   <li><a href="./v5.8.x/restart.html">v5.8.x</a></li>
 </ul>

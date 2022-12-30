@@ -1,23 +1,20 @@
 
 <!DOCTYPE html>
 
-<html lang="en">
+<html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
-
     <title>AMR refinement criteria &#8212; Clawpack dev documentation</title>
+    <link rel="stylesheet" href="_static/flasky.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="stylesheet" href="_static/base.css" type="text/css" />
     <link rel="stylesheet" href="_static/layout.css" type="text/css" />
-    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="_static/flasky.css" />
     <link rel="stylesheet" type="text/css" href="_static/graphviz.css" />
-    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
     <script src="_static/jquery.js"></script>
     <script src="_static/underscore.js"></script>
-    <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="_static/doctools.js"></script>
-    <script src="_static/sphinx_highlight.js"></script>
+    <script src="_static/language_data.js"></script>
     <script async="async" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="shortcut icon" href="_static/clawicon.ico"/>
     <link rel="author" title="About these documents" href="about.html" />
@@ -76,8 +73,7 @@
           <a href="amr_algorithm.html" title="Adaptive mesh refinement (AMR) algorithms"
              accesskey="P">previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="contents.html">Clawpack dev documentation</a> &#187;</li>
-          <li class="nav-item nav-item-1"><a href="amrclaw.html" accesskey="U">AMRClaw Description and Detailed Contents</a> &#187;</li>
-        <li class="nav-item nav-item-this"><a href="">AMR refinement criteria</a></li> 
+          <li class="nav-item nav-item-1"><a href="amrclaw.html" accesskey="U">AMRClaw Description and Detailed Contents</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -86,8 +82,8 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <section id="amr-refinement-criteria">
-<span id="refinement"></span><h1>AMR refinement criteria<a class="headerlink" href="#amr-refinement-criteria" title="Permalink to this heading">¶</a></h1>
+  <div class="section" id="amr-refinement-criteria">
+<span id="refinement"></span><h1>AMR refinement criteria<a class="headerlink" href="#amr-refinement-criteria" title="Permalink to this headline">¶</a></h1>
 <p>Several parameters controlling refinement can be set in the <cite>setrun</cite>
 function.  See <a class="reference internal" href="setrun_amrclaw.html#setrun-amrclaw"><span class="std std-ref">Specifying AMRClaw run-time parameters in setrun.py</span></a> for further description of these.
 Many of the parameters discussed below are attributes of <cite>rundata.amrdata</cite>
@@ -120,16 +116,16 @@ cells). The parameter <cite>clustering_cutoff</cite> in amrNez.data is used to c
 tradeoff. At least this fraction of the fine grid cells should result from
 coarse cells that were flagged as needing refinement. The value
 clustering_cutoff = 0.7 is usually reasonable.</p>
-<section id="flagging-criteria">
-<span id="refinement-flagging"></span><h2>Flagging criteria<a class="headerlink" href="#flagging-criteria" title="Permalink to this heading">¶</a></h2>
+<div class="section" id="flagging-criteria">
+<span id="refinement-flagging"></span><h2>Flagging criteria<a class="headerlink" href="#flagging-criteria" title="Permalink to this headline">¶</a></h2>
 <p>Two possible approaches to flagging individual
 cells for refinement (based on the behavior of the solution) are built into
 AMRClaw.  (A different default approach is used in GeoClaw, see
 <a class="reference internal" href="#refinement-geoclaw"><span class="std std-ref">Flagging criteria in GeoClaw</span></a>).</p>
 <p><strong>Note:</strong> Starting in v5.6.0, a new approach is also available, see
 <a class="reference internal" href="adjoint.html#adjoint"><span class="std std-ref">Guiding AMR with adjoint flagging</span></a>.</p>
-<section id="flag2refine">
-<span id="refinement-flag2refine"></span><h3>flag2refine<a class="headerlink" href="#flag2refine" title="Permalink to this heading">¶</a></h3>
+<div class="section" id="flag2refine">
+<span id="refinement-flag2refine"></span><h3>flag2refine<a class="headerlink" href="#flag2refine" title="Permalink to this headline">¶</a></h3>
 <p>One approach to flagging cells for refinement (the default used in
 most examples) is to set <cite>flag2refine == True</cite> and specify
 a tolerance <cite>flag2refine_tol</cite>.  This indicates that the
@@ -146,9 +142,9 @@ component <span class="math notranslate nohighlight">\(m\)</span>.</p>
 modifying this routine – best done by copying the library routine to your
 application directory and modifying the <cite>Makefile</cite> to point to the modified
 version.</p>
-</section>
-<section id="richardson-extrapolation">
-<span id="refinement-richardson"></span><h3>Richardson extrapolation<a class="headerlink" href="#richardson-extrapolation" title="Permalink to this heading">¶</a></h3>
+</div>
+<div class="section" id="richardson-extrapolation">
+<span id="refinement-richardson"></span><h3>Richardson extrapolation<a class="headerlink" href="#richardson-extrapolation" title="Permalink to this headline">¶</a></h3>
 <p>The second approach to flagging individual cells is based on using Richardson
 extrapolation to estimate the error in each cell.  This is used if
 <cite>flag_richardson == True</cite>.    In this case a cell is flagged if the error
@@ -165,10 +161,10 @@ differences do not identify the regions of greatest error.</p>
 <cite>flag2refine == True</cite> and <cite>flag_richardson == True</cite>
 then a cell will be flagged if either of the corresponding specified
 tolerances is exceeded.</p>
-</section>
-</section>
-<section id="specifying-amr-regions">
-<span id="refinement-regions"></span><h2>Specifying AMR regions<a class="headerlink" href="#specifying-amr-regions" title="Permalink to this heading">¶</a></h2>
+</div>
+</div>
+<div class="section" id="specifying-amr-regions">
+<span id="refinement-regions"></span><h2>Specifying AMR regions<a class="headerlink" href="#specifying-amr-regions" title="Permalink to this headline">¶</a></h2>
 <p><strong>New in Version 5.7.0:</strong> Although the regions described here are still
 supported in v5.7.0, a more general form of <a class="reference internal" href="flagregions.html#flagregions"><span class="std std-ref">Specifying flagregions for adaptive refinement</span></a>
 are also now supported and are recommended in general rather than
@@ -228,9 +224,9 @@ determined by <a class="reference internal" href="#refinement-richardson"><span 
 <p>Points that are not covered by either region are not constrained by the
 regions at all.   With <cite>amr_levels_max = 6</cite> then they might
 be refined to any level from 1 to 6 depending on the error flagging criteria.</p>
-</section>
-<section id="implementation">
-<h2>Implementation<a class="headerlink" href="#implementation" title="Permalink to this heading">¶</a></h2>
+</div>
+<div class="section" id="implementation">
+<h2>Implementation<a class="headerlink" href="#implementation" title="Permalink to this headline">¶</a></h2>
 <p>It is perhaps easiest to understand how this works by summarizing
 the implementation.  Note the order in which different flagging
 criteria are checked was modified in Version 5.5.0 in order to avoid
@@ -278,9 +274,9 @@ the solution on the current grid and on a coarsened grid.  If
 the error estimate with the adjoint solutions over the relevant time period.
 In either case, the setrun parameter <cite>flag_richardson_tol</cite> is used as the
 tolerance.</p>
-</section>
-<section id="flagging-criteria-in-geoclaw">
-<span id="refinement-geoclaw"></span><h2>Flagging criteria in GeoClaw<a class="headerlink" href="#flagging-criteria-in-geoclaw" title="Permalink to this heading">¶</a></h2>
+</div>
+<div class="section" id="flagging-criteria-in-geoclaw">
+<span id="refinement-geoclaw"></span><h2>Flagging criteria in GeoClaw<a class="headerlink" href="#flagging-criteria-in-geoclaw" title="Permalink to this headline">¶</a></h2>
 <p>In GeoClaw, a special <cite>flag2refine</cite> subroutine is defined.
 A standard approach for modeling tsunamis propagating across the ocean
 is to refine anywhere that the surface elevation of the ocean <span class="math notranslate nohighlight">\(\eta =
@@ -298,11 +294,10 @@ distant shores.</p>
 <p>Generally one must also use <cite>regions</cite> to allow (or force) much higher levels of
 refinement over small regions along the coast if one is doing detailed
 inundation modeling of a particular community.</p>
-</section>
-</section>
+</div>
+</div>
 
 
-            <div class="clearer"></div>
           </div>
         </div>
       </div>
@@ -313,9 +308,8 @@ inundation modeling of a particular community.</p>
 </a>
 <h2>Version dev</h2>
 </p>
-  <div>
-    <h3><a href="contents.html">Table of Contents</a></h3>
-    <ul>
+  <h3><a href="contents.html">Table of Contents</a></h3>
+  <ul>
 <li><a class="reference internal" href="#">AMR refinement criteria</a><ul>
 <li><a class="reference internal" href="#flagging-criteria">Flagging criteria</a><ul>
 <li><a class="reference internal" href="#flag2refine">flag2refine</a></li>
@@ -328,8 +322,7 @@ inundation modeling of a particular community.</p>
 </ul>
 </li>
 </ul>
-
-  </div><h3>Related Topics</h3>
+<h3>Related Topics</h3>
 <ul>
   <li><a href="contents.html">Documentation overview</a><ul>
   <li><a href="amrclaw.html">AMRClaw Description and Detailed Contents</a><ul>
@@ -362,12 +355,12 @@ inundation modeling of a particular community.</p>
   <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="text" name="q" aria-labelledby="searchlabel" />
       <input type="submit" value="Go" />
     </form>
     </div>
 </div>
-<script>document.getElementById('searchbox').style.display = "block"</script>
+<script>$('#searchbox').show(0);</script>
 <h4>Latest Version</h4>
 <ul>
   <li><a href="refinement.html">dev</a></li>
@@ -375,6 +368,12 @@ inundation modeling of a particular community.</p>
 </ul>
 <h4>Older Versions</h4>
 <ul>
+  <li><a href="../v5.1.x/refinement.html">v5.1.x</a></li>
+  <li><a href="../v5.2.x/refinement.html">v5.2.x</a></li>
+  <li><a href="../v5.3.x/refinement.html">v5.3.x</a></li>
+  <li><a href="../v5.4.x/refinement.html">v5.4.x</a></li>
+  <li><a href="../v5.5.x/refinement.html">v5.5.x</a></li>
+  <li><a href="../v5.6.x/refinement.html">v5.6.x</a></li>
   <li><a href="../v5.7.x/refinement.html">v5.7.x</a></li>
   <li><a href="../v5.8.x/refinement.html">v5.8.x</a></li>
 </ul>

@@ -1,23 +1,21 @@
 
 <!DOCTYPE html>
 
-<html lang="en">
+<html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
-
     <title>Output data formats &#8212; Clawpack 5.7.x documentation</title>
+    <link rel="stylesheet" href="_static/flasky.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="stylesheet" href="_static/base.css" type="text/css" />
     <link rel="stylesheet" href="_static/layout.css" type="text/css" />
-    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="_static/flasky.css" />
     <link rel="stylesheet" type="text/css" href="_static/graphviz.css" />
-    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
     <script src="_static/jquery.js"></script>
     <script src="_static/underscore.js"></script>
-    <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="_static/doctools.js"></script>
-    <script src="_static/sphinx_highlight.js"></script>
+    <script src="_static/language_data.js"></script>
+    <script async="async" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="shortcut icon" href="_static/clawicon.ico"/>
     <link rel="author" title="About these documents" href="about.html" />
     <link rel="index" title="Index" href="genindex.html" />
@@ -74,8 +72,7 @@
         <li class="right" >
           <a href="bc.html" title="Boundary conditions"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="contents.html">Clawpack 5.7.x documentation</a> &#187;</li>
-        <li class="nav-item nav-item-this"><a href="">Output data formats</a></li> 
+        <li class="nav-item nav-item-0"><a href="contents.html">Clawpack 5.7.x documentation</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -84,8 +81,8 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <section id="output-data-formats">
-<span id="output-styles"></span><h1>Output data formats<a class="headerlink" href="#output-data-formats" title="Permalink to this heading">¶</a></h1>
+  <div class="section" id="output-data-formats">
+<span id="output-styles"></span><h1>Output data formats<a class="headerlink" href="#output-data-formats" title="Permalink to this headline">¶</a></h1>
 <p>In <a class="reference internal" href="setrun.html#setrun"><span class="std std-ref">Specifying classic run-time parameters in setrun.py</span></a>, the format for the output data (solutions) can be
 specified by setting the parameter <cite>output_style</cite>.</p>
 <p>To read the solution stored in these files into Python for plotting or other
@@ -101,13 +98,13 @@ to use some form of binary output, e.g. <a class="reference internal" href="#out
 <p>In AMRClaw, ASCII and binary output are both written by the library routine
 <cite>valout.f</cite>.  The aux arrays are also dumped if requested, see
 <a class="reference internal" href="#output-aux"><span class="std std-ref">Output of aux arrays</span></a>.</p>
-<section id="ascii-output-data-format">
-<span id="output-ascii"></span><h2>ASCII output data format<a class="headerlink" href="#ascii-output-data-format" title="Permalink to this heading">¶</a></h2>
+<div class="section" id="ascii-output-data-format">
+<span id="output-ascii"></span><h2>ASCII output data format<a class="headerlink" href="#ascii-output-data-format" title="Permalink to this headline">¶</a></h2>
 <p>Two output files are created at each output time (each frame).  The frames
 are generally numbered 0, 1, 2, etc.  The two files, at frame 2, for
 example, are called <cite>fort.t0002</cite> and <cite>fort.q0002</cite>.</p>
-<section id="fort-t0002">
-<h3><cite>fort.t0002</cite><a class="headerlink" href="#fort-t0002" title="Permalink to this heading">¶</a></h3>
+<div class="section" id="fort-t0002">
+<h3><cite>fort.t0002</cite><a class="headerlink" href="#fort-t0002" title="Permalink to this headline">¶</a></h3>
 <p>This file has the typical form:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span> <span class="mf">0.40000000E+00</span>    <span class="n">time</span>
  <span class="mi">1</span>                 <span class="n">meqn</span>
@@ -125,9 +122,9 @@ or PyClaw with only a single patch, then <cite>ngrids</cite> would be 1.</p>
 <p>The data for all 36 patches is contained in <cite>fort.q0002</cite>.  The data from each
 patch is preceeded by a header that tells where the patch is located in the
 domain, how many grid cells it contains, and what the cell size is, e.g.</p>
-</section>
-<section id="fort-q0002">
-<h3><cite>fort.q0002</cite><a class="headerlink" href="#fort-q0002" title="Permalink to this heading">¶</a></h3>
+</div>
+<div class="section" id="fort-q0002">
+<h3><cite>fort.q0002</cite><a class="headerlink" href="#fort-q0002" title="Permalink to this headline">¶</a></h3>
 <p>This header has the typical form:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="mi">1</span>                 <span class="n">grid_number</span>
 <span class="mi">1</span>                 <span class="n">AMR_level</span>
@@ -155,10 +152,10 @@ corner of the patch, <cite>dx</cite> and <cite>dy</cite> are the cell width in <
 <cite>AMR_level</cite> is the level of refinement, where 1 is the coarsest level.
 Each patch has a unique <cite>grid_number</cite> that usually isn’t needed for
 visualization purposes.</p>
-</section>
-</section>
-<section id="raw-binary-output-data-format">
-<span id="output-binary"></span><h2>Raw binary output data format<a class="headerlink" href="#raw-binary-output-data-format" title="Permalink to this heading">¶</a></h2>
+</div>
+</div>
+<div class="section" id="raw-binary-output-data-format">
+<span id="output-binary"></span><h2>Raw binary output data format<a class="headerlink" href="#raw-binary-output-data-format" title="Permalink to this headline">¶</a></h2>
 <p>The files for each frame are numbered as for the ASCII file and the
 <cite>fort.t0002</cite> file, for example, is still an ASCII file with 6 lines of
 metadata.  There are also ASCII files such as <cite>fort.q0002</cite>, but these now
@@ -170,19 +167,18 @@ data into patches for plotting, the <cite>fort.q0002</cite> file must be used.</
 <p>Unlike the ASCII data files, the binary output
 files contain ghost cells as well as the interior cells (since a contiguous
 block of memory is dumped for each patch with a single <cite>write</cite> statement).</p>
-</section>
-<section id="netcdf-output-data-format">
-<span id="output-netcdf"></span><h2>NetCDF output data format<a class="headerlink" href="#netcdf-output-data-format" title="Permalink to this heading">¶</a></h2>
+</div>
+<div class="section" id="netcdf-output-data-format">
+<span id="output-netcdf"></span><h2>NetCDF output data format<a class="headerlink" href="#netcdf-output-data-format" title="Permalink to this headline">¶</a></h2>
 <p>See <a class="reference internal" href="pyclaw/io.html#netcdf"><span class="std std-ref">pyclaw.fileio.netcdf</span></a>.</p>
-</section>
-<section id="output-of-aux-arrays">
-<span id="output-aux"></span><h2>Output of aux arrays<a class="headerlink" href="#output-of-aux-arrays" title="Permalink to this heading">¶</a></h2>
+</div>
+<div class="section" id="output-of-aux-arrays">
+<span id="output-aux"></span><h2>Output of aux arrays<a class="headerlink" href="#output-of-aux-arrays" title="Permalink to this headline">¶</a></h2>
 <p>Describe…</p>
-</section>
-</section>
+</div>
+</div>
 
 
-            <div class="clearer"></div>
           </div>
         </div>
       </div>
@@ -193,9 +189,8 @@ block of memory is dumped for each patch with a single <cite>write</cite> statem
 </a>
 <h2>Version 5.7.x</h2>
 </p>
-  <div>
-    <h3><a href="contents.html">Table of Contents</a></h3>
-    <ul>
+  <h3><a href="contents.html">Table of Contents</a></h3>
+  <ul>
 <li><a class="reference internal" href="#">Output data formats</a><ul>
 <li><a class="reference internal" href="#ascii-output-data-format">ASCII output data format</a><ul>
 <li><a class="reference internal" href="#fort-t0002"><cite>fort.t0002</cite></a></li>
@@ -208,8 +203,7 @@ block of memory is dumped for each patch with a single <cite>write</cite> statem
 </ul>
 </li>
 </ul>
-
-  </div><h3>Related Topics</h3>
+<h3>Related Topics</h3>
 <ul>
   <li><a href="contents.html">Documentation overview</a><ul>
       <li>Previous: <a href="bc.html" title="previous chapter">Boundary conditions</a></li>
@@ -240,12 +234,12 @@ block of memory is dumped for each patch with a single <cite>write</cite> statem
   <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="text" name="q" aria-labelledby="searchlabel" />
       <input type="submit" value="Go" />
     </form>
     </div>
 </div>
-<script>document.getElementById('searchbox').style.display = "block"</script>
+<script>$('#searchbox').show(0);</script>
 <h4>Latest Version</h4>
 <ul>
   <li><a href="../dev/output_styles.html">dev</a></li>
@@ -253,6 +247,12 @@ block of memory is dumped for each patch with a single <cite>write</cite> statem
 </ul>
 <h4>Older Versions</h4>
 <ul>
+  <li><a href="../v5.1.x/output_styles.html">v5.1.x</a></li>
+  <li><a href="../v5.2.x/output_styles.html">v5.2.x</a></li>
+  <li><a href="../v5.3.x/output_styles.html">v5.3.x</a></li>
+  <li><a href="../v5.4.x/output_styles.html">v5.4.x</a></li>
+  <li><a href="../v5.5.x/output_styles.html">v5.5.x</a></li>
+  <li><a href="../v5.6.x/output_styles.html">v5.6.x</a></li>
   <li><a href="output_styles.html">v5.7.x</a></li>
   <li><a href="../v5.8.x/output_styles.html">v5.8.x</a></li>
 </ul>

@@ -1,23 +1,21 @@
 
 <!DOCTYPE html>
 
-<html lang="en">
+<html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
-
     <title>Force Cells to be Dry Initially &#8212; Clawpack 5.9.x documentation</title>
+    <link rel="stylesheet" href="_static/flasky.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="stylesheet" href="_static/base.css" type="text/css" />
     <link rel="stylesheet" href="_static/layout.css" type="text/css" />
-    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="_static/flasky.css" />
     <link rel="stylesheet" type="text/css" href="_static/graphviz.css" />
-    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
     <script src="_static/jquery.js"></script>
     <script src="_static/underscore.js"></script>
-    <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="_static/doctools.js"></script>
-    <script src="_static/sphinx_highlight.js"></script>
+    <script src="_static/language_data.js"></script>
+    <script async="async" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="shortcut icon" href="_static/clawicon.ico"/>
     <link rel="author" title="About these documents" href="about.html" />
     <link rel="index" title="Index" href="genindex.html" />
@@ -75,8 +73,7 @@
           <a href="marching_front.html" title="Marching Front algorithm"
              accesskey="P">previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="contents.html">Clawpack 5.9.x documentation</a> &#187;</li>
-          <li class="nav-item nav-item-1"><a href="geoclaw.html" accesskey="U">GeoClaw Description and Detailed Contents</a> &#187;</li>
-        <li class="nav-item nav-item-this"><a href="">Force Cells to be Dry Initially</a></li> 
+          <li class="nav-item nav-item-1"><a href="geoclaw.html" accesskey="U">GeoClaw Description and Detailed Contents</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -85,8 +82,8 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <section id="force-cells-to-be-dry-initially">
-<span id="force-dry"></span><h1>Force Cells to be Dry Initially<a class="headerlink" href="#force-cells-to-be-dry-initially" title="Permalink to this heading">¶</a></h1>
+  <div class="section" id="force-cells-to-be-dry-initially">
+<span id="force-dry"></span><h1>Force Cells to be Dry Initially<a class="headerlink" href="#force-cells-to-be-dry-initially" title="Permalink to this headline">¶</a></h1>
 <p><strong>New in Version 5.7.0.</strong></p>
 <p>Adapted from <a class="reference external" href="http://www.clawpack.org/gallery/_static/apps/notebooks/geoclaw/ForceDry.html">this notebook</a>.</p>
 <p>See also <a class="reference internal" href="marching_front.html#marching-front"><span class="std std-ref">Marching Front algorithm</span></a>, which describes a
@@ -131,17 +128,17 @@ simply because <cite>Z &gt; 0</cite> at this point since the <cite>B</cite> valu
 negative in the cell. This is dealt with in the examples below by
 doing some buffering.</p></li>
 </ul>
-<section id="contents">
-<h2>Contents<a class="headerlink" href="#contents" title="Permalink to this heading">¶</a></h2>
+<div class="section" id="contents">
+<h2>Contents<a class="headerlink" href="#contents" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
 <li><p><a class="reference external" href="#fdry-topo">Sample topography from a 1/3 arcsecond DEM</a></p></li>
 <li><p><a class="reference external" href="#fdry-init">Creating the force_dry_init array</a></p></li>
 <li><p><a class="reference external" href="#fdry-file">Create file to read into GeoClaw</a></p></li>
 <li><p><a class="reference external" href="#fdry-geoclaw">Usage in GeoClaw Fortran code</a></p></li>
 </ul>
-</section>
-<section id="examples">
-<h2>Examples<a class="headerlink" href="#examples" title="Permalink to this heading">¶</a></h2>
+</div>
+<div class="section" id="examples">
+<h2>Examples<a class="headerlink" href="#examples" title="Permalink to this headline">¶</a></h2>
 <p>First import some needed modules and set up color maps.</p>
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%</span><span class="k">matplotlib</span> inline
 </pre></div>
@@ -164,7 +161,7 @@ doing some buffering.</p></li>
                                       <span class="mf">0.5</span><span class="p">:[</span><span class="mf">0.8</span><span class="p">,</span><span class="mf">1.0</span><span class="p">,</span><span class="mf">0.5</span><span class="p">],</span>
                                       <span class="mf">1.0</span><span class="p">:[</span><span class="mf">0.8</span><span class="p">,</span><span class="mf">0.5</span><span class="p">,</span><span class="mf">0.2</span><span class="p">]})</span>
 
-<span class="n">sea_cmap</span> <span class="o">=</span> <span class="n">colormaps</span><span class="o">.</span><span class="n">make_colormap</span><span class="p">({</span> <span class="mf">0.0</span><span class="p">:[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span> <span class="mf">1.</span><span class="p">:[</span><span class="mf">.8</span><span class="p">,</span><span class="mf">.8</span><span class="p">,</span><span class="mi">1</span><span class="p">]})</span>
+<span class="n">sea_cmap</span> <span class="o">=</span> <span class="n">colormaps</span><span class="o">.</span><span class="n">make_colormap</span><span class="p">({</span> <span class="mf">0.0</span><span class="p">:[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span> <span class="mf">1.</span><span class="p">:[</span><span class="o">.</span><span class="mi">8</span><span class="p">,</span><span class="o">.</span><span class="mi">8</span><span class="p">,</span><span class="mi">1</span><span class="p">]})</span>
 
 <span class="n">cmap</span><span class="p">,</span> <span class="n">norm</span> <span class="o">=</span> <span class="n">colormaps</span><span class="o">.</span><span class="n">add_colormaps</span><span class="p">((</span><span class="n">land_cmap</span><span class="p">,</span> <span class="n">sea_cmap</span><span class="p">),</span>
                                      <span class="n">data_limits</span><span class="o">=</span><span class="p">(</span><span class="n">zmin</span><span class="p">,</span><span class="n">zmax</span><span class="p">),</span>
@@ -176,9 +173,9 @@ doing some buffering.</p></li>
                                      <span class="n">data_break</span><span class="o">=</span><span class="mf">0.</span><span class="p">)</span>
 </pre></div>
 </div>
-</section>
-<section id="sample-topography-from-a-1-3-arcsecond-dem">
-<span id="fdry-topo"></span><h2>Sample topography from a 1/3 arcsecond DEM<a class="headerlink" href="#sample-topography-from-a-1-3-arcsecond-dem" title="Permalink to this heading">¶</a></h2>
+</div>
+<div class="section" id="sample-topography-from-a-1-3-arcsecond-dem">
+<span id="fdry-topo"></span><h2>Sample topography from a 1/3 arcsecond DEM<a class="headerlink" href="#sample-topography-from-a-1-3-arcsecond-dem" title="Permalink to this headline">¶</a></h2>
 <p>We consider a small region on the SW coast of Whidbey Island north of
 Maxwelton Beach as an example, as was used in
 <a class="reference external" href="MarchingFront.ipynb">MarchingFront.ipynb</a>.</p>
@@ -250,9 +247,9 @@ that is below MHW colored pink to distinguish it from the water better:</p>
 </pre></div>
 </div>
 <img alt="_images/output_17_0.png" src="_images/output_17_0.png" />
-</section>
-<section id="creating-the-force-dry-init-array">
-<span id="fdry-init"></span><h2>Creating the <cite>force_dry_init</cite> array<a class="headerlink" href="#creating-the-force-dry-init-array" title="Permalink to this heading">¶</a></h2>
+</div>
+<div class="section" id="creating-the-force-dry-init-array">
+<span id="fdry-init"></span><h2>Creating the <cite>force_dry_init</cite> array<a class="headerlink" href="#creating-the-force-dry-init-array" title="Permalink to this headline">¶</a></h2>
 <p>The array <cite>wet_points</cite> generated above has the value 1 at DEM points
 identified as wet and 0 at points identified as dry, so if we set</p>
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">dry_points</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">wet_points</span>
@@ -313,9 +310,9 @@ not be forced to be dry:</p>
 </pre></div>
 </div>
 <img alt="_images/output_25_1.png" src="_images/output_25_1.png" />
-</section>
-<section id="create-file-to-read-into-geoclaw">
-<span id="fdry-file"></span><h2>Create file to read into GeoClaw<a class="headerlink" href="#create-file-to-read-into-geoclaw" title="Permalink to this heading">¶</a></h2>
+</div>
+<div class="section" id="create-file-to-read-into-geoclaw">
+<span id="fdry-file"></span><h2>Create file to read into GeoClaw<a class="headerlink" href="#create-file-to-read-into-geoclaw" title="Permalink to this headline">¶</a></h2>
 <p>The array <cite>force_dry_init</cite> can now be saved in the same format as topo
 files, using <cite>topo_type=3</cite> and specifying <cite>Z_format=’%1i’</cite> so that
 the data values from the array, which are all either 0 or 1, are printed
@@ -349,9 +346,9 @@ followed by the data:</p>
 <span class="o">-</span><span class="mi">9999</span>                          <span class="n">nodata_value</span>
 </pre></div>
 </div>
-</section>
-<section id="usage-in-geoclaw-fortran-code">
-<span id="fdry-geoclaw"></span><h2>Usage in GeoClaw Fortran code<a class="headerlink" href="#usage-in-geoclaw-fortran-code" title="Permalink to this heading">¶</a></h2>
+</div>
+<div class="section" id="usage-in-geoclaw-fortran-code">
+<span id="fdry-geoclaw"></span><h2>Usage in GeoClaw Fortran code<a class="headerlink" href="#usage-in-geoclaw-fortran-code" title="Permalink to this headline">¶</a></h2>
 <p>To use a <cite>force_dry_init.data</cite> file of the sort created above, when
 setting up a GeoClaw run the <cite>setrun.py</cite> file must be modified to
 indicate the name of this file along with a time <cite>tend</cite>. The array is
@@ -367,8 +364,8 @@ should be forced to be dry for times up to 15 minutes, we could specify:</p>
 <span class="n">rundata</span><span class="o">.</span><span class="n">qinit_data</span><span class="o">.</span><span class="n">force_dry_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">force_dry</span><span class="p">)</span>
 </pre></div>
 </div>
-<section id="internal-geoclaw-modifications">
-<h3>Internal GeoClaw modifications<a class="headerlink" href="#internal-geoclaw-modifications" title="Permalink to this heading">¶</a></h3>
+<div class="section" id="internal-geoclaw-modifications">
+<h3>Internal GeoClaw modifications<a class="headerlink" href="#internal-geoclaw-modifications" title="Permalink to this headline">¶</a></h3>
 <p>The following files in <cite>geoclaw/src/2d/shallow</cite> have been modified to
 handle the <cite>force_dry_init</cite> array:</p>
 <ul class="simple">
@@ -393,12 +390,11 @@ but before the main tsunami wave has arrived. At later times the
 tsunami may have gotten a region wet even if <cite>force_dry_init</cite>
 indicates is should be initially dry.</p></li>
 </ul>
-</section>
-</section>
-</section>
+</div>
+</div>
+</div>
 
 
-            <div class="clearer"></div>
           </div>
         </div>
       </div>
@@ -409,9 +405,8 @@ indicates is should be initially dry.</p></li>
 </a>
 <h2>Version 5.9.x</h2>
 </p>
-  <div>
-    <h3><a href="contents.html">Table of Contents</a></h3>
-    <ul>
+  <h3><a href="contents.html">Table of Contents</a></h3>
+  <ul>
 <li><a class="reference internal" href="#">Force Cells to be Dry Initially</a><ul>
 <li><a class="reference internal" href="#contents">Contents</a></li>
 <li><a class="reference internal" href="#examples">Examples</a></li>
@@ -425,8 +420,7 @@ indicates is should be initially dry.</p></li>
 </ul>
 </li>
 </ul>
-
-  </div><h3>Related Topics</h3>
+<h3>Related Topics</h3>
 <ul>
   <li><a href="contents.html">Documentation overview</a><ul>
   <li><a href="geoclaw.html">GeoClaw Description and Detailed Contents</a><ul>
@@ -459,12 +453,12 @@ indicates is should be initially dry.</p></li>
   <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="text" name="q" aria-labelledby="searchlabel" />
       <input type="submit" value="Go" />
     </form>
     </div>
 </div>
-<script>document.getElementById('searchbox').style.display = "block"</script>
+<script>$('#searchbox').show(0);</script>
 <h4>Latest Version</h4>
 <ul>
   <li><a href="../dev/force_dry.html">dev</a></li>
@@ -472,6 +466,12 @@ indicates is should be initially dry.</p></li>
 </ul>
 <h4>Older Versions</h4>
 <ul>
+  <li><a href="../v5.1.x/index.html">v5.1.x</a></li>
+  <li><a href="../v5.2.x/index.html">v5.2.x</a></li>
+  <li><a href="../v5.3.x/index.html">v5.3.x</a></li>
+  <li><a href="../v5.4.x/index.html">v5.4.x</a></li>
+  <li><a href="../v5.5.x/index.html">v5.5.x</a></li>
+  <li><a href="../v5.6.x/index.html">v5.6.x</a></li>
   <li><a href="../v5.7.x/force_dry.html">v5.7.x</a></li>
   <li><a href="../v5.8.x/force_dry.html">v5.8.x</a></li>
 </ul>
