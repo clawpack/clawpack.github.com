@@ -1,20 +1,23 @@
 
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html lang="en">
   <head>
     <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
     <title>PyClaw tutorial: Solve the acoustics equations &#8212; Clawpack 5.9.x documentation</title>
-    <link rel="stylesheet" href="../_static/flasky.css" type="text/css" />
-    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" href="../_static/base.css" type="text/css" />
     <link rel="stylesheet" href="../_static/layout.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/flasky.css" />
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
-    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
     <script src="../_static/jquery.js"></script>
     <script src="../_static/underscore.js"></script>
+    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../_static/doctools.js"></script>
-    <script src="../_static/language_data.js"></script>
+    <script src="../_static/sphinx_highlight.js"></script>
     <script async="async" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="shortcut icon" href="../_static/clawicon.ico"/>
     <link rel="author" title="About these documents" href="../about.html" />
@@ -74,7 +77,8 @@
              accesskey="P">previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="../contents.html">Clawpack 5.9.x documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="index.html" >PyClaw</a> &#187;</li>
-          <li class="nav-item nav-item-2"><a href="basics.html" accesskey="U">PyClaw Basics</a> &#187;</li> 
+          <li class="nav-item nav-item-2"><a href="basics.html" accesskey="U">PyClaw Basics</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">PyClaw tutorial: Solve the acoustics equations</a></li> 
       </ul>
     </div>  
 
@@ -83,8 +87,8 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <div class="section" id="pyclaw-tutorial-solve-the-acoustics-equations">
-<span id="pyclaw-tutorial"></span><h1>PyClaw tutorial: Solve the acoustics equations<a class="headerlink" href="#pyclaw-tutorial-solve-the-acoustics-equations" title="Permalink to this headline">¶</a></h1>
+  <section id="pyclaw-tutorial-solve-the-acoustics-equations">
+<span id="pyclaw-tutorial"></span><h1>PyClaw tutorial: Solve the acoustics equations<a class="headerlink" href="#pyclaw-tutorial-solve-the-acoustics-equations" title="Permalink to this heading">¶</a></h1>
 <p>PyClaw is designed to solve general systems of hyperbolic PDEs of the form</p>
 <div class="math notranslate nohighlight">
 \[\begin{equation}
@@ -105,60 +109,60 @@ of the clawpack/riemann package.</p>
 interactive shell.  See <span class="xref std std-ref">acoustics_1d</span> for the full source on which this is based.</p>
 <p>The commands below should be typed at the Python prompt; we recommend using
 IPython.</p>
-<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">clawpack</span> <span class="kn">import</span> <span class="n">pyclaw</span>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">clawpack</span> <span class="kn">import</span> <span class="n">pyclaw</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">clawpack</span> <span class="kn">import</span> <span class="n">riemann</span>
 </pre></div>
 </div>
-<div class="section" id="the-solver">
-<h2>The Solver<a class="headerlink" href="#the-solver" title="Permalink to this headline">¶</a></h2>
+<section id="the-solver">
+<h2>The Solver<a class="headerlink" href="#the-solver" title="Permalink to this heading">¶</a></h2>
 <p>PyClaw includes various algorithms for solving hyperbolic PDEs; each is implemented
 in a <code class="xref py py-class docutils literal notranslate"><span class="pre">Solver</span></code> object.  So the first step is to create a solver</p>
-<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">solver</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">ClawSolver1D</span><span class="p">(</span><span class="n">riemann</span><span class="o">.</span><span class="n">acoustics_1D</span><span class="p">)</span>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">solver</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">ClawSolver1D</span><span class="p">(</span><span class="n">riemann</span><span class="o">.</span><span class="n">acoustics_1D</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>Next we set the boundary conditions.  We’ll use a wall (wall)
 condition at the left boundary and a non-wall (zero-order extrapolation)
 condition at the right boundary</p>
-<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">solver</span><span class="o">.</span><span class="n">bc_lower</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">BC</span><span class="o">.</span><span class="n">wall</span>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">solver</span><span class="o">.</span><span class="n">bc_lower</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">BC</span><span class="o">.</span><span class="n">wall</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">solver</span><span class="o">.</span><span class="n">bc_upper</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">BC</span><span class="o">.</span><span class="n">extrap</span>
 </pre></div>
 </div>
-</div>
-<div class="section" id="the-domain">
-<h2>The domain<a class="headerlink" href="#the-domain" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="the-domain">
+<h2>The domain<a class="headerlink" href="#the-domain" title="Permalink to this heading">¶</a></h2>
 <p>Next we need to set up the grid.  We do so by defining the
 physical domain and the computational resolution.  We’ll
 use the interval <span class="math notranslate nohighlight">\((-1,1)\)</span> and 200 grid cells:</p>
-<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">domain</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">Domain</span><span class="p">([</span><span class="o">-</span><span class="mf">1.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">],</span> <span class="p">[</span><span class="mi">200</span><span class="p">])</span>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">domain</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">Domain</span><span class="p">([</span><span class="o">-</span><span class="mf">1.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">],</span> <span class="p">[</span><span class="mi">200</span><span class="p">])</span>
 </pre></div>
 </div>
 <p>Notice that the calling sequence is similar to numpy’s <code class="docutils literal notranslate"><span class="pre">linspace</span></code> command.</p>
 <p>Finally, we set up a <code class="xref py py-class docutils literal notranslate"><span class="pre">Solution</span></code>
 object, which will hold the solution values:</p>
-<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">solution</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">Solution</span><span class="p">(</span><span class="n">solver</span><span class="o">.</span><span class="n">num_eqn</span><span class="p">,</span> <span class="n">domain</span><span class="p">)</span>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">solution</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">Solution</span><span class="p">(</span><span class="n">solver</span><span class="o">.</span><span class="n">num_eqn</span><span class="p">,</span> <span class="n">domain</span><span class="p">)</span>
 </pre></div>
 </div>
-</div>
-<div class="section" id="initial-condition">
-<h2>Initial condition<a class="headerlink" href="#initial-condition" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="initial-condition">
+<h2>Initial condition<a class="headerlink" href="#initial-condition" title="Permalink to this heading">¶</a></h2>
 <p>Now we will set the initial value of the solution</p>
-<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">state</span> <span class="o">=</span> <span class="n">solution</span><span class="o">.</span><span class="n">state</span>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">state</span> <span class="o">=</span> <span class="n">solution</span><span class="o">.</span><span class="n">state</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">xc</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">p_centers</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>      <span class="c1"># Array containing the cell center coordinates</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="n">exp</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">state</span><span class="o">.</span><span class="n">q</span><span class="p">[</span><span class="mi">0</span><span class="p">,:]</span> <span class="o">=</span> <span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="mi">100</span> <span class="o">*</span> <span class="p">(</span><span class="n">xc</span><span class="o">-</span><span class="mf">0.75</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="c1"># Pressure: Gaussian centered at x=0.75.</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">state</span><span class="o">.</span><span class="n">q</span><span class="p">[</span><span class="mi">1</span><span class="p">,:]</span> <span class="o">=</span> <span class="mf">0.</span>                       <span class="c1"># Velocity: zero.</span>
 </pre></div>
 </div>
-</div>
-<div class="section" id="problem-specific-parameters">
-<h2>Problem-specific parameters<a class="headerlink" href="#problem-specific-parameters" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="problem-specific-parameters">
+<h2>Problem-specific parameters<a class="headerlink" href="#problem-specific-parameters" title="Permalink to this heading">¶</a></h2>
 <p>The acoustics equations above have some coefficients – namely, the
 bulk modulus <span class="math notranslate nohighlight">\(K\)</span> and density <span class="math notranslate nohighlight">\(\rho\)</span> – that must be defined.
 Furthermore, checking the code for the Riemann solver we’ve chosen
 reveals that it expects us to provide values for the impedance <span class="math notranslate nohighlight">\(Z\)</span>
 and sound speed <span class="math notranslate nohighlight">\(c\)</span>.  These values are stored in a Python dictionary
 called problem_data that is a member of the <code class="xref py py-class docutils literal notranslate"><span class="pre">State</span></code></p>
-<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">math</span> <span class="kn">import</span> <span class="n">sqrt</span>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">math</span> <span class="kn">import</span> <span class="n">sqrt</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">rho</span> <span class="o">=</span> <span class="mf">1.0</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">bulk</span> <span class="o">=</span> <span class="mf">1.0</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">state</span><span class="o">.</span><span class="n">problem_data</span><span class="p">[</span><span class="s1">&#39;rho&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">rho</span>
@@ -167,27 +171,27 @@ called problem_data that is a member of the <code class="xref py py-class docuti
 <span class="gp">&gt;&gt;&gt; </span><span class="n">state</span><span class="o">.</span><span class="n">problem_data</span><span class="p">[</span><span class="s1">&#39;cc&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">sqrt</span><span class="p">(</span><span class="n">bulk</span><span class="o">/</span><span class="n">rho</span><span class="p">)</span>
 </pre></div>
 </div>
-</div>
-<div class="section" id="the-controller">
-<h2>The controller<a class="headerlink" href="#the-controller" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="the-controller">
+<h2>The controller<a class="headerlink" href="#the-controller" title="Permalink to this heading">¶</a></h2>
 <p>The most convenient way to run a PyClaw simulation is by using a
 <code class="xref py py-class docutils literal notranslate"><span class="pre">Controller</span></code> object.  The controller
 directs the solver in advancing the solution and handles output.</p>
-<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">controller</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">Controller</span><span class="p">()</span>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">controller</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">Controller</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">controller</span><span class="o">.</span><span class="n">solution</span> <span class="o">=</span> <span class="n">solution</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">controller</span><span class="o">.</span><span class="n">solver</span> <span class="o">=</span> <span class="n">solver</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">controller</span><span class="o">.</span><span class="n">tfinal</span> <span class="o">=</span> <span class="mf">1.0</span>
 </pre></div>
 </div>
 <p>At last everything is set up!  Now run the simulation</p>
-<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">status</span> <span class="o">=</span> <span class="n">controller</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">status</span> <span class="o">=</span> <span class="n">controller</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
 </pre></div>
 </div>
 <p>This should print out a few lines indicating the output times. It also prints
 the minimum and maximum tipe-step used, the number of steps required for the
 computation and the maximum CFL number. The simplest way to plot the solution
 is</p>
-<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">clawpack.pyclaw</span> <span class="kn">import</span> <span class="n">plot</span>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">clawpack.pyclaw</span> <span class="kn">import</span> <span class="n">plot</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">plot</span><span class="o">.</span><span class="n">interactive_plot</span><span class="p">()</span> 
 </pre></div>
 </div>
@@ -197,10 +201,11 @@ important options that haven’t been discussed here.  To get an
 idea, take a look through the pyclaw/examples directory and try running
 some other examples.  It’s also a good idea to get more deeply
 acquainted with the main <a class="reference internal" href="classes.html#pyclaw-classes"><span class="std std-ref">Understanding Pyclaw Classes</span></a>.</p>
-</div>
-</div>
+</section>
+</section>
 
 
+            <div class="clearer"></div>
           </div>
         </div>
       </div>
@@ -211,8 +216,9 @@ acquainted with the main <a class="reference internal" href="classes.html#pyclaw
 </a>
 <h2>Version 5.9.x</h2>
 </p>
-  <h3><a href="../contents.html">Table of Contents</a></h3>
-  <ul>
+  <div>
+    <h3><a href="../contents.html">Table of Contents</a></h3>
+    <ul>
 <li><a class="reference internal" href="#">PyClaw tutorial: Solve the acoustics equations</a><ul>
 <li><a class="reference internal" href="#the-solver">The Solver</a></li>
 <li><a class="reference internal" href="#the-domain">The domain</a></li>
@@ -222,7 +228,8 @@ acquainted with the main <a class="reference internal" href="classes.html#pyclaw
 </ul>
 </li>
 </ul>
-<h3>Related Topics</h3>
+
+  </div><h3>Related Topics</h3>
 <ul>
   <li><a href="../contents.html">Documentation overview</a><ul>
   <li><a href="index.html">PyClaw</a><ul>
@@ -257,12 +264,12 @@ acquainted with the main <a class="reference internal" href="classes.html#pyclaw
   <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="../search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
       <input type="submit" value="Go" />
     </form>
     </div>
 </div>
-<script>$('#searchbox').show(0);</script>
+<script>document.getElementById('searchbox').style.display = "block"</script>
 <h4>Latest Version</h4>
 <ul>
   <li><a href="../../dev/pyclaw/tutorial.html">dev</a></li>
@@ -270,12 +277,6 @@ acquainted with the main <a class="reference internal" href="classes.html#pyclaw
 </ul>
 <h4>Older Versions</h4>
 <ul>
-  <li><a href="../../v5.1.x/pyclaw/tutorial.html">v5.1.x</a></li>
-  <li><a href="../../v5.2.x/pyclaw/tutorial.html">v5.2.x</a></li>
-  <li><a href="../../v5.3.x/pyclaw/tutorial.html">v5.3.x</a></li>
-  <li><a href="../../v5.4.x/pyclaw/tutorial.html">v5.4.x</a></li>
-  <li><a href="../../v5.5.x/pyclaw/tutorial.html">v5.5.x</a></li>
-  <li><a href="../../v5.6.x/pyclaw/tutorial.html">v5.6.x</a></li>
   <li><a href="../../v5.7.x/pyclaw/tutorial.html">v5.7.x</a></li>
   <li><a href="../../v5.8.x/pyclaw/tutorial.html">v5.8.x</a></li>
 </ul>

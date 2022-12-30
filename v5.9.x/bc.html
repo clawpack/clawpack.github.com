@@ -1,21 +1,23 @@
 
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html lang="en">
   <head>
     <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
     <title>Boundary conditions &#8212; Clawpack 5.9.x documentation</title>
-    <link rel="stylesheet" href="_static/flasky.css" type="text/css" />
-    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="stylesheet" href="_static/base.css" type="text/css" />
     <link rel="stylesheet" href="_static/layout.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/flasky.css" />
     <link rel="stylesheet" type="text/css" href="_static/graphviz.css" />
-    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
     <script src="_static/jquery.js"></script>
     <script src="_static/underscore.js"></script>
+    <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="_static/doctools.js"></script>
-    <script src="_static/language_data.js"></script>
-    <script async="async" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script src="_static/sphinx_highlight.js"></script>
     <link rel="shortcut icon" href="_static/clawicon.ico"/>
     <link rel="author" title="About these documents" href="about.html" />
     <link rel="index" title="Index" href="genindex.html" />
@@ -72,7 +74,8 @@
         <li class="right" >
           <a href="setrun_sample.html" title="Sample setrun.py module for classic Clawpack"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="contents.html">Clawpack 5.9.x documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="contents.html">Clawpack 5.9.x documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Boundary conditions</a></li> 
       </ul>
     </div>  
 
@@ -81,8 +84,8 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <div class="section" id="boundary-conditions">
-<span id="bc"></span><h1>Boundary conditions<a class="headerlink" href="#boundary-conditions" title="Permalink to this headline">¶</a></h1>
+  <section id="boundary-conditions">
+<span id="bc"></span><h1>Boundary conditions<a class="headerlink" href="#boundary-conditions" title="Permalink to this heading">¶</a></h1>
 <p>Boundary conditions are imposed each time step by filling ghost cells
 adjacent to the edge of each grid patch.  See Chapter 4 of <a class="reference internal" href="biblio.html#leveque-fvmhp" id="id1"><span>[LeVeque-FVMHP]</span></a>
 for more details.</p>
@@ -136,8 +139,8 @@ or <cite>bc_upper</cite> to 0 will execute code added by the user.  In this case
 best to put the modified version of <cite>bcN.f</cite> in the application directory and
 modify the <cite>Makefile</cite> to point to the modified version.
 See <a class="reference internal" href="#bc-user"><span class="std std-ref">User-defined boundary conditions</span></a> below.</p>
-<div class="section" id="boundary-conditions-for-adaptive-refinement">
-<span id="bc-amr"></span><h2>Boundary conditions for adaptive refinement<a class="headerlink" href="#boundary-conditions-for-adaptive-refinement" title="Permalink to this headline">¶</a></h2>
+<section id="boundary-conditions-for-adaptive-refinement">
+<span id="bc-amr"></span><h2>Boundary conditions for adaptive refinement<a class="headerlink" href="#boundary-conditions-for-adaptive-refinement" title="Permalink to this heading">¶</a></h2>
 <p>When AMR is used, any interior patch edges (not at a domain boundary) are
 filled automatically each time step, either by copying from adjacent
 patches at the same level or by interpolating (in both space and
@@ -156,9 +159,9 @@ which case the custom boundary condition procedure must be applied) or lies
 within the domain (in which case ghost cell values are automatically set by
 the AMR code and the user   <cite>bcNamr</cite> routine should leave these values
 alone.</p>
-</div>
-<div class="section" id="boundary-conditions-for-geoclaw">
-<span id="bc-geoclaw"></span><h2>Boundary conditions for GeoClaw<a class="headerlink" href="#boundary-conditions-for-geoclaw" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="boundary-conditions-for-geoclaw">
+<span id="bc-geoclaw"></span><h2>Boundary conditions for GeoClaw<a class="headerlink" href="#boundary-conditions-for-geoclaw" title="Permalink to this heading">¶</a></h2>
 <p>For tsunami modeling or other geophysical flows over topography the
 computational domain has artificial boundaries that are placed sufficiently
 far from the region of interest that any flow or waves leaving the domain
@@ -172,9 +175,9 @@ e.g. along the walls of a wave tank.</p>
 <p>The library routine <cite>$CLAW/geoclaw/src/2d/shallow/bc2amr.f</cite> is modified from
 the  <cite>amrclaw</cite> version only by extrapolating the depth at the boundaries
 into ghost cells.</p>
-</div>
-<div class="section" id="boundary-conditions-for-clamshell-grids-on-the-sphere">
-<span id="bc-sphere"></span><h2>Boundary conditions for clamshell grids on the sphere<a class="headerlink" href="#boundary-conditions-for-clamshell-grids-on-the-sphere" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="boundary-conditions-for-clamshell-grids-on-the-sphere">
+<span id="bc-sphere"></span><h2>Boundary conditions for clamshell grids on the sphere<a class="headerlink" href="#boundary-conditions-for-clamshell-grids-on-the-sphere" title="Permalink to this heading">¶</a></h2>
 <p>In 2D AMRClaw and  GeoClaw, an additional option is available for <cite>bc_lower</cite>
 and <cite>bc_upper</cite> that is implemented in the library routines:</p>
 <ul>
@@ -189,9 +192,9 @@ animations on the <a class="reference external" href="?">website for the origina
 See also <span id="id3">[BergerCalhounHelzelLeVeque]</span> for further examples.</p>
 </li>
 </ul>
-</div>
-<div class="section" id="user-defined-boundary-conditions">
-<span id="bc-user"></span><h2>User-defined boundary conditions<a class="headerlink" href="#user-defined-boundary-conditions" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="user-defined-boundary-conditions">
+<span id="bc-user"></span><h2>User-defined boundary conditions<a class="headerlink" href="#user-defined-boundary-conditions" title="Permalink to this heading">¶</a></h2>
 <p>If none of the boundary conditions described above is suitable at one or
 more boundaries of the domain, then you will have to modify the library
 routine to implement the desired boundary condition.
@@ -213,10 +216,11 @@ implemented and follow the model in your own code.</p>
 cells extend outside the physical domain and which are filled automatically
 from adjacent grid patches or by interpolation from coarser patches if they
 are interior to the domain.</p>
-</div>
-</div>
+</section>
+</section>
 
 
+            <div class="clearer"></div>
           </div>
         </div>
       </div>
@@ -227,8 +231,9 @@ are interior to the domain.</p>
 </a>
 <h2>Version 5.9.x</h2>
 </p>
-  <h3><a href="contents.html">Table of Contents</a></h3>
-  <ul>
+  <div>
+    <h3><a href="contents.html">Table of Contents</a></h3>
+    <ul>
 <li><a class="reference internal" href="#">Boundary conditions</a><ul>
 <li><a class="reference internal" href="#boundary-conditions-for-adaptive-refinement">Boundary conditions for adaptive refinement</a></li>
 <li><a class="reference internal" href="#boundary-conditions-for-geoclaw">Boundary conditions for GeoClaw</a></li>
@@ -237,7 +242,8 @@ are interior to the domain.</p>
 </ul>
 </li>
 </ul>
-<h3>Related Topics</h3>
+
+  </div><h3>Related Topics</h3>
 <ul>
   <li><a href="contents.html">Documentation overview</a><ul>
       <li>Previous: <a href="setrun_sample.html" title="previous chapter">Sample <cite>setrun.py</cite> module for classic Clawpack</a></li>
@@ -268,12 +274,12 @@ are interior to the domain.</p>
   <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
       <input type="submit" value="Go" />
     </form>
     </div>
 </div>
-<script>$('#searchbox').show(0);</script>
+<script>document.getElementById('searchbox').style.display = "block"</script>
 <h4>Latest Version</h4>
 <ul>
   <li><a href="../dev/bc.html">dev</a></li>
@@ -281,12 +287,6 @@ are interior to the domain.</p>
 </ul>
 <h4>Older Versions</h4>
 <ul>
-  <li><a href="../v5.1.x/bc.html">v5.1.x</a></li>
-  <li><a href="../v5.2.x/bc.html">v5.2.x</a></li>
-  <li><a href="../v5.3.x/bc.html">v5.3.x</a></li>
-  <li><a href="../v5.4.x/bc.html">v5.4.x</a></li>
-  <li><a href="../v5.5.x/bc.html">v5.5.x</a></li>
-  <li><a href="../v5.6.x/bc.html">v5.6.x</a></li>
   <li><a href="../v5.7.x/bc.html">v5.7.x</a></li>
   <li><a href="../v5.8.x/bc.html">v5.8.x</a></li>
 </ul>
