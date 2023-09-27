@@ -1,20 +1,23 @@
 
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html lang="en">
   <head>
     <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
     <title>Setting up your own problem &#8212; Clawpack dev documentation</title>
-    <link rel="stylesheet" href="../_static/flasky.css" type="text/css" />
-    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" href="../_static/base.css" type="text/css" />
     <link rel="stylesheet" href="../_static/layout.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/flasky.css" />
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
-    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
     <script src="../_static/jquery.js"></script>
     <script src="../_static/underscore.js"></script>
+    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../_static/doctools.js"></script>
-    <script src="../_static/language_data.js"></script>
+    <script src="../_static/sphinx_highlight.js"></script>
     <script async="async" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="shortcut icon" href="../_static/clawicon.ico"/>
     <link rel="author" title="About these documents" href="../about.html" />
@@ -74,7 +77,8 @@
              accesskey="P">previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="../contents.html">Clawpack dev documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="index.html" >PyClaw</a> &#187;</li>
-          <li class="nav-item nav-item-2"><a href="going_further.html" accesskey="U">Going Further</a> &#187;</li> 
+          <li class="nav-item nav-item-2"><a href="going_further.html" accesskey="U">Going Further</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Setting up your own problem</a></li> 
       </ul>
     </div>  
 
@@ -83,8 +87,8 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <div class="section" id="setting-up-your-own-problem">
-<span id="problem-setup"></span><h1>Setting up your own problem<a class="headerlink" href="#setting-up-your-own-problem" title="Permalink to this headline">¶</a></h1>
+  <section id="setting-up-your-own-problem">
+<span id="problem-setup"></span><h1>Setting up your own problem<a class="headerlink" href="#setting-up-your-own-problem" title="Permalink to this heading">¶</a></h1>
 <p>The best way to set up a new problem is to find an existing problem setup that
 is similar.  The main steps are:</p>
 <blockquote>
@@ -102,8 +106,8 @@ prefer to write some of them in Fortran for performance reasons.
 The latter approach requires direct use of
 <a class="reference external" href="http://www.scipy.org/F2py">f2py</a>.  See <a class="reference internal" href="clawpack_and_pyclaw.html#port-example"><span class="std std-ref">Porting a problem from Clawpack 4.6.x to PyClaw</span></a> for
 more details.</p>
-<div class="section" id="writing-the-initialization-script">
-<h2>Writing the initialization script<a class="headerlink" href="#writing-the-initialization-script" title="Permalink to this headline">¶</a></h2>
+<section id="writing-the-initialization-script">
+<h2>Writing the initialization script<a class="headerlink" href="#writing-the-initialization-script" title="Permalink to this heading">¶</a></h2>
 <p>This script should:</p>
 <blockquote>
 <div><ul class="simple">
@@ -117,12 +121,12 @@ more details.</p>
 </div></blockquote>
 <p>Usually the script then instantiates a <code class="xref py py-class docutils literal notranslate"><span class="pre">Controller</span></code>, sets the
 initial solution and solver, and calls <code class="xref py py-meth docutils literal notranslate"><span class="pre">run()</span></code>.</p>
-<div class="section" id="setting-initial-conditions">
-<h3>Setting initial conditions<a class="headerlink" href="#setting-initial-conditions" title="Permalink to this headline">¶</a></h3>
+<section id="setting-initial-conditions">
+<h3>Setting initial conditions<a class="headerlink" href="#setting-initial-conditions" title="Permalink to this heading">¶</a></h3>
 <p>Once you have initialized a Solution object, it contains a member state.q
 whose first dimension is num_eqn and whose remaining dimensions are those
 of the grid.  Now you must set the initial condition.  For instance</p>
-<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">Y</span><span class="p">,</span><span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">meshgrid</span><span class="p">(</span><span class="n">state</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">y</span><span class="o">.</span><span class="n">centers</span><span class="p">,</span><span class="n">state</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">centers</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">r</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">X</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">Y</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">width</span> <span class="o">=</span> <span class="mf">0.2</span>
@@ -134,21 +138,21 @@ of the grid.  Now you must set the initial condition.  For instance</p>
 <p>Note that in a parallel run we only wish to set the local values of the state
 so the appropriate geometry object to use here is the
 <code class="xref py py-class docutils literal notranslate"><span class="pre">Grid</span></code> class.</p>
-</div>
-<div class="section" id="setting-auxiliary-variables">
-<h3>Setting auxiliary variables<a class="headerlink" href="#setting-auxiliary-variables" title="Permalink to this headline">¶</a></h3>
+</section>
+<section id="setting-auxiliary-variables">
+<h3>Setting auxiliary variables<a class="headerlink" href="#setting-auxiliary-variables" title="Permalink to this heading">¶</a></h3>
 <p>If the problem involves coefficients that vary in space or a mapped grid,
 the required fields are stored in state.aux.  In order to use such fields,
 you must pass the num_aux argument to the State initialization</p>
-<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">state</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">State</span><span class="p">(</span><span class="n">domain</span><span class="p">,</span><span class="n">solver</span><span class="o">.</span><span class="n">num_eqn</span><span class="p">,</span><span class="n">num_aux</span><span class="p">)</span>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">state</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">State</span><span class="p">(</span><span class="n">domain</span><span class="p">,</span><span class="n">solver</span><span class="o">.</span><span class="n">num_eqn</span><span class="p">,</span><span class="n">num_aux</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>The number of fields in state.aux (i.e., the length of its first dimension)
 is set equal to num_aux.  The values of state.aux are set in the same way
 as those of state.q.</p>
-</div>
-<div class="section" id="setting-boundary-conditions">
-<h3>Setting boundary conditions<a class="headerlink" href="#setting-boundary-conditions" title="Permalink to this headline">¶</a></h3>
+</section>
+<section id="setting-boundary-conditions">
+<h3>Setting boundary conditions<a class="headerlink" href="#setting-boundary-conditions" title="Permalink to this heading">¶</a></h3>
 <p>The boundary conditions are specified through solver.bc_lower and
 solver.bc_upper, each of which is a list of length <code class="docutils literal notranslate"><span class="pre">solver.num_dim</span></code>. The
 ordering of the boundary conditions in each list is the same as the ordering of
@@ -169,7 +173,7 @@ component of q is the normal velocity in x/y.</p></li>
 <p>Other boundary conditions can be implemented by using <code class="docutils literal notranslate"><span class="pre">pyclaw.BC.custom</span></code>, and
 providing a custom BC function.  The attribute solver.user_bc_lower/upper must
 be set to the corresponding function handle.  For instance</p>
-<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">custom_bc</span><span class="p">(</span><span class="n">state</span><span class="p">,</span><span class="n">dim</span><span class="p">,</span><span class="n">t</span><span class="p">,</span><span class="n">qbc</span><span class="p">,</span><span class="n">num_ghost</span><span class="p">):</span>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">custom_bc</span><span class="p">(</span><span class="n">state</span><span class="p">,</span><span class="n">dim</span><span class="p">,</span><span class="n">t</span><span class="p">,</span><span class="n">qbc</span><span class="p">,</span><span class="n">num_ghost</span><span class="p">):</span>
 <span class="gp">... </span>   <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">xrange</span><span class="p">(</span><span class="n">num_ghost</span><span class="p">):</span>
 <span class="gp">... </span>      <span class="n">qbc</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="n">i</span><span class="p">,:]</span> <span class="o">=</span> <span class="n">q0</span>
 
@@ -181,13 +185,13 @@ be set to the corresponding function handle.  For instance</p>
 in a similar way, using <code class="docutils literal notranslate"><span class="pre">solver.aux_bc_lower</span></code> and <code class="docutils literal notranslate"><span class="pre">solver.aux_bc_upper</span></code>.
 Note that although state is passed to the BC routines, they should
 NEVER modify state.  Rather, they should modify qbc/auxbc.</p>
-</div>
-<div class="section" id="setting-solver-options">
-<h3>Setting solver options<a class="headerlink" href="#setting-solver-options" title="Permalink to this headline">¶</a></h3>
-</div>
-</div>
-<div class="section" id="using-your-own-riemann-solver">
-<h2>Using your own Riemann solver<a class="headerlink" href="#using-your-own-riemann-solver" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="setting-solver-options">
+<h3>Setting solver options<a class="headerlink" href="#setting-solver-options" title="Permalink to this heading">¶</a></h3>
+</section>
+</section>
+<section id="using-your-own-riemann-solver">
+<h2>Using your own Riemann solver<a class="headerlink" href="#using-your-own-riemann-solver" title="Permalink to this heading">¶</a></h2>
 <p>The Riemann package has solvers for many hyperbolic systems.  If your problem
 involves a new system, you will need to write your own Riemann solver.
 A nice example of how to compile and import your own Riemann solver can be seen
@@ -225,9 +229,9 @@ than with Fortran.  For two-dimensional problems, or one-dimensional problems
 requiring fine grids (or if you are impatient) the solver should be written
 in Fortran.  The best approach is generally to find a similar solver in the
 Riemann package and modify it to solve your system.</p>
-</div>
-<div class="section" id="adding-source-terms">
-<h2>Adding source terms<a class="headerlink" href="#adding-source-terms" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="adding-source-terms">
+<h2>Adding source terms<a class="headerlink" href="#adding-source-terms" title="Permalink to this heading">¶</a></h2>
 <p>Non-hyperbolic terms (representing, e.g., reaction or diffusion) can be included
 in a PyClaw simulation by providing an appropriate function handle to</p>
 <blockquote>
@@ -239,17 +243,18 @@ return <span class="math notranslate nohighlight">\(\Delta t \cdot \psi(q)\)</sp
 </ul>
 </div></blockquote>
 <p>For an example, see pyclaw/examples/euler_2d/shockbubble.py.</p>
-</div>
-<div class="section" id="setting-up-the-makefile">
-<h2>Setting up the Makefile<a class="headerlink" href="#setting-up-the-makefile" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="setting-up-the-makefile">
+<h2>Setting up the Makefile<a class="headerlink" href="#setting-up-the-makefile" title="Permalink to this heading">¶</a></h2>
 <p>Generally you can just copy the Makefile from an example in pyclaw/examples and
 replace the value of <cite>RP_SOURCES</cite>.  Make sure the example you choose has the
 same dimensionality.  Also be sure to use the f-wave targets if your Riemann
 solver is an f-wave solver.</p>
-</div>
-</div>
+</section>
+</section>
 
 
+            <div class="clearer"></div>
           </div>
         </div>
       </div>
@@ -260,8 +265,9 @@ solver is an f-wave solver.</p>
 </a>
 <h2>Version dev</h2>
 </p>
-  <h3><a href="../contents.html">Table of Contents</a></h3>
-  <ul>
+  <div>
+    <h3><a href="../contents.html">Table of Contents</a></h3>
+    <ul>
 <li><a class="reference internal" href="#">Setting up your own problem</a><ul>
 <li><a class="reference internal" href="#writing-the-initialization-script">Writing the initialization script</a><ul>
 <li><a class="reference internal" href="#setting-initial-conditions">Setting initial conditions</a></li>
@@ -276,7 +282,8 @@ solver is an f-wave solver.</p>
 </ul>
 </li>
 </ul>
-<h3>Related Topics</h3>
+
+  </div><h3>Related Topics</h3>
 <ul>
   <li><a href="../contents.html">Documentation overview</a><ul>
   <li><a href="index.html">PyClaw</a><ul>
@@ -311,12 +318,12 @@ solver is an f-wave solver.</p>
   <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="../search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
       <input type="submit" value="Go" />
     </form>
     </div>
 </div>
-<script>$('#searchbox').show(0);</script>
+<script>document.getElementById('searchbox').style.display = "block"</script>
 <h4>Latest Version</h4>
 <ul>
   <li><a href="problem.html">dev</a></li>
@@ -324,12 +331,6 @@ solver is an f-wave solver.</p>
 </ul>
 <h4>Older Versions</h4>
 <ul>
-  <li><a href="../../v5.1.x/pyclaw/problem.html">v5.1.x</a></li>
-  <li><a href="../../v5.2.x/pyclaw/problem.html">v5.2.x</a></li>
-  <li><a href="../../v5.3.x/pyclaw/problem.html">v5.3.x</a></li>
-  <li><a href="../../v5.4.x/pyclaw/problem.html">v5.4.x</a></li>
-  <li><a href="../../v5.5.x/pyclaw/problem.html">v5.5.x</a></li>
-  <li><a href="../../v5.6.x/pyclaw/problem.html">v5.6.x</a></li>
   <li><a href="../../v5.7.x/pyclaw/problem.html">v5.7.x</a></li>
   <li><a href="../../v5.8.x/pyclaw/problem.html">v5.8.x</a></li>
 </ul>
