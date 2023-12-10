@@ -104,30 +104,11 @@ equations contain higher order derivative terms and so they are no longer
 hyperbolic. The equations implemented include third-order derivatives
 with respect to <cite>txx</cite>.  However, the implementations proceed by alternating
 steps with the shallow water equations and the solution of elliptic
-equations that involve only second-order derivatives in <cite>xx</cite>.</p>
-<section id="the-sgn-equations">
-<span id="bouss1d-sgn"></span><h2>The SGN equations<a class="headerlink" href="#the-sgn-equations" title="Permalink to this heading">¶</a></h2>
-<p>The recommended set of equations to use are a modification of the
-Serre-Green-Naghdi (SGN) equations with the addition of a parameter <cite>alpha</cite>
-suggested by Bonneton et al.  Both the 1d and 2d versions of these equations
-and their GeoClaw implementation are discussed in <a class="reference internal" href="biblio.html#bergerleveque2023" id="id1"><span>[BergerLeVeque2023]</span></a>.
-Setting <cite>alpha = 1</cite> gives the original SGN equations, but <cite>alpha = 1.153</cite> is
-recommended since it gives a better approximation to the linear dispersion
-relation of the Airy solution to the full 3d problem.</p>
-</section>
-<section id="the-madsen-sorensen-ms-equations">
-<span id="bouss1d-ms"></span><h2>The Madsen-Sorensen (MS) equations<a class="headerlink" href="#the-madsen-sorensen-ms-equations" title="Permalink to this heading">¶</a></h2>
-<p>These equations also give a good approximation to the linear dispersion
-relation of the Airy solution when the parameter <cite>beta = 1/15</cite> is used.
-These equations were used in an earlier GeoClaw implementation known as
-BoussClaw.  These have been reimplemented in GeoClaw more recently,
-including a 2d implementation that allows the use of AMR.  However,
-extensive tests with these equations have revealed some stability issues,
-particularly in the case of AMR, which have also been reported by others.
-The 1d MS implementation is included in GeoClaw but it is generally not
-recommended except for those interested in comparing different formulations
-and perhaps further investigating the stability issues.</p>
-</section>
+equations that involve second-order derivatives in <cite>xx</cite> but no time derivatives.
+In one space dimension, solving this equation requires solving a tridiagonal
+linear system of equations in each time step.</p>
+<p>See <a class="reference internal" href="bouss2d.html#bouss2d"><span class="std std-ref">Boussinesq solvers in Two Space Dimensions</span></a> and <a class="reference internal" href="biblio.html#bergerleveque2023" id="id1"><span>[BergerLeVeque2023]</span></a> for more discussion
+of the Boussinesq-type equations SGN and MS that are implemented in GeoClaw.</p>
 <section id="using-the-1d-boussinesq-code">
 <span id="bouss1d-usage"></span><h2>Using the 1d Boussinesq code<a class="headerlink" href="#using-the-1d-boussinesq-code" title="Permalink to this heading">¶</a></h2>
 <p>As in the 1d shallow water implementation, general mapped grids can be used,
@@ -161,21 +142,37 @@ see <a class="reference internal" href="fortran_compilers.html#fortran-fflags"><
 </section>
 <section id="setrun-py">
 <span id="bouss1d-setrun"></span><h3>setrun.py<a class="headerlink" href="#setrun-py" title="Permalink to this heading">¶</a></h3>
-<p>Some additional parameters must be added to <cite>setrun.py</cite>, typically set as
-follows:</p>
+<p>To use the Boussinesq solvers, somewhere in the <cite>setrun</cite> function you
+must include</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">clawpack.geoclaw.data</span> <span class="kn">import</span> <span class="n">BoussData1D</span>
 <span class="n">rundata</span><span class="o">.</span><span class="n">add_data</span><span class="p">(</span><span class="n">BoussData1D</span><span class="p">(),</span><span class="s1">&#39;bouss_data&#39;</span><span class="p">)</span>
-<span class="n">rundata</span><span class="o">.</span><span class="n">bouss_data</span><span class="o">.</span><span class="n">bouss</span> <span class="o">=</span> <span class="kc">True</span>
-<span class="n">rundata</span><span class="o">.</span><span class="n">bouss_data</span><span class="o">.</span><span class="n">equations</span> <span class="o">=</span> <span class="mi">2</span>  <span class="c1"># for SGN (recommended, or 1 for MS)</span>
+</pre></div>
+</div>
+<p>and then the following parameters can be adjusted (the values shown here
+are the default values that will be used if you do not specify a value
+directly):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rundata</span><span class="o">.</span><span class="n">bouss_data</span><span class="o">.</span><span class="n">equations</span> <span class="o">=</span> <span class="mi">2</span>   <span class="c1"># 0=SWE, 1=MS, 2=SGN</span>
 <span class="n">rundata</span><span class="o">.</span><span class="n">bouss_data</span><span class="o">.</span><span class="n">deepBouss</span> <span class="o">=</span> <span class="mf">5.</span>  <span class="c1"># depth (meters) to switch to SWE</span>
 </pre></div>
 </div>
 <p>The <cite>rundata.bouss_data</cite> object has attributes:</p>
-<ul class="simple">
-<li><p><cite>bouss_equations</cite> (int): Which equation set to use
-(0 for SWE, 1 for MS, 2 for SGN).</p></li>
-<li><p><cite>bouss_min_depth</cite> (float): water depth at which to switch from Boussinesq
-to SWE.</p></li>
+<ul>
+<li><p><cite>bouss_equations</cite>: The system of equations being solved.  Setting this to 2
+gives the recommended SGN equations.</p>
+<p>The value <cite>alpha = 1.153</cite> recommended for SGN is
+hardwired into <cite>$CLAW/geoclaw/src/2d/bouss/bouss_module.f90</cite>.  To change
+this value, you must modify this module.  (See <a class="reference internal" href="makefiles_library.html#makefiles-library"><span class="std std-ref">Library routines in Makefiles</span></a>
+for tips on modifying a library routine.)  Similarly, if you set
+<cite>bouss_equations = 1</cite> for the Madsen-Sorensen equations, the recommended
+parameter value <cite>B = 1/15</cite> is set in <cite>bouss_module.f90</cite>.</p>
+<p>Setting <cite>bouss_equations = 0</cite> causes the code to revert to the shallow
+water equations, useful for comparing dispersive and nondispersive results.</p>
+</li>
+<li><p><cite>bouss_min_depth</cite>: The criterion used for switching from Boussinesq to SWE
+in shallow water and onshore.  If the original water depth <cite>h</cite> at time <cite>t0</cite>
+is less than <cite>bouss_min_depth</cite> in a cell or any of its nearest neighbors,
+then this cell is omitted from set of unknowns in the elliptic equation
+solve and no dispersive correction terms are calculated for this cell.</p></li>
 </ul>
 <p>The latter parameter is needed because in very shallow water, and for
 modeling onshore inundation, the Boussinesq equations are not suitable.
@@ -183,7 +180,8 @@ So some criterion is needed to drop these correction terms and revert to
 solving SWE near shore.  Many different approaches have been used in the
 literature.  So far we have only implemented the simplest common approach,
 which is to revert to SWE in any grid cell where the initial water depth (at
-the initial time) is less than <cite>bouss_min_depth</cite>.</p>
+the initial time) is less than <cite>bouss_min_depth</cite>.
+See <a class="reference internal" href="bouss2d.html#bouss2d-switch"><span class="std std-ref">Wave breaking and switching to SWE</span></a> for more discussion.</p>
 </section>
 </section>
 </section>
@@ -204,8 +202,6 @@ the initial time) is less than <cite>bouss_min_depth</cite>.</p>
     <h3><a href="contents.html">Table of Contents</a></h3>
     <ul>
 <li><a class="reference internal" href="#">Boussinesq solvers in One Space Dimension</a><ul>
-<li><a class="reference internal" href="#the-sgn-equations">The SGN equations</a></li>
-<li><a class="reference internal" href="#the-madsen-sorensen-ms-equations">The Madsen-Sorensen (MS) equations</a></li>
 <li><a class="reference internal" href="#using-the-1d-boussinesq-code">Using the 1d Boussinesq code</a><ul>
 <li><a class="reference internal" href="#makefile">Makefile</a></li>
 <li><a class="reference internal" href="#setrun-py">setrun.py</a></li>

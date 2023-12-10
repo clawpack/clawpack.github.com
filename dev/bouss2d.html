@@ -87,8 +87,225 @@
             
   <section id="boussinesq-solvers-in-two-space-dimensions">
 <span id="bouss2d"></span><h1>Boussinesq solvers in Two Space Dimensions<a class="headerlink" href="#boussinesq-solvers-in-two-space-dimensions" title="Permalink to this heading">¶</a></h1>
-<p>To appear in a future release.</p>
-<p>See <a class="reference internal" href="biblio.html#bergerleveque2023" id="id1"><span>[BergerLeVeque2023]</span></a>.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Not yet incorporated in clawpack master branch or releases.</p>
+</div>
+<p>As of Version 5.10.0 (?), GeoClaw supports two different sets of
+dispersive Boussinesq-type equations that have been used in the literature
+to better model wave propagation in situations where the wavelength is not
+sufficiently long relative to the fluid depth for the shallow water
+equation approximation to be accurate.  The one-dimensional version of these
+capabilities are described in <a class="reference internal" href="bouss1d.html#bouss1d"><span class="std std-ref">Boussinesq solvers in One Space Dimension</span></a>.</p>
+<p>These Boussinesq equations are still depth-averaged equations, with the same
+conserved quantities (fluid depth <cite>h</cite> and momenta <cite>hu</cite> and <cite>hv</cite> in 2D) as the
+shallow water equations (SWE), but the
+equations contain higher order derivative terms and so they are no longer
+hyperbolic and require implicit methods for efficient solution with a
+physically reasonable time step.  This adds considerable complexity to the
+code since adaptive mesh refinement (AMR) is still supported.</p>
+<p>The equations implemented include third-order derivatives
+with respect to <cite>txx</cite>, <cite>tyy</cite>, and <cite>txy</cite>.
+However, the implementations proceed by alternating
+steps with the shallow water equations (SWE) and the solution of elliptic
+equations that involve second order derivatives in <cite>x</cite> and <cite>y</cite> but no
+time derivatives.</p>
+<p>In two space dimensions, solving this
+elliptic equation requires solving a sparse
+linear system of equations in each time step, at each refinement level when
+AMR is being used. The structure of this system is complicated by the need
+to include all grid cells from all patches at the same refinement level
+in the linear system that is solved. Boundary conditions at the edge of
+patches must be interpolated from coarser level solutions, in much the same
+way that the boundaary conditions for <cite>h</cite>, <cite>hu</cite>, and <cite>hv</cite> are interpolated
+when solving the SWE with AMR. Because the solution of the elliptic system
+yields correction terms to the momenta (denoted here by <cite>huc</cite> and <cite>hvc</cite>),
+when solving the Boussinesq equations the array <cite>q</cite> of state variables
+is expanded to include these correction terms as well, and so the number of
+equations and variables is 5 instead of 3.  This change must be made in
+<cite>setrun.py</cite>, along with other changes discussed below, in order to use
+the Boussinesq solvers.</p>
+<p>Currently the only linear system solver supported for solving the large
+sparse elliptic systems is <a class="reference external" href="https://petsc.org/release/">PETSc</a>,
+which can use MPI to solve these these systems. Using the Boussinesq solvers
+requires these prerequesites, as discussed further in <a class="reference internal" href="#bouss2d-prereqs"><span class="std std-ref">Prerequisites for the 2d Boussinesq code</span></a>.</p>
+<p>See <a class="reference internal" href="biblio.html#bergerleveque2023" id="id1"><span>[BergerLeVeque2023]</span></a> for more discussion of the equations solved and the
+AMR strategy used.</p>
+<section id="boussinesq-type-dispersive-equations">
+<span id="bouss2d-eqns"></span><h2>Boussinesq-type dispersive equations<a class="headerlink" href="#boussinesq-type-dispersive-equations" title="Permalink to this heading">¶</a></h2>
+<p>The equations we solve are not the original depth-averaged dispersive
+equations derived by Boussinesq, but for simplicity
+in this documentation and the code, we refer to the
+equations simply as “Boussinesq equations”, following common practice.
+Many variants of these equations have been derived and fine-tuned to
+better match the dispersion relation of the linearized
+<a class="reference external" href="https://en.wikipedia.org/wiki/Airy_wave_theory">Airy wave theory</a>
+and to incorporate variable bottom topography.</p>
+<p>Two variants are currently implement in GeoClaw, described below.</p>
+</section>
+<section id="the-sgn-equations">
+<span id="bouss2d-sgn"></span><h2>The SGN equations<a class="headerlink" href="#the-sgn-equations" title="Permalink to this heading">¶</a></h2>
+<p>The recommended set of equations to use are a modification of the
+Serre-Green-Naghdi (SGN) equations with the addition of a parameter <cite>alpha</cite>
+suggested by Bonneton et al.  Both the 1D and 2D versions of these equations
+and their GeoClaw implementation are discussed in <a class="reference internal" href="biblio.html#bergerleveque2023" id="id2"><span>[BergerLeVeque2023]</span></a>.
+Setting <cite>alpha = 1</cite> gives the original SGN equations, but <cite>alpha = 1.153</cite> is
+recommended since it gives a better approximation to the linear dispersion
+relation of the Airy solution to the full 3d problem.</p>
+</section>
+<section id="the-madsen-sorensen-ms-equations">
+<span id="bouss2d-ms"></span><h2>The Madsen-Sorensen (MS) equations<a class="headerlink" href="#the-madsen-sorensen-ms-equations" title="Permalink to this heading">¶</a></h2>
+<p>These equations also give a good approximation to the linear dispersion
+relation of the Airy solution when the parameter <cite>beta = 1/15</cite> is used.
+These equations were used in an earlier GeoClaw implementation known as
+BoussClaw.  <em>[Todo: add citations]</em>
+These have been reimplemented in GeoClaw more recently,
+including a 2d implementation that allows the use of AMR.  However,
+extensive tests with these equations have revealed some stability issues,
+particularly in the case of AMR, which have also been reported by others.
+The 1D MS implementation is included in GeoClaw but it is generally not
+recommended except for those interested in comparing different formulations
+and perhaps further investigating the stability issues.</p>
+</section>
+<section id="using-the-2d-boussinesq-code">
+<span id="bouss2d-usage"></span><h2>Using the 2d Boussinesq code<a class="headerlink" href="#using-the-2d-boussinesq-code" title="Permalink to this heading">¶</a></h2>
+<p>Provided the <a class="reference internal" href="#bouss2d-prereqs"><span class="std std-ref">Prerequisites for the 2d Boussinesq code</span></a> have been installed, switching from the
+SWE to a Boussinesq solver in GeoClaw requires only minor changes to
+<cite>setrun.py</cite> and the <cite>Makefile</cite>.</p>
+<p>See the files in <cite>$CLAW/geoclaw/examples/bouss/radial_flat</cite> for an example.</p>
+<section id="setrun-py">
+<span id="bouss2d-setrun"></span><h3>setrun.py<a class="headerlink" href="#setrun-py" title="Permalink to this heading">¶</a></h3>
+<p>As mentioned above, it is necessary to set:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">clawdata</span><span class="o">.</span><span class="n">num_eqn</span> <span class="o">=</span> <span class="mi">5</span>
+</pre></div>
+</div>
+<p>instead of the usual value 3 used for SWE, since correction terms for the
+momenta are also stored in the <cite>q</cite> arrays to facilitate interpolation to
+ghost cells of finer level patches each time step.</p>
+<p>It is also necessary to set some parameters that are specific to the
+Boussinesq solvers.  Somewhere in the <cite>setrun</cite> function you must include</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">clawpack.geoclaw.data</span> <span class="kn">import</span> <span class="n">BoussData</span>
+<span class="n">rundata</span><span class="o">.</span><span class="n">add_data</span><span class="p">(</span><span class="n">BoussData</span><span class="p">(),</span><span class="s1">&#39;bouss_data&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>and then the following parameters can be adjusted (the values shown here
+are the default values that will be used if you do not specify a value
+directly):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rundata</span><span class="o">.</span><span class="n">bouss_data</span><span class="o">.</span><span class="n">bouss_equations</span> <span class="o">=</span> <span class="mi">2</span>    <span class="c1"># 0=SWE, 1=MS, 2=SGN</span>
+<span class="n">rundata</span><span class="o">.</span><span class="n">bouss_data</span><span class="o">.</span><span class="n">bouss_min_level</span> <span class="o">=</span> <span class="mi">1</span>    <span class="c1"># coarsest level to apply bouss</span>
+<span class="n">rundata</span><span class="o">.</span><span class="n">bouss_data</span><span class="o">.</span><span class="n">bouss_max_level</span> <span class="o">=</span> <span class="mi">10</span>   <span class="c1"># finest level to apply bouss</span>
+<span class="n">rundata</span><span class="o">.</span><span class="n">bouss_data</span><span class="o">.</span><span class="n">bouss_min_depth</span> <span class="o">=</span> <span class="mf">10.</span>  <span class="c1"># depth (meters) to switch to SWE</span>
+<span class="n">rundata</span><span class="o">.</span><span class="n">bouss_data</span><span class="o">.</span><span class="n">bouss_solver</span> <span class="o">=</span> <span class="mi">3</span>       <span class="c1"># 1=GMRES, 2=Pardiso, 3=PETSc</span>
+<span class="n">rundata</span><span class="o">.</span><span class="n">bouss_data</span><span class="o">.</span><span class="n">bouss_tstart</span> <span class="o">=</span> <span class="mf">0.</span>      <span class="c1"># time to switch from SWE</span>
+</pre></div>
+</div>
+<p>These parameters control:</p>
+<ul>
+<li><p><cite>bouss_equations</cite>: The system of equations being solved.  Setting this to 2
+gives the recommended SGN equations.</p>
+<p>The value <cite>alpha = 1.153</cite> recommended for SGN is
+hardwired into <cite>$CLAW/geoclaw/src/2d/bouss/bouss_module.f90</cite>.  To change
+this value, you must modify this module.  (See <a class="reference internal" href="makefiles_library.html#makefiles-library"><span class="std std-ref">Library routines in Makefiles</span></a>
+for tips on modifying a library routine.)  Similarly, if you set
+<cite>bouss_equations = 1</cite> for the Madsen-Sorensen equations, the recommended
+parameter value <cite>B = 1/15</cite> is set in <cite>bouss_module.f90</cite>.</p>
+<p>Setting <cite>bouss_equations = 0</cite> causes the code to revert to the shallow
+water equations, useful for comparing dispersive and nondispersive results.</p>
+</li>
+<li><p><cite>bouss_min_level</cite>: The minimum AMR level on which Boussinesq correction
+terms should be applied.  In some cases it may be desirable to use the SWE
+on the coarsest grids in the ocean while Boussinesq corrections are only
+applied on fine levels near shore, for example.</p></li>
+<li><p><cite>bouss_max_level</cite>: The finest AMR level on which Boussinesq correction
+terms should be applied.  In some cases it may be desirable to use the SWE
+only on coarser grids if the finest level grid only exists in very shallow
+regions or onshore, where the the equations switch to SWE for inundation
+modeling.  Since much of the computational work is often on the finest level,
+avoiding the Boussinesq terms altogether on these levels may be advantageous
+in some situations.</p></li>
+<li><p><cite>bouss_min_depth</cite>: The criterion used for switching from Boussinesq to SWE
+in shallow water and onshore.  If the original water depth <cite>h</cite> at time <cite>t0</cite>
+is less than <cite>bouss_min_depth</cite> in a cell or any of its nearest neighbors,
+then this cell is omitted from set of unknowns in the elliptic equation
+solve and no dispersive correction terms are calculated for this cell.
+This is discussed further below in <a class="reference internal" href="#bouss2d-switch"><span class="std std-ref">Wave breaking and switching to SWE</span></a>.</p></li>
+<li><p><cite>bouss_solver</cite>: What linear system solver to use. Currently only the value
+3 for <a class="reference external" href="https://petsc.org/release/">PETSc</a> is recognized.</p></li>
+<li><p><cite>bouss_tstart</cite>: The time <cite>t</cite> at which to start applying Boussinesq terms.
+Normally you will want this to be less than or equal to <cite>t0</cite>, the starting
+time of the calculation (which is usually but not always 0). However,
+there are some cases in which the initial data results in extreme
+motion in the first few time steps and it is necessary to get things going
+with the SWE.  For most applications this is not necessary and you need
+only change this parameter if you have set <cite>t0 &lt; 0</cite>.</p></li>
+</ul>
+</section>
+<section id="makefile">
+<span id="bouss2d-makefile"></span><h3>Makefile<a class="headerlink" href="#makefile" title="Permalink to this heading">¶</a></h3>
+<p>You can copy the <cite>Makefile</cite> from
+<cite>$CLAW/geoclaw/examples/bouss/radial_flat/Makefile</cite> and make any adjustments
+needed.</p>
+<p>This <cite>Makefile</cite> reads in the standard Boussinesq solver file
+<cite>$CLAW/geoclaw/src/2d/bouss/Makefile.bouss</cite>, which lists the Fortran modules
+and source code files that are used by default from the library
+<cite>$CLAW/geoclaw/src/2d/bouss</cite>, or from <cite>$CLAW/amrclaw/src/2d</cite> or
+<cite>$CLAW/geoclaw/src/2d/shallow</cite> in the case of files that did not need to
+be modified for the Boussinesq code.</p>
+<p>Two <cite>Makefile</cite> variables <cite>PETSC_DIR</cite> and <cite>PETSC_ARCH</cite> must be set (perhaps as
+environment variables in the shell from which <cite>make</cite> is invoked). These are
+described further below in <a class="reference internal" href="#bouss2d-prereqs"><span class="std std-ref">Prerequisites for the 2d Boussinesq code</span></a>.</p>
+<p>The <cite>Makefile</cite> should also include a line of the form:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>PETSC_OPTIONS=-options_file $(CLAW)/geoclaw/examples/bouss/petscMPIoptions
+</pre></div>
+</div>
+<p>with a pointer to the file that sets various <cite>PETSc</cite> options. The file
+<cite>$CLAW/geoclaw/examples/bouss/petscMPIoptions</cite> gives the options used in
+the examples, which may be adequate for other problems too.
+<em>[Todo: more description of options?]</em></p>
+<p>In addition to a line of the form</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>EXE = $(PWD)/xgeoclaw
+</pre></div>
+</div>
+<p>that specifies the name and location of the executable to be generated, the
+<cite>Makefile</cite> should also contain a line of the form:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">RUNEXE</span><span class="o">=</span><span class="s2">&quot;$</span><span class="si">{PETSC_DIR}</span><span class="s2">/$</span><span class="si">{PETSC_ARCH}</span><span class="s2">/bin/mpiexec -n 6&quot;</span>
+</pre></div>
+</div>
+<p>This is the command that should be used in order to run the executable.
+In other words, if you set <cite>PETSC_DIR</cite> and <cite>PETSC_ARCH</cite> as environment
+variables, and the executable is named <cite>xgeoclaw</cite> as usual, then the command</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$PETSC_DIR/$PETSC_ARCH/bin/mpiexec -n 6 xgeoclaw
+</pre></div>
+</div>
+<p>given in the shell should run the executable (invoking MPI with 6 processes in
+this example).  If this does not work then one of the environment variables
+may be set incorrectly to find the <cite>mpiexec</cite> command.</p>
+</section>
+</section>
+<section id="prerequisites-for-the-2d-boussinesq-code">
+<span id="bouss2d-prereqs"></span><h2>Prerequisites for the 2d Boussinesq code<a class="headerlink" href="#prerequisites-for-the-2d-boussinesq-code" title="Permalink to this heading">¶</a></h2>
+<p>Currently the only linear solver supported is <cite>PETSc</cite>, so this must be
+installed, see <a class="reference external" href="https://petsc.org/release/install/">https://petsc.org/release/install/</a> for instructions
+and also note the <a class="reference external" href="https://petsc.org/release/install/install_tutorial/#prerequisites">PETSc prerequisites</a>.
+Note that MPI, LAPACK, and the BLAS are required and will be installed as
+part of installing PETSc.  If you already have some of the prerequisites
+installed, be sure to read <a class="reference external" href="https://petsc.org/release/install/install/#configuring-petsc">Configuring PETSc</a>
+before installing.</p>
+<p><em>[Todo: How to set `$PETSC_DIR` And `$PETSC_ARCH`]</em></p>
+<p>See also the PETSc documentation page
+<a class="reference external" href="https://petsc.org/release/install/multibuild/#environmental-variables-petsc-dir-and-petsc-arch">Environmental Variables $PETSC_DIR And $PETSC_ARCH</a></p>
+</section>
+<section id="wave-breaking-and-switching-to-swe">
+<span id="bouss2d-switch"></span><h2>Wave breaking and switching to SWE<a class="headerlink" href="#wave-breaking-and-switching-to-swe" title="Permalink to this heading">¶</a></h2>
+<p>The <cite>bouss_min_depth</cite> parameter is needed because in very shallow water, and for
+modeling onshore inundation, the Boussinesq equations are not suitable.
+So some criterion is needed to drop these correction terms and revert to
+solving SWE near shore.  Many different approaches have been used in the
+literature.  So far we have only implemented the simplest common approach,
+which is to revert to SWE in any grid cell where the initial water depth (at
+the initial time) is less than <cite>bouss_min_depth</cite>.</p>
+<p><em>[Todo: Add more discussion.]</em></p>
+</section>
 </section>
 
 
@@ -102,7 +319,26 @@
     <img class="logo" src= "_static/clawlogo.jpg" alt="Logo"/>
 </a>
 <h2>Version dev</h2>
-</p><h3>Related Topics</h3>
+</p>
+  <div>
+    <h3><a href="contents.html">Table of Contents</a></h3>
+    <ul>
+<li><a class="reference internal" href="#">Boussinesq solvers in Two Space Dimensions</a><ul>
+<li><a class="reference internal" href="#boussinesq-type-dispersive-equations">Boussinesq-type dispersive equations</a></li>
+<li><a class="reference internal" href="#the-sgn-equations">The SGN equations</a></li>
+<li><a class="reference internal" href="#the-madsen-sorensen-ms-equations">The Madsen-Sorensen (MS) equations</a></li>
+<li><a class="reference internal" href="#using-the-2d-boussinesq-code">Using the 2d Boussinesq code</a><ul>
+<li><a class="reference internal" href="#setrun-py">setrun.py</a></li>
+<li><a class="reference internal" href="#makefile">Makefile</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#prerequisites-for-the-2d-boussinesq-code">Prerequisites for the 2d Boussinesq code</a></li>
+<li><a class="reference internal" href="#wave-breaking-and-switching-to-swe">Wave breaking and switching to SWE</a></li>
+</ul>
+</li>
+</ul>
+
+  </div><h3>Related Topics</h3>
 <ul>
   <li><a href="contents.html">Documentation overview</a><ul>
   <li><a href="geoclaw.html">GeoClaw Description and Detailed Contents</a><ul>

@@ -128,6 +128,17 @@ and Boussinesq solvers, but these will not be used until the next major release.
 </section>
 <section id="changes-to-geoclaw">
 <h2>Changes to geoclaw<a class="headerlink" href="#changes-to-geoclaw" title="Permalink to this heading">¶</a></h2>
+<p>The <cite>setrun</cite> parameter <cite>rundata.fixed_grid_data</cite> was removed from
+<cite>geoclaw/src/python/geoclaw/data.py</cite> and is no longer available in <cite>setrun</cite>.
+This old way of specifying fixed grid output has been deprecated for some
+time in favor of <cite>fgmax</cite> and <cite>fgout</cite> grids, but some old <cite>setrun.py</cite> files
+may still set</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">fixedgrids</span> <span class="o">=</span> <span class="n">rundata</span><span class="o">.</span><span class="n">fixed_grid_data</span><span class="o">.</span><span class="n">fixedgrids</span>
+</pre></div>
+</div>
+<p>and throw an error that can be fixed by deleting this line.
+If items are appended to this list in your <cite>setrun</cite>, then these should be
+converted to <cite>fgmax</cite> and/or <cite>fgout</cite> grids.</p>
 <p>The <cite>setrun</cite> parameter <cite>runclaw.geo_data.sphere_source</cite> was added to allow
 experimenting with the spherical source term that is currently missing from
 the default GeoClaw code, see <a class="reference internal" href="sphere_source.html#sphere-source"><span class="std std-ref">Source terms for shallow water on the sphere</span></a>, which now includes a
