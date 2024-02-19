@@ -101,6 +101,8 @@
 <li><p>dist_latlong2meters - Convert dx, dy distance in degrees to meters</p></li>
 <li><p>haversine - Calculate the haversine based great circle distance</p></li>
 <li><p>inv_haversine - Inverts the haversine distance</p></li>
+<li><p>bearing - Compute the bearing from on location to another</p></li>
+<li><p>gctransect - Compute a set of points on the great circle between two points</p></li>
 <li><p>fetch_noaa_tide_data - Fetches water levels and tide predictions</p></li>
 </ul>
 </dd>
@@ -210,6 +212,28 @@ located at:</p>
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="clawpack.geoclaw.util.gctransect">
+<span class="sig-prename descclassname"><span class="pre">clawpack.geoclaw.util.</span></span><span class="sig-name descname"><span class="pre">gctransect</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">npts</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coords</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'W'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">units</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'degrees'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Rearth</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">6367500.0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.geoclaw.util.gctransect" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given (longitude,latitude) pairs (x1,y1), (x2,y2) and npts
+Compute (x,y) for npts equally spaced points on the great circle connecting
+them.</p>
+<p>If coords=’W’ the points will all have -2*pi &lt; x &lt;= 0.
+If coords=’E’ the points will all have -0 &lt;= x &lt; 2*pi.
+With continuity at the date line x = pm pi.</p>
+<p>Sample usage for 50 points on great circle from Tohoku to Crescent City:</p>
+<blockquote>
+<div><p>from clawpack.geoclaw import util,kmltools
+xtrans,ytrans = util.gctransect(142,37,-124.2,41.74,50,’W’)
+kmltools.transect2kml(xtrans,ytrans)
+# then open transect.kml to view on Google Earth</p>
+</div></blockquote>
+<dl class="simple">
+<dt>Based in part on formulas in</dt><dd><p><a class="reference external" href="https://math.stackexchange.com/questions/1783746">https://math.stackexchange.com/questions/1783746</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="clawpack.geoclaw.util.haversine">
 <span class="sig-prename descclassname"><span class="pre">clawpack.geoclaw.util.</span></span><span class="sig-name descname"><span class="pre">haversine</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x1</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y1</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">units</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'degrees'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.geoclaw.util.haversine" title="Permalink to this definition">¶</a></dt>
 <dd><p>x0,y0 is assumed to be a point (or an array with the same shapes as x1,y1)
@@ -254,6 +278,7 @@ May return NaN if no solution.</p>
 <li><a class="reference internal" href="#clawpack.geoclaw.util.dist_meters2latlong"><code class="docutils literal notranslate"><span class="pre">dist_meters2latlong()</span></code></a></li>
 <li><a class="reference internal" href="#clawpack.geoclaw.util.dms2decimal"><code class="docutils literal notranslate"><span class="pre">dms2decimal()</span></code></a></li>
 <li><a class="reference internal" href="#clawpack.geoclaw.util.fetch_noaa_tide_data"><code class="docutils literal notranslate"><span class="pre">fetch_noaa_tide_data()</span></code></a></li>
+<li><a class="reference internal" href="#clawpack.geoclaw.util.gctransect"><code class="docutils literal notranslate"><span class="pre">gctransect()</span></code></a></li>
 <li><a class="reference internal" href="#clawpack.geoclaw.util.haversine"><code class="docutils literal notranslate"><span class="pre">haversine()</span></code></a></li>
 <li><a class="reference internal" href="#clawpack.geoclaw.util.inv_haversine"><code class="docutils literal notranslate"><span class="pre">inv_haversine()</span></code></a></li>
 </ul>

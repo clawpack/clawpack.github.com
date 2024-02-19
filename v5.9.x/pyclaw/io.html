@@ -323,8 +323,109 @@ the format being read in.  <code class="docutils literal notranslate"><span clas
 </dd></dl>
 
 </section>
-<section id="pyclaw-fileio-hdf5">
-<span id="hdf5"></span><h2><code class="xref py py-mod docutils literal notranslate"><span class="pre">pyclaw.fileio.hdf5</span></code><a class="headerlink" href="#pyclaw-fileio-hdf5" title="Permalink to this heading">¶</a></h2>
+<section id="module-clawpack.pyclaw.fileio.hdf5">
+<span id="pyclaw-fileio-hdf5"></span><span id="hdf5"></span><h2><code class="xref py py-mod docutils literal notranslate"><span class="pre">pyclaw.fileio.hdf5</span></code><a class="headerlink" href="#module-clawpack.pyclaw.fileio.hdf5" title="Permalink to this heading">¶</a></h2>
+<p>Routines for reading and writing a HDF5 output file</p>
+<dl class="simple">
+<dt>This module reads and writes hdf5 files via either of the following modules:</dt><dd><p>h5py - <a class="reference external" href="http://code.google.com/p/h5py/">http://code.google.com/p/h5py/</a>
+PyTables - <a class="reference external" href="http://www.pytables.org/moin">http://www.pytables.org/moin</a></p>
+</dd>
+</dl>
+<p>It will first try h5py and then PyTables and use the correct calls
+according to whichever is present on the system.  We recommend that you use
+h5py as it is a minimal wrapper to the HDF5 library.</p>
+<dl class="simple">
+<dt>To install either, you must also install the hdf5 library from the website:</dt><dd><p><a class="reference external" href="http://www.hdfgroup.org/HDF5/release/obtain5.html">http://www.hdfgroup.org/HDF5/release/obtain5.html</a></p>
+</dd>
+</dl>
+<dl class="py function">
+<dt class="sig sig-object py" id="clawpack.pyclaw.fileio.hdf5.read">
+<span class="sig-prename descclassname"><span class="pre">clawpack.pyclaw.fileio.hdf5.</span></span><span class="sig-name descname"><span class="pre">read</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">solution</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">frame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'./'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_prefix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'claw'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">read_aux</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">options</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{}</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.pyclaw.fileio.hdf5.read" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read in a HDF5 file into a Solution</p>
+<dl class="field-list simple">
+<dt class="field-odd">Input<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><em>solution</em> - (<code class="xref py py-class docutils literal notranslate"><span class="pre">Solution</span></code>) Pyclaw object to be 
+output</p></li>
+<li><p><em>frame</em> - (int) Frame number</p></li>
+<li><p><em>path</em> - (string) Root path</p></li>
+<li><p><em>file_prefix</em> - (string) Prefix for the file name.  <code class="docutils literal notranslate"><span class="pre">default</span> <span class="pre">=</span> <span class="pre">'claw'</span></code></p></li>
+<li><p><em>write_aux</em> - (bool) Boolean controlling whether the associated 
+auxiliary array should be written out.  <code class="docutils literal notranslate"><span class="pre">default</span> <span class="pre">=</span> <span class="pre">False</span></code></p></li>
+<li><p><em>options</em> - (dict) Optional argument dictionary, not used for reading.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="clawpack.pyclaw.fileio.hdf5.write">
+<span class="sig-prename descclassname"><span class="pre">clawpack.pyclaw.fileio.hdf5.</span></span><span class="sig-name descname"><span class="pre">write</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">solution</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">frame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_prefix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'claw'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">write_aux</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">options</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">write_p</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.pyclaw.fileio.hdf5.write" title="Permalink to this definition">¶</a></dt>
+<dd><p>Write out a Solution to a HDF5 file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Input<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><em>solution</em> - (<code class="xref py py-class docutils literal notranslate"><span class="pre">Solution</span></code>) Pyclaw solution 
+object to input into</p></li>
+<li><p><em>frame</em> - (int) Frame number</p></li>
+<li><p><em>path</em> - (string) Root path</p></li>
+<li><p><em>file_prefix</em> - (string) Prefix for the file name.  <code class="docutils literal notranslate"><span class="pre">default</span> <span class="pre">=</span> <span class="pre">'claw'</span></code></p></li>
+<li><p><em>write_aux</em> - (bool) Boolean controlling whether the associated 
+auxiliary array should be written out.  <code class="docutils literal notranslate"><span class="pre">default</span> <span class="pre">=</span> <span class="pre">False</span></code></p></li>
+<li><p><em>options</em> - (dict) Optional argument dictionary, see 
+<a class="reference internal" href="#hdf5-option-table">HDF5 Option Table</a></p></li>
+</ul>
+</dd>
+</dl>
+<table class="docutils align-default" id="hdf5-option-table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Key</p></th>
+<th class="head"><p>Value</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>compression</p></td>
+<td><p>(None, string [“gzip” | “lzf” | “szip”] or int 0-9)
+Enable dataset compression. DEFLATE, LZF and (where
+available) SZIP are supported. An integer is
+interpreted as a GZIP level for backwards
+compatibility.</p></td>
+</tr>
+<tr class="row-odd"><td><p>compression_opts</p></td>
+<td><p>(None, or special value) Setting for compression
+filter; legal values for each filter type are:</p>
+<ul class="simple">
+<li><p><em>gzip</em> - (int) 0-9</p></li>
+<li><p><em>lzf</em> - None allowed</p></li>
+<li><dl class="simple">
+<dt><em>szip</em> - (tuple) 2-tuple (‘ec’|’nn’, even integer</dt><dd><p>0-32)</p>
+</dd>
+</dl>
+</li>
+</ul>
+<p>See the filters module for a detailed description of
+each of these filters.</p>
+</td>
+</tr>
+<tr class="row-even"><td><p>chunks</p></td>
+<td><p>(None, True or shape tuple) Store the dataset in
+chunked format. Automatically selected if any of the
+other keyword options are given. If you don’t provide
+a shape tuple, the library will guess one for you.</p></td>
+</tr>
+<tr class="row-odd"><td><p>shuffle</p></td>
+<td><p>(True/False) Enable/disable data shuffling, which can
+improve compression performance. Automatically
+enabled when compression is used.</p></td>
+</tr>
+<tr class="row-even"><td><p>fletcher32</p></td>
+<td><p>(True/False) Enable Fletcher32 error detection; may
+be used with or without compression.</p></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
 </section>
 <section id="module-clawpack.pyclaw.fileio.netcdf">
 <span id="pyclaw-fileio-netcdf"></span><span id="netcdf"></span><h2><code class="xref py py-mod docutils literal notranslate"><span class="pre">pyclaw.fileio.netcdf</span></code><a class="headerlink" href="#module-clawpack.pyclaw.fileio.netcdf" title="Permalink to this heading">¶</a></h2>
@@ -525,7 +626,11 @@ use HDF5.</p>
 <li><a class="reference internal" href="#clawpack.pyclaw.fileio.binary.read"><code class="docutils literal notranslate"><span class="pre">read()</span></code></a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#pyclaw-fileio-hdf5"><code class="xref py py-mod docutils literal notranslate"><span class="pre">pyclaw.fileio.hdf5</span></code></a></li>
+<li><a class="reference internal" href="#module-clawpack.pyclaw.fileio.hdf5"><code class="xref py py-mod docutils literal notranslate"><span class="pre">pyclaw.fileio.hdf5</span></code></a><ul>
+<li><a class="reference internal" href="#clawpack.pyclaw.fileio.hdf5.read"><code class="docutils literal notranslate"><span class="pre">read()</span></code></a></li>
+<li><a class="reference internal" href="#clawpack.pyclaw.fileio.hdf5.write"><code class="docutils literal notranslate"><span class="pre">write()</span></code></a></li>
+</ul>
+</li>
 <li><a class="reference internal" href="#module-clawpack.pyclaw.fileio.netcdf"><code class="xref py py-mod docutils literal notranslate"><span class="pre">pyclaw.fileio.netcdf</span></code></a><ul>
 <li><a class="reference internal" href="#clawpack.pyclaw.fileio.netcdf.read"><code class="docutils literal notranslate"><span class="pre">read()</span></code></a></li>
 <li><a class="reference internal" href="#clawpack.pyclaw.fileio.netcdf.write"><code class="docutils literal notranslate"><span class="pre">write()</span></code></a></li>
