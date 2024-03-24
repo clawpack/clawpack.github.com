@@ -1,0 +1,188 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+    <title>Shoaling example with square wave data &#8212; Clawpack 5.10.x documentation</title>
+    <link rel="stylesheet" href="../../../../../_static/base.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../../_static/layout.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/flasky.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/graphviz.css" />
+    <script data-url_root="../../../../../" id="documentation_options" src="../../../../../_static/documentation_options.js"></script>
+    <script src="../../../../../_static/jquery.js"></script>
+    <script src="../../../../../_static/underscore.js"></script>
+    <script src="../../../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../../../../../_static/doctools.js"></script>
+    <script src="../../../../../_static/sphinx_highlight.js"></script>
+    <link rel="shortcut icon" href="../../../../../_static/clawicon.ico"/>
+    <link rel="index" title="Index" href="../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../search.html" /> 
+  </head><body>
+<div id="main-wrapper" class="sphinx">
+<div id="header-wrapper">
+  <section id="header">
+    <!-- <h1><a href="http://clawpack.org/">Clawpack</a></h1> -->
+    <h1><a href="http://clawpack.org/">Clawpack-5</a></h1> 
+    <nav>
+      <ul>
+        <li>
+          <a href="http://clawpack.org/contents.html">Docs</a>
+        </li>
+        <li>
+          <a href="http://clawpack.org/installing.html">Install</a>
+        </li>
+        <li>
+          <a class="" href="../../../../../index.html">Gallery</a>
+        </li>
+        <li>
+          <a href="http://clawpack.org/about.html">Citation</a>
+        </li>
+        <li>
+          <a class="active" href="http://github.com/clawpack">Github</a>
+        </li>
+        <li>
+          <a href="http://clawpack.org/community.html">Community</a>
+        </li>
+        <li>
+          <a href="http://clawpack.org/developers.html">Contribute</a>
+        </li>
+      </ul>
+    </nav>
+  </section>
+<div class="decoration"></div>
+</div>
+
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../../../index.html">Clawpack 5.10.x documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Shoaling example with square wave data</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="shoaling-example-with-square-wave-data">
+<span id="geoclaw-1d-examples-shoaling-qinit-box"></span><h1>Shoaling example with square wave data<a class="headerlink" href="#shoaling-example-with-square-wave-data" title="Permalink to this heading">¶</a></h1>
+<p>The initial wave is specified in <cite>qinit.f90</cite> as a Gaussian perturbation in
+the sea surface <cite>eta</cite>, with the momentum set to <cite>eta * sqrt(g*h)</cite> so that
+the wave is initially purely right-going on the constant-depth ocean.</p>
+<p>This example was adapted from the example at
+<a class="reference external" href="https://github.com/rjleveque/shoaling_paper_figures/tree/master/qinit_box">https://github.com/rjleveque/shoaling_paper_figures/tree/master/qinit_box</a>,
+originally developed to generate figures 2 and 3 for the paper:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Shoaling</span> <span class="n">on</span> <span class="n">Steep</span> <span class="n">Continental</span> <span class="n">Slopes</span><span class="p">:</span> <span class="n">Relating</span> <span class="n">Transmission</span> <span class="ow">and</span>
+<span class="n">Reflection</span> <span class="n">Coefficients</span> <span class="n">to</span> <span class="n">Green</span><span class="s1">&#39;s Law,</span>
+<span class="n">by</span> <span class="n">J</span><span class="o">.</span> <span class="n">George</span><span class="p">,</span> <span class="n">D</span><span class="o">.</span> <span class="n">I</span><span class="o">.</span> <span class="n">Ketcheson</span><span class="p">,</span> <span class="ow">and</span> <span class="n">R</span><span class="o">.</span> <span class="n">J</span><span class="o">.</span> <span class="n">LeVeque</span><span class="p">,</span>
+<span class="n">Pure</span> <span class="ow">and</span> <span class="n">Applied</span> <span class="n">Geophysics</span><span class="p">,</span> <span class="mf">2019.</span>
+<span class="n">DOI</span> <span class="mf">10.1007</span><span class="o">/</span><span class="n">s00024</span><span class="o">-</span><span class="mi">019</span><span class="o">-</span><span class="mi">02316</span><span class="o">-</span><span class="n">y</span>
+</pre></div>
+</div>
+<p>See <a class="reference external" href="http://faculty.washington.edu/rjl/pubs/Shoaling2019">http://faculty.washington.edu/rjl/pubs/Shoaling2019</a> for additional links.</p>
+<p>The file <cite>make_celledges.py</cite> sets up the domain and computational grid.
+A piecewise linear topography is defined by specifying the topography <cite>z</cite>
+value at a set of nodes <cite>x</cite> in the <cite>xzpairs</cite> list.  Set up to have an
+ocean of depth 3200m and a shelf of depth 200m.</p>
+<p>A nonuniform grid with <cite>mx</cite> grid cells is used with cell widths related
+to the still water depth in such a way that the Courant number is roughly
+constant in deep water and onto the shelf, and with uniform grid cells
+near shore and onshore where the water depth is less than <cite>hmin</cite>.</p>
+<p>Executing <cite>make_celledges.py</cite> creates a file <cite>celledges.data</cite> that contains
+the cell edges.  This file must be created before running GeoClaw.</p>
+<p>In GeoClaw a mapped grid is used with a <cite>mapc2p</cite> function specified in
+<cite>setrun.py</cite> that is generated from the <cite>celledges.data</cite>.  The computational
+grid specified in <cite>setrun.py</cite> is always <cite>0 &lt;= xc &lt;= 1</cite>.  Set:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rundata</span><span class="o">.</span><span class="n">grid_data</span><span class="o">.</span><span class="n">grid_type</span> <span class="o">=</span> <span class="mi">2</span>
+</pre></div>
+</div>
+<p>to indicate a mapped grid.</p>
+<p>In this example the physical <cite>x</cite> coordiate is in meters, set by specifying:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rundata</span><span class="o">.</span><span class="n">geo_data</span><span class="o">.</span><span class="n">coordinate_system</span> <span class="o">=</span> <span class="mi">1</span>
+</pre></div>
+</div>
+<p>To use:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">make</span> <span class="n">topo</span>     <span class="c1"># executes make_celledges.py</span>
+<span class="n">make</span> <span class="o">.</span><span class="n">output</span>  <span class="c1"># compile, make data, and run</span>
+<span class="n">make</span> <span class="o">.</span><span class="n">plots</span>   <span class="c1"># to create _plots (or plot interactively with Iplotclaw)</span>
+</pre></div>
+</div>
+<section id="version">
+<h2>Version<a class="headerlink" href="#version" title="Permalink to this heading">¶</a></h2>
+<p>Updated when merged into geoclaw, November 2023</p>
+</section>
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<p><a href="http://clawpack.org/">
+    <img class="logo" src= "../../../../../_static/clawlogo.jpg" alt="Logo"/>
+</a>
+<h2>Version 5.10.x</h2>
+</p>
+  <div>
+    <h3><a href="../../../../../index.html">Table of Contents</a></h3>
+    <ul>
+<li><a class="reference internal" href="#">Shoaling example with square wave data</a><ul>
+<li><a class="reference internal" href="#version">Version</a></li>
+</ul>
+</li>
+</ul>
+
+  </div><h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../../../index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../../../../../_sources/gallery/geoclaw/examples/1d_classic/shoaling_qinit_box/README.rst.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+  <div class="footer">
+    &copy; Copyright CC-BY 2024, The Clawpack Development Team.
+    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
+  </div>
+  <script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-44811544-1', 'auto');
+  ga('send', 'pageview');
+
+  </script>
+  
+  </body>
+</html>

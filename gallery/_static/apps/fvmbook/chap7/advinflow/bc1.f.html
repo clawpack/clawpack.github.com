@@ -15,7 +15,7 @@
            <font FACE="HELVETICA,ARIAL">
            
 <!-- Created from the file /Users/rjl/clawpack_src/clawpack_master/apps/fvmbook/chap7/advinflow/bc1.f -->
-<!-- Date: Mon Jan 18 2021 at 15:32:51 -->
+<!-- Date: Sat Mar 23 2024 at 11:05:22 -->
 
 <table bgcolor="#FFEE99"> <tr> <td>
 &nbsp;<font size=6> bc1.f.html </font> </td>
@@ -27,7 +27,7 @@
 </td></tr><tr><td>
 &nbsp;Directory:  &nbsp; /Users/rjl/clawpack_src/clawpack_master/apps/fvmbook/chap7/advinflow 
 </td></tr><tr><td>
-&nbsp;Converted:  &nbsp; Mon Jan 18 2021 at 15:32:51 
+&nbsp;Converted:  &nbsp; Sat Mar 23 2024 at 11:05:22 
 &nbsp; using <a href="http://www.clawpack.org//doc/application_documentation.html#clawcode2html">clawcode2html</a>
 </td></tr><tr><td>
 <font color="#BB3300"> &nbsp;This documentation file will 
@@ -85,30 +85,33 @@ not reflect any later changes in the source file. </font>
 <font color="blue">c</font>
   110 continue
 <font color="blue">c     # zero-order extrapolation:</font>
-      do 115 m=1,meqn
-         do 115 ibc=1,mbc
-               q(m,1-ibc) = q(m,1)
-  115       continue
+      do m=1,meqn
+         do ibc=1,mbc
+            q(m,1-ibc) = q(m,1)
+         enddo
+      enddo
       go to 199
 
   120 continue
 <font color="blue">c     # periodic:  </font>
-      do 125 m=1,meqn
-         do 125 ibc=1,mbc
-               q(m,1-ibc) = q(m,mx+1-ibc)
-  125       continue
+      do m=1,meqn
+         do ibc=1,mbc
+            q(m,1-ibc) = q(m,mx+1-ibc)
+         enddo
+      enddo
       go to 199
 
   130 continue
 <font color="blue">c     # solid wall (assumes 2'nd component is velocity or momentum in x):</font>
-      do 135 m=1,meqn
-         do 135 ibc=1,mbc
-               q(m,1-ibc) = q(m,ibc)
-  135       continue
+      do m=1,meqn
+         do ibc=1,mbc
+            q(m,1-ibc) = q(m,ibc)
+         enddo
+      enddo
 <font color="blue">c     # negate the normal velocity:</font>
-      do 136 ibc=1,mbc
-            q(2,1-ibc) = -q(2,ibc)
-  136    continue
+      do ibc=1,mbc
+         q(2,1-ibc) = -q(2,ibc)
+      enddo
       go to 199
 
   199 continue
@@ -127,29 +130,32 @@ not reflect any later changes in the source file. </font>
 
   210 continue
 <font color="blue">c     # zero-order extrapolation:</font>
-      do 215 m=1,meqn
-         do 215 ibc=1,mbc
-               q(m,mx+ibc) = q(m,mx)
-  215       continue
+      do m=1,meqn
+         do ibc=1,mbc
+            q(m,mx+ibc) = q(m,mx)
+         enddo
+      enddo
       go to 299
 
   220 continue
 <font color="blue">c     # periodic:  </font>
-      do 225 m=1,meqn
-         do 225 ibc=1,mbc
-               q(m,mx+ibc) = q(m,ibc)
-  225       continue
+      do m=1,meqn
+         do ibc=1,mbc
+            q(m,mx+ibc) = q(m,ibc)
+         enddo
+      enddo
       go to 299
 
   230 continue
 <font color="blue">c     # solid wall (assumes 2'nd component is velocity or momentum in x):</font>
-      do 235 m=1,meqn
-         do 235 ibc=1,mbc
-               q(m,mx+ibc) = q(m,mx+1-ibc)
-  235       continue
-      do 236 ibc=1,mbc
-            q(2,mx+ibc) = -q(2,mx+1-ibc)
-  236    continue
+      do m=1,meqn
+         do ibc=1,mbc
+            q(m,mx+ibc) = q(m,mx+1-ibc)
+         enddo
+      enddo
+      do ibc=1,mbc
+         q(2,mx+ibc) = -q(2,mx+1-ibc)
+      enddo
       go to 299
 
   299 continue

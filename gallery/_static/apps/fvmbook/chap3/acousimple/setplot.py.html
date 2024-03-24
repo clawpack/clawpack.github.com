@@ -15,7 +15,7 @@
            <font FACE="HELVETICA,ARIAL">
            
 <!-- Created from the file /Users/rjl/clawpack_src/clawpack_master/apps/fvmbook/chap3/acousimple/setplot.py -->
-<!-- Date: Mon Jan 18 2021 at 15:30:38 -->
+<!-- Date: Sat Mar 23 2024 at 11:04:21 -->
 
 <table bgcolor="#FFEE99"> <tr> <td>
 &nbsp;<font size=6> setplot.py.html </font> </td>
@@ -27,7 +27,7 @@
 </td></tr><tr><td>
 &nbsp;Directory:  &nbsp; /Users/rjl/clawpack_src/clawpack_master/apps/fvmbook/chap3/acousimple 
 </td></tr><tr><td>
-&nbsp;Converted:  &nbsp; Mon Jan 18 2021 at 15:30:38 
+&nbsp;Converted:  &nbsp; Sat Mar 23 2024 at 11:04:21 
 &nbsp; using <a href="http://www.clawpack.org//doc/application_documentation.html#clawcode2html">clawcode2html</a>
 </td></tr><tr><td>
 <font color="#BB3300"> &nbsp;This documentation file will 
@@ -43,6 +43,17 @@ This module is imported by the plotting routines and then the
 function setplot is called to set the plot parameters.
     
 """ 
+
+<font color="blue"># compute impedance Z from the data in setprob.data (created by setrun.py):</font>
+<font color="blue"># note that Z = sqrt(K*rho) where K is called bulk in setrun and setprob.</font>
+
+from numpy import sqrt
+from clawpack.clawutil.data import ClawData
+setprob = ClawData('setprob.data')
+setprob.read('setprob.data', force=True)
+Z = sqrt(setprob.bulk * setprob.rho)
+print('Impedance Z = %.3f' % Z)
+
 
 <font color="blue">#--------------------------</font>
 def setplot(plotdata=None):
@@ -61,8 +72,13 @@ def setplot(plotdata=None):
 
     plotdata.clearfigures()  <font color="blue"># clear any old figures,axes,items data</font>
 
+    def adjust_axes(current_data):
+        from pylab import tight_layout
+        tight_layout()
+
     <font color="blue"># Figure for pressure and velocity:</font>
     plotfigure = plotdata.new_plotfigure(name='Pressure and Velocity', figno=1)
+    plotfigure.kwargs = {'figsize':(6,7)}
 
     <font color="blue"># Pressure:</font>
     <font color="blue"># ---------</font>
@@ -70,7 +86,7 @@ def setplot(plotdata=None):
     <font color="blue"># Set up for axes in this figure:</font>
     plotaxes = plotfigure.new_plotaxes()
     plotaxes.axescmd = 'subplot(2,1,1)'   <font color="blue"># top figure</font>
-    plotaxes.xlimits = 'auto'
+    plotaxes.xlimits = [-1,1]
     plotaxes.ylimits = [-.5,1.]
     plotaxes.title = 'Pressure'
 
@@ -87,15 +103,82 @@ def setplot(plotdata=None):
     <font color="blue"># Set up for axes in this figure:</font>
     plotaxes = plotfigure.new_plotaxes()
     plotaxes.axescmd = 'subplot(2,1,2)'   <font color="blue"># bottom figure</font>
-    plotaxes.xlimits = 'auto'
+    plotaxes.xlimits = [-1,1]
     plotaxes.ylimits = [-1.,1.]
     plotaxes.title = 'Velocity'
+    plotaxes.afteraxes = adjust_axes
 
     <font color="blue"># Set up for item on these axes:</font>
     plotitem = plotaxes.new_plotitem(plot_type='1d_plot')
     plotitem.plot_var = 1
     plotitem.plotstyle = '-'
     plotitem.color = 'b'
+
+    <font color="blue"># ===================================================================</font>
+    <font color="blue"># Figure showing p,u and decomposition into characteristic vars w1,w2</font>
+
+    plotfigure = plotdata.new_plotfigure(name='characteristic variables',
+                                         figno=2)
+    plotfigure.kwargs = {'figsize':(6,7)}
+
+    <font color="blue"># Pressure and velocity:</font>
+    <font color="blue"># ----------------------</font>
+
+    <font color="blue"># Set up for axes in this figure:</font>
+    plotaxes = plotfigure.new_plotaxes()
+    plotaxes.axescmd = 'subplot(2,1,1)'   <font color="blue"># top figure</font>
+    plotaxes.xlimits = [-1,1]
+    plotaxes.ylimits = [-1.,1.]
+    plotaxes.title = 'Pressure (blue) and velocity (magenta)'
+
+    <font color="blue"># Set up for item on these axes:</font>
+    plotitem = plotaxes.new_plotitem(plot_type='1d_plot')
+    plotitem.plot_var = 0
+    plotitem.plotstyle = '-'
+    plotitem.color = 'b'
+
+    <font color="blue"># Set up for item on these axes:</font>
+    plotitem = plotaxes.new_plotitem(plot_type='1d_plot')
+    plotitem.plot_var = 1
+    plotitem.plotstyle = '-'
+    plotitem.color = 'm'
+
+    <font color="blue"># characteristic variables:</font>
+    <font color="blue"># -------------------------</font>
+
+    def w1(current_data):
+        q = current_data.q  <font color="blue"># use data from current frame</font>
+        p = q[0,:]
+        u = q[1,:]
+        w1 = (-p + Z*u)/(2*Z)
+        return w1
+
+    def w2(current_data):
+        q = current_data.q  <font color="blue"># use data from current frame</font>
+        p = q[0,:]
+        u = q[1,:]
+        w2 = (p + Z*u)/(2*Z)
+        return w2
+
+    <font color="blue"># Set up for axes in this figure:</font>
+    plotaxes = plotfigure.new_plotaxes()
+    plotaxes.axescmd = 'subplot(2,1,2)'   <font color="blue"># bottom figure</font>
+    plotaxes.xlimits = [-1,1]
+    plotaxes.ylimits = [-1.,1.]
+    plotaxes.title = 'w1 (green) and w2 (red)'
+    plotaxes.afteraxes = adjust_axes
+
+    <font color="blue"># Set up for item on these axes:</font>
+    plotitem = plotaxes.new_plotitem(plot_type='1d_plot')
+    plotitem.plot_var = w1
+    plotitem.plotstyle = '-'
+    plotitem.color = 'g'
+
+    <font color="blue"># Set up for item on these axes:</font>
+    plotitem = plotaxes.new_plotitem(plot_type='1d_plot')
+    plotitem.plot_var = w2
+    plotitem.plotstyle = '-'
+    plotitem.color = 'r'
 
     <font color="blue"># Parameters used only when creating html and/or latex hardcopy</font>
     <font color="blue"># e.g., via clawpack.visclaw.frametools.printframes:</font>

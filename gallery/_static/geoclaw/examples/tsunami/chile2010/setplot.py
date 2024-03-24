@@ -7,13 +7,10 @@ function setplot is called to set the plot parameters.
     
 """ 
 
-from __future__ import absolute_import
-from __future__ import print_function
 import numpy as np
 import matplotlib.pyplot as plt
 
 from clawpack.geoclaw import topotools
-from six.moves import range
 
 try:
     TG32412 = np.loadtxt('32412_notide.txt')
@@ -57,6 +54,7 @@ def setplot(plotdata=None):
     # Figure for surface
     #-----------------------------------------
     plotfigure = plotdata.new_plotfigure(name='Surface', figno=0)
+    plotfigure.figsize = (8,6)
 
     # Set up for axes in this figure:
     plotaxes = plotfigure.new_plotaxes('pcolor')
@@ -106,6 +104,50 @@ def setplot(plotdata=None):
     plotitem.amr_contour_show = [1,0,0]  
     plotitem.celledges_show = 0
     plotitem.patchedges_show = 0
+
+    #-----------------------------------------
+    # Figure for surface
+    #-----------------------------------------
+    plotfigure = plotdata.new_plotfigure(name='Test', figno=1)
+    plotfigure.figsize = (8,6)
+
+    # Set up for axes in this figure:
+    plotaxes = plotfigure.new_plotaxes('pcolor')
+    plotaxes.title = 'Surface'
+    plotaxes.scaled = True
+    plotaxes.xlimits = [-100,-80]
+    plotaxes.ylimits = [-50,-10]
+
+    def fixup(current_data):
+        import pylab
+        addgauges(current_data)
+        t = current_data.t
+        t = t / 3600.  # hours
+        pylab.title('Surface at %4.2f hours' % t, fontsize=20)
+        pylab.xticks(fontsize=15)
+        pylab.yticks(fontsize=15)
+    plotaxes.afteraxes = fixup
+
+    # Water
+    plotitem = plotaxes.new_plotitem(plot_type='2d_pcolor')
+    #plotitem.plot_var = geoplot.surface
+    plotitem.plot_var = geoplot.surface_or_depth
+    plotitem.pcolor_cmap = geoplot.tsunami_colormap
+    plotitem.pcolor_cmin = -0.2
+    plotitem.pcolor_cmax = 0.2
+    plotitem.add_colorbar = True
+    plotitem.amr_celledges_show = [0,0,0]
+    plotitem.patchedges_show = 1
+
+    # Land
+    plotitem = plotaxes.new_plotitem(plot_type='2d_pcolor')
+    plotitem.plot_var = geoplot.land
+    plotitem.pcolor_cmap = geoplot.land_colors
+    plotitem.pcolor_cmin = 0.0
+    plotitem.pcolor_cmax = 100.0
+    plotitem.add_colorbar = False
+    plotitem.amr_celledges_show = [1,1,0]
+    plotitem.patchedges_show = 1
 
 
     #-----------------------------------------
@@ -191,7 +233,7 @@ def setplot(plotdata=None):
 
     plotdata.printfigs = True                # print figures
     plotdata.print_format = 'png'            # file format
-    plotdata.print_framenos = 'all'          # list of frames to print
+    plotdata.print_framenos = [0,1,2,3]      # list of frames to print
     plotdata.print_gaugenos = 'all'          # list of gauges to print
     plotdata.print_fignos = 'all'            # list of figures to print
     plotdata.html = True                     # create html files of plots?
@@ -201,6 +243,11 @@ def setplot(plotdata=None):
     plotdata.latex_framesperline = 1         # layout of plots
     plotdata.latex_makepdf = False           # also run pdflatex?
     plotdata.parallel = True                 # make multiple frame png's at once
+
+    plotdata.mp4_movie = True
+    plotdata.movie_name_prefix = 'chile2010_'
+    plotdata.gif_movie = True
+
 
     return plotdata
 

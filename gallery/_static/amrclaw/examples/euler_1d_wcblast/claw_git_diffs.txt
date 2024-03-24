@@ -6,49 +6,46 @@ clawpack
 /Users/rjl/clawpack_src/clawpack_master/
 
 diff --git a/amrclaw b/amrclaw
+index 4b50c26..36f7f43 160000
 --- a/amrclaw
 +++ b/amrclaw
 @@ -1 +1 @@
--Subproject commit 7d3e82fc7c4f138dcaa762b1ee5d1c09b79e43be
-+Subproject commit 7d3e82fc7c4f138dcaa762b1ee5d1c09b79e43be-dirty
+-Subproject commit 4b50c2661a955639e634102fe80c38f77883aebc
++Subproject commit 36f7f43e9165841c6bb7e78f7015cec7b7f8528a-dirty
 diff --git a/classic b/classic
 --- a/classic
 +++ b/classic
 @@ -1 +1 @@
--Subproject commit 13f06a2342255c012b24ec594a4724c0e78409d8
-+Subproject commit 13f06a2342255c012b24ec594a4724c0e78409d8-dirty
+-Subproject commit a27a4951a42f392cd8d1b36ed296b84f53e888e8
++Subproject commit a27a4951a42f392cd8d1b36ed296b84f53e888e8-dirty
 diff --git a/clawutil b/clawutil
+index f52b270..91a844b 160000
 --- a/clawutil
 +++ b/clawutil
 @@ -1 +1 @@
--Subproject commit 116ffb792e889fbf0854d7ac599657039d7b1f3e
-+Subproject commit 116ffb792e889fbf0854d7ac599657039d7b1f3e-dirty
+-Subproject commit f52b270d13622e7b65e3dc1b34cb8dbd017ee72b
++Subproject commit 91a844b2f2c5416e456543ad5f385567e51a2761
 diff --git a/geoclaw b/geoclaw
-index ec5966d..3b17a37 160000
+index 2226769..e790c13 160000
 --- a/geoclaw
 +++ b/geoclaw
 @@ -1 +1 @@
--Subproject commit ec5966d4aeb1564d760ea3a8321ecbdd7ec8bc97
-+Subproject commit 3b17a37c7d458c3f6d61b2299987cea90f11b6a1-dirty
-diff --git a/pyclaw b/pyclaw
-index a85a01a..feab1b5 160000
---- a/pyclaw
-+++ b/pyclaw
-@@ -1 +1 @@
--Subproject commit a85a01a5f20be1a18dde70b7bb37dc1cdcbd0b26
-+Subproject commit feab1b5eb19d50adb89195a891d2062cc2ad13c2
+-Subproject commit 222676970c6f12fefcc3a715eda7ac00b3c22b89
++Subproject commit e790c13ee11de7de4b75660befe1213d73f90cf1-dirty
 diff --git a/riemann b/riemann
+index 45fa75b..7b4004c 160000
 --- a/riemann
 +++ b/riemann
 @@ -1 +1 @@
--Subproject commit 597824c051d56fa0c8818e00d740867283329b24
-+Subproject commit 597824c051d56fa0c8818e00d740867283329b24-dirty
+-Subproject commit 45fa75b3a40672284b79a85fb9a439fc536e0486
++Subproject commit 7b4004c044d04900ca2de6bc6ae49fc23330c64f
 diff --git a/visclaw b/visclaw
+index 32e257c..e53c1fd 160000
 --- a/visclaw
 +++ b/visclaw
 @@ -1 +1 @@
--Subproject commit b03b0d40aeab7706e99bea7d207f0cabd933ecdb
-+Subproject commit b03b0d40aeab7706e99bea7d207f0cabd933ecdb-dirty
+-Subproject commit 32e257c83c6810fd7881c44c06956bae7b82fa9b
++Subproject commit e53c1fd36f3c2eee2fc402ddc572d3cd6c67ed63
 
 
 ===========
@@ -56,6 +53,40 @@ classic
 ===========
 /Users/rjl/clawpack_src/clawpack_master/classic
 
+diff --git a/examples/run_tests.py b/examples/run_tests.py
+index f30c640..7a65c5c 100644
+--- a/examples/run_tests.py
++++ b/examples/run_tests.py
+@@ -10,15 +10,23 @@ import os
+ env = os.environ
+ env['GIT_STATUS'] = 'True'
+ env['FFLAGS'] = '-O2 -fopenmp'
+-env['OMP_NUM_THREADS'] = '3'
++env['OMP_NUM_THREADS'] = '6'
+ 
+ make_all.make_all(make_clean_first=True, env=env)
+ 
++run_notebooks = True  # run any *.ipynb files and create html versions?
++
++if run_notebooks:
++    make_all.make_notebook_htmls(env=env)
++
+ 
+ print("\n-----------------------------------------------------------\n")
+ 
+-all_ok = regression_tests.test_subdirs()
+-if all_ok:
+-    print("===> All tests pass")
+-else:
+-    print("===> Some test(s) failed")
++if 0:
++    # Not currently working since gallery links changed
++    # Needs more general rethinking
++    all_ok = regression_tests.test_subdirs()
++    if all_ok:
++        print("===> All tests pass")
++    else:
++        print("===> Some test(s) failed")
 
 
 ===========
@@ -63,6 +94,40 @@ amrclaw
 ===========
 /Users/rjl/clawpack_src/clawpack_master/amrclaw
 
+diff --git a/examples/run_tests.py b/examples/run_tests.py
+index abff5e0..7a65c5c 100644
+--- a/examples/run_tests.py
++++ b/examples/run_tests.py
+@@ -10,14 +10,23 @@ import os
+ env = os.environ
+ env['GIT_STATUS'] = 'True'
+ env['FFLAGS'] = '-O2 -fopenmp'
+-env['OMP_NUM_THREADS'] = '3'
++env['OMP_NUM_THREADS'] = '6'
+ 
+ make_all.make_all(make_clean_first=True, env=env)
+ 
++run_notebooks = True  # run any *.ipynb files and create html versions?
++
++if run_notebooks:
++    make_all.make_notebook_htmls(env=env)
++
++
+ print("\n-----------------------------------------------------------\n")
+ 
+-all_ok = regression_tests.test_subdirs()
+-if all_ok:
+-    print("===> All tests pass")
+-else:
+-    print("===> Some test(s) failed")
++if 0:
++    # Not currently working since gallery links changed
++    # Needs more general rethinking
++    all_ok = regression_tests.test_subdirs()
++    if all_ok:
++        print("===> All tests pass")
++    else:
++        print("===> Some test(s) failed")
 
 
 ===========
@@ -98,3 +163,16 @@ geoclaw
 ===========
 /Users/rjl/clawpack_src/clawpack_master/geoclaw
 
+diff --git a/examples/run_tests.py b/examples/run_tests.py
+index 7ea041ab..7a65c5c2 100644
+--- a/examples/run_tests.py
++++ b/examples/run_tests.py
+@@ -10,7 +10,7 @@ import os
+ env = os.environ
+ env['GIT_STATUS'] = 'True'
+ env['FFLAGS'] = '-O2 -fopenmp'
+-env['OMP_NUM_THREADS'] = '3'
++env['OMP_NUM_THREADS'] = '6'
+ 
+ make_all.make_all(make_clean_first=True, env=env)
+ 

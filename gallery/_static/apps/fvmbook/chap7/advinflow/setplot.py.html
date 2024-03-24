@@ -15,7 +15,7 @@
            <font FACE="HELVETICA,ARIAL">
            
 <!-- Created from the file /Users/rjl/clawpack_src/clawpack_master/apps/fvmbook/chap7/advinflow/setplot.py -->
-<!-- Date: Mon Jan 18 2021 at 15:32:51 -->
+<!-- Date: Sat Mar 23 2024 at 11:05:23 -->
 
 <table bgcolor="#FFEE99"> <tr> <td>
 &nbsp;<font size=6> setplot.py.html </font> </td>
@@ -27,7 +27,7 @@
 </td></tr><tr><td>
 &nbsp;Directory:  &nbsp; /Users/rjl/clawpack_src/clawpack_master/apps/fvmbook/chap7/advinflow 
 </td></tr><tr><td>
-&nbsp;Converted:  &nbsp; Mon Jan 18 2021 at 15:32:51 
+&nbsp;Converted:  &nbsp; Sat Mar 23 2024 at 11:05:23 
 &nbsp; using <a href="http://www.clawpack.org//doc/application_documentation.html#clawcode2html">clawcode2html</a>
 </td></tr><tr><td>
 <font color="#BB3300"> &nbsp;This documentation file will 
@@ -43,6 +43,18 @@ This module is imported by the plotting routines and then the
 function setplot is called to set the plot parameters.
     
 """ 
+
+import setrun
+rundata = setrun.setrun()
+u = rundata.probdata.u
+
+def g(t):
+    """
+    Function defining boundary condition u(0,t) = g(t).
+    Should agree with Fortran version g.f.
+    """
+    from numpy import sin
+    return sin(10*t)
 
 <font color="blue">#--------------------------</font>
 def setplot(plotdata):
@@ -75,6 +87,18 @@ def setplot(plotdata):
     plotitem.color = 'b'
     plotitem.show = True       <font color="blue"># show on plot?</font>
     
+    def qtrue(current_data):
+        from numpy import where
+        t = current_data.t
+        x = current_data.x
+        qtrue = where(x<u*t, g(t-x/u), 0.)
+        return qtrue
+
+    plotitem = plotaxes.new_plotitem(plot_type='1d')
+    plotitem.plot_var = qtrue
+    plotitem.plotstyle = '-'
+    plotitem.color = 'r'
+    plotitem.show = True       <font color="blue"># show on plot?</font>
 
     <font color="blue"># Parameters used only when creating html and/or latex hardcopy</font>
     <font color="blue"># e.g., via clawpack.visclaw.frametools.printframes:</font>

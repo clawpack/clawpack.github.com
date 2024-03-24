@@ -1,10 +1,92 @@
 Clawpack git diffs...
 
 ===========
+clawpack
+===========
+/Users/rjl/clawpack_src/clawpack_master/
+
+diff --git a/amrclaw b/amrclaw
+index 4b50c26..36f7f43 160000
+--- a/amrclaw
++++ b/amrclaw
+@@ -1 +1 @@
+-Subproject commit 4b50c2661a955639e634102fe80c38f77883aebc
++Subproject commit 36f7f43e9165841c6bb7e78f7015cec7b7f8528a-dirty
+diff --git a/classic b/classic
+--- a/classic
++++ b/classic
+@@ -1 +1 @@
+-Subproject commit a27a4951a42f392cd8d1b36ed296b84f53e888e8
++Subproject commit a27a4951a42f392cd8d1b36ed296b84f53e888e8-dirty
+diff --git a/clawutil b/clawutil
+index f52b270..91a844b 160000
+--- a/clawutil
++++ b/clawutil
+@@ -1 +1 @@
+-Subproject commit f52b270d13622e7b65e3dc1b34cb8dbd017ee72b
++Subproject commit 91a844b2f2c5416e456543ad5f385567e51a2761
+diff --git a/geoclaw b/geoclaw
+index 2226769..e790c13 160000
+--- a/geoclaw
++++ b/geoclaw
+@@ -1 +1 @@
+-Subproject commit 222676970c6f12fefcc3a715eda7ac00b3c22b89
++Subproject commit e790c13ee11de7de4b75660befe1213d73f90cf1-dirty
+diff --git a/riemann b/riemann
+index 45fa75b..7b4004c 160000
+--- a/riemann
++++ b/riemann
+@@ -1 +1 @@
+-Subproject commit 45fa75b3a40672284b79a85fb9a439fc536e0486
++Subproject commit 7b4004c044d04900ca2de6bc6ae49fc23330c64f
+diff --git a/visclaw b/visclaw
+index 32e257c..e53c1fd 160000
+--- a/visclaw
++++ b/visclaw
+@@ -1 +1 @@
+-Subproject commit 32e257c83c6810fd7881c44c06956bae7b82fa9b
++Subproject commit e53c1fd36f3c2eee2fc402ddc572d3cd6c67ed63
+
+
+===========
 classic
 ===========
 /Users/rjl/clawpack_src/clawpack_master/classic
 
+diff --git a/examples/run_tests.py b/examples/run_tests.py
+index f30c640..7a65c5c 100644
+--- a/examples/run_tests.py
++++ b/examples/run_tests.py
+@@ -10,15 +10,23 @@ import os
+ env = os.environ
+ env['GIT_STATUS'] = 'True'
+ env['FFLAGS'] = '-O2 -fopenmp'
+-env['OMP_NUM_THREADS'] = '3'
++env['OMP_NUM_THREADS'] = '6'
+ 
+ make_all.make_all(make_clean_first=True, env=env)
+ 
++run_notebooks = True  # run any *.ipynb files and create html versions?
++
++if run_notebooks:
++    make_all.make_notebook_htmls(env=env)
++
+ 
+ print("\n-----------------------------------------------------------\n")
+ 
+-all_ok = regression_tests.test_subdirs()
+-if all_ok:
+-    print("===> All tests pass")
+-else:
+-    print("===> Some test(s) failed")
++if 0:
++    # Not currently working since gallery links changed
++    # Needs more general rethinking
++    all_ok = regression_tests.test_subdirs()
++    if all_ok:
++        print("===> All tests pass")
++    else:
++        print("===> Some test(s) failed")
 
 
 ===========
@@ -12,19 +94,40 @@ amrclaw
 ===========
 /Users/rjl/clawpack_src/clawpack_master/amrclaw
 
-diff --git a/examples/advection_1d_example1/setrun.py b/examples/advection_1d_example1/setrun.py
-index 465a777..1b687db 100644
---- a/examples/advection_1d_example1/setrun.py
-+++ b/examples/advection_1d_example1/setrun.py
-@@ -106,7 +106,7 @@ def setrun(claw_pkg='amrclaw'):
-     if clawdata.output_style==1:
-         # Output ntimes frames at equally spaced times up to tfinal:
-         # Can specify num_output_times = 0 for no output
--        clawdata.num_output_times = 20
-+        clawdata.num_output_times = 4 #20
-         clawdata.tfinal = 4.000000
-         clawdata.output_t0 = True  # output at initial (or restart) time?
-         
+diff --git a/examples/run_tests.py b/examples/run_tests.py
+index abff5e0..7a65c5c 100644
+--- a/examples/run_tests.py
++++ b/examples/run_tests.py
+@@ -10,14 +10,23 @@ import os
+ env = os.environ
+ env['GIT_STATUS'] = 'True'
+ env['FFLAGS'] = '-O2 -fopenmp'
+-env['OMP_NUM_THREADS'] = '3'
++env['OMP_NUM_THREADS'] = '6'
+ 
+ make_all.make_all(make_clean_first=True, env=env)
+ 
++run_notebooks = True  # run any *.ipynb files and create html versions?
++
++if run_notebooks:
++    make_all.make_notebook_htmls(env=env)
++
++
+ print("\n-----------------------------------------------------------\n")
+ 
+-all_ok = regression_tests.test_subdirs()
+-if all_ok:
+-    print("===> All tests pass")
+-else:
+-    print("===> Some test(s) failed")
++if 0:
++    # Not currently working since gallery links changed
++    # Needs more general rethinking
++    all_ok = regression_tests.test_subdirs()
++    if all_ok:
++        print("===> All tests pass")
++    else:
++        print("===> Some test(s) failed")
 
 
 ===========
@@ -32,111 +135,6 @@ clawutil
 ===========
 /Users/rjl/clawpack_src/clawpack_master/clawutil
 
-diff --git a/src/python/clawutil/nbtools.py b/src/python/clawutil/nbtools.py
-index ad5652e..ef6f796 100644
---- a/src/python/clawutil/nbtools.py
-+++ b/src/python/clawutil/nbtools.py
-@@ -4,7 +4,10 @@ Useful tools for running Clawpack from an IPython notebook.
- 
- from __future__ import absolute_import
- from __future__ import print_function
-+import os
-+
- from IPython.core.display import display
-+
- try:
-     from IPython.display import FileLink
- except:
-@@ -87,7 +90,7 @@ def make_exe(new=False, env=None, verbose=True):
-     make_driver(args, env, outfile, verbose)
- 
-     
--def make_output(label=None, env=None, verbose=True):
-+def make_output(label=None, env=None, outdir_base='_output', verbose=True):
-     """Perform 'make output' and display link."""
-     
-     if label is None: 
-@@ -95,7 +98,7 @@ def make_output(label=None, env=None, verbose=True):
-     else:
-         if label[0] != '_':
-             label = '_' + label
--    outdir = '_output%s' % str(label)
-+    outdir = '%s%s' % (outdir_base,str(label))
-     outfile = 'run_output%s.txt' % str(label)
- 
-     args = 'output OUTDIR=%s' % outdir
-@@ -104,7 +107,8 @@ def make_output(label=None, env=None, verbose=True):
-     return outdir
- 
-     
--def make_plots(label=None, env=None, verbose=True):
-+def make_plots(label=None, env=None, outdir_base='_output', 
-+               plotdir_base='_plots', verbose=True):
-     """Perform 'make plots' and display links"""
- 
-     if label is None: 
-@@ -112,29 +116,42 @@ def make_plots(label=None, env=None, verbose=True):
-     else:
-         if label[0] != '_':
-             label = '_' + label
--    outdir = '_output%s' % str(label)
--    plotdir = '_plots%s' % str(label)
-+    outdir = '%s%s' % (outdir_base,str(label))
-+    plotdir = '%s%s' % (plotdir_base,str(label))
-     outfile = 'plot_output%s.txt' % str(label)
- 
-     args = 'plots OUTDIR=%s PLOTDIR=%s' % (outdir,plotdir)
-     make_driver(args, env, outfile, verbose)
- 
-     if verbose:
--        index_file = FileLink('%s/_PlotIndex.html' % plotdir)
-+        print('+++ ',os.getcwd())
-+        plotindex_path = '%s/PlotIndex.html' % plotdir
-+        index_file = FileLink(plotindex_path)
-         print("View plots created at this link:")
-         display(index_file)
- 
-+        plotindex_path = os.path.join(os.getcwd(), '%s/PlotIndex.html' % plotdir)
-+        plotindex_path = 'file://' + plotindex_path
-+        print('Note that some links may not work when opened on Juptyer')
-+        print('If you are running this locally, you should also be able to view')
-+        print('plots by copying and pasting this link into a new browser tab:')
-+        print('    ',plotindex_path)
-+
-     return plotdir
-     
- 
--def make_output_and_plots(label=None, env=None, verbose=True):
-+def make_output_and_plots(label=None, env=None, 
-+                outdir_base='_output', plotdir_base='_plots', verbose=True):
- 
--    outdir = make_output(label,env,verbose)
--    plotdir = make_plots(label,env,verbose)
-+    outdir = make_output(label,env,outdir_base=outdir_base,verbose=verbose)
-+    plotdir = make_plots(label,env,outdir_base=outdir_base,
-+                         plotdir_base=plotdir_base,verbose=verbose)
-     return outdir,plotdir
- 
- 
--def make_all(label=None, env=None, verbose=True):
-+def make_all(label=None, env=None,
-+             outdir_base='_output', plotdir_base='_plots', verbose=True):
-+
-     """Perform 'make all' and display links"""
- 
-     if label is None: 
-@@ -150,7 +167,10 @@ def make_all(label=None, env=None, verbose=True):
-     make_driver(args, env, outfile, verbose)
- 
-     if verbose:
--        index_file = FileLink('%s/_PlotIndex.html' % plotdir)
-+        print('+++ ',os.getcwd())
-+        plotindex_path = os.path.join(os.getcwd(), '%s/PlotIndex.html' % plotdir)
-+        print('+++ ',plotindex_path)
-+        index_file = FileLink(plotindex_path)
-         print("View plots created at this link:")
-         display(index_file)
- 
 
 
 ===========
@@ -165,3 +163,16 @@ geoclaw
 ===========
 /Users/rjl/clawpack_src/clawpack_master/geoclaw
 
+diff --git a/examples/run_tests.py b/examples/run_tests.py
+index 7ea041ab..7a65c5c2 100644
+--- a/examples/run_tests.py
++++ b/examples/run_tests.py
+@@ -10,7 +10,7 @@ import os
+ env = os.environ
+ env['GIT_STATUS'] = 'True'
+ env['FFLAGS'] = '-O2 -fopenmp'
+-env['OMP_NUM_THREADS'] = '3'
++env['OMP_NUM_THREADS'] = '6'
+ 
+ make_all.make_all(make_clean_first=True, env=env)
+ 

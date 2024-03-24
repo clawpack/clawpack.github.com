@@ -6,47 +6,40 @@ clawpack
 /Users/rjl/clawpack_src/clawpack_master/
 
 diff --git a/amrclaw b/amrclaw
+index 4b50c26..36f7f43 160000
 --- a/amrclaw
 +++ b/amrclaw
 @@ -1 +1 @@
--Subproject commit 3b64e95d947fb60bf6ae5e7fa3952b97969230dc
-+Subproject commit 3b64e95d947fb60bf6ae5e7fa3952b97969230dc-dirty
-diff --git a/classic b/classic
---- a/classic
-+++ b/classic
-@@ -1 +1 @@
--Subproject commit 2d0f3d2449d8bd9ea8361031c9d25f44bd1d11f9
-+Subproject commit 2d0f3d2449d8bd9ea8361031c9d25f44bd1d11f9-dirty
+-Subproject commit 4b50c2661a955639e634102fe80c38f77883aebc
++Subproject commit 36f7f43e9165841c6bb7e78f7015cec7b7f8528a
 diff --git a/clawutil b/clawutil
+index f52b270..91a844b 160000
 --- a/clawutil
 +++ b/clawutil
 @@ -1 +1 @@
--Subproject commit 60c7f2397222e250b3e8e63673234aa5582700b0
-+Subproject commit 60c7f2397222e250b3e8e63673234aa5582700b0-dirty
+-Subproject commit f52b270d13622e7b65e3dc1b34cb8dbd017ee72b
++Subproject commit 91a844b2f2c5416e456543ad5f385567e51a2761
 diff --git a/geoclaw b/geoclaw
+index 2226769..cc56341 160000
 --- a/geoclaw
 +++ b/geoclaw
 @@ -1 +1 @@
--Subproject commit 466573e294a3ad8a90a7148b4fe6ea0cba0df4cb
-+Subproject commit 466573e294a3ad8a90a7148b4fe6ea0cba0df4cb-dirty
-diff --git a/pyclaw b/pyclaw
---- a/pyclaw
-+++ b/pyclaw
-@@ -1 +1 @@
--Subproject commit 85fab6ad414001c6ad019559bde10e0e0df20bf4
-+Subproject commit 85fab6ad414001c6ad019559bde10e0e0df20bf4-dirty
+-Subproject commit 222676970c6f12fefcc3a715eda7ac00b3c22b89
++Subproject commit cc5634177eee3df9518cf21342247035d3a268dc-dirty
 diff --git a/riemann b/riemann
+index 45fa75b..7b4004c 160000
 --- a/riemann
 +++ b/riemann
 @@ -1 +1 @@
--Subproject commit d177660f5e7ac7a966958708780717918d91aff6
-+Subproject commit d177660f5e7ac7a966958708780717918d91aff6-dirty
+-Subproject commit 45fa75b3a40672284b79a85fb9a439fc536e0486
++Subproject commit 7b4004c044d04900ca2de6bc6ae49fc23330c64f
 diff --git a/visclaw b/visclaw
+index 32e257c..e53c1fd 160000
 --- a/visclaw
 +++ b/visclaw
 @@ -1 +1 @@
--Subproject commit b763ccc8d8517c0090597e703b73b4409ca74fd6
-+Subproject commit b763ccc8d8517c0090597e703b73b4409ca74fd6-dirty
+-Subproject commit 32e257c83c6810fd7881c44c06956bae7b82fa9b
++Subproject commit e53c1fd36f3c2eee2fc402ddc572d3cd6c67ed63
 
 
 ===========
@@ -96,3 +89,38 @@ geoclaw
 ===========
 /Users/rjl/clawpack_src/clawpack_master/geoclaw
 
+diff --git a/examples/run_tests.py b/examples/run_tests.py
+index 7ea041ab..7a65c5c2 100644
+--- a/examples/run_tests.py
++++ b/examples/run_tests.py
+@@ -10,7 +10,7 @@ import os
+ env = os.environ
+ env['GIT_STATUS'] = 'True'
+ env['FFLAGS'] = '-O2 -fopenmp'
+-env['OMP_NUM_THREADS'] = '3'
++env['OMP_NUM_THREADS'] = '6'
+ 
+ make_all.make_all(make_clean_first=True, env=env)
+ 
+diff --git a/src/1d_classic/shallow/b4step1.f90 b/src/1d_classic/shallow/b4step1.f90
+index 600bb32b..f451cd97 100644
+--- a/src/1d_classic/shallow/b4step1.f90
++++ b/src/1d_classic/shallow/b4step1.f90
+@@ -93,11 +93,16 @@ subroutine b4step1(mbc,mx,meqn,q,xlower,dx,t,dt,maux,aux)
+ 
+             cell_zeta_mass = zeta * (xp_edge(i+1) - xp_edge(i))
+ 
+-            if (coordinate_system == 2) then
++            if (coordinate_system == -1) then
++                ! for total_mass on circle when using radial symmetry:
++                cell_zeta_mass = cell_zeta_mass * pi * &
++                         (xp_edge(i+1) + xp_edge(i))
++            else if (coordinate_system == 2) then
+                 ! for total mass on full sphere:
+                 cell_zeta_mass = cell_zeta_mass * (sin(xp_edge(i+1)*DEG2RAD) - &
+                          sin(xp_edge(i)*DEG2RAD))/dx * capa_latitude
+             endif
++
+             total_zeta_mass = total_zeta_mass + cell_zeta_mass
+         enddo
+     

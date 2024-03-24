@@ -9,46 +9,34 @@ diff --git a/amrclaw b/amrclaw
 --- a/amrclaw
 +++ b/amrclaw
 @@ -1 +1 @@
--Subproject commit 7d3e82fc7c4f138dcaa762b1ee5d1c09b79e43be
-+Subproject commit 7d3e82fc7c4f138dcaa762b1ee5d1c09b79e43be-dirty
+-Subproject commit 36f7f43e9165841c6bb7e78f7015cec7b7f8528a
++Subproject commit 36f7f43e9165841c6bb7e78f7015cec7b7f8528a-dirty
 diff --git a/classic b/classic
 --- a/classic
 +++ b/classic
 @@ -1 +1 @@
--Subproject commit 13f06a2342255c012b24ec594a4724c0e78409d8
-+Subproject commit 13f06a2342255c012b24ec594a4724c0e78409d8-dirty
+-Subproject commit a27a4951a42f392cd8d1b36ed296b84f53e888e8
++Subproject commit a27a4951a42f392cd8d1b36ed296b84f53e888e8-dirty
 diff --git a/clawutil b/clawutil
+index b8c1a95..266979d 160000
 --- a/clawutil
 +++ b/clawutil
 @@ -1 +1 @@
--Subproject commit 116ffb792e889fbf0854d7ac599657039d7b1f3e
-+Subproject commit 116ffb792e889fbf0854d7ac599657039d7b1f3e-dirty
+-Subproject commit b8c1a959b7171dd8733a677d0de2db81db36df4e
++Subproject commit 266979d9de47792019b4ad5c682ec4811ab308fe
 diff --git a/geoclaw b/geoclaw
-index ec5966d..657ab2d 160000
+index c10ff9e..7f4eabf 160000
 --- a/geoclaw
 +++ b/geoclaw
 @@ -1 +1 @@
--Subproject commit ec5966d4aeb1564d760ea3a8321ecbdd7ec8bc97
-+Subproject commit 657ab2dc89783e23163e9197d48893e2a6aaa497-dirty
-diff --git a/pyclaw b/pyclaw
-index a85a01a..feab1b5 160000
---- a/pyclaw
-+++ b/pyclaw
-@@ -1 +1 @@
--Subproject commit a85a01a5f20be1a18dde70b7bb37dc1cdcbd0b26
-+Subproject commit feab1b5eb19d50adb89195a891d2062cc2ad13c2
-diff --git a/riemann b/riemann
---- a/riemann
-+++ b/riemann
-@@ -1 +1 @@
--Subproject commit 597824c051d56fa0c8818e00d740867283329b24
-+Subproject commit 597824c051d56fa0c8818e00d740867283329b24-dirty
+-Subproject commit c10ff9e311a73483c3505e9c4a9156397f7a35e0
++Subproject commit 7f4eabfdbb6b338d6605e741ef8a2d171c480e1a
 diff --git a/visclaw b/visclaw
 --- a/visclaw
 +++ b/visclaw
 @@ -1 +1 @@
--Subproject commit b03b0d40aeab7706e99bea7d207f0cabd933ecdb
-+Subproject commit b03b0d40aeab7706e99bea7d207f0cabd933ecdb-dirty
+-Subproject commit e53c1fd36f3c2eee2fc402ddc572d3cd6c67ed63
++Subproject commit e53c1fd36f3c2eee2fc402ddc572d3cd6c67ed63-dirty
 
 
 ===========
@@ -56,6 +44,40 @@ classic
 ===========
 /Users/rjl/clawpack_src/clawpack_master/classic
 
+diff --git a/examples/run_tests.py b/examples/run_tests.py
+index f30c640..7a65c5c 100644
+--- a/examples/run_tests.py
++++ b/examples/run_tests.py
+@@ -10,15 +10,23 @@ import os
+ env = os.environ
+ env['GIT_STATUS'] = 'True'
+ env['FFLAGS'] = '-O2 -fopenmp'
+-env['OMP_NUM_THREADS'] = '3'
++env['OMP_NUM_THREADS'] = '6'
+ 
+ make_all.make_all(make_clean_first=True, env=env)
+ 
++run_notebooks = True  # run any *.ipynb files and create html versions?
++
++if run_notebooks:
++    make_all.make_notebook_htmls(env=env)
++
+ 
+ print("\n-----------------------------------------------------------\n")
+ 
+-all_ok = regression_tests.test_subdirs()
+-if all_ok:
+-    print("===> All tests pass")
+-else:
+-    print("===> Some test(s) failed")
++if 0:
++    # Not currently working since gallery links changed
++    # Needs more general rethinking
++    all_ok = regression_tests.test_subdirs()
++    if all_ok:
++        print("===> All tests pass")
++    else:
++        print("===> Some test(s) failed")
 
 
 ===========
@@ -63,6 +85,40 @@ amrclaw
 ===========
 /Users/rjl/clawpack_src/clawpack_master/amrclaw
 
+diff --git a/examples/run_tests.py b/examples/run_tests.py
+index abff5e0..7a65c5c 100644
+--- a/examples/run_tests.py
++++ b/examples/run_tests.py
+@@ -10,14 +10,23 @@ import os
+ env = os.environ
+ env['GIT_STATUS'] = 'True'
+ env['FFLAGS'] = '-O2 -fopenmp'
+-env['OMP_NUM_THREADS'] = '3'
++env['OMP_NUM_THREADS'] = '6'
+ 
+ make_all.make_all(make_clean_first=True, env=env)
+ 
++run_notebooks = True  # run any *.ipynb files and create html versions?
++
++if run_notebooks:
++    make_all.make_notebook_htmls(env=env)
++
++
+ print("\n-----------------------------------------------------------\n")
+ 
+-all_ok = regression_tests.test_subdirs()
+-if all_ok:
+-    print("===> All tests pass")
+-else:
+-    print("===> Some test(s) failed")
++if 0:
++    # Not currently working since gallery links changed
++    # Needs more general rethinking
++    all_ok = regression_tests.test_subdirs()
++    if all_ok:
++        print("===> All tests pass")
++    else:
++        print("===> Some test(s) failed")
 
 
 ===========
@@ -84,6 +140,31 @@ visclaw
 ===========
 /Users/rjl/clawpack_src/clawpack_master/visclaw
 
+diff --git a/src/python/visclaw/data.py b/src/python/visclaw/data.py
+index 134eba5..14f4d49 100644
+--- a/src/python/visclaw/data.py
++++ b/src/python/visclaw/data.py
+@@ -598,6 +598,7 @@ class ClawPlotFigure(clawdata.ClawData):
+         self.add_attribute('kml_show_figure',False)
+         self.add_attribute('kml_maxlevel',20)
+         self.add_attribute('kml_figsize',None)    # Figure size;  specify to get rid of aliasing
++        self.add_attribute('kml_gaugewidth',800)  # width of png for gauge plots
+         self._next_AXES = 0
+ 
+     def new_plotaxes(self, name=None, type='each_frame'):
+diff --git a/src/python/visclaw/plotpages.py b/src/python/visclaw/plotpages.py
+index 11f49a8..d512633 100644
+--- a/src/python/visclaw/plotpages.py
++++ b/src/python/visclaw/plotpages.py
+@@ -1010,7 +1010,7 @@ def plotclaw2kml(plotdata):
+                 "Time     : t1 = $[t1], t2 = $[t2]\n" + \
+                 "Location : x1 = $[x1], y1 = $[y1]\n" + \
+                 "</pre>" + \
+-                "<center><img style=\"width:500\" src=\"$[pngfile]\"/></center>" + \
++                "<center><img style=\"width:1000\" src=\"$[pngfile]\"/></center>" + \
+                 "<pre><b>File : $[pngfile]</pre>"
+ 
+         # the 'text' tag will replace Placemark description
 
 
 ===========
@@ -98,25 +179,3 @@ geoclaw
 ===========
 /Users/rjl/clawpack_src/clawpack_master/geoclaw
 
-diff --git a/examples/storm-surge/synthetic/setrun.py b/examples/storm-surge/synthetic/setrun.py
-index 0b2a168..71ef24b 100644
---- a/examples/storm-surge/synthetic/setrun.py
-+++ b/examples/storm-surge/synthetic/setrun.py
-@@ -172,7 +172,7 @@ def setrun(claw_pkg='geoclaw'):
-     # ------------------
- 
-     # Order of accuracy:  1 => Godunov,  2 => Lax-Wendroff plus limiters
--    clawdata.order = 2
-+    clawdata.order = 1
- 
-     # Use dimensional splitting? (not yet available for AMR)
-     clawdata.dimensional_split = 'unsplit'
-@@ -181,7 +181,7 @@ def setrun(claw_pkg='geoclaw'):
-     #  0 or 'none'      ==> donor cell (only normal solver used)
-     #  1 or 'increment' ==> corner transport of waves
-     #  2 or 'all'       ==> corner transport of 2nd order corrections too
--    clawdata.transverse_waves = 2
-+    clawdata.transverse_waves = 1
- 
-     # Number of waves in the Riemann solution:
-     clawdata.num_waves = 3
