@@ -1,0 +1,436 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+    <title>Fixed grid output (fgout) &#8212; Clawpack 5.10.x documentation</title>
+    <link rel="stylesheet" href="_static/base.css" type="text/css" />
+    <link rel="stylesheet" href="_static/layout.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/flasky.css" />
+    <link rel="stylesheet" type="text/css" href="_static/graphviz.css" />
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/sphinx_highlight.js"></script>
+    <link rel="shortcut icon" href="_static/clawicon.ico"/>
+    <link rel="author" title="About these documents" href="about.html" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Fixed grid monitoring (fgmax)" href="fgmax.html" />
+    <link rel="prev" title="Manning friction term" href="manning.html" /> 
+  </head><body>
+<div id="main-wrapper" class="sphinx">
+<div id="header-wrapper">
+  <section id="header">
+    <!-- <h1><a href="http://clawpack.org/">Clawpack</a></h1> -->
+    <h1><a href="http://clawpack.org/">Clawpack-5</a></h1> 
+    <nav>
+      <ul>
+        <li>
+          <a href="contents.html">Docs</a>
+        </li>
+        <li>
+          <a href="installing.html">Install</a>
+        </li>
+        <li>
+          <a class="" href="http://clawpack.org/gallery/index.html">Gallery</a>
+        </li>
+        <li>
+          <a href="about.html">Citation</a>
+        </li>
+        <li>
+          <a class="active" href="http://github.com/clawpack">GitHub</a>
+        </li>
+        <li>
+          <a class="" href="community.html">Community</a>
+        </li>
+        <li>
+          <a class="" href="developers.html">Contribute</a>
+        </li>
+      </ul>
+    </nav>
+  </section>
+<div class="decoration"></div>
+</div>
+
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="fgmax.html" title="Fixed grid monitoring (fgmax)"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="manning.html" title="Manning friction term"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="contents.html">Clawpack 5.10.x documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="geoclaw.html" accesskey="U">GeoClaw Description and Detailed Contents</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Fixed grid output (fgout)</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="fixed-grid-output-fgout">
+<span id="fgout"></span><h1>Fixed grid output (fgout)<a class="headerlink" href="#fixed-grid-output-fgout" title="Permalink to this heading">¶</a></h1>
+<p><strong>New in v5.9.0:</strong></p>
+<p>See also:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><a class="reference internal" href="fgout_tools_module.html#fgout-tools-module"><span class="std std-ref">fgout_tools module for working with fgout grids</span></a></p></li>
+<li><p><a class="reference internal" href="setrun_geoclaw.html#setrun-fgout"><span class="std std-ref">Fixed grid output</span></a> - For adding fgout data to <cite>setrun.py</cite></p></li>
+<li><p><a class="reference internal" href="#fgout-examples"><span class="std std-ref">fgout examples</span></a> - Links to some examples</p></li>
+</ul>
+</div></blockquote>
+<p>GeoClaw has the capability to output the results at specified output times
+on a specified “fixed grid” by interpolating from the AMR grids active at each
+output time.</p>
+<p>This complements the normal output frame capabilities of Clawpack,
+and has several advantages for some applications, particularly when
+making animations or when using the GeoClaw solution as input to
+another process, such as particle tracking.</p>
+<p>Advantages include:</p>
+<blockquote>
+<div><p>1. The solution is output on a fixed uniform grid at each fgout
+time, independent of the AMR structure.  This is useful in order
+to produce a set of frames for an animation that are all the same
+resolution with the same size array.</p>
+<p>2. It is possible to produce fgout outputs at times that do not
+coincide with the time steps of the computation, whereas standard
+frame output can only occur at the end of a time step on the coarsest
+level.  Hence fgout output does not require reducing the time step to hit
+the fgout times exactly, which would cause significant increase in
+computing time and possible degradation of the computed solution
+if the coarse grid time steps had to be greatly reduced to match
+frequent output times in a finely resolved region.</p>
+<p>3. When exploring the solution or making an animation over one
+small portion of the computational domain, it is possible to
+create an fgout grid that only covers this region at the desired
+resolution and does not require output of the entire AMR structure
+over the entire computational domain at each output time.
+This can <em>greatly</em> reduce the size of the output in some cases.</p>
+<p>4. If an fgout grid is output with sufficiently fine temporal resolution,
+then this set of data can be used to explore the solution in various ways
+using post-processing.  For example, it is possible to spatially
+interpolate to any desired location within the grid and produce a time
+series of the solution at this point.   This would be similar to the gauge
+output produced by GeoClaw, but would allow specifying the point of
+interest after the fact, whereas standard gauages must be specified in
+advance of the GeoClaw run (see <a class="reference internal" href="gauges.html#gauges"><span class="std std-ref">Gauges</span></a>).  Similarly, the fluid
+velocities computed from GeoClaw can be used to track particles (as
+massless tracer particles for visualization purposes, or with more
+complex dynamics for debris tracking). The Python module
+<a class="reference internal" href="fgout_tools_module.html#fgout-tools-module"><span class="std std-ref">fgout_tools module for working with fgout grids</span></a> provides some tools for interpolating
+from fgout frames to arbitrary points <cite>(x,y,t)</cite>.</p>
+</div></blockquote>
+<p>The original version of this, capability, originally called <cite>fixedgrid
+output</cite> in Clawpack 4.6 was carried over and existed through v5.8.x, but has
+been removed as of Version 5.9.0.</p>
+<p>An improved version for monitoring maximum values and arrival times was
+added in v5.7.0, referred to as <cite>fgmax grids</cite>; see <a class="reference internal" href="fgmax.html#fgmax"><span class="std std-ref">Fixed grid monitoring (fgmax)</span></a>.</p>
+<p>An improved version of the capability to output on a fixed grid at more
+frequent times than the standard AMR output has been introduced in v5.9.0,
+and these are now called <cite>fgout grids</cite> to complement the <cite>fgmax grids</cite>.
+These <cite>fgout grids</cite> are described further below.</p>
+<section id="input-file-specification">
+<span id="fgout-input"></span><h2>Input file specification<a class="headerlink" href="#input-file-specification" title="Permalink to this heading">¶</a></h2>
+<p>The GeoClaw Fortran code reads in one or more files that specify fgout grids
+grid(s) for writing out the solution on a fixed grid throughout
+the computation.</p>
+<p>The desired fgout grid(s) are specified to GeoClaw in <cite>setrun.py</cite>,
+by setting <cite>rundata.fgout_data.fgout_grids</cite> to be a list of objects
+of class <cite>fgout_tools.FGoutGrid</cite>.
+After doing <cite>make data</cite> or <cite>make .output</cite>, these are written out
+to <cite>fgout_grids.data</cite>, the file that is read by the Fortran code at runtime.</p>
+<p>More than one fgout grid can be specified, and an integer label with at
+most 4 digits can be assigned to each grid.  You can assign numbers
+to each fgout grid using the <cite>fgno</cite> attribute, described below.
+If you do not assign numbers, they will be numbered sequentially (1,2, etc.)
+based on the order they are specified in the <cite>setrun.py</cite> file.</p>
+</section>
+<section id="a-simple-example">
+<h2>A simple example<a class="headerlink" href="#a-simple-example" title="Permalink to this heading">¶</a></h2>
+<p>Here’s an example of how one grid can be set up:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">clawpack.geoclaw</span> <span class="kn">import</span> <span class="n">fgout_tools</span>
+
+<span class="n">fgout_grids</span> <span class="o">=</span> <span class="n">rundata</span><span class="o">.</span><span class="n">fgout_data</span><span class="o">.</span><span class="n">fgout_grids</span>  <span class="c1"># empty list initially</span>
+
+<span class="n">fgout</span> <span class="o">=</span> <span class="n">fgout_tools</span><span class="o">.</span><span class="n">FGoutGrid</span><span class="p">()</span>
+<span class="n">fgout</span><span class="o">.</span><span class="n">fgno</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="n">fgout</span><span class="o">.</span><span class="n">output_format</span> <span class="o">=</span> <span class="s1">&#39;binary32&#39;</span>
+<span class="n">fgout</span><span class="o">.</span><span class="n">nx</span> <span class="o">=</span> <span class="mi">200</span>
+<span class="n">fgout</span><span class="o">.</span><span class="n">ny</span> <span class="o">=</span> <span class="mi">250</span>
+<span class="n">fgout</span><span class="o">.</span><span class="n">x1</span> <span class="o">=</span> <span class="o">-</span><span class="mf">115.</span>
+<span class="n">fgout</span><span class="o">.</span><span class="n">x2</span> <span class="o">=</span> <span class="o">-</span><span class="mf">70.</span>
+<span class="n">fgout</span><span class="o">.</span><span class="n">y1</span> <span class="o">=</span> <span class="o">-</span><span class="mf">55.</span>
+<span class="n">fgout</span><span class="o">.</span><span class="n">y2</span> <span class="o">=</span> <span class="o">-</span><span class="mf">10.</span>
+<span class="n">fgout</span><span class="o">.</span><span class="n">tstart</span> <span class="o">=</span> <span class="mf">0.</span>
+<span class="n">fgout</span><span class="o">.</span><span class="n">tend</span> <span class="o">=</span> <span class="mf">6.</span><span class="o">*</span><span class="mi">3600</span>
+<span class="n">fgout</span><span class="o">.</span><span class="n">nout</span> <span class="o">=</span> <span class="mi">37</span>
+<span class="n">fgout_grids</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">fgout</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>This specifies output on a 200 by 250 grid of equally spaced points on the
+rectangle <cite>[-115, -70] x [-55, -10]</cite>.  (Note that these values are cell
+edges, the actual fgout points will be at cell centers,
+displaced from these edges.  See <a class="reference internal" href="#fgout-registration"><span class="std std-ref">fgout grid registration</span></a> below.)</p>
+<p>The output times are equally spaced
+from <cite>tstart = 0</cite> to <cite>tend = 6*3600</cite> (6 hours).
+There will be 37 total outputs, so one every 10 minutes.</p>
+<p>The parameter <cite>fgout.output_format</cite> can be set to <cite>‘ascii’</cite>, <cite>‘binary32’</cite>,
+or <cite>‘binary64’</cite>, the same options as supported for the standard output in
+geoclaw as of v5.9.0.
+Usually`’binary32’` is best, which truncates the float64 (kind=8)
+computated values in the fortran code to float32 (kind=4) before dumping the
+raw binary.  This is almost always sufficient precision for plotting or
+post-processing needs, and results in smaller files than either of the other
+options.  This may be particularly important if hundreds of fgout frames
+are saved for making an animation or doing particle tracking.</p>
+</section>
+<section id="format-of-fgout-output">
+<span id="fgout-format"></span><h2>Format of fgout output<a class="headerlink" href="#format-of-fgout-output" title="Permalink to this heading">¶</a></h2>
+<p>After GeoClaw has run, the output directory should contain
+files of this form for each fgout grid:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><cite>fgout0001.t0000</cite>  # containing info about this output time</p></li>
+<li><p><cite>fgout0001.q0000</cite>  # header (and also data if <cite>output_format==’ascii’</cite>)</p></li>
+<li><p><cite>fgout0001.b0000</cite>  # data in binary format (only if
+<cite>output_format==’binary32’</cite> or <cite>‘binary64’</cite>)</p></li>
+</ul>
+</div></blockquote>
+<p>These would be for fgout grid number <cite>fgno = 1</cite> at the first output time.</p>
+<p>These files have exactly the same format as the output files produced at
+each output time for standard GeoClaw output (and more generally for any
+Clawpack output), as described at <a class="reference internal" href="output_styles.html#output-styles"><span class="std std-ref">Output data sytles and formats</span></a>.  The style allows
+specifying AMR output in which there are many grids at each output time,
+possibly at various refinement levels.
+In the case of fgout grids there will always be only a single grid at each
+output time, with <cite>AMR_level</cite> set to 0 in the header files to indicate
+that these grids are not part of the general AMR hierarchy.</p>
+</section>
+<section id="using-setplot-py-to-produce-plots">
+<span id="fgout-setplot"></span><h2>Using <cite>setplot.py</cite> to produce plots<a class="headerlink" href="#using-setplot-py-to-produce-plots" title="Permalink to this heading">¶</a></h2>
+<p>Since the files have the same format as the usual <cite>fort.t</cite>, <cite>fort.q</cite>, and
+<cite>fort.b</cite> files for Clawpack output, it is possible to use a <cite>setplot.py</cite>
+file to set up plotting this sequence of fgout frames in exactly the same
+manner as for standard output.  The only difference is that it is necessary
+to specify that the file names start with <cite>fgout…</cite> rather than <cite>fort.</cite>.
+This can be done in <cite>setplot.py</cite> via:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">plotdata</span><span class="o">.</span><span class="n">file_prefix</span> <span class="o">=</span> <span class="s1">&#39;fgout0001&#39;</span>  <span class="c1"># for fgout grid fgno==1</span>
+<span class="n">plotdata</span><span class="o">.</span><span class="n">format</span> <span class="o">=</span> <span class="s1">&#39;binary32&#39;</span>    <span class="c1"># set to match fgout.output_format</span>
+</pre></div>
+</div>
+<p>An example is provided in
+<cite>$CLAW/geoclaw/examples/tsunami/chile2010_fgmax-fgout</cite>.</p>
+</section>
+<section id="reading-and-plotting-fgout-arrays-directly">
+<span id="fgout-plotting"></span><h2>Reading and plotting fgout arrays directly<a class="headerlink" href="#reading-and-plotting-fgout-arrays-directly" title="Permalink to this heading">¶</a></h2>
+<p>Alternatively, since every output frame consists of only a single uniform
+grid of data, it is much easier to manipulate or plot this data directly than
+for general AMR data.  The <cite>fgout_tools.py</cite> module described at
+<a class="reference internal" href="fgout_tools_module.html#fgout-tools-module"><span class="std std-ref">fgout_tools module for working with fgout grids</span></a> provides tools for reading frames and producing
+arrays that can then be worked with directly. It also contains tools for
+interpolating within these grids in both space and time.</p>
+<p>For example, here’s how to read a frame 5 of an fgout grid set up as above:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">fgno</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="n">outdir</span> <span class="o">=</span> <span class="s1">&#39;_output&#39;</span>
+<span class="n">output_format</span> <span class="o">=</span> <span class="s1">&#39;binary32&#39;</span>  <span class="c1"># format of fgout grid output</span>
+<span class="n">fgout_grid</span> <span class="o">=</span> <span class="n">fgout_tools</span><span class="o">.</span><span class="n">FGoutGrid</span><span class="p">(</span><span class="n">fgno</span><span class="p">,</span> <span class="n">outdir</span><span class="p">,</span> <span class="n">output_format</span><span class="p">)</span>
+
+<span class="n">fgframe</span> <span class="o">=</span> <span class="mi">5</span>
+<span class="n">fgout</span> <span class="o">=</span> <span class="n">fgout_grid</span><span class="o">.</span><span class="n">read_frame</span><span class="p">(</span><span class="n">fgframe</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Then <cite>fgout.X</cite> and <cite>fgout.Y</cite> are 2-dimensional arrays defining the grid
+and <cite>fgout.q</cite> defines the standard GeoClaw <cite>q</cite> array, with <cite>q[0:4,:,:]</cite>
+corresponding to <cite>h, hu, hv, eta</cite>, where <cite>eta = h+B</cite> and <cite>B</cite> is the topography.
+For convenience, additional attributes are defined using lazy
+evaluation only if requested by the user, including
+<cite>h, hu, hv, eta, u, v, s, hss</cite>, where <cite>s</cite> is the speed and
+<cite>hss</cite> is the momentum flux.</p>
+<p>The values in <cite>fgout.X</cite> and <cite>fgout.Y</cite> are the cell centers of the fgout
+grid, and if you want to plot the <cite>q</cite> values on this grid you should use
+<cite>clawpack.visclaw.plottools.pcolorcells</cite>, as described at
+<span class="xref std std-ref">pcolorcells</span>.  For example, here’s a minimalist example of plotting
+the water surface eta on top of topography for a single frame of fgout data
+as read above:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">clawpack.visclaw</span> <span class="kn">import</span> <span class="n">plottools</span><span class="p">,</span> <span class="n">geoplot</span>
+<span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="n">ma</span>
+
+<span class="n">plottools</span><span class="o">.</span><span class="n">pcolorcells</span><span class="p">(</span><span class="n">fgout</span><span class="o">.</span><span class="n">X</span><span class="p">,</span><span class="n">fgout</span><span class="o">.</span><span class="n">Y</span><span class="p">,</span><span class="n">fgout</span><span class="o">.</span><span class="n">B</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="n">geoplot</span><span class="o">.</span><span class="n">land_colors</span><span class="p">)</span>
+<span class="n">eta</span> <span class="o">=</span> <span class="n">ma</span><span class="o">.</span><span class="n">masked_where</span><span class="p">(</span><span class="n">fgout</span><span class="o">.</span><span class="n">h</span><span class="o">&lt;</span><span class="mf">0.001</span><span class="p">,</span> <span class="n">fgout</span><span class="o">.</span><span class="n">eta</span><span class="p">)</span>
+<span class="n">eta_plot</span> <span class="o">=</span> <span class="n">plottools</span><span class="o">.</span><span class="n">pcolorcells</span><span class="p">(</span><span class="n">fgout</span><span class="o">.</span><span class="n">X</span><span class="p">,</span><span class="n">fgout</span><span class="o">.</span><span class="n">Y</span><span class="p">,</span><span class="n">eta</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="n">geoplot</span><span class="o">.</span><span class="n">tsunami_colormap</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>For more detailed examples of plotting, including making animations,
+see <cite>$CLAW/geoclaw/examples/tsunami/chile2010_fgmax-fgout</cite>.</p>
+</section>
+<section id="fgout-grid-registration">
+<span id="fgout-registration"></span><h2>fgout grid registration<a class="headerlink" href="#fgout-grid-registration" title="Permalink to this heading">¶</a></h2>
+<p>Note above that fgout points are specified by setting e.g. <cite>fgout.x1,
+fgout.x2</cite> and <cite>fgout.nx</cite> in <cite>setrun.py</cite>.  For consistency with the way the
+finite volume computational grid is specified in <cite>setrun.py</cite>
+(and written to the output files),
+the values <cite>x1, x2</cite> are viewed as cell edges and <cite>nx</cite> is the desired number
+of cells (in the <cite>x</cite> direction).  The actual fgout points will be at the
+cell centers.  So the cell width (= distance between points)
+is <cite>dx = (x2-x1)/nx</cite>, and the first fgout point (cell center)
+will have <cite>x</cite> coordinate <cite>x1 + dx/2</cite>.</p>
+<p>Solution values at these points are interpolated from the finite volume
+GeoClaw solution as described in the next section.</p>
+</section>
+<section id="choice-of-interpolation-procedure">
+<span id="fgout-interp"></span><h2>Choice of interpolation procedure<a class="headerlink" href="#choice-of-interpolation-procedure" title="Permalink to this heading">¶</a></h2>
+<p>The fgout grid need not be aligned with any computational grid, and in general
+it may overlap several grids at different AMR resolutions. At each fgout time
+requested, the solution is interpolated from the finest available AMR grid
+covering each fgout point, at both the last time step before the fgout time
+and the first time step after the fgout time.</p>
+<p>The default spatial interpolation method used to assign values to fgout points
+at each time step is to assume the computational solution is constant in each
+finite volume cell and simply evaluate this value in the finest AMR level
+grid cell that includes
+the fgout point.  This is controlled by the parameter <cite>method = 0</cite> in
+subroutine <cite>fgout_interp</cite> in <cite>$CLAW/geoclaw/src/2d/shallow/fgout_module.f90</cite>.
+This is generally recommended rather than setting <cite>method = 1</cite>, which gives
+linear interpolation between finite volume cell centers, because interpolating
+<cite>h</cite>, <cite>B</cite>, and <cite>eta</cite> separately near the shore can lead to unphysically large
+values of <cite>h</cite> and/or <cite>eta</cite> (see <a class="reference internal" href="nearshore_interp.html#nearshore-interp"><span class="std std-ref">Nearshore interpolation</span></a>).</p>
+<p>Similarly, the temporal intepolation between the two neighboring time steps is
+done by simply using the value at the later time step, as controlled by the
+parameter <cite>method = 0</cite> in the
+subroutine <cite>fgout_write</cite> in <cite>$CLAW/geoclaw/src/2d/shallow/fgout_module.f90</cite>.
+This is generally recommended rather than setting <cite>method = 1</cite>, which gives
+linear interpolation between the times, because interpolating
+<cite>h</cite>, <cite>B</cite>, and <cite>eta</cite> separately near the shore can lead to unphysically large
+values of <cite>h</cite> and/or <cite>eta</cite> (see <a class="reference internal" href="nearshore_interp.html#nearshore-interp"><span class="std std-ref">Nearshore interpolation</span></a>).</p>
+<p>If you want to change one of these methods, you can make your own version of
+<cite>fgout_module.f90</cite> and point to this in the <cite>Makefile</cite> under <cite>MODULES=</cite>
+(see <a class="reference internal" href="makefiles_library.html#makefiles-replace"><span class="std std-ref">Replacing files with the same name as library files</span></a>).</p>
+</section>
+<section id="fgout-examples">
+<span id="id1"></span><h2>fgout examples<a class="headerlink" href="#fgout-examples" title="Permalink to this heading">¶</a></h2>
+<p>For some examples, see
+<cite>$CLAW/geoclaw/examples/tsunami/chile2010_fgmax-fgout</cite>.
+Sample results appear in the <a class="reference external" href="https://www.clawpack.org/gallery/gallery/gallery_geoclaw.html">GeoClaw Gallery</a>;
+see the
+<a class="reference external" href="https://www.clawpack.org/gallery/_static/geoclaw/examples/tsunami/chile2010_fgmax-fgout/README.html">README</a>
+for a description and links to the plots and a script for making an animation.</p>
+</section>
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<p><a href="http://clawpack.org/">
+    <img class="logo" src= "_static/clawlogo.jpg" alt="Logo"/>
+</a>
+<h2>Version 5.10.x</h2>
+</p>
+  <div>
+    <h3><a href="contents.html">Table of Contents</a></h3>
+    <ul>
+<li><a class="reference internal" href="#">Fixed grid output (fgout)</a><ul>
+<li><a class="reference internal" href="#input-file-specification">Input file specification</a></li>
+<li><a class="reference internal" href="#a-simple-example">A simple example</a></li>
+<li><a class="reference internal" href="#format-of-fgout-output">Format of fgout output</a></li>
+<li><a class="reference internal" href="#using-setplot-py-to-produce-plots">Using <cite>setplot.py</cite> to produce plots</a></li>
+<li><a class="reference internal" href="#reading-and-plotting-fgout-arrays-directly">Reading and plotting fgout arrays directly</a></li>
+<li><a class="reference internal" href="#fgout-grid-registration">fgout grid registration</a></li>
+<li><a class="reference internal" href="#choice-of-interpolation-procedure">Choice of interpolation procedure</a></li>
+<li><a class="reference internal" href="#fgout-examples">fgout examples</a></li>
+</ul>
+</li>
+</ul>
+
+  </div><h3>Related Topics</h3>
+<ul>
+  <li><a href="contents.html">Documentation overview</a><ul>
+  <li><a href="geoclaw.html">GeoClaw Description and Detailed Contents</a><ul>
+      <li>Previous: <a href="manning.html" title="previous chapter">Manning friction term</a></li>
+      <li>Next: <a href="fgmax.html" title="next chapter">Fixed grid monitoring (fgmax)</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+<div class="widget navlinks">
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/fgout.rst.txt"
+            rel="nofollow"
+            target="_blank">Source .rst</a></li>
+    <li><a href="https://github.com/clawpack/doc/blob/dev/doc/fgout.rst"
+            rel="nofollow"
+            target="_blank">Source on GitHub</a></li>
+     <li><a href="https://github.com/clawpack/doc/commits/dev/doc/fgout.rst"
+             rel="nofollow"
+             target="_blank">History</a></li>
+    <li><a href="https://github.com/clawpack/doc/edit/dev/doc/fgout.rst"
+            rel="nofollow"
+            target="_blank">Suggest Edits</a></li>
+     <li><a href="https://github.com/clawpack/doc/issues/new/choose"
+             rel="nofollow"
+             target="_blank">Raise an Issue</a></li>
+  </ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+<h4>Latest Version</h4>
+<ul>
+  <li><a href="../dev/fgout.html">dev</a></li>
+  <li><a href="fgout.html">v5.10.x</a></li>
+</ul>
+<h4>Older Versions</h4>
+<ul>
+  <li><a href="../v5.7.x/fgout.html">v5.7.x</a></li>
+  <li><a href="../v5.8.x/fgout.html">v5.8.x</a></li>
+  <li><a href="../v5.9.x/fgout.html">v5.9.x</a></li>
+</ul>
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+  <div class="footer">
+    &copy; Copyright CC-BY 2024, The Clawpack Development Team.
+    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
+  </div>
+  <script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-44811544-1', 'auto');
+  ga('send', 'pageview');
+
+  </script>
+  
+  </body>
+</html>

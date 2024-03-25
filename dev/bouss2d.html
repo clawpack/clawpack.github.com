@@ -6,7 +6,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
 
-    <title>Boussinesq solvers in Two Space Dimensions &#8212; Clawpack dev documentation</title>
+    <title>Boussinesq solvers in Two Space Dimensions &#8212; Clawpack 5.10.x documentation</title>
     <link rel="stylesheet" href="_static/base.css" type="text/css" />
     <link rel="stylesheet" href="_static/layout.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
@@ -74,7 +74,7 @@
         <li class="right" >
           <a href="bouss1d.html" title="Boussinesq solvers in One Space Dimension"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="contents.html">Clawpack dev documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="contents.html">Clawpack 5.10.x documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="geoclaw.html" accesskey="U">GeoClaw Description and Detailed Contents</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">Boussinesq solvers in Two Space Dimensions</a></li> 
       </ul>
@@ -87,11 +87,7 @@
             
   <section id="boussinesq-solvers-in-two-space-dimensions">
 <span id="bouss2d"></span><h1>Boussinesq solvers in Two Space Dimensions<a class="headerlink" href="#boussinesq-solvers-in-two-space-dimensions" title="Permalink to this heading">¶</a></h1>
-<div class="admonition warning">
-<p class="admonition-title">Warning</p>
-<p>Not yet incorporated in clawpack master branch or releases.</p>
-</div>
-<p>As of Version 5.10.0 (?), GeoClaw includes the option to solve a
+<p>As of Version 5.10.0, GeoClaw includes the option to solve a
 dispersive Boussinesq-type equation known as Serre-Green-Naghdi (SGN)
 instead of the usual shallow water equations (SWE).
 This equation and related depth-averaged equations have been used
@@ -159,19 +155,21 @@ to be more stable.</p>
 are generalized to include a parameter <cite>alpha</cite>
 suggested by Bonneton et al.  Both the 1D and 2D versions of these equations
 and their GeoClaw implementation are discussed in <a class="reference internal" href="biblio.html#bergerleveque2023" id="id3"><span>[BergerLeVeque2023]</span></a>.
-Setting <cite>alpha = 1</cite> gives the original SGN equations, but <cite>alpha = 1.153</cite> is
+The value <cite>alpha = 1.153</cite> is
 recommended since it gives a better approximation to the linear dispersion
-relation of the Airy solution to the full 3d problem. This value is
+relation of the Airy solution to the full 3d problem.
+This value is
 hardwired into <cite>$CLAW/geoclaw/src/2d/bouss/bouss_module.f90</cite>.  To change
 this value, you must modify this module.  (See <a class="reference internal" href="makefiles_library.html#makefiles-library"><span class="std std-ref">Library routines in Makefiles</span></a>
-for tips on modifying a library routine.)</p>
+for tips on modifying a library routine.)
+Setting <cite>alpha = 1</cite> gives the original SGN equations.</p>
 </section>
 <section id="the-madsen-sorensen-ms-equations">
 <span id="bouss2d-ms"></span><h2>The Madsen-Sorensen (MS) equations<a class="headerlink" href="#the-madsen-sorensen-ms-equations" title="Permalink to this heading">¶</a></h2>
 <p>Primarily for historical reasons, GeoClaw also includes an implementation of
 another Boussinesq-type dispersive system, the Madsen-Sorensen (MS) equations.
 These equations also give a good approximation to the linear dispersion
-relation of the Airy solution when the parameter <cite>beta = 1/15</cite> is used,
+relation of the Airy solution when the parameter <cite>Bparam = 1/15</cite> is used,
 which is hardwired into <cite>$CLAW/geoclaw/src/2d/bouss/bouss_module.f90</cite>.
 These equations were used in an earlier GeoClaw implementation
 by Jihwan Kim, known as BoussClaw  <a class="reference internal" href="biblio.html#kimetal2017" id="id4"><span>[KimEtAl2017]</span></a>.
@@ -218,14 +216,15 @@ directly):</p>
 </pre></div>
 </div>
 <p>These parameters are described below:</p>
-<ul class="simple">
+<ul>
 <li><p><cite>bouss_equations</cite>: The system of equations being solved.  Setting this to 2
-gives the recommended SGN equations, while 1 gives Madsen-Sorensen.
-Setting <cite>bouss_equations = 0</cite> causes the code to revert to the shallow
+gives the recommended SGN equations, while 1 gives Madsen-Sorensen.</p>
+<p>Setting <cite>bouss_equations = 0</cite> causes the code to revert to the shallow
 water equations, useful for comparing dispersive and nondispersive results.
 (But if <cite>bouss_data</cite> is being set, it still requires <cite>clawdata.num_eqn = 5</cite>
 and the two new components in q are always 0 in this case, so this is
-slightly less efficient than using the standard GeoClaw.)</p></li>
+slightly less efficient than using the standard GeoClaw.)</p>
+</li>
 <li><p><cite>bouss_min_level</cite>: The minimum AMR level on which Boussinesq correction
 terms should be applied.  In some cases it may be desirable to use the SWE
 on the coarsest grids in the ocean while Boussinesq corrections are only
@@ -270,8 +269,8 @@ be modified for the Boussinesq code.</p>
 environment variables in the shell from which <cite>make</cite> is invoked). These are
 described further below in <a class="reference internal" href="#bouss2d-prereqs"><span class="std std-ref">Prerequisites for the 2d Boussinesq code</span></a>.</p>
 <p>The <cite>FFLAGS</cite> specified in the <cite>Makefile</cite> should include <cite>-DHAVE_PETSC</cite>
-to indicate that <cite>PETSc</cite> is being used, necessary when compiling some of the
-source code.</p>
+to indicate that <cite>PETSc</cite> is being used, necessary when compiling the
+source code for Boussinesq solvers.</p>
 <p>The <cite>Makefile</cite> should also include a line of the form:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>PETSC_OPTIONS=-options_file $(CLAW)/geoclaw/examples/bouss/petscMPIoptions
 </pre></div>
@@ -280,9 +279,9 @@ source code.</p>
 <cite>$CLAW/geoclaw/examples/bouss/petscMPIoptions</cite> gives the options used in
 the examples, which may be adequate for other problems too.
 This file includes some comments briefly explaining the options set.
-We use KSP (a Krylov space method) as the main solver
-and GMRES as the preconditioner (pc).  For more about the options for
-these methods, see:</p>
+We use a GMRES Krylov space method as the main solver
+and algebraic multigrid as the preconditioner.
+For more about the options for these methods, see:</p>
 <blockquote>
 <div><ul class="simple">
 <li><p><a class="reference external" href="https://petsc.org/release/manualpages/KSP/KSPSetFromOptions">https://petsc.org/release/manualpages/KSP/KSPSetFromOptions</a></p></li>
@@ -318,11 +317,11 @@ Note that MPI, LAPACK, and the BLAS are required and will be installed as
 part of installing PETSc.  If you already have some of the prerequisites
 installed, be sure to read <a class="reference external" href="https://petsc.org/release/install/install/#configuring-petsc">Configuring PETSc</a>
 before installing.</p>
-<p>The environment variables <cite>$PETSC_DIR</cite> And <cite>$PETSC_ARCH</cite> must be set
+<p>The environment variables <cite>$PETSC_DIR</cite> and <cite>$PETSC_ARCH</cite> must be set
 appropriately based on your PETSc installation, either as environment
 variables or directly in the <cite>Makefile</cite>.
 See the PETSc documentation page
-<a class="reference external" href="https://petsc.org/release/install/multibuild/#environmental-variables-petsc-dir-and-petsc-arch">Environmental Variables $PETSC_DIR And $PETSC_ARCH</a></p>
+<a class="reference external" href="https://petsc.org/release/install/multibuild/#environmental-variables-petsc-dir-and-petsc-arch">Environmental Variables $PETSC_DIR And $PETSC_ARCH</a>.</p>
 </section>
 <section id="wave-breaking-and-switching-to-swe">
 <span id="bouss2d-switch"></span><h2>Wave breaking and switching to SWE<a class="headerlink" href="#wave-breaking-and-switching-to-swe" title="Permalink to this heading">¶</a></h2>
@@ -330,7 +329,7 @@ See the PETSc documentation page
 modeling onshore inundation, the Boussinesq equations are not suitable.
 So some criterion is needed to drop these correction terms and revert to
 solving SWE near shore.  Many different approaches have been used in the
-literature.  So far we have only implemented the simplest common approach,
+literature.  So far we have only implemented the simplest commonly used approach,
 which is to revert to SWE in any grid cell where the initial water depth (at
 the initial time) is less than <cite>bouss_min_depth</cite>.</p>
 </section>
@@ -354,7 +353,7 @@ developed to accompany the paper <a class="reference internal" href="biblio.html
 <p><a href="http://clawpack.org/">
     <img class="logo" src= "_static/clawlogo.jpg" alt="Logo"/>
 </a>
-<h2>Version dev</h2>
+<h2>Version 5.10.x</h2>
 </p>
   <div>
     <h3><a href="contents.html">Table of Contents</a></h3>
@@ -414,12 +413,24 @@ developed to accompany the paper <a class="reference internal" href="biblio.html
     </div>
 </div>
 <script>document.getElementById('searchbox').style.display = "block"</script>
+<h4>Latest Version</h4>
+<ul>
+  <li><a href="bouss2d.html">dev</a></li>
+  <li><a href="../v5.10.x/bouss2d.html">v5.10.x</a></li>
+</ul>
+<h4>Older Versions</h4>
+<ul>
+  <li><a href="../v5.7.x/index.html">v5.7.x</a></li>
+  <li><a href="../v5.8.x/index.html">v5.8.x</a></li>
+  <li><a href="../v5.9.x/bouss2d.html">v5.9.x</a></li>
+</ul>
+
         </div>
       </div>
       <div class="clearer"></div>
     </div>
   <div class="footer">
-    &copy; Copyright CC-BY 2022, The Clawpack Development Team.
+    &copy; Copyright CC-BY 2024, The Clawpack Development Team.
     Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
   </div>
   <script>

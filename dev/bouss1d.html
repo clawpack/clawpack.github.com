@@ -6,7 +6,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
 
-    <title>Boussinesq solvers in One Space Dimension &#8212; Clawpack dev documentation</title>
+    <title>Boussinesq solvers in One Space Dimension &#8212; Clawpack 5.10.x documentation</title>
     <link rel="stylesheet" href="_static/base.css" type="text/css" />
     <link rel="stylesheet" href="_static/layout.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
@@ -74,7 +74,7 @@
         <li class="right" >
           <a href="geoclaw1d.html" title="GeoClaw in One Space Dimension"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="contents.html">Clawpack dev documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="contents.html">Clawpack 5.10.x documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="geoclaw.html" accesskey="U">GeoClaw Description and Detailed Contents</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">Boussinesq solvers in One Space Dimension</a></li> 
       </ul>
@@ -87,17 +87,13 @@
             
   <section id="boussinesq-solvers-in-one-space-dimension">
 <span id="bouss1d"></span><h1>Boussinesq solvers in One Space Dimension<a class="headerlink" href="#boussinesq-solvers-in-one-space-dimension" title="Permalink to this heading">¶</a></h1>
-<div class="admonition warning">
-<p class="admonition-title">Warning</p>
-<p>Not yet incorporated in clawpack master branch or releases.</p>
-</div>
-<p>As of Version 5.10.0 (?), the geoclaw repository contains some code for solving
+<p>As of Version 5.10.0, the geoclaw repository contains some code for solving
 problems in one space dimension, as described more generally in
 <a class="reference internal" href="geoclaw1d.html#geoclaw1d"><span class="std std-ref">GeoClaw in One Space Dimension</span></a>.  This 1d code also supports two different sets of
 dispersive Boussinesq equations that have been used in the literature
 to better model wave propagation in situations where the wavelength is not
 sufficiently long relative to the fluid depth for the shallow water
-equation approximation to be accurate.</p>
+equation (SWE) approximation to be accurate.</p>
 <p>These Boussinesq equations are still depth-averaged equation with the same
 conserved quantities (fluid depth <cite>h</cite> and momentum <cite>hu</cite> in 1d), but the
 equations contain higher order derivative terms and so they are no longer
@@ -111,7 +107,7 @@ linear system of equations in each time step.</p>
 of the Boussinesq-type equations SGN and MS that are implemented in GeoClaw.
 We recommend using the Serre-Green-Naghdi (SGN) equations rather than
 Madsen-Sorensen (MS), which has similar dispersive properties but
-been found to be less stable.</p>
+is less stable.</p>
 <section id="using-the-1d-boussinesq-code">
 <span id="bouss1d-usage"></span><h2>Using the 1d Boussinesq code<a class="headerlink" href="#using-the-1d-boussinesq-code" title="Permalink to this heading">¶</a></h2>
 <p>As in the 1d shallow water implementation, general mapped grids can be used,
@@ -121,22 +117,23 @@ equations are both implemented.  The axisymmetric version on the sphere
 (<cite>coordinate_system == 2</cite>) is not yet implemented.</p>
 <p>Specifying topo and dtopo files is identical to what is described for
 <a class="reference internal" href="geoclaw1d.html#geoclaw1d"><span class="std std-ref">GeoClaw in One Space Dimension</span></a>.</p>
-<p><strong>Some things that must change:</strong></p>
-<p>See the examples with names like <cite>$CLAW/geoclaw/examples/1d/bouss_*</cite>
-for some sample code that can be modified for other problems.</p>
+<p>The <cite>Makefile</cite> and <cite>setrun.py</cite> files must be modified from those used
+for SWE as described below.
+See the examples with names like <cite>$CLAW/geoclaw/examples/1d/bouss_*</cite>
+for sample files to use as a template.</p>
 <section id="makefile">
 <span id="bouss1d-makefile"></span><h3>Makefile<a class="headerlink" href="#makefile" title="Permalink to this heading">¶</a></h3>
 <p>A different <cite>Makefile</cite> is required for applications to use code from both
 the <cite>$CLAW/geoclaw/src/1d/shallow</cite> and <cite>$CLAW/geoclaw/src/1d/bouss</cite>
 libraries.</p>
 <p>Solving the Boussinesq equations requires solving an elliptic equation each
-time step, by setting up and solving a tridiagonal linear system of
+time step, which in one space dimension yields a tridiagonal linear system of
 equations.  LAPACK is used for this, and the <cite>Makefile</cite> requires <cite>FFLAGS</cite> to
-include <cite>-llapack -lblas</cite> or explicit pointers to these librarires on your
+include <cite>-llapack -lblas</cite> or explicit pointers to these libraries on your
 computer.  Alternatively, the file
 <cite>$CLAW/geoclaw/src/1d/bouss/lapack_tridiag.f</cite>
 contains the necessary soubroutines from lapack and the blas and so you can
-add this to the list of <cite>SOURCES</cite> in the <cite>Makefile</cite>.  See e.g.
+add this to the list of <cite>SOURCES</cite> in the <cite>Makefile</cite>.  See
 <cite>$CLAW/geoclaw/src/1d/examples/bouss_wavetank_matsuyama/Makefile</cite>
 for an example.</p>
 <p>OpenMP is not used in the 1d codes, so there is no need to compile with
@@ -167,7 +164,7 @@ hardwired into <cite>$CLAW/geoclaw/src/2d/bouss/bouss_module.f90</cite>.  To cha
 this value, you must modify this module.  (See <a class="reference internal" href="makefiles_library.html#makefiles-library"><span class="std std-ref">Library routines in Makefiles</span></a>
 for tips on modifying a library routine.)  Similarly, if you set
 <cite>bouss_equations = 1</cite> for the Madsen-Sorensen equations, the recommended
-parameter value <cite>B = 1/15</cite> is set in <cite>bouss_module.f90</cite>.</p>
+parameter value <cite>Bparam = 1/15</cite> is set in <cite>bouss_module.f90</cite>.</p>
 <p>Setting <cite>bouss_equations = 0</cite> causes the code to revert to the shallow
 water equations, useful for comparing dispersive and nondispersive results.</p>
 </li>
@@ -199,7 +196,7 @@ See <a class="reference internal" href="bouss2d.html#bouss2d-switch"><span class
 <p><a href="http://clawpack.org/">
     <img class="logo" src= "_static/clawlogo.jpg" alt="Logo"/>
 </a>
-<h2>Version dev</h2>
+<h2>Version 5.10.x</h2>
 </p>
   <div>
     <h3><a href="contents.html">Table of Contents</a></h3>
@@ -253,12 +250,24 @@ See <a class="reference internal" href="bouss2d.html#bouss2d-switch"><span class
     </div>
 </div>
 <script>document.getElementById('searchbox').style.display = "block"</script>
+<h4>Latest Version</h4>
+<ul>
+  <li><a href="bouss1d.html">dev</a></li>
+  <li><a href="../v5.10.x/bouss1d.html">v5.10.x</a></li>
+</ul>
+<h4>Older Versions</h4>
+<ul>
+  <li><a href="../v5.7.x/index.html">v5.7.x</a></li>
+  <li><a href="../v5.8.x/index.html">v5.8.x</a></li>
+  <li><a href="../v5.9.x/bouss1d.html">v5.9.x</a></li>
+</ul>
+
         </div>
       </div>
       <div class="clearer"></div>
     </div>
   <div class="footer">
-    &copy; Copyright CC-BY 2022, The Clawpack Development Team.
+    &copy; Copyright CC-BY 2024, The Clawpack Development Team.
     Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
   </div>
   <script>
