@@ -108,10 +108,14 @@ make sure everything looks correct.</p>
 </section>
 <section id="version-numbers">
 <h2>Version numbers<a class="headerlink" href="#version-numbers" title="Permalink to this heading">¶</a></h2>
-<p>Change the version number in <cite>clawpack/clawpack/__init__.py</cite>.
-Initially set it to e.g. v5.4.1rc-alpha, then to the final release number.</p>
-<p>The version number is also set in <cite>clawpack/setup.py</cite> and should be changed
-there to be consistent with <cite>clawpack/clawpack/__init__.py</cite></p>
+<p>Change the version number in the following files to the new version number:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><cite>clawpack/clawpack/__init__.py</cite></p></li>
+<li><p><cite>clawpack/setup.py</cite></p></li>
+<li><p><cite>clawpack/pyproject.toml</cite></p></li>
+</ul>
+</div></blockquote>
 </section>
 <section id="release-candidates">
 <h2>Release candidates<a class="headerlink" href="#release-candidates" title="Permalink to this heading">¶</a></h2>
@@ -190,47 +194,23 @@ the current master branch of each repository.</p>
 </section>
 <section id="pypi">
 <h2>Pypi<a class="headerlink" href="#pypi" title="Permalink to this heading">¶</a></h2>
-<p>To release on the pypi server (for installation via pip) we have to do a bit
-of trickery.  We can’t just follow the directions at <a class="reference external" href="https://packaging.python.org/tutorials/packaging-projects/">https://packaging.python.org/tutorials/packaging-projects/</a>
-because we have a very non-Pythonic directory structure; in particular,
-the subdirectories <cite>clawpack/x/</cite> do not have an <cite>__init__.py</cite>.</p>
-<p>Here’s what to do, starting with a clean clone in some directory
-referred to below as <cite>$TEMP</cite> (replace <cite>5.x.x</cite> by the new version number):</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>cd $TEMP
-git clone https://github.com/clawpack/clawpack.git
-cd clawpack    # should now be in $TEMP/clawpack
-source pull_all.sh
-git submodule update --init --recursive
-git-archive-all --prefix clawpack-5.x.x/ clawpack-5.x.x.tar
-
-mv clawpack-5.x.x.tar ..
-cd ..
-tar -xf clawpack-5.x.x.tar  # creates $TEMP/clawpack-5.x.x
-
-cd clawpack
-python3 setup.py sdist  # creates $TEMP/clawpack/dist/clawpack-5.x.x.tar.gz
-cd dist     # should be in $TEMP/clawpack/dist
-tar -xzf clawpack-5.x.x.tar.gz
-
-cp clawpack-5.x.x/PKG-INFO ../../clawpack-5.x.x
-rm -rf clawpack-5.x.x
-
-cd ../..   # should be in $TEMP
-rm clawpack-5.x.x.tar
-tar -cf clawpack-5.x.x.tar clawpack-5.x.x
-gzip clawpack-5.x.x.tar
-mv clawpack-5.x.x.tar.gz clawpack/dist
+<p>To release on the pypi server (for installation via pip) we
+simply build from a clean clone and upload:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">git</span> <span class="n">clone</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">github</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">clawpack</span><span class="o">/</span><span class="n">clawpack</span><span class="o">.</span><span class="n">git</span>
+<span class="n">cd</span> <span class="n">clawpack</span>
+<span class="n">git</span> <span class="n">submodule</span> <span class="n">init</span>
+<span class="n">git</span> <span class="n">submodule</span> <span class="n">update</span>
+<span class="n">python</span> <span class="o">-</span><span class="n">m</span> <span class="n">build</span>
 </pre></div>
 </div>
-<p>Upload to the testpypi server for testing
-(you will need to have created an account there):</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">cd</span> <span class="n">clawpack</span>   <span class="c1"># should be in $TEMP/clawpack</span>
-<span class="n">twine</span> <span class="n">upload</span> <span class="o">--</span><span class="n">repository</span><span class="o">-</span><span class="n">url</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">test</span><span class="o">.</span><span class="n">pypi</span><span class="o">.</span><span class="n">org</span><span class="o">/</span><span class="n">legacy</span><span class="o">/</span> <span class="n">dist</span><span class="o">/*</span>
-
-<span class="n">credentials</span><span class="p">:</span> <span class="p">[[</span><span class="n">test</span> <span class="n">pypi</span><span class="p">]]</span>
+<p>To upload to Pypi you need an account there and you must be listed as a
+maintainer of Clawpack.  Then you can update using
+<a class="reference external" href="https://pypi.org/project/twine/">twine</a>.</p>
+<p>You can first upload to the testpypi server for testing:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">twine</span> <span class="n">upload</span> <span class="o">--</span><span class="n">repository</span><span class="o">-</span><span class="n">url</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">test</span><span class="o">.</span><span class="n">pypi</span><span class="o">.</span><span class="n">org</span><span class="o">/</span><span class="n">legacy</span><span class="o">/</span> <span class="n">dist</span><span class="o">/*</span>
 </pre></div>
 </div>
-<p>Click the link and check that it looks okay.  You can also test via:</p>
+<p>Click the link and check that it looks okay.  You can also test installation via:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>pip3 uninstall clawpack
 pip3 install —no-cache—dir —index-url https://test.pypi.org/simple/ clawpack
 </pre></div>
