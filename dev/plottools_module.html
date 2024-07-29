@@ -1,0 +1,216 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+    <title>plottools module of useful matplotlib tools &#8212; Clawpack dev documentation</title>
+    <link rel="stylesheet" href="_static/base.css" type="text/css" />
+    <link rel="stylesheet" href="_static/layout.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/flasky.css" />
+    <link rel="stylesheet" type="text/css" href="_static/graphviz.css" />
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/sphinx_highlight.js"></script>
+    <link rel="shortcut icon" href="_static/clawicon.ico"/>
+    <link rel="author" title="About these documents" href="about.html" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+  </head><body>
+<div id="main-wrapper" class="sphinx">
+<div id="header-wrapper">
+  <section id="header">
+    <!-- <h1><a href="http://clawpack.org/">Clawpack</a></h1> -->
+    <h1><a href="http://clawpack.org/">Clawpack-5</a></h1> 
+    <nav>
+      <ul>
+        <li>
+          <a href="contents.html">Docs</a>
+        </li>
+        <li>
+          <a href="installing.html">Install</a>
+        </li>
+        <li>
+          <a class="" href="http://clawpack.org/gallery/index.html">Gallery</a>
+        </li>
+        <li>
+          <a href="about.html">Citation</a>
+        </li>
+        <li>
+          <a class="active" href="http://github.com/clawpack">GitHub</a>
+        </li>
+        <li>
+          <a class="" href="community.html">Community</a>
+        </li>
+        <li>
+          <a class="" href="developers.html">Contribute</a>
+        </li>
+      </ul>
+    </nav>
+  </section>
+<div class="decoration"></div>
+</div>
+
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="contents.html">Clawpack dev documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">plottools module of useful matplotlib tools</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="plottools-module-of-useful-matplotlib-tools">
+<span id="plottools-module"></span><h1>plottools module of useful matplotlib tools<a class="headerlink" href="#plottools-module-of-useful-matplotlib-tools" title="Permalink to this heading">¶</a></h1>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="pcolorcells.html#pcolorcells"><span class="std std-ref">pcolorcells</span></a></p></li>
+</ul>
+</div>
+<section id="module-clawpack.visclaw.plottools">
+<span id="documentation-auto-generated-from-the-module-docstrings"></span><h2>Documentation auto-generated from the module docstrings<a class="headerlink" href="#module-clawpack.visclaw.plottools" title="Permalink to this heading">¶</a></h2>
+<p>Module with some miscellaneous useful tools.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="clawpack.visclaw.plottools.pcolorcells">
+<span class="sig-prename descclassname"><span class="pre">clawpack.visclaw.plottools.</span></span><span class="sig-name descname"><span class="pre">pcolorcells</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Z</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.visclaw.plottools.pcolorcells" title="Permalink to this definition">¶</a></dt>
+<dd><p>Wraps pcolormesh in a way that works if X,Y are cell centers or edges.
+X,Y can be 2d or 1d arrays.</p>
+<p>if <cite>ax==None</cite> then the plot is done on a new set of axes, otherwise on ax</p>
+<p>X,Y,Z is the data to be plotted.  It is assumed to be finite volume data
+where Z[i,j] is a constant value over a grid cell.</p>
+<p>Internally x,y are defined as 1d arrays since it is assumed the 
+grids are Cartesian.</p>
+<p>If the length of the 1d arrays x and y match the dimensions of Z then
+these are assumed to be cell center values. In this case the arrays
+are expanded by one to obtain x_edge, y_edge as edge values,
+as needed for proper alignment.</p>
+<p>If the length of x,y is already one greater than the corresponding
+dimension of Z, then it is assumed that these are already edge values.</p>
+<p>Notes:</p>
+<ul class="simple">
+<li><p>This should work also if x and/or y is decreasing rather than increasing.</p></li>
+<li><p>Should also work regardless of index order.</p></li>
+</ul>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="clawpack.visclaw.plottools.plotbox">
+<span class="sig-prename descclassname"><span class="pre">clawpack.visclaw.plottools.</span></span><span class="sig-name descname"><span class="pre">plotbox</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xy</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kwargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{'color':</span> <span class="pre">'b',</span> <span class="pre">'linewidth':</span> <span class="pre">2}</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.visclaw.plottools.plotbox" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add a box around a region to an existing plot.
+xy can be a list of [x1, x2, y1, y2] of the corners 
+or a string “x1 x2 y1 y2”.</p>
+</dd></dl>
+
+</section>
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<p><a href="http://clawpack.org/">
+    <img class="logo" src= "_static/clawlogo.jpg" alt="Logo"/>
+</a>
+<h2>Version dev</h2>
+</p>
+  <div>
+    <h3><a href="contents.html">Table of Contents</a></h3>
+    <ul>
+<li><a class="reference internal" href="#">plottools module of useful matplotlib tools</a><ul>
+<li><a class="reference internal" href="#module-clawpack.visclaw.plottools">Documentation auto-generated from the module docstrings</a><ul>
+<li><a class="reference internal" href="#clawpack.visclaw.plottools.pcolorcells"><code class="docutils literal notranslate"><span class="pre">pcolorcells()</span></code></a></li>
+<li><a class="reference internal" href="#clawpack.visclaw.plottools.plotbox"><code class="docutils literal notranslate"><span class="pre">plotbox()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  </div><h3>Related Topics</h3>
+<ul>
+  <li><a href="contents.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+<div class="widget navlinks">
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/plottools_module.rst.txt"
+            rel="nofollow"
+            target="_blank">Source .rst</a></li>
+    <li><a href="https://github.com/clawpack/doc/blob/dev/doc/plottools_module.rst"
+            rel="nofollow"
+            target="_blank">Source on GitHub</a></li>
+     <li><a href="https://github.com/clawpack/doc/commits/dev/doc/plottools_module.rst"
+             rel="nofollow"
+             target="_blank">History</a></li>
+    <li><a href="https://github.com/clawpack/doc/edit/dev/doc/plottools_module.rst"
+            rel="nofollow"
+            target="_blank">Suggest Edits</a></li>
+     <li><a href="https://github.com/clawpack/doc/issues/new/choose"
+             rel="nofollow"
+             target="_blank">Raise an Issue</a></li>
+  </ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+<h4>Latest Version</h4>
+<ul>
+  <li><a href="plottools_module.html">dev</a></li>
+  <li><a href="../v5.10.x/index.html">v5.10.x</a></li>
+</ul>
+<h4>Older Versions</h4>
+<ul>
+  <li><a href="../v5.7.x/index.html">v5.7.x</a></li>
+  <li><a href="../v5.8.x/index.html">v5.8.x</a></li>
+  <li><a href="../v5.9.x/index.html">v5.9.x</a></li>
+</ul>
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+  <div class="footer">
+    &copy; Copyright CC-BY 2024, The Clawpack Development Team.
+    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
+  </div>
+  <script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-44811544-1', 'auto');
+  ga('send', 'pageview');
+
+  </script>
+  
+  </body>
+</html>

@@ -138,25 +138,26 @@ surge simulations.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Attributes<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><em>t</em> (list(datetime.datetiem)) Contains the time at which each entry of
-the other arrays are at.  These are expected to be <em>datetime</em> objects.
-Note that when written some formats require a <em>time_offset</em> to be set.</p></li>
-<li><p><em>eye_location</em> (ndarray(:, :)) location of the eye of the storm.
-Default units are in signed decimcal longitude and latitude.</p></li>
+<li><p><em>t</em> (list(float) or list(datetime.datetiem)) Contains the time at which
+each entry of the other arrays are at.  These are expected to
+be <em>datetime</em> objects. Note that when written some formats require
+a <em>time_offset</em> to be set.</p></li>
+<li><p><em>eye_location</em> (ndarray(:, :)) location of the eye of the storm. Default
+units are in signed decimal longitude and latitude.</p></li>
 <li><p><em>max_wind_speed</em> (ndarray(:)) Maximum wind speed.  Default units are
 meters/second.</p></li>
 <li><p><em>max_wind_radius</em> (ndarray(:)) Radius at which the maximum wind speed
 occurs.  Default units are meters.</p></li>
-<li><p><em>central_pressure</em> (ndarray(:)) Central pressure of storm.  Default
-units are Pascals.</p></li>
+<li><p><em>central_pressure</em> (ndarray(:)) Central pressure of storm.  Default units
+are Pascals.</p></li>
 <li><p><em>storm_radius</em> (ndarray(:)) Radius of storm, often defined as the last
 closed iso-bar of pressure.  Default units are meters.</p></li>
 <li><p><em>time_offset</em> (datetime.datetime) A date time that as an offset for the
-simulation time.  This will default to the beginning of the first of the
-year that the first time point is found in.</p></li>
+simulation time.  This will default to the beginning of the first of
+the year that the first time point is found in.</p></li>
 <li><p><em>wind_speeds</em> (ndarray(:, :)) Wind speeds defined in every record, such
-as 34kt, 50kt, 64kt, etc and their radii. Default units are meters/second
-and meters.</p></li>
+as 34kt, 50kt, 64kt, etc and their radii. Default units are
+meters/second and meters.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Initialization<span class="colon">:</span></dt>
@@ -440,28 +441,40 @@ the available supported formats a <em>ValueError</em> is raised.</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="clawpack.geoclaw.surge.storm.Storm.write_geoclaw">
-<span class="sig-name descname"><span class="pre">write_geoclaw</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_wind_radius_fill</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">storm_radius_fill</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.geoclaw.surge.storm.Storm.write_geoclaw" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">write_geoclaw</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">skip</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fill_dict</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.geoclaw.surge.storm.Storm.write_geoclaw" title="Permalink to this definition">¶</a></dt>
 <dd><p>Write out a GeoClaw formatted storm file</p>
 <p>GeoClaw storm files are read in by the GeoClaw Fortran code.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Input<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><em>path</em> (string) Path to the file to be written.</p></li>
-<li><p><em>verbose</em> (bool) Print out additional information when writing.</p></li>
-<li><p><em>max_wind_radius_fill</em> (func) Function that can be used to fill in
-missing data for <cite>max_wind_radius</cite> values.  This defaults to simply
-setting the value to -1.  The function signature should be
-<cite>max_wind_radius(t, storm)</cite> where t is the time of the forecast and
-<cite>storm</cite> is the storm object.  Note that if this or <cite>storm_radius</cite>
-field remains -1 that this data line will be assumed to be redundant
-and not be written out.</p></li>
-<li><p><em>storm_radius_fill</em> (func) Function that can be used to fill in
-missing data for <cite>storm_radius</cite> values.  This defaults to simply
-setting the value to -1.  The function signature should be
-<cite>storm_radius(t, storm)</cite> where t is the time of the forecast and
-<cite>storm</cite> is the storm object.  Note that if this or <cite>max_wind_radius</cite>
-field remains -1 that this data line will be assumed to be redundant
-and not be written</p></li>
+<li><dl class="simple">
+<dt><em>skip</em> (bool) Skip a time if NaNs are found and are not replaced.  </dt><dd><p>Default is <cite>True</cite>.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><em>force</em> (bool) Force output of storm even if there is missing data.</dt><dd><p>Default is <cite>False</cite>.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><em>verbose</em> (bool) Print out additional information when writing.</dt><dd><p>Default is <cite>False</cite>.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><em>fill_dict</em> (dict) Dictionary of functions to use to fill in missing</dt><dd><p>data represented by NaNs.  The keys are the field to be filled and
+the function signature should be <cite>my_func(t, storm)</cite> where t is the
+time of the forecast and <cite>storm</cite> is the storm object.  If the
+field remains a NaN or a function is not provided these lines will
+be assumed redundant and will be ommitted.  Note that the older 
+keyword arguments are put in this dictionary.  Currently the one
+default function is for <cite>storm_radius</cite>, which sets the value to 
+500 km.</p>
+</dd>
+</dl>
+</li>
 </ul>
 </dd>
 </dl>
