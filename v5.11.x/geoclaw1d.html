@@ -1,0 +1,355 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+    <title>GeoClaw in One Space Dimension &#8212; Clawpack 5.11.x documentation</title>
+    <link rel="stylesheet" href="_static/base.css" type="text/css" />
+    <link rel="stylesheet" href="_static/layout.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/flasky.css" />
+    <link rel="stylesheet" type="text/css" href="_static/graphviz.css" />
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/sphinx_highlight.js"></script>
+    <link rel="shortcut icon" href="_static/clawicon.ico"/>
+    <link rel="author" title="About these documents" href="about.html" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Boussinesq solvers in One Space Dimension" href="bouss1d.html" />
+    <link rel="prev" title="Source terms for shallow water on the sphere" href="sphere_source.html" /> 
+  </head><body>
+<div id="main-wrapper" class="sphinx">
+<div id="header-wrapper">
+  <section id="header">
+    <!-- <h1><a href="http://clawpack.org/">Clawpack</a></h1> -->
+    <h1><a href="http://clawpack.org/">Clawpack-5</a></h1> 
+    <nav>
+      <ul>
+        <li>
+          <a href="contents.html">Docs</a>
+        </li>
+        <li>
+          <a href="installing.html">Install</a>
+        </li>
+        <li>
+          <a class="" href="http://clawpack.org/gallery/index.html">Gallery</a>
+        </li>
+        <li>
+          <a href="about.html">Citation</a>
+        </li>
+        <li>
+          <a class="active" href="http://github.com/clawpack">GitHub</a>
+        </li>
+        <li>
+          <a class="" href="community.html">Community</a>
+        </li>
+        <li>
+          <a class="" href="developers.html">Contribute</a>
+        </li>
+      </ul>
+    </nav>
+  </section>
+<div class="decoration"></div>
+</div>
+
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="bouss1d.html" title="Boussinesq solvers in One Space Dimension"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="sphere_source.html" title="Source terms for shallow water on the sphere"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="contents.html">Clawpack 5.11.x documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="geoclaw.html" accesskey="U">GeoClaw Description and Detailed Contents</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">GeoClaw in One Space Dimension</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="geoclaw-in-one-space-dimension">
+<span id="geoclaw1d"></span><h1>GeoClaw in One Space Dimension<a class="headerlink" href="#geoclaw-in-one-space-dimension" title="Permalink to this heading">¶</a></h1>
+<p>As of Version 5.10.0, the geoclaw repository contains some code for solving
+problems in one space dimension.  This can be used for solving plane wave
+problems on planar topography (including onshore inundation), as well as
+radially symmetric problems on the plane
+or axisymmetric problems on the sphere (see <a class="reference internal" href="#geoclaw1d-coord"><span class="std std-ref">Coordinate systems</span></a>).</p>
+<p>Some general notes:</p>
+<ul>
+<li><p>The standard 2d version of GeoClaw can be used to solve 1d problem by
+simply specifying a domain that is only a few cells wide in the
+y-direction, and insuring that the topography, initial data, and any dtopo
+files varies only in x as well.  By setting the AMR refinement ratios to be
+1 in the y-direction, it is possible to still use adaptive mesh refinement
+in x.  For some 1d problems this may be the best approach.</p></li>
+<li><p>By contrast, the newly introduced 1d code does not support AMR at this
+time.  Instead, a fixed grid is used.</p>
+<p>However, the grid spacing may be
+variable and some tools are provided to compute a mapped grid that has the
+property that the Courant number (based on the linearized
+shallow water wave speed <cite>sqrt(g*h)</cite>)is roughly constant, so that cells in
+deep water are larger than cells in shallow water (transitioning to a
+uniform grid in very shallow water and onshore).  For some problems a fine
+1d grid of this nature can be used to compute a very accurate solution and
+is sometimes preferable to using AMR.</p>
+</li>
+<li><p>In addition to shallow water equations, the 1d code also supports two
+different forms of Boussinesq equations, which include dispersive terms
+and better model waves whose wavelength is short compared to the fluid
+depth.  For more information, see <a class="reference internal" href="bouss1d.html#bouss1d"><span class="std std-ref">Boussinesq solvers in One Space Dimension</span></a>.
+(Two-dimensional Boussinesq solvers have also recently been implemented,
+with AMR, and will appear in a future release; see <a class="reference internal" href="bouss2d.html#bouss2d"><span class="std std-ref">Boussinesq solvers in Two Space Dimensions</span></a>.)</p></li>
+<li><p>Topography data (topo files) and moving topography (dtopo files) can be
+specified much as in 2d GeoClaw; see <span class="xref std std-ref">topo1d</span> below.</p></li>
+</ul>
+<p>The 1d library routines are found in <cite>$CLAW/geoclaw/src/1d_classic/shallow</cite>,
+with some additional routines needed for the Boussinesq solvers in
+<cite>$CLAW/geoclaw/src/1d_classic/bouss</cite>.</p>
+<p>Some examples illustrating usage can be found in
+<cite>$CLAW/geoclaw/examples/1d</cite>, and some plots and animations can be viewed in
+the <a class="reference external" href="https://www.clawpack.org/gallery/gallery/gallery_geoclaw.html">GeoClaw Gallery</a></p>
+<section id="coordinate-systems">
+<span id="geoclaw1d-coord"></span><h2>Coordinate systems<a class="headerlink" href="#coordinate-systems" title="Permalink to this heading">¶</a></h2>
+<p>In <cite>setrun.py</cite>, the parameter <cite>rundata.geo_data.coordinate_system</cite>
+can be used to specify the coordinate system to be used.</p>
+<ul>
+<li><p><cite>rundata.geo_data.coordinate_system == 1</cite>: <cite>x</cite> is measured in meters. This
+is the most natural coordinate system for many 1d problems, e.g. modeling
+waves in a wave tank, or plane waves in the ocean (provided the topography
+only varies in the direction of propagation).</p></li>
+<li><p><cite>rundata.geo_data.coordinate_system == -1</cite>: <cite>x &gt;= 0</cite> is measured in meters
+and represents radial distance.
+In this case, the solution is assumed to a 1d cross section of
+a rotationally symmetric 2d solution.  The 2d shallow water (or
+Boussinesq) equations can then be reduced to 1d equations that have a
+similar form to the plane wave equations, with the addition also of a
+geometric source term <a class="reference internal" href="biblio.html#bergerleveque2023" id="id1"><span>[BergerLeVeque2023]</span></a>.
+This source term is built in to the solution procedure in this case.</p></li>
+<li><p><cite>rundata.geo_data.coordinate_system == 2</cite>: <cite>x</cite> is measured in degrees
+for a problem that is rotationally symmetric on the sphere about some axis
+of rotation, e.g. waves
+spreading out from a radially symmetric crater on topography that is also
+rotationally symmetric about the same axis. In this case <cite>-90 &lt;= x &lt;=90</cite>
+with the endpoints corresponding to the two points where the axis intersects
+the sphere, so it represents latitude with respect to this axis.
+(If the axis passes through the poles then <cite>x</cite> is the ordinary
+latitude with <cite>x = -90</cite> at the south pole and <cite>x = +90</cite> at the north pole.)</p>
+<p>As in the case of radial symmetry, the spherical case requires some
+changes in the equations and the addition of a geometric source term.
+Near each pole the solution behaves much as in the radial symmetric case,
+but note that waves from a disturbance at one pole will initially
+decay as they spread out but after passing the equator they will start to
+refocus at the other pole.</p>
+</li>
+</ul>
+</section>
+<section id="uniform-and-mapped-grids">
+<h2>Uniform and mapped grids<a class="headerlink" href="#uniform-and-mapped-grids" title="Permalink to this heading">¶</a></h2>
+<p>In <cite>setrun.py</cite>, the parameter <cite>rundata.grid_data.grid_type</cite>
+can be used to specify the computational grid to be used.</p>
+<ul>
+<li><p><cite>rundata.grid_data.grid_type == 0</cite>: A uniform grid is used, with
+spacing determined by the domain length and the number of grid cells
+specified.</p></li>
+<li><p><cite>rundata.grid_data.grid_type == 1</cite>: A mapped grid is used.
+In this case a function <cite>mapc2p.f90</cite> must be provided to map
+the computational grid specified in <cite>setrun.py</cite> to physical cells.
+See <a class="reference internal" href="mapc2p.html#mapc2p"><span class="std std-ref">The mapc2p function</span></a>.  In this case <cite>0 &lt;= x &lt;= 1</cite> is used in the examples,
+but any computational grid interval can be used as long as <cite>mapc2p</cite>
+maps equally spaced points on this interval to te desired physical grid.</p></li>
+<li><p><cite>rundata.grid_data.grid_type == 2</cite>: A nonuniform grid is used with a
+user-specified set of grid cell edges.  In this case
+<cite>rundata.grid_data.fname_celledges</cite> should be set to a string
+giving the name of the file that contains the cell edges (one per line).
+Also, the computational grid should be in the domain <cite>0 &lt;= x &lt;= 1</cite>, i.e.:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">clawdata</span><span class="o">.</span><span class="n">lower</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.</span>           <span class="c1"># xlower</span>
+<span class="n">clawdata</span><span class="o">.</span><span class="n">upper</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.</span>           <span class="c1"># xupper</span>
+<span class="n">clawdata</span><span class="o">.</span><span class="n">num_cells</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">mx</span>       <span class="c1"># number of grid cells</span>
+</pre></div>
+</div>
+<p>In this case the number of celledges in the data file should be <cite>mx+1</cite>.
+A <cite>mapc2p</cite> function that maps the unit interval to the physical grid
+must then be specified in <cite>setplot.py</cite>, and can be generated using the
+function <cite>clawpack.geoclaw.nonuniform_grid_tools.make_mapc2p()</cite>.</p>
+<p>The module  <cite>clawpack.geoclaw.nonuniform_grid_tools.py</cite>
+also includes tools to create a nonuniform grid with the property that
+a specified uniform grid width is used onshore an in very shallow
+water, but are much larger in deeper water, with the physical grid widths
+chosen so that the CFL number is roughly uniform (based on the propagation
+speed <cite>sqrt(g*h)</cite>).
+Most of the examples in <cite>$CLAW/geoclaw/examples/1d_classic/</cite>
+illustrate this.</p>
+</li>
+</ul>
+<p>Note that when using <cite>grid_type</cite> 1 or 2, any gauges specified in <cite>setrun.py</cite>
+must be specified in computational coordinates, not physical coordinates.
+See, e.g. <cite>$CLAW/geoclaw/examples/1d_classic/ocean_shelf_beach/setrun.py</cite>
+for an example.</p>
+</section>
+<section id="topograpy-data">
+<h2>Topograpy data<a class="headerlink" href="#topograpy-data" title="Permalink to this heading">¶</a></h2>
+<p>Topography data is specified in a file that has two columns, with values
+<cite>x, B</cite> specifying the topo value <cite>B</cite> at spatial locations <cite>x</cite>.
+The topography is viewed as being piecewise linear connecting these points.
+As in 2d GeoClaw, the finite volume cells used for the computation have a
+single cell-averaged <cite>B</cite> value that is obtained by cell-averaging this
+piecewise linear function.</p>
+<p>Note that if a mapped grid is used and if the topography values are
+specified at the cell edges, then the cell-averaged finite volume values are
+simply the average of the <cite>B</cite> values from each edge of the cell.  In this
+case, the same file that is used to specify the topography can also be used
+to specify the grid. (The second column is ignored when it is read in as a
+grid specification.)</p>
+<p>In <cite>setrun.py</cite>, the parameter <cite>rundata.topo_data.topofiles</cite>
+is set to a list of topofiles, each of which is specified by a list
+containing the <cite>topo_type</cite> and <cite>topofile_path</cite>, the path to the file, as
+in 2d.  Currently only one topofile is supported, and
+so this should have the form:</p>
+<blockquote>
+<div><p>rundata.topo_data.topofiles = [[topo_type, topofile_path]]</p>
+</div></blockquote>
+<p>Currently only <cite>topo_type == 1</cite> is supported, which has the form described
+above.</p>
+</section>
+<section id="moving-topograpy-dtopo-data">
+<h2>Moving topograpy (dtopo) data<a class="headerlink" href="#moving-topograpy-dtopo-data" title="Permalink to this heading">¶</a></h2>
+<p>In <cite>setrun.py</cite>, the parameter <cite>rundata.dtopo_data.dtopofiles</cite>
+is set to a list of dtopofiles, each of which is specified by a list
+containing the <cite>dtopo_type</cite> and <cite>dtopofile_path</cite>, the path to the file, as
+in 2d.  Currently only one dtopofile is supported, and
+so this should have the form:</p>
+<blockquote>
+<div><p>rundata.dtopo_data.dtopofiles = [[dtopo_type, dtopofile_path]]</p>
+</div></blockquote>
+<p>Currently only <cite>dtopo_type == 1</cite> is supported, and the dtopofile should have
+a form similar to what was described for topofiles above,
+except that each line
+starts with a <em>t</em> value for the time, so each line contains t,x,dz</p>
+<p>The <cite>x,dz</cite> values give the displacement <cite>dz</cite> at <cite>x</cite> at time <cite>t</cite>.  It is assumed
+that the grid is uniform and that the file contains <cite>mx*mt</cite> lines if mt
+different times are specified on a grid with mx points.</p>
+<p>One way to specify a dtopo file is to use the Okada model (see <a class="reference internal" href="okada.html#okada"><span class="std std-ref">Earthquake sources: Fault slip and the Okada model</span></a>)
+in a situation where the fault is dipping in the x-direction and the fault
+geometry and slip are assumed
+to be constant in the y-direction over a long enough distance that a 1d
+slice in x is a reasonable model.
+Tools are provided create such a dtopo file, see the example in
+<cite>$CLAW/geoclaw/examples/1d/okada_dtopo</cite>.</p>
+</section>
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<p><a href="http://clawpack.org/">
+    <img class="logo" src= "_static/clawlogo.jpg" alt="Logo"/>
+</a>
+<h2>Version 5.11.x</h2>
+</p>
+  <div>
+    <h3><a href="contents.html">Table of Contents</a></h3>
+    <ul>
+<li><a class="reference internal" href="#">GeoClaw in One Space Dimension</a><ul>
+<li><a class="reference internal" href="#coordinate-systems">Coordinate systems</a></li>
+<li><a class="reference internal" href="#uniform-and-mapped-grids">Uniform and mapped grids</a></li>
+<li><a class="reference internal" href="#topograpy-data">Topograpy data</a></li>
+<li><a class="reference internal" href="#moving-topograpy-dtopo-data">Moving topograpy (dtopo) data</a></li>
+</ul>
+</li>
+</ul>
+
+  </div><h3>Related Topics</h3>
+<ul>
+  <li><a href="contents.html">Documentation overview</a><ul>
+  <li><a href="geoclaw.html">GeoClaw Description and Detailed Contents</a><ul>
+      <li>Previous: <a href="sphere_source.html" title="previous chapter">Source terms for shallow water on the sphere</a></li>
+      <li>Next: <a href="bouss1d.html" title="next chapter">Boussinesq solvers in One Space Dimension</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+<div class="widget navlinks">
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/geoclaw1d.rst.txt"
+            rel="nofollow"
+            target="_blank">Source .rst</a></li>
+    <li><a href="https://github.com/clawpack/doc/blob/dev/doc/geoclaw1d.rst"
+            rel="nofollow"
+            target="_blank">Source on GitHub</a></li>
+     <li><a href="https://github.com/clawpack/doc/commits/dev/doc/geoclaw1d.rst"
+             rel="nofollow"
+             target="_blank">History</a></li>
+    <li><a href="https://github.com/clawpack/doc/edit/dev/doc/geoclaw1d.rst"
+            rel="nofollow"
+            target="_blank">Suggest Edits</a></li>
+     <li><a href="https://github.com/clawpack/doc/issues/new/choose"
+             rel="nofollow"
+             target="_blank">Raise an Issue</a></li>
+  </ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+<h4>Latest Version</h4>
+<ul>
+  <li><a href="../dev/geoclaw1d.html">dev</a></li>
+  <li><a href="geoclaw1d.html">v5.11.x</a></li>
+</ul>
+<h4>Older Versions</h4>
+<ul>
+  <li><a href="../v5.10.x/geoclaw1d.html">v5.10.x</a></li>
+  <li><a href="../v5.7.x/index.html">v5.7.x</a></li>
+  <li><a href="../v5.8.x/index.html">v5.8.x</a></li>
+  <li><a href="../v5.9.x/geoclaw1d.html">v5.9.x</a></li>
+</ul>
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+  <div class="footer">
+    &copy; Copyright CC-BY 2024, The Clawpack Development Team.
+    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
+  </div>
+  <script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-44811544-1', 'auto');
+  ga('send', 'pageview');
+
+  </script>
+  
+  </body>
+</html>

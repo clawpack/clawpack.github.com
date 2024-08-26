@@ -623,103 +623,6 @@ for this dimension</p>
 <span id="pyclaw-parallel-geometry"></span><h2>Parallel Geometry Objects<a class="headerlink" href="#parallel-geometry-objects" title="Permalink to this heading">¶</a></h2>
 <section id="petclaw-geometry-domain">
 <h3><code class="xref py py-class docutils literal notranslate"><span class="pre">petclaw.geometry.Domain</span></code><a class="headerlink" href="#petclaw-geometry-domain" title="Permalink to this heading">¶</a></h3>
-<dl class="py class">
-<dt class="sig sig-object py" id="clawpack.petclaw.geometry.Domain">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">clawpack.petclaw.geometry.</span></span><span class="sig-name descname"><span class="pre">Domain</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">geom</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.petclaw.geometry.Domain" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#clawpack.pyclaw.geometry.Domain" title="clawpack.pyclaw.geometry.Domain"><code class="xref py py-class docutils literal notranslate"><span class="pre">Domain</span></code></a></p>
-<p>Parallel Domain Class</p>
-<p><strong>Parent Class Documentation:</strong></p>
-<p>2D Classic (Clawpack) solver.</p>
-<p>Solve using the wave propagation algorithms of Randy LeVeque’s
-Clawpack code (www.clawpack.org).</p>
-<p>In addition to the attributes of ClawSolver1D, ClawSolver2D
-also has the following options:</p>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="clawpack.petclaw.geometry.Domain.dimensional_split">
-<span class="sig-name descname"><span class="pre">dimensional_split</span></span><a class="headerlink" href="#clawpack.petclaw.geometry.Domain.dimensional_split" title="Permalink to this definition">¶</a></dt>
-<dd><p>If True, use dimensional splitting (Godunov splitting).
-Dimensional splitting with Strang splitting is not supported
-at present but could easily be enabled if necessary.
-If False, use unsplit Clawpack algorithms, possibly including
-transverse Riemann solves.</p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="clawpack.petclaw.geometry.Domain.transverse_waves">
-<span class="sig-name descname"><span class="pre">transverse_waves</span></span><a class="headerlink" href="#clawpack.petclaw.geometry.Domain.transverse_waves" title="Permalink to this definition">¶</a></dt>
-<dd><p>If dimensional_split is True, this option has no effect.  If
-dimensional_split is False, then transverse_waves should be one of
-the following values:</p>
-<p>ClawSolver2D.no_trans: Transverse Riemann solver
-not used.  The stable CFL for this algorithm is 0.5.  Not recommended.</p>
-<p>ClawSolver2D.trans_inc: Transverse increment waves are computed
-and propagated.</p>
-<p>ClawSolver2D.trans_cor: Transverse increment waves and transverse
-correction waves are computed and propagated.</p>
-</dd></dl>
-
-<p>Note that only the fortran routines are supported for now in 2D.</p>
-<p><strong>Parent Class Documentation:</strong></p>
-<p>Generic classic Clawpack solver</p>
-<p>All Clawpack solvers inherit from this base class.</p>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="clawpack.petclaw.geometry.Domain.mthlim">
-<span class="sig-name descname"><span class="pre">mthlim</span></span><a class="headerlink" href="#clawpack.petclaw.geometry.Domain.mthlim" title="Permalink to this definition">¶</a></dt>
-<dd><p>Limiter(s) to be used.  Specified either as one value or a list.
-If one value, the specified limiter is used for all wave families.
-If a list, the specified values indicate which limiter to apply to
-each wave family.  Take a look at pyclaw.limiters.tvd for an enumeration.
-<code class="docutils literal notranslate"><span class="pre">Default</span> <span class="pre">=</span> <span class="pre">limiters.tvd.minmod</span></code></p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="clawpack.petclaw.geometry.Domain.order">
-<span class="sig-name descname"><span class="pre">order</span></span><a class="headerlink" href="#clawpack.petclaw.geometry.Domain.order" title="Permalink to this definition">¶</a></dt>
-<dd><p>Order of the solver, either 1 for first order (i.e., Godunov’s method)
-or 2 for second order (Lax-Wendroff-LeVeque).
-<code class="docutils literal notranslate"><span class="pre">Default</span> <span class="pre">=</span> <span class="pre">2</span></code></p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="clawpack.petclaw.geometry.Domain.source_split">
-<span class="sig-name descname"><span class="pre">source_split</span></span><a class="headerlink" href="#clawpack.petclaw.geometry.Domain.source_split" title="Permalink to this definition">¶</a></dt>
-<dd><p>Which source splitting method to use: 1 for first 
-order Godunov splitting and 2 for second order Strang splitting.
-<code class="docutils literal notranslate"><span class="pre">Default</span> <span class="pre">=</span> <span class="pre">1</span></code></p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="clawpack.petclaw.geometry.Domain.fwave">
-<span class="sig-name descname"><span class="pre">fwave</span></span><a class="headerlink" href="#clawpack.petclaw.geometry.Domain.fwave" title="Permalink to this definition">¶</a></dt>
-<dd><p>Whether to split the flux jump (rather than the jump in Q) into waves; 
-requires that the Riemann solver performs the splitting.  
-<code class="docutils literal notranslate"><span class="pre">Default</span> <span class="pre">=</span> <span class="pre">False</span></code></p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="clawpack.petclaw.geometry.Domain.step_source">
-<span class="sig-name descname"><span class="pre">step_source</span></span><a class="headerlink" href="#clawpack.petclaw.geometry.Domain.step_source" title="Permalink to this definition">¶</a></dt>
-<dd><p>Handle for function that evaluates the source term.  
-The required signature for this function is:</p>
-<p>def step_source(solver,state,dt)</p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="clawpack.petclaw.geometry.Domain.kernel_language">
-<span class="sig-name descname"><span class="pre">kernel_language</span></span><a class="headerlink" href="#clawpack.petclaw.geometry.Domain.kernel_language" title="Permalink to this definition">¶</a></dt>
-<dd><p>Specifies whether to use wrapped Fortran routines (‘Fortran’)
-or pure Python (‘Python’).  <code class="docutils literal notranslate"><span class="pre">Default</span> <span class="pre">=</span> <span class="pre">'Fortran'</span></code>.</p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="clawpack.petclaw.geometry.Domain.verbosity">
-<span class="sig-name descname"><span class="pre">verbosity</span></span><a class="headerlink" href="#clawpack.petclaw.geometry.Domain.verbosity" title="Permalink to this definition">¶</a></dt>
-<dd><p>The level of detail of logged messages from the Fortran solver.
-<code class="docutils literal notranslate"><span class="pre">Default</span> <span class="pre">=</span> <span class="pre">0</span></code>.</p>
-</dd></dl>
-
-</dd></dl>
-
 </section>
 <section id="petclaw-geometry-patch">
 <h3><code class="xref py py-class docutils literal notranslate"><span class="pre">petclaw.geometry.Patch</span></code><a class="headerlink" href="#petclaw-geometry-patch" title="Permalink to this heading">¶</a></h3>
@@ -822,21 +725,7 @@ or pure Python (‘Python’).  <code class="docutils literal notranslate"><span
 </ul>
 </li>
 <li><a class="reference internal" href="#parallel-geometry-objects">Parallel Geometry Objects</a><ul>
-<li><a class="reference internal" href="#petclaw-geometry-domain"><code class="xref py py-class docutils literal notranslate"><span class="pre">petclaw.geometry.Domain</span></code></a><ul>
-<li><a class="reference internal" href="#clawpack.petclaw.geometry.Domain"><code class="docutils literal notranslate"><span class="pre">Domain</span></code></a><ul>
-<li><a class="reference internal" href="#clawpack.petclaw.geometry.Domain.dimensional_split"><code class="docutils literal notranslate"><span class="pre">Domain.dimensional_split</span></code></a></li>
-<li><a class="reference internal" href="#clawpack.petclaw.geometry.Domain.transverse_waves"><code class="docutils literal notranslate"><span class="pre">Domain.transverse_waves</span></code></a></li>
-<li><a class="reference internal" href="#clawpack.petclaw.geometry.Domain.mthlim"><code class="docutils literal notranslate"><span class="pre">Domain.mthlim</span></code></a></li>
-<li><a class="reference internal" href="#clawpack.petclaw.geometry.Domain.order"><code class="docutils literal notranslate"><span class="pre">Domain.order</span></code></a></li>
-<li><a class="reference internal" href="#clawpack.petclaw.geometry.Domain.source_split"><code class="docutils literal notranslate"><span class="pre">Domain.source_split</span></code></a></li>
-<li><a class="reference internal" href="#clawpack.petclaw.geometry.Domain.fwave"><code class="docutils literal notranslate"><span class="pre">Domain.fwave</span></code></a></li>
-<li><a class="reference internal" href="#clawpack.petclaw.geometry.Domain.step_source"><code class="docutils literal notranslate"><span class="pre">Domain.step_source</span></code></a></li>
-<li><a class="reference internal" href="#clawpack.petclaw.geometry.Domain.kernel_language"><code class="docutils literal notranslate"><span class="pre">Domain.kernel_language</span></code></a></li>
-<li><a class="reference internal" href="#clawpack.petclaw.geometry.Domain.verbosity"><code class="docutils literal notranslate"><span class="pre">Domain.verbosity</span></code></a></li>
-</ul>
-</li>
-</ul>
-</li>
+<li><a class="reference internal" href="#petclaw-geometry-domain"><code class="xref py py-class docutils literal notranslate"><span class="pre">petclaw.geometry.Domain</span></code></a></li>
 <li><a class="reference internal" href="#petclaw-geometry-patch"><code class="xref py py-class docutils literal notranslate"><span class="pre">petclaw.geometry.Patch</span></code></a><ul>
 <li><a class="reference internal" href="#clawpack.petclaw.geometry.Patch"><code class="docutils literal notranslate"><span class="pre">Patch</span></code></a></li>
 </ul>
@@ -889,10 +778,11 @@ or pure Python (‘Python’).  <code class="docutils literal notranslate"><span
 <h4>Latest Version</h4>
 <ul>
   <li><a href="../../dev/pyclaw/geometry.html">dev</a></li>
-  <li><a href="../../v5.10.x/pyclaw/geometry.html">v5.10.x</a></li>
+  <li><a href="../../v5.11.x/pyclaw/geometry.html">v5.11.x</a></li>
 </ul>
 <h4>Older Versions</h4>
 <ul>
+  <li><a href="../../v5.10.x/pyclaw/geometry.html">v5.10.x</a></li>
   <li><a href="../../v5.7.x/pyclaw/geometry.html">v5.7.x</a></li>
   <li><a href="../../v5.8.x/pyclaw/geometry.html">v5.8.x</a></li>
   <li><a href="geometry.html">v5.9.x</a></li>

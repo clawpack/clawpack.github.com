@@ -6,7 +6,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
 
-    <title>Fixed grid output (fgout) &#8212; Clawpack 5.10.x documentation</title>
+    <title>Fixed grid output (fgout) &#8212; Clawpack 5.11.x documentation</title>
     <link rel="stylesheet" href="_static/base.css" type="text/css" />
     <link rel="stylesheet" href="_static/layout.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
@@ -74,7 +74,7 @@
         <li class="right" >
           <a href="manning.html" title="Manning friction term"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="contents.html">Clawpack 5.10.x documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="contents.html">Clawpack 5.11.x documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="geoclaw.html" accesskey="U">GeoClaw Description and Detailed Contents</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">Fixed grid output (fgout)</a></li> 
       </ul>
@@ -87,7 +87,8 @@
             
   <section id="fixed-grid-output-fgout">
 <span id="fgout"></span><h1>Fixed grid output (fgout)<a class="headerlink" href="#fixed-grid-output-fgout" title="Permalink to this heading">¶</a></h1>
-<p><strong>New in v5.9.0:</strong></p>
+<p><strong>New in v5.9.0, with a change to the API in v5.11.0.</strong></p>
+<p><strong>In particular note the</strong> <a class="reference internal" href="#fgout-changed511"><span class="std std-ref">Incompatibility with previous versions</span></a></p>
 <p>See also:</p>
 <blockquote>
 <div><ul class="simple">
@@ -145,7 +146,8 @@ added in v5.7.0, referred to as <cite>fgmax grids</cite>; see <a class="referenc
 <p>An improved version of the capability to output on a fixed grid at more
 frequent times than the standard AMR output has been introduced in v5.9.0,
 and these are now called <cite>fgout grids</cite> to complement the <cite>fgmax grids</cite>.
-These <cite>fgout grids</cite> are described further below.</p>
+These <cite>fgout grids</cite> are described further below (with some changes
+introduced in v5.11.0).</p>
 <section id="input-file-specification">
 <span id="fgout-input"></span><h2>Input file specification<a class="headerlink" href="#input-file-specification" title="Permalink to this heading">¶</a></h2>
 <p>The GeoClaw Fortran code reads in one or more files that specify fgout grids
@@ -164,6 +166,7 @@ based on the order they are specified in the <cite>setrun.py</cite> file.</p>
 </section>
 <section id="a-simple-example">
 <h2>A simple example<a class="headerlink" href="#a-simple-example" title="Permalink to this heading">¶</a></h2>
+<p><strong>Modified for v5.11.0</strong></p>
 <p>Here’s an example of how one grid can be set up:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">clawpack.geoclaw</span> <span class="kn">import</span> <span class="n">fgout_tools</span>
 
@@ -178,9 +181,11 @@ based on the order they are specified in the <cite>setrun.py</cite> file.</p>
 <span class="n">fgout</span><span class="o">.</span><span class="n">x2</span> <span class="o">=</span> <span class="o">-</span><span class="mf">70.</span>
 <span class="n">fgout</span><span class="o">.</span><span class="n">y1</span> <span class="o">=</span> <span class="o">-</span><span class="mf">55.</span>
 <span class="n">fgout</span><span class="o">.</span><span class="n">y2</span> <span class="o">=</span> <span class="o">-</span><span class="mf">10.</span>
+<span class="n">fgout</span><span class="o">.</span><span class="n">output_style</span> <span class="o">=</span> <span class="mi">1</span>  <span class="c1"># new in v5.11.0</span>
 <span class="n">fgout</span><span class="o">.</span><span class="n">tstart</span> <span class="o">=</span> <span class="mf">0.</span>
 <span class="n">fgout</span><span class="o">.</span><span class="n">tend</span> <span class="o">=</span> <span class="mf">6.</span><span class="o">*</span><span class="mi">3600</span>
 <span class="n">fgout</span><span class="o">.</span><span class="n">nout</span> <span class="o">=</span> <span class="mi">37</span>
+<span class="n">fgout</span><span class="o">.</span><span class="n">q_out_vars</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">]</span>  <span class="c1"># new in v5.11.0</span>
 <span class="n">fgout_grids</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">fgout</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -192,14 +197,25 @@ displaced from these edges.  See <a class="reference internal" href="#fgout-regi
 from <cite>tstart = 0</cite> to <cite>tend = 6*3600</cite> (6 hours).
 There will be 37 total outputs, so one every 10 minutes.</p>
 <p>The parameter <cite>fgout.output_format</cite> can be set to <cite>‘ascii’</cite>, <cite>‘binary32’</cite>,
-or <cite>‘binary64’</cite>, the same options as supported for the standard output in
-geoclaw as of v5.9.0.
+or <cite>‘binary’ == ‘binary64’</cite>; the same options as supported for the
+standard output in geoclaw as of v5.9.0.
 Usually`’binary32’` is best, which truncates the float64 (kind=8)
 computated values in the fortran code to float32 (kind=4) before dumping the
 raw binary.  This is almost always sufficient precision for plotting or
 post-processing needs, and results in smaller files than either of the other
 options.  This may be particularly important if hundreds of fgout frames
 are saved for making an animation or doing particle tracking.</p>
+<p><strong>New in v5.11.0:</strong> <cite>fgout.output_style == 1</cite> corresponds to specifying
+<cite>tstart</cite>, <cite>tend</cite>, and <cite>nout</cite> as previously.  But now it is possible
+to instead set fgout.output_style == 2`, in which case a list of output
+times can be specified that need not be equally spaced, e.g.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">fgout</span><span class="o">.</span><span class="n">output_style</span> <span class="o">=</span> <span class="mi">2</span>  <span class="c1"># new in v5.11.0</span>
+<span class="n">fgout</span><span class="o">.</span><span class="n">output_times</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.</span><span class="p">]</span> <span class="o">+</span> <span class="nb">list</span><span class="p">(</span><span class="n">linspace</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">13</span><span class="p">)</span><span class="o">*</span><span class="mi">3600</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>to output a frame at time 0 and then every 5 minutes from 1 hour to 2 hours.</p>
+<p>You can also now specify which components of <cite>q</cite> to save for each frame,
+see below and <a class="reference internal" href="#fgout-q-out-vars"><span class="std std-ref">Specifying q_out_vars</span></a>.</p>
 </section>
 <section id="format-of-fgout-output">
 <span id="fgout-format"></span><h2>Format of fgout output<a class="headerlink" href="#format-of-fgout-output" title="Permalink to this heading">¶</a></h2>
@@ -209,8 +225,7 @@ files of this form for each fgout grid:</p>
 <div><ul class="simple">
 <li><p><cite>fgout0001.t0000</cite>  # containing info about this output time</p></li>
 <li><p><cite>fgout0001.q0000</cite>  # header (and also data if <cite>output_format==’ascii’</cite>)</p></li>
-<li><p><cite>fgout0001.b0000</cite>  # data in binary format (only if
-<cite>output_format==’binary32’</cite> or <cite>‘binary64’</cite>)</p></li>
+<li><p><cite>fgout0001.b0000</cite>  # data in binary format (only if <cite>output_format</cite> is a binary type`)</p></li>
 </ul>
 </div></blockquote>
 <p>These would be for fgout grid number <cite>fgno = 1</cite> at the first output time.</p>
@@ -249,24 +264,51 @@ interpolating within these grids in both space and time.</p>
 <p>For example, here’s how to read a frame 5 of an fgout grid set up as above:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">fgno</span> <span class="o">=</span> <span class="mi">1</span>
 <span class="n">outdir</span> <span class="o">=</span> <span class="s1">&#39;_output&#39;</span>
-<span class="n">output_format</span> <span class="o">=</span> <span class="s1">&#39;binary32&#39;</span>  <span class="c1"># format of fgout grid output</span>
-<span class="n">fgout_grid</span> <span class="o">=</span> <span class="n">fgout_tools</span><span class="o">.</span><span class="n">FGoutGrid</span><span class="p">(</span><span class="n">fgno</span><span class="p">,</span> <span class="n">outdir</span><span class="p">,</span> <span class="n">output_format</span><span class="p">)</span>
+<span class="n">fgout_grid</span> <span class="o">=</span> <span class="n">fgout_tools</span><span class="o">.</span><span class="n">FGoutGrid</span><span class="p">(</span><span class="n">fgno</span><span class="p">,</span> <span class="n">outdir</span><span class="p">)</span>
+<span class="n">fgout_grid</span><span class="o">.</span><span class="n">read_fgout_grids_data</span><span class="p">()</span> <span class="c1"># required as of v5.11.0</span>
 
 <span class="n">fgframe</span> <span class="o">=</span> <span class="mi">5</span>
 <span class="n">fgout</span> <span class="o">=</span> <span class="n">fgout_grid</span><span class="o">.</span><span class="n">read_frame</span><span class="p">(</span><span class="n">fgframe</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>Then <cite>fgout.X</cite> and <cite>fgout.Y</cite> are 2-dimensional arrays defining the grid
-and <cite>fgout.q</cite> defines the standard GeoClaw <cite>q</cite> array, with <cite>q[0:4,:,:]</cite>
-corresponding to <cite>h, hu, hv, eta</cite>, where <cite>eta = h+B</cite> and <cite>B</cite> is the topography.
-For convenience, additional attributes are defined using lazy
-evaluation only if requested by the user, including
-<cite>h, hu, hv, eta, u, v, s, hss</cite>, where <cite>s</cite> is the speed and
-<cite>hss</cite> is the momentum flux.</p>
+<p>The call to <cite>read_fgout_grids_data()</cite> reads <cite>_output/fgout_grids.data</cite>
+and sets the <cite>output_format</cite> along with other fgout grid parameters set there.
+It also sets <cite>fgout.X</cite>, <cite>fgout.Y</cite> as 2D arrays that are the same for
+all fgout frames.</p>
+<section id="incompatibility-with-previous-versions">
+<span id="fgout-changed511"></span><h3>Incompatibility with previous versions<a class="headerlink" href="#incompatibility-with-previous-versions" title="Permalink to this heading">¶</a></h3>
+<p>If you have fgout output created
+with a version of Clawpack prior to v5.11.0 and you wish to process it using
+a newer version, calling</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">fgout_grid</span><span class="o">.</span><span class="n">read_fgout_grids_data</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>should throw an error because the contents and ordering of information in
+<cite>fgout_grids.data</cite> has changed.  To read this data in the old style,
+instead use:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">fgout_grid</span><span class="o">.</span><span class="n">read_fgout_grids_data_pre511</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>The format of fgout frames has <em>not</em> changed, so once the basic grid information
+has been set, loading each frame should still work fine.</p>
+<p><strong>Reading each frame:</strong>
+The call to <cite>read_frame()</cite> above loads <cite>fgout.q</cite> for a frame number <cite>fgframe</cite>.
+This defines the <cite>q</cite> array, with <cite>q[0:mq,:,:]</cite>
+corresponding to the requested <cite>q_out_vars</cite>.</p>
+<p><strong>New in v5.11.0:</strong> Previously <cite>mq=4</cite> and the <cite>q</cite> array always contained
+<cite>h, hu, hv, eta</cite>, where <cite>eta = h+B</cite> and <cite>B</cite> is the topography.
+This is still the default is <cite>q_out_vars</cite> is not specified in setting up the
+fgout grid, but fewer components of <cite>q</cite> can now be output, along with additional
+variables (see <a class="reference internal" href="#fgout-q-out-vars"><span class="std std-ref">Specifying q_out_vars</span></a>).</p>
+<p>For convenience, additional attributes are defined using lazy
+evaluation only if requested by the user, e.g.,
+<cite>h, hu, hv, eta, B, u, v, s, hss</cite>, where <cite>s</cite> is the speed and
+<cite>hss</cite> is the momentum flux, provided enough components of q have been saved
+to compute these.</p>
 <p>The values in <cite>fgout.X</cite> and <cite>fgout.Y</cite> are the cell centers of the fgout
 grid, and if you want to plot the <cite>q</cite> values on this grid you should use
 <cite>clawpack.visclaw.plottools.pcolorcells</cite>, as described at
-<span class="xref std std-ref">pcolorcells</span>.  For example, here’s a minimalist example of plotting
+<a class="reference internal" href="pcolorcells.html#pcolorcells"><span class="std std-ref">pcolorcells</span></a>.  For example, here’s a minimalist example of plotting
 the water surface eta on top of topography for a single frame of fgout data
 as read above:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">clawpack.visclaw</span> <span class="kn">import</span> <span class="n">plottools</span><span class="p">,</span> <span class="n">geoplot</span>
@@ -279,6 +321,76 @@ as read above:</p>
 </div>
 <p>For more detailed examples of plotting, including making animations,
 see <cite>$CLAW/geoclaw/examples/tsunami/chile2010_fgmax-fgout</cite>.</p>
+</section>
+</section>
+<section id="specifying-q-out-vars">
+<span id="fgout-q-out-vars"></span><h2>Specifying <cite>q_out_vars</cite><a class="headerlink" href="#specifying-q-out-vars" title="Permalink to this heading">¶</a></h2>
+<p><strong>New in v5.11.0:</strong></p>
+<p>Previously, each fgout frame contained columns for <cite>h, hu, hv, eta</cite> at each
+fgout time, where <cite>eta = h + B</cite> based on the current topography <cite>B</cite> at the
+fgout point.</p>
+<p>Starting in v5.11.0 the user can specify <cite>q_out_vars</cite> as an array containing
+the indices of the Fortran <cite>q</cite> array that should be output, and/or additional
+integers that specify <cite>eta</cite> or <cite>B</cite>.  The previous default corresponds to
+setting:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">fgout</span><span class="o">.</span><span class="n">q_out_vars</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>since in the standard GeoClaw Fortran code has 3 variables in <cite>q</cite> (h, hu, hv)
+and index 4 indicates that <cite>eta = h+B</cite> should also be written out for each
+frame.</p>
+<p>The integer 5 can be used to indicate that <cite>B</cite> should be written out.
+For example, to only write out <cite>h</cite> and <cite>B</cite>, the user would set:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">fgout</span><span class="o">.</span><span class="n">q_out_vars</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">5</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>Note that if any two of <cite>h,eta,B</cite> are saved then the third can be computed
+since <cite>eta = h+B</cite>.  The lazy evaluation routines will compute any of these
+from the others if that is possible (or raise an exception if not).</p>
+<p>Note that if know that the underlying AMR grids will never change in the fgout
+region then it would be possible to do a short run with:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">fgout</span><span class="o">.</span><span class="n">q_out_vars</span> <span class="o">=</span> <span class="p">[</span><span class="mi">5</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>to capture the <cite>B</cite> values and then the full run with:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">fgout</span><span class="o">.</span><span class="n">q_out_vars</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>to capture only <cite>h</cite> for each frame and still be able to calculate <cite>eta</cite> for
+each frame if needed for plotting, reducing the file size (possibly useful
+if hundreds of frames on a fine resolution will be saved over some
+region where the AMR resolution is fixed).</p>
+<p><strong>Additional variables for Boussinesq solvers:</strong></p>
+<p>If the dispersive Boussinesq equations are solved (as introduced in v5.10.0,
+see <a class="reference internal" href="bouss2d.html#bouss2d"><span class="std std-ref">Boussinesq solvers in Two Space Dimensions</span></a>), then the Fortran <cite>q</cite> array has two additional components
+<cite>q[4] = huc</cite> and <cite>q[5] = hvc</cite>.  These are used to store corrections to the
+momenta <cite>hu</cite> and <cite>hv</cite> at each time step, which are computed by solving an
+elliptic equation with an implicit solver.  It is convenient to store these
+in <cite>q</cite> computationally, but the user rarely wants to see these values, and
+so the <cite>q_out_vars</cite> can be used to suppress plotting these components and
+only save <cite>h, hu, hv, eta</cite> as in the standard GeoClaw case by setting:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">fgout</span><span class="o">.</span><span class="n">q_out_vars</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">6</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>where now 6 represents <cite>eta</cite> (and 7 would indicate that <cite>B</cite> should be saved).</p>
+<p><strong>qmap dictionary:</strong></p>
+<p>To identify which component of the <cite>q</cite> array read in corresponds to what
+variable name, a dictionary <cite>fgout_grid.qmap</cite> is used, with the standard
+GeoClaw default being:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="s1">&#39;h&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;hu&#39;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;hv&#39;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span> <span class="s1">&#39;eta&#39;</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span> <span class="s1">&#39;B&#39;</span><span class="p">:</span> <span class="mi">5</span><span class="p">}</span>
+</pre></div>
+</div>
+<p>This dictionary can be specified when instantiating a new <cite>FGoutGrid</cite> object,
+e.g.:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">fgout_grid</span> <span class="o">=</span> <span class="n">fgout_tools</span><span class="o">.</span><span class="n">FGoutGrid</span><span class="p">(</span><span class="n">fgno</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">outdir</span><span class="o">=</span><span class="s1">&#39;_output&#39;</span><span class="p">,</span> <span class="n">qmap</span><span class="o">=</span><span class="s1">&#39;geoclaw&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>to use the default GeoClaw dictionary. This is also the default if <cite>qmap</cite>
+is not specified.  Alternatively you can instantiate this with
+<cite>qmap=’geoclaw-bouss’</cite>, which would be equivalent to instantiating with:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">qmap</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;h&#39;</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;hu&#39;</span><span class="p">:</span><span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;hv&#39;</span><span class="p">:</span><span class="mi">3</span><span class="p">,</span> <span class="s1">&#39;huc&#39;</span><span class="p">:</span><span class="mi">4</span><span class="p">,</span> <span class="s1">&#39;hvc&#39;</span><span class="p">:</span><span class="mi">5</span><span class="p">,</span> <span class="s1">&#39;eta&#39;</span><span class="p">:</span><span class="mi">6</span><span class="p">,</span> <span class="s1">&#39;B&#39;</span><span class="p">:</span><span class="mi">7</span><span class="p">}</span>
+</pre></div>
+</div>
 </section>
 <section id="fgout-grid-registration">
 <span id="fgout-registration"></span><h2>fgout grid registration<a class="headerlink" href="#fgout-grid-registration" title="Permalink to this heading">¶</a></h2>
@@ -344,7 +456,7 @@ for a description and links to the plots and a script for making an animation.</
 <p><a href="http://clawpack.org/">
     <img class="logo" src= "_static/clawlogo.jpg" alt="Logo"/>
 </a>
-<h2>Version 5.10.x</h2>
+<h2>Version 5.11.x</h2>
 </p>
   <div>
     <h3><a href="contents.html">Table of Contents</a></h3>
@@ -354,7 +466,11 @@ for a description and links to the plots and a script for making an animation.</
 <li><a class="reference internal" href="#a-simple-example">A simple example</a></li>
 <li><a class="reference internal" href="#format-of-fgout-output">Format of fgout output</a></li>
 <li><a class="reference internal" href="#using-setplot-py-to-produce-plots">Using <cite>setplot.py</cite> to produce plots</a></li>
-<li><a class="reference internal" href="#reading-and-plotting-fgout-arrays-directly">Reading and plotting fgout arrays directly</a></li>
+<li><a class="reference internal" href="#reading-and-plotting-fgout-arrays-directly">Reading and plotting fgout arrays directly</a><ul>
+<li><a class="reference internal" href="#incompatibility-with-previous-versions">Incompatibility with previous versions</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#specifying-q-out-vars">Specifying <cite>q_out_vars</cite></a></li>
 <li><a class="reference internal" href="#fgout-grid-registration">fgout grid registration</a></li>
 <li><a class="reference internal" href="#choice-of-interpolation-procedure">Choice of interpolation procedure</a></li>
 <li><a class="reference internal" href="#fgout-examples">fgout examples</a></li>
@@ -404,10 +520,11 @@ for a description and links to the plots and a script for making an animation.</
 <h4>Latest Version</h4>
 <ul>
   <li><a href="./dev/fgout.html">dev</a></li>
-  <li><a href="fgout.html">v5.10.x</a></li>
+  <li><a href="fgout.html">v5.11.x</a></li>
 </ul>
 <h4>Older Versions</h4>
 <ul>
+  <li><a href="./v5.10.x/fgout.html">v5.10.x</a></li>
   <li><a href="./v5.7.x/fgout.html">v5.7.x</a></li>
   <li><a href="./v5.8.x/fgout.html">v5.8.x</a></li>
   <li><a href="./v5.9.x/fgout.html">v5.9.x</a></li>
