@@ -1,0 +1,259 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+    <title>Setting a Speed Limit to Avoid Instabilities &#8212; Clawpack dev documentation</title>
+    <link rel="stylesheet" href="_static/base.css" type="text/css" />
+    <link rel="stylesheet" href="_static/layout.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/flasky.css" />
+    <link rel="stylesheet" type="text/css" href="_static/graphviz.css" />
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/sphinx_highlight.js"></script>
+    <link rel="shortcut icon" href="_static/clawicon.ico"/>
+    <link rel="author" title="About these documents" href="about.html" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="PyClaw" href="pyclaw/index.html" />
+    <link rel="prev" title="Boussinesq solvers in Two Space Dimensions" href="bouss2d.html" /> 
+  </head><body>
+<div id="main-wrapper" class="sphinx">
+<div id="header-wrapper">
+  <section id="header">
+    <!-- <h1><a href="http://clawpack.org/">Clawpack</a></h1> -->
+    <h1><a href="http://clawpack.org/">Clawpack-5</a></h1> 
+    <nav>
+      <ul>
+        <li>
+          <a href="contents.html">Docs</a>
+        </li>
+        <li>
+          <a href="installing.html">Install</a>
+        </li>
+        <li>
+          <a class="" href="http://clawpack.org/gallery/index.html">Gallery</a>
+        </li>
+        <li>
+          <a href="about.html">Citation</a>
+        </li>
+        <li>
+          <a class="active" href="http://github.com/clawpack">GitHub</a>
+        </li>
+        <li>
+          <a class="" href="community.html">Community</a>
+        </li>
+        <li>
+          <a class="" href="developers.html">Contribute</a>
+        </li>
+      </ul>
+    </nav>
+  </section>
+<div class="decoration"></div>
+</div>
+
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="pyclaw/index.html" title="PyClaw"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="bouss2d.html" title="Boussinesq solvers in Two Space Dimensions"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="contents.html">Clawpack dev documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="geoclaw.html" accesskey="U">GeoClaw Description and Detailed Contents</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Setting a Speed Limit to Avoid Instabilities</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="setting-a-speed-limit-to-avoid-instabilities">
+<span id="speed-limit"></span><h1>Setting a Speed Limit to Avoid Instabilities<a class="headerlink" href="#setting-a-speed-limit-to-avoid-instabilities" title="Permalink to this heading">¶</a></h1>
+<p><strong>To appear in v5.11.1.</strong>  Not yet in the master branch…</p>
+<p>See <a class="reference external" href="https://github.com/clawpack/geoclaw/pull/637">https://github.com/clawpack/geoclaw/pull/637</a>
+for some more information on this modification.</p>
+<p>A new paramter <cite>rundata.geo_data.speed_limit</cite> can now be set in <cite>setrun.py</cite>
+to impose an upper limit on the water speed <cite>s = sqrt(u**2 + v**2)</cite>.  By
+default this is set to 50 m/s (about 112 mph), which we believe is larger
+than any physical water speed for most practical problems, and so using the
+default value should not significantly affect agreement with
+past simulation results.</p>
+<p>In practice you may want to explicitly set a smaller value, e.g.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rundata</span><span class="o">.</span><span class="n">geo_data</span><span class="o">.</span><span class="n">speed_limit</span> <span class="o">=</span> <span class="mf">20.</span>
+</pre></div>
+</div>
+<p>for better performance and less danger of instability in certain cases.</p>
+<section id="avoiding-too-many-dt-reductions">
+<span id="speed-limit-dt"></span><h2>Avoiding <cite>too many dt reductions</cite><a class="headerlink" href="#avoiding-too-many-dt-reductions" title="Permalink to this heading">¶</a></h2>
+<p>The reason for introducing the <cite>speed_limit</cite> is to improve the stability of
+GeoClaw in situations where flows are inundating relatively steep
+topography.  Past versions of GeoClaw have sometimes died with a cryptic
+error message such as</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">****</span> <span class="n">Too</span> <span class="n">many</span> <span class="n">dt</span> <span class="n">reductions</span> <span class="o">****</span>
+<span class="o">****</span> <span class="n">Stopping</span> <span class="n">calculation</span>   <span class="o">****</span>
+<span class="o">****</span> <span class="n">ntogo</span> <span class="o">=</span>   <span class="mi">172</span>
+</pre></div>
+</div>
+<p>This indicates that GeoClaw has repeatedly attempted to reduce the time step dt
+to get the Courant number below the desired value <cite>clf_desired</cite>,
+but has failed to do so with a physically reasonable set of reductions.
+(<cite>ntogo</cite> is the number of time steps still remaining to sync up this level
+with the next coarser AMR level.)</p>
+<p>The developers have determined that this usually happens in grid
+cells that are on steep topography (e.g. on a cliff face)
+in a case when the cell is at the edge of the inundation zone
+with a fluid depth that is much smaller than the jump in topography between
+this cell and an adjacent lower cell.  The Riemann solver for the shallow
+water equations is not designed to handle the resulting flow of this small
+amount of water down the vertical interface between these cells, since
+depth-averaged equations are not appropriate to model this waterfall.  As a
+result, the values of <cite>h</cite> and the momenta <cite>hu, hv</cite> that come out of the
+approximate Riemann solution may be such that <cite>h</cite> is very small while <cite>hu,
+hv</cite> are so large that <cite>u = hu/h</cite> and/or <cite>v = hv/h</cite> turn out to be much too
+large to be physically meaningful (values in excess of 10000 m/s have been
+observed in a single cell in simulations that behave well everywhere
+else).  Since the Courant number is based on the wave speed <cite>|s| +
+sqrt(g*h)</cite>, huge values of <cite>s</cite> require tiny values of <cite>dt</cite> to respect
+the CFL condition.</p>
+<p>The new <cite>speed_limit</cite> fixes things up in these isolated bad cells and allows
+the calculation to proceed.</p>
+</section>
+<section id="how-is-the-speed-limit-imposed">
+<span id="speed-limit-imposed"></span><h2>How is the speed limit imposed?<a class="headerlink" href="#how-is-the-speed-limit-imposed" title="Permalink to this heading">¶</a></h2>
+<p>The new <cite>speed_limit</cite> is used in the GeoClaw <cite>b4step2.f90</cite> subroutine to check
+the speed <cite>s</cite> in every cell before taking the next step on the shallow water
+equations.  In a cell where <cite>s &gt; speed_limit</cite>, the velocities <cite>u,v</cite> are
+scaled down so the direction of the velocity vector is preserved,
+but with reduced speed <cite>sqrt(u**2 + v**2) = speed_limit</cite>.  This is also
+done in <cite>getmaxspeed.f90</cite>, used for setting time steps.</p>
+<p>The <cite>speed_limit</cite> is also imposed in the <cite>src2.f90</cite> subroutine, but only
+in the case where the user sets</p>
+<blockquote>
+<div><p>rundata.geo_data.friction_forcing = False</p>
+</div></blockquote>
+<p>so that no bottom friction is applied in this routine.  For
+frictionless calculations, we have found that unphysical speeds can
+arise in many cells in the inundation zone. These are typically cells
+where the depth <cite>h</cite> is very small but <cite>hu,hv</cite> are large, and even a bit of
+bottom friction typically damps the speed to something reasonable, if
+<cite>friction_forcing</cite> is being used.  This has
+not been extensively tested, but in some experiments a Manning coefficient
+of at least 0.05 avoids problems.  If you need to use a smaller value, you may
+need to adjust <cite>src2.f90</cite> to also apply the <cite>speed_limit</cite> more generally.
+(The Manning coefficient value 0.025 is often used for tsunami modeling.)</p>
+</section>
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<p><a href="http://clawpack.org/">
+    <img class="logo" src= "_static/clawlogo.jpg" alt="Logo"/>
+</a>
+<h2>Version dev</h2>
+</p>
+  <div>
+    <h3><a href="contents.html">Table of Contents</a></h3>
+    <ul>
+<li><a class="reference internal" href="#">Setting a Speed Limit to Avoid Instabilities</a><ul>
+<li><a class="reference internal" href="#avoiding-too-many-dt-reductions">Avoiding <cite>too many dt reductions</cite></a></li>
+<li><a class="reference internal" href="#how-is-the-speed-limit-imposed">How is the speed limit imposed?</a></li>
+</ul>
+</li>
+</ul>
+
+  </div><h3>Related Topics</h3>
+<ul>
+  <li><a href="contents.html">Documentation overview</a><ul>
+  <li><a href="geoclaw.html">GeoClaw Description and Detailed Contents</a><ul>
+      <li>Previous: <a href="bouss2d.html" title="previous chapter">Boussinesq solvers in Two Space Dimensions</a></li>
+      <li>Next: <a href="pyclaw/index.html" title="next chapter">PyClaw</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+<div class="widget navlinks">
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/speed_limit.rst.txt"
+            rel="nofollow"
+            target="_blank">Source .rst</a></li>
+    <li><a href="https://github.com/clawpack/doc/blob/dev/doc/speed_limit.rst"
+            rel="nofollow"
+            target="_blank">Source on GitHub</a></li>
+     <li><a href="https://github.com/clawpack/doc/commits/dev/doc/speed_limit.rst"
+             rel="nofollow"
+             target="_blank">History</a></li>
+    <li><a href="https://github.com/clawpack/doc/edit/dev/doc/speed_limit.rst"
+            rel="nofollow"
+            target="_blank">Suggest Edits</a></li>
+     <li><a href="https://github.com/clawpack/doc/issues/new/choose"
+             rel="nofollow"
+             target="_blank">Raise an Issue</a></li>
+  </ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+<h4>Latest Version</h4>
+<ul>
+  <li><a href="speed_limit.html">dev</a></li>
+  <li><a href="../v5.11.x/index.html">v5.11.x</a></li>
+</ul>
+<h4>Older Versions</h4>
+<ul>
+  <li><a href="../v5.10.x/index.html">v5.10.x</a></li>
+  <li><a href="../v5.7.x/index.html">v5.7.x</a></li>
+  <li><a href="../v5.8.x/index.html">v5.8.x</a></li>
+  <li><a href="../v5.9.x/index.html">v5.9.x</a></li>
+</ul>
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+  <div class="footer">
+    &copy; Copyright CC-BY 2024, The Clawpack Development Team.
+    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
+  </div>
+  <script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-44811544-1', 'auto');
+  ga('send', 'pageview');
+
+  </script>
+  
+  </body>
+</html>

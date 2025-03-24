@@ -288,10 +288,23 @@ point (by setting <cite>coarsen=2</cite>). This is particularly useful if you on
 a subset of a huge online netCDF file (e.g. coastal DEMs at 1/3 arcsecond
 resolution are typically several gigabytes).</p>
 <p>The dictionary <cite>topotools.remote_topo_urls</cite> contains some useful URLs for
-etopo1 and a few other NOAA THREDDS datasets. This allows reading etopo1
-data, for example, via:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">clawpack.geoclaw</span> <span class="kn">import</span> <span class="n">topotools</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">topo1</span> <span class="o">=</span> <span class="n">topotools</span><span class="o">.</span><span class="n">read_netcdf</span><span class="p">(</span><span class="s1">&#39;etopo1&#39;</span><span class="p">,</span><span class="o">...</span><span class="p">)</span>
+etopo and a few other NOAA THREDDS datasets. This allows reading etopo
+60 arc-second data, for example, via:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">clawpack.geoclaw</span> <span class="kn">import</span> <span class="n">topotools</span>
+<span class="n">extent</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mi">135</span><span class="p">,</span> <span class="o">-</span><span class="mi">120</span><span class="p">,</span> <span class="mi">38</span><span class="p">,</span> <span class="mi">52</span><span class="p">]</span>
+<span class="n">topo</span> <span class="o">=</span> <span class="n">topotools</span><span class="o">.</span><span class="n">read_netcdf</span><span class="p">(</span><span class="s1">&#39;etopo22_60s&#39;</span><span class="p">,</span> <span class="n">extent</span><span class="o">=</span><span class="n">extent</span><span class="p">,</span>
+                             <span class="n">coarsen</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>A quick plot of the topography can then be created using:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">topo</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>(with numerous optional arguments),
+and the topo can be saved as an ASCII raster topofile via, e.g.:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">fname</span> <span class="o">=</span> <span class="s1">&#39;topo.asc&#39;</span>
+<span class="n">topo</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="n">topo_type</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">header_style</span><span class="o">=</span><span class="s1">&#39;asc&#39;</span><span class="p">,</span>
+           <span class="n">grid_registration</span><span class="o">=</span><span class="s1">&#39;llcenter&#39;</span><span class="p">,</span> <span class="n">Z_format</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">%.1f</span><span class="s1">&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>See <cite>$CLAW/geoclaw/tests/test_etopo1.py</cite> for one example, in which a very
