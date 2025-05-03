@@ -87,6 +87,14 @@
             
   <section id="boussinesq-solvers-in-two-space-dimensions">
 <span id="bouss2d"></span><h1>Boussinesq solvers in Two Space Dimensions<a class="headerlink" href="#boussinesq-solvers-in-two-space-dimensions" title="Permalink to this heading">¶</a></h1>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>The PETSc version required and the set of environment variables
+that must be set to use the 2D Boussinesq solvers changed in Version 5.12.0.
+PETSc Version 3.20 (or later) should now be used.
+This documentation has been updated, and see also
+<cite>$CLAW/geoclaw/examples/bouss/README.txt</cite> for additional setup information.</p>
+</div>
 <p>As of Version 5.10.0, GeoClaw includes the option to solve a
 dispersive Boussinesq-type equation known as Serre-Green-Naghdi (SGN)
 instead of the usual shallow water equations (SWE).
@@ -265,17 +273,19 @@ and source code files that are used by default from the library
 <cite>$CLAW/geoclaw/src/2d/bouss</cite>, or from <cite>$CLAW/amrclaw/src/2d</cite> or
 <cite>$CLAW/geoclaw/src/2d/shallow</cite> in the case of files that did not need to
 be modified for the Boussinesq code.</p>
-<p>Two <cite>Makefile</cite> variables <cite>PETSC_DIR</cite> and <cite>PETSC_ARCH</cite> must be set (perhaps as
-environment variables in the shell from which <cite>make</cite> is invoked). These are
-described further below in <a class="reference internal" href="#bouss2d-prereqs"><span class="std std-ref">Prerequisites for the 2d Boussinesq code</span></a>.</p>
-<p>The <cite>FFLAGS</cite> specified in the <cite>Makefile</cite> should include <cite>-DHAVE_PETSC</cite>
-to indicate that <cite>PETSc</cite> is being used, necessary when compiling the
-source code for Boussinesq solvers.</p>
-<p>The <cite>Makefile</cite> should also include a line of the form:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>PETSC_OPTIONS=-options_file $(CLAW)/geoclaw/examples/bouss/petscMPIoptions
+<p>The <cite>Makefile</cite> uses several variables that must be set either by hardwiring
+them in the <cite>Makefile</cite> or as environment variables in the shell from
+which <cite>make</cite> is invoked.  The sample bash script
+<cite>$CLAW/geoclaw/examples/bouss/setenv.sh</cite> shows how these might be set, with
+comments.</p>
+<p>One variable that must be set as an environment variable is <cite>PETSC_OPTIONS</cite>,
+which should be set in bash as:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">export</span> <span class="n">PETSC_OPTIONS</span><span class="o">=</span><span class="s2">&quot;-options_file /path/to/petscMPIoptions&quot;</span>
 </pre></div>
 </div>
-<p>with a pointer to the file that sets various <cite>PETSc</cite> options. The file
+<p>where <cite>petscMPIoptions</cite> is a file that specifies the linear solver and
+preconditioner to use, convergence tolerances,
+and other parameters needed by PETSc.  The file
 <cite>$CLAW/geoclaw/examples/bouss/petscMPIoptions</cite> gives the options used in
 the examples, which may be adequate for other problems too.
 This file includes some comments briefly explaining the options set.
@@ -288,24 +298,21 @@ For more about the options for these methods, see:</p>
 <li><p><a class="reference external" href="https://petsc.org/release/manualpages/PC/PCSetFromOptions/">https://petsc.org/release/manualpages/PC/PCSetFromOptions/</a></p></li>
 </ul>
 </div></blockquote>
+<p>The <cite>FFLAGS</cite> specified in the <cite>Makefile</cite> should include <cite>-DHAVE_PETSC</cite>
+to indicate that <cite>PETSc</cite> is being used, necessary when compiling the
+source code for Boussinesq solvers.</p>
 <p>In addition to a line of the form</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">EXE</span> <span class="o">=</span> <span class="n">xgeoclaw</span>
 </pre></div>
 </div>
 <p>that specifies the name and location of the executable to be generated, the
 <cite>Makefile</cite> should also contain a line of the form:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">RUNEXE</span><span class="o">=</span><span class="s2">&quot;$</span><span class="si">{PETSC_DIR}</span><span class="s2">/$</span><span class="si">{PETSC_ARCH}</span><span class="s2">/bin/mpiexec -n 6&quot;</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">RUNEXE</span><span class="o">=</span><span class="s2">&quot;$</span><span class="si">{CLAW_MPIEXEC}</span><span class="s2"> -n $</span><span class="si">{BOUSS_MPI_PROCS}</span><span class="s2">&quot;</span>
 </pre></div>
 </div>
-<p>This is the command that should be used in order to run the executable.
-In other words, if you set <cite>PETSC_DIR</cite> and <cite>PETSC_ARCH</cite> as environment
-variables, and the executable is named <cite>xgeoclaw</cite> as usual, then the command</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$PETSC_DIR/$PETSC_ARCH/bin/mpiexec -n 6 xgeoclaw
-</pre></div>
-</div>
-<p>given in the shell should run the executable (invoking MPI with 6 processes in
-this example).  If this does not work then one of the environment variables
-may be set incorrectly to find the <cite>mpiexec</cite> command.</p>
+<p>The variable <cite>CLAW_MPIEXEC</cite> must be the path to the command used to run the
+executable <cite>$EXE</cite> with MPI, and <cite>BOUSS_MPI_PROCS</cite> is the number of MPI
+processes to use.</p>
 </section>
 </section>
 <section id="prerequisites-for-the-2d-boussinesq-code">
