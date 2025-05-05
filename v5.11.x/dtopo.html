@@ -1,0 +1,350 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+    <title>Moving topography displacement files &#8212; Clawpack 5.11.x documentation</title>
+    <link rel="stylesheet" href="_static/base.css" type="text/css" />
+    <link rel="stylesheet" href="_static/layout.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/flasky.css" />
+    <link rel="stylesheet" type="text/css" href="_static/graphviz.css" />
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/sphinx_highlight.js"></script>
+    <link rel="shortcut icon" href="_static/clawicon.ico"/>
+    <link rel="author" title="About these documents" href="about.html" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Landslides" href="landslides.html" />
+    <link rel="prev" title="kmltools module of utility functions" href="kmltools_module.html" /> 
+  </head><body>
+<div id="main-wrapper" class="sphinx">
+<div id="header-wrapper">
+  <section id="header">
+    <!-- <h1><a href="http://clawpack.org/">Clawpack</a></h1> -->
+    <h1><a href="http://clawpack.org/">Clawpack-5</a></h1> 
+    <nav>
+      <ul>
+        <li>
+          <a href="contents.html">Docs</a>
+        </li>
+        <li>
+          <a href="installing.html">Install</a>
+        </li>
+        <li>
+          <a class="" href="http://clawpack.org/gallery/index.html">Gallery</a>
+        </li>
+        <li>
+          <a href="about.html">Citation</a>
+        </li>
+        <li>
+          <a class="active" href="http://github.com/clawpack">GitHub</a>
+        </li>
+        <li>
+          <a class="" href="community.html">Community</a>
+        </li>
+        <li>
+          <a class="" href="developers.html">Contribute</a>
+        </li>
+      </ul>
+    </nav>
+  </section>
+<div class="decoration"></div>
+</div>
+
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="landslides.html" title="Landslides"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="kmltools_module.html" title="kmltools module of utility functions"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="contents.html">Clawpack 5.11.x documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="geoclaw.html" accesskey="U">GeoClaw Description and Detailed Contents</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Moving topography displacement files</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="moving-topography-displacement-files">
+<span id="dtopo"></span><h1>Moving topography displacement files<a class="headerlink" href="#moving-topography-displacement-files" title="Permalink to this heading">¶</a></h1>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="dtopotools_module.html#dtopotools-module"><span class="std std-ref">dtopotools module for moving topography</span></a></p></li>
+<li><p><a class="reference internal" href="topo.html#topo"><span class="std std-ref">Topography data</span></a></p></li>
+<li><p><a class="reference internal" href="tsunamidata.html#tsunamidata"><span class="std std-ref">Some sources of tsunami data</span></a></p></li>
+</ul>
+</div>
+<p>For tsunami generation a <em>dtopo file</em> is often used to specify the
+displacement of the topography relative to that specified in the topo files,
+which are described in <a class="reference internal" href="topo.html#topo"><span class="std std-ref">Topography data</span></a>.  The dtopo file specifies the change in
+topography over some region (by specifying the displacement on a grid of
+points) either at a single time or at a sequence of times. Various file
+formats are allowed, see <a class="reference internal" href="#dtopo-formats"><span class="std std-ref">dtopo file formats</span></a> below.</p>
+<p>This displacement might arise from various sources, including:</p>
+<ul class="simple">
+<li><p>An earthquake creating motion of the seafloor, specified as either a
+time history of the displacement might be available, or simply as the
+final static displacement at the end of the shaking (for an
+“instantaneous” event).</p></li>
+<li><p>A submarine landslide, slump, or mass flow, or
+a subareal landslide along the coast that strikes and enters the water.</p></li>
+</ul>
+<p>In the latter case it is generally challenging to model the landslide motion
+accurately and it is often necessary to use a fully coupled model that
+includes the effect of the fluid motion on the landslide during its
+evolution.  Such cases cannot be modeled simply by providing a dtopo file as
+described here.  But in some cases it may be possible to run a separate
+landslide model first and use the evolution of the surface to generate a
+dtopo file that can then be used to generate a tsunami.  See
+<a class="reference internal" href="landslides.html#landslides"><span class="std std-ref">Landslides</span></a> for more details and an example.</p>
+<p>The <a class="reference external" href="https://dlgeorge.github.io/project/dclaw-project">D-Claw</a> code
+is an extension of GeoClaw that can model dense debris flows and some kinds
+of landslides, including subareal landslides striking water and generating
+a tsunami.  See <a class="reference internal" href="dclaw.html#dclaw"><span class="std std-ref">D-Claw for debris flows and landslides</span></a> for more details.</p>
+<section id="dtopo-files-for-earthquakes">
+<span id="dtopo-seismic"></span><h2>dtopo files for earthquakes<a class="headerlink" href="#dtopo-files-for-earthquakes" title="Permalink to this heading">¶</a></h2>
+<p>Genearating a tsunami in GeoClaw often proceeds by specifying the vertical
+motion of the seafloor at one or more times.  The entire water column in each
+grid cell is then moved vertically by the same amount (or some filtering
+may be applied, see below).  This creates a disturbance of the sea surface,
+which in turn results in tsunami waves that propagate away from the source
+region.</p>
+<p>Calculating the seafloor deformation due to an earthquake usually starts by
+specifying some amount of slip on a fault plane interior to the earth,
+or more likely on a finite set of subfaults, each of
+which is a planar rectangle or triangle, and which together better approximate
+the fault surface for a complex fault.</p>
+<p>There are three distinct ways of approximating seafloor deformation resulting
+from an earthquake that are commonly used in GeoClaw:</p>
+<blockquote>
+<div><ol class="arabic simple">
+<li><p>The <strong>Okada model</strong> is a simple approach in which the earth is assumed to be
+a homogeneous halfspace, with the earth’s surface (and seafloor) at the
+top free surface.  The slip on a single subfault then results in a
+static deformation of the surface at some time after all the seismic waves
+have propagated away.  The Okada model can be applied to either a single
+rectangle or triangle, and then for a more complex fault the deformation due
+to each subfault is simply summed up, assuming linearity.  This approach
+does not model the shaking of the earthquake but the final static deformation
+is often sufficient to model the resulting tsunami.  This is often called
+a “static displacement” or “instantaneous displacement” model,
+since the earthquake is assumed to
+act at the same time on all subfaults and the final static deformation
+from each subfault is used immediately at the earthquake time (usually
+either at the time <cite>t0</cite> where the GeoClaw simulation starts or perhaps
+1 second later so that the initial flat ocean surface is also captured in
+the output).</p></li>
+<li><p>A <strong>“kinematic” earthquake model</strong> assigns slips to each subfault and also
+assigns a “rupture time” and a “rise time” for each subfault, with the
+latter determining how long it takes the slip to build up on the subfault.
+A quasi-static approach can then be used in which the Okada model is used
+at each time from <cite>t0</cite> to the final time of any subfault motion, with
+the cumulative slip up to that time used as the seafloor deformation at that
+time. Alternatively, a full 3D seismic simulation could be performed to
+model the generation and propagation of seismic waves spreading out from
+the fault.  The motion of the free surface in the seismic simulation is
+then used as the seafloor deformation, and is evolving in time from the
+initial time <cite>t0</cite> of the earthquake to a later time when all the seismic
+waves have decayed. At this time, the final seafloor deformation may be
+similar to what the Okada model would predict, particularly if the seismic
+simulation is done in a homogeneous half-space.  However, the seismic
+simulation can instead be done using a model of the structure of the earth
+in which the elastic parameters (and seismic wave speeds) vary in space.
+Some seismic codes also allow the free surface to model the topography and
+bathymetry of the sea floor as well, and may even model the ocean as a
+separate acoustic layer on top of the earth.</p></li>
+<li><p>A <strong>“dynamic” rupture model</strong> is even more complex, in that the initial fault
+geometry and stresses are prescribed but the slip on each subfault is
+then determined dynamically by using a rupture model for the rock mechanics,
+coupled with the 3D elastic wave equations.</p></li>
+</ol>
+</div></blockquote>
+<p>Regardless of how complex the model is that determines the seafloor motion,
+in GeoClaw we simply read in the resulting vertical seafloor displacement
+on a uniform grid at a sequence of one or more times.</p>
+</section>
+<section id="dtopo-file-formats">
+<span id="dtopo-formats"></span><h2>dtopo file formats<a class="headerlink" href="#dtopo-file-formats" title="Permalink to this heading">¶</a></h2>
+<p>Currently two formats are supported for this file:</p>
+<blockquote>
+<div><p><strong>dtopotype=1:</strong></p>
+<p>Similar to
+topo files with <em>topotype=1</em> as described above, except that each line
+starts with a <em>t</em> value for the time, so each line contains t,x,y,dz</p>
+<p>The x,y,dz values give the displacement dz at x,y at time t.  It is assumed
+that the grid is uniform and that the file contains mx*my*mt lines if mt
+different times are specified for an mx*my grid.</p>
+<p><strong>dtopotype=3:</strong></p>
+<p>This is the recommended <cite>dtopo_type</cite>.  Similar to
+topo files with <em>topotype=3</em> as described above, but the header is
+different, and contains lines specifying <em>mx, my, mt, xlower, ylower, t0,
+dx, dy</em>, and <em>dt</em>.  These are followed by <em>mt</em> sets of <em>my</em> lines,
+each line containing <em>mx</em> values of <em>dz</em>.</p>
+</div></blockquote>
+<p>Here is an example header for a dtopofile:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>    <span class="mi">721</span>       <span class="n">mx</span>
+   <span class="mi">1201</span>       <span class="n">my</span>
+     <span class="mi">56</span>       <span class="n">mt</span>
+<span class="o">-</span><span class="mf">1.28500000000000e+02</span>   <span class="n">xlower</span>
+<span class="mf">4.00000000000000e+01</span>   <span class="n">ylower</span>
+<span class="mf">0.00000000000000e+00</span>   <span class="n">t0</span>
+<span class="mf">8.33333333332575e-03</span>   <span class="n">dx</span>
+<span class="mf">8.33333333333286e-03</span>   <span class="n">dy</span>
+<span class="mf">1.00000000000000e+01</span>   <span class="n">dt</span>
+</pre></div>
+</div>
+<p>The time increment is <cite>dt=10</cite> seconds and <cite>mt=56</cite> snapshots of the
+vertical deformation are stored in this file;
+this header is followed by 1201 x 56 lines, each having 721 values
+giving the vertical displacement on one line of constant latitude.</p>
+<p>Note that while the topography is moving, it is important to insure that the
+time step is small enough to capture the motion.  The <cite>setrun.py</cite>
+parameter <cite>rundata.dtopo_data.dt_max_dtopo</cite> can be set to the  maximum timestep
+to be used between time <cite>t0 = 0</cite> and <cite>t0 + (mt-1)*dt = 550</cite> seconds, in the
+example above.  See <a class="reference internal" href="setrun_geoclaw.html#setrun-topo"><span class="std std-ref">Topography data file parameters</span></a>.</p>
+<p>GeoClaw does not include any capabilities for 3D seismic modeling, but
+the Okada model on both rectangles and triangles is implemented, along with
+tools for reading the fault parameters in
+various formats, applying the Okada model, and generating a dtopo file
+with the resulting displacements.
+See <a class="reference internal" href="okada.html#okada"><span class="std std-ref">Earthquake sources: Fault slip and the Okada model</span></a> and <a class="reference internal" href="dtopotools_module.html#dtopotools-module"><span class="std std-ref">dtopotools module for moving topography</span></a> for more details.</p>
+</section>
+<section id="qinit-data-file">
+<span id="qinit-file"></span><h2>qinit data file<a class="headerlink" href="#qinit-data-file" title="Permalink to this heading">¶</a></h2>
+<p>Instead of (or in addition to) specifying a displacement of the topography
+it is possible to specify a perturbation to the depth, momentum, or surface
+elevation of the initial data.  This is generally useful only for tsunami
+modeling where the initial data specified in the default <em>qinit.f90</em> function
+is the stationary water with surface elevation equal to <em>sea_level</em> as set in
+<cite>setrun.py</cite> (see <a class="reference internal" href="setrun_geoclaw.html#setrun-geoclaw"><span class="std std-ref">Specifying GeoClaw parameters in setrun.py</span></a>).</p>
+<p>Of course it is possible to copy the <em>qinit.f90</em> function to your
+directory and modify it, but for some applications the initial elevation may
+be given on grid of the same type as described above.  In this case file can
+be provided as described at <a class="reference internal" href="setrun_geoclaw.html#setrun-qinit"><span class="std std-ref">qinit data file parameters</span></a> containing this
+perturbation.</p>
+<p>The file format is similar to what is described above for <em>topotype=1</em>, but
+now each line contains <em>x,y,dq</em> where <em>dq</em> is a perturbation to one of the
+components of <em>q</em> as specified by the value of <em>qinit_type</em> specified (see
+<a class="reference internal" href="setrun_geoclaw.html#setrun-qinit"><span class="std std-ref">qinit data file parameters</span></a>).  If <em>qinit_type = 4</em>, the value <em>dq</em> is instead the
+surface elevation desired for the initial data and the depth <em>h</em> (first
+component of <em>q</em>) is set accordingly.</p>
+</section>
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<p><a href="http://clawpack.org/">
+    <img class="logo" src= "_static/clawlogo.jpg" alt="Logo"/>
+</a>
+<h2>Version 5.11.x</h2>
+</p>
+  <div>
+    <h3><a href="contents.html">Table of Contents</a></h3>
+    <ul>
+<li><a class="reference internal" href="#">Moving topography displacement files</a><ul>
+<li><a class="reference internal" href="#dtopo-files-for-earthquakes">dtopo files for earthquakes</a></li>
+<li><a class="reference internal" href="#dtopo-file-formats">dtopo file formats</a></li>
+<li><a class="reference internal" href="#qinit-data-file">qinit data file</a></li>
+</ul>
+</li>
+</ul>
+
+  </div><h3>Related Topics</h3>
+<ul>
+  <li><a href="contents.html">Documentation overview</a><ul>
+  <li><a href="geoclaw.html">GeoClaw Description and Detailed Contents</a><ul>
+      <li>Previous: <a href="kmltools_module.html" title="previous chapter">kmltools module of utility functions</a></li>
+      <li>Next: <a href="landslides.html" title="next chapter">Landslides</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+<div class="widget navlinks">
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/dtopo.rst.txt"
+            rel="nofollow"
+            target="_blank">Source .rst</a></li>
+    <li><a href="https://github.com/clawpack/doc/blob/dev/doc/dtopo.rst"
+            rel="nofollow"
+            target="_blank">Source on GitHub</a></li>
+     <li><a href="https://github.com/clawpack/doc/commits/dev/doc/dtopo.rst"
+             rel="nofollow"
+             target="_blank">History</a></li>
+    <li><a href="https://github.com/clawpack/doc/edit/dev/doc/dtopo.rst"
+            rel="nofollow"
+            target="_blank">Suggest Edits</a></li>
+     <li><a href="https://github.com/clawpack/doc/issues/new/choose"
+             rel="nofollow"
+             target="_blank">Raise an Issue</a></li>
+  </ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+<h4>Latest Version</h4>
+<ul>
+  <li><a href="../dev/dtopo.html">dev</a></li>
+  <li><a href="dtopo.html">v5.11.x</a></li>
+</ul>
+<h4>Older Versions</h4>
+<ul>
+  <li><a href="../v5.10.x/index.html">v5.10.x</a></li>
+  <li><a href="../v5.7.x/index.html">v5.7.x</a></li>
+  <li><a href="../v5.8.x/index.html">v5.8.x</a></li>
+  <li><a href="../v5.9.x/index.html">v5.9.x</a></li>
+</ul>
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+  <div class="footer">
+    &copy; Copyright CC-BY 2024, The Clawpack Development Team.
+    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
+  </div>
+  <script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-44811544-1', 'auto');
+  ga('send', 'pageview');
+
+  </script>
+  
+  </body>
+</html>
