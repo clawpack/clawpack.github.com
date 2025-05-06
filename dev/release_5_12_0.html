@@ -78,17 +78,17 @@
             
   <section id="v5-12-0-release-notes">
 <span id="release-5-12-0"></span><h1>v5.12.0 release notes<a class="headerlink" href="#v5-12-0-release-notes" title="Permalink to this heading">¶</a></h1>
-<p>Clawpack 5.12.0 was released on May XX, 2025. See <a class="reference internal" href="installing.html#installing"><span class="std std-ref">Installing Clawpack</span></a>.</p>
+<p>Clawpack 5.12.0 was released on May 5, 2025. See <a class="reference internal" href="installing.html#installing"><span class="std std-ref">Installing Clawpack</span></a>.</p>
 <p>Permanent DOI: <a class="reference external" href="http://doi.org/10.5281/zenodo.XX">http://doi.org/10.5281/zenodo.XX</a></p>
 <p>Changes relative to Clawpack 5.11.0 (August 25, 2024) are shown below.</p>
 <p>To see more recent changes that are in the the master branch but not yet
-released, see <a class="reference internal" href="changes_to_master.html#changes-to-master"><span class="std std-ref">Changes to master since v5.11.0</span></a>.</p>
+released, see <a class="reference internal" href="changes_to_master.html#changes-to-master"><span class="std std-ref">Changes to master since v5.12.0</span></a>.</p>
 <section id="changes-that-are-not-backward-compatible">
 <h2>Changes that are not backward compatible<a class="headerlink" href="#changes-that-are-not-backward-compatible" title="Permalink to this heading">¶</a></h2>
 <ul class="simple">
 <li><p>In GeoClaw, several bugs were fixed in the implicit solvers for Boussinesq
 equations. A newer version of PETSc (&gt;= 3.20) is now required and names
-of some variables in the <cite>petscMIPoptions</cite> file have changed, along with
+of some variables in the <cite>petscMPIoptions</cite> file have changed, along with
 some of the environment variables expected in the <cite>Makefile</cite>.</p></li>
 </ul>
 </section>
@@ -103,7 +103,7 @@ Github CI (rather than travis).</p>
 <ul class="simple">
 <li><p>None</p></li>
 </ul>
-<p>See <a class="reference external" href="https://github.com/clawpack/classic/compare/v5.11.0...master">classic diffs</a></p>
+<p>See <a class="reference external" href="https://github.com/clawpack/classic/compare/v5.11.0...v5.12.0">classic diffs</a></p>
 </section>
 <section id="changes-to-clawutil">
 <h2>Changes to clawutil<a class="headerlink" href="#changes-to-clawutil" title="Permalink to this heading">¶</a></h2>
@@ -111,21 +111,21 @@ Github CI (rather than travis).</p>
 <li><p>A <cite>make check</cite> option has been added to the general <cite>Makefile.common</cite>,
 which prints out the values of environment variables used in the <cite>Makefile</cite>.</p></li>
 </ul>
-<p>See <a class="reference external" href="https://github.com/clawpack/clawutil/compare/v5.11.0...master">clawutil diffs</a></p>
+<p>See <a class="reference external" href="https://github.com/clawpack/clawutil/compare/v5.11.0...v5.12.0">clawutil diffs</a></p>
 </section>
 <section id="changes-to-visclaw">
 <h2>Changes to visclaw<a class="headerlink" href="#changes-to-visclaw" title="Permalink to this heading">¶</a></h2>
 <ul class="simple">
 <li><p>Several minor changes.</p></li>
 </ul>
-<p>See <a class="reference external" href="https://github.com/clawpack/visclaw/compare/v5.11.0...master">visclaw diffs</a></p>
+<p>See <a class="reference external" href="https://github.com/clawpack/visclaw/compare/v5.11.0...v5.12.0">visclaw diffs</a></p>
 </section>
 <section id="changes-to-riemann">
 <h2>Changes to riemann<a class="headerlink" href="#changes-to-riemann" title="Permalink to this heading">¶</a></h2>
 <ul class="simple">
 <li><p>Several minor changes.</p></li>
 </ul>
-<p>See <a class="reference external" href="https://github.com/clawpack/riemann/compare/v5.11.0...master">riemann diffs</a></p>
+<p>See <a class="reference external" href="https://github.com/clawpack/riemann/compare/v5.11.0...v5.12.0">riemann diffs</a></p>
 </section>
 <section id="changes-to-amrclaw">
 <h2>Changes to amrclaw<a class="headerlink" href="#changes-to-amrclaw" title="Permalink to this heading">¶</a></h2>
@@ -136,12 +136,20 @@ for a gauge it wouldn’t capture the gauge value until this long after the
 starting time value <cite>t1</cite> specified for the gauge.</p></li>
 <li><p>Allow an arbitrary number of flagregions (was limited to 99 previously).</p></li>
 </ul>
-<p>See <a class="reference external" href="https://github.com/clawpack/amrclaw/compare/v5.11.0...master">amrclaw diffs</a></p>
+<p>See <a class="reference external" href="https://github.com/clawpack/amrclaw/compare/v5.11.0...v5.12.0">amrclaw diffs</a></p>
 </section>
 <section id="changes-to-geoclaw">
 <h2>Changes to geoclaw<a class="headerlink" href="#changes-to-geoclaw" title="Permalink to this heading">¶</a></h2>
 <ul>
-<li><p>Several new capabilities added for storms.</p></li>
+<li><p>Some new capabilities added for storms.</p>
+<p>Support for reading in data files that specify wind and pressure
+fields on a grid is now supported. This currently specifically
+reads files in the Oceanweather Inc. formats NWS12 (ASCII) and
+NWS13 (NetCDF) with further support for more general NetCDF data
+included. This should be considered experimental at this time but
+is included to test this functionality out and start to plan out
+support for more file formats and nested grids.</p>
+</li>
 <li><p>A new <cite>speed_limit</cite> was introduced that can be set in <cite>setrun.py</cite>, e.g.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rundata</span><span class="o">.</span><span class="n">geo_data</span><span class="o">.</span><span class="n">speed_limit</span> <span class="o">=</span> <span class="mf">20.</span>  <span class="c1"># meters/sec</span>
 </pre></div>
@@ -159,8 +167,13 @@ at <a class="reference external" href="https://www.clawpack.org/bouss2d.html">ht
 boundary conditions at patch edges are handled in the linear system solver
 when there are
 re-entrant corners on a fine level (e.g. the inside corner of an L-shaped
-union of patches).  Domain boundaries were also not handled properly in the
+union of patches).  Domain boundaries were not always handled properly in the
 case of solid wall or periodic boundary conditions.</p></li>
+<li><p>For efficiency, the sparse matrix needed for the dispersive terms is now
+built directly in CSR (compressed sparse row) format, as used by the
+PETSc linear solvers, instead of building the matrix in
+COO (coordinate, or triplet format) and then converting.
+This should not affect users’ code (except to make it run faster).</p></li>
 <li><p>The 2D Boussinesq code should now be run with PETSc 23.0 (or later), which
 requires some changes to parameter names in the <cite>petscMPIoptions</cite> file
 and environment variables used in a Boussinesq application <cite>Makefile</cite>.
@@ -170,7 +183,7 @@ See <a class="reference external" href="https://www.clawpack.org/bouss2d.html">h
 variables.</p></li>
 <li><p>Numerous other bug fixes and enhancements.</p></li>
 </ul>
-<p>See <a class="reference external" href="https://github.com/clawpack/geoclaw/compare/v5.11.0...master">geoclaw diffs</a></p>
+<p>See <a class="reference external" href="https://github.com/clawpack/geoclaw/compare/v5.11.0...v5.12.0">geoclaw diffs</a></p>
 </section>
 <section id="changes-to-pyclaw">
 <h2>Changes to PyClaw<a class="headerlink" href="#changes-to-pyclaw" title="Permalink to this heading">¶</a></h2>
@@ -178,7 +191,7 @@ variables.</p></li>
 <li><p>Some changes related to CI and pytests, still in progress.</p></li>
 <li><p>Several other minor changes.</p></li>
 </ul>
-<p>See <a class="reference external" href="https://github.com/clawpack/pyclaw/compare/v5.11.0...master">pyclaw diffs</a></p>
+<p>See <a class="reference external" href="https://github.com/clawpack/pyclaw/compare/v5.11.0...v5.12.0">pyclaw diffs</a></p>
 </section>
 </section>
 <section id="other-clawpack-repositories">
@@ -186,9 +199,9 @@ variables.</p></li>
 <p>The repositories below are not included in the Clawpack tarfile or pip
 install, but changes to these repositories may also be of interest.</p>
 <ul class="simple">
-<li><p><a class="reference external" href="https://github.com/clawpack/apps/compare/v5.11.0...master">apps diffs</a></p></li>
+<li><p><a class="reference external" href="https://github.com/clawpack/apps/compare/v5.11.0...v5.12.0">apps diffs</a></p></li>
 <li><p><a class="reference external" href="https://github.com/clawpack/doc/compare/v5.11.x...dev">doc diffs</a></p></li>
-<li><p><a class="reference external" href="https://github.com/clawpack/docker-files/compare/v5.11.0...master">docker-files diffs</a></p></li>
+<li><p><a class="reference external" href="https://github.com/clawpack/docker-files/compare/v5.11.0...v5.12.0">docker-files diffs</a></p></li>
 </ul>
 </section>
 
@@ -260,11 +273,12 @@ install, but changes to these repositories may also be of interest.</p>
 <h4>Latest Version</h4>
 <ul>
   <li><a href="release_5_12_0.html">dev</a></li>
-  <li><a href="../v5.11.x/index.html">v5.11.x</a></li>
+  <li><a href="../v5.12.x/release_5_12_0.html">v5.12.x</a></li>
 </ul>
 <h4>Older Versions</h4>
 <ul>
   <li><a href="../v5.10.x/index.html">v5.10.x</a></li>
+  <li><a href="../v5.11.x/index.html">v5.11.x</a></li>
   <li><a href="../v5.7.x/index.html">v5.7.x</a></li>
   <li><a href="../v5.8.x/index.html">v5.8.x</a></li>
   <li><a href="../v5.9.x/index.html">v5.9.x</a></li>
