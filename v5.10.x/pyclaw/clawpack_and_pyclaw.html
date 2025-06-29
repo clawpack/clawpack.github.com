@@ -1,24 +1,20 @@
-
 <!DOCTYPE html>
 
-<html lang="en">
+<html lang="en" data-content_root="../">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
     <title>Porting a problem from Clawpack 4.6.x to PyClaw &#8212; Clawpack 5.10.x documentation</title>
     <link rel="stylesheet" href="../_static/base.css" type="text/css" />
     <link rel="stylesheet" href="../_static/layout.css" type="text/css" />
-    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/flasky.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
-    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
-    <script src="../_static/jquery.js"></script>
-    <script src="../_static/underscore.js"></script>
-    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
-    <script src="../_static/doctools.js"></script>
-    <script src="../_static/sphinx_highlight.js"></script>
-    <link rel="shortcut icon" href="../_static/clawicon.ico"/>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../_static/flasky.css?v=59fe8e2d" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
+    <script src="../_static/documentation_options.js?v=e9c64444"></script>
+    <script src="../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="icon" href="../_static/clawicon.ico"/>
     <link rel="author" title="About these documents" href="../about.html" />
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -59,7 +55,7 @@
 <div class="decoration"></div>
 </div>
 
-    <div class="related" role="navigation" aria-label="related navigation">
+    <div class="related" role="navigation" aria-label="Related">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -87,7 +83,7 @@
           <div class="body" role="main">
             
   <section id="porting-a-problem-from-clawpack-4-6-x-to-pyclaw">
-<span id="port-example"></span><span id="clawpack-and-pyclaw"></span><h1>Porting a problem from Clawpack 4.6.x to PyClaw<a class="headerlink" href="#porting-a-problem-from-clawpack-4-6-x-to-pyclaw" title="Permalink to this heading">¶</a></h1>
+<span id="port-example"></span><span id="clawpack-and-pyclaw"></span><h1>Porting a problem from Clawpack 4.6.x to PyClaw<a class="headerlink" href="#porting-a-problem-from-clawpack-4-6-x-to-pyclaw" title="Link to this heading">¶</a></h1>
 <p>The script <cite>pyclaw/development/clawdata2pyclaw.py</cite> is intended to aid
 in converting a Clawpack 4.6 problem setup to PyClaw.  However,
 some manual conversion is necessary, especially if the problem
@@ -148,7 +144,7 @@ fortran functions. In the shallow water equations on a sphere example, we get
 the following output:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">Type</span><span class="p">:</span>           <span class="n">module</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">Base</span> <span class="n">Class</span><span class="p">:</span>     <span class="o">&lt;</span><span class="nb">type</span> <span class="s1">&#39;module&#39;</span><span class="o">&gt;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">String</span> <span class="n">Form</span><span class="p">:</span>    <span class="o">&lt;</span><span class="n">module</span> <span class="s1">&#39;problem&#39;</span> <span class="kn">from</span> <span class="s1">&#39;problem.so&#39;</span><span class="o">&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">String</span> <span class="n">Form</span><span class="p">:</span>    <span class="o">&lt;</span><span class="n">module</span> <span class="s1">&#39;problem&#39;</span> <span class="kn">from</span><span class="w"> </span><span class="s1">&#39;problem.so&#39;</span><span class="o">&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">Namespace</span><span class="p">:</span>      <span class="n">Interactive</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">File</span><span class="p">:</span>           <span class="o">/</span><span class="n">Users</span><span class="o">/../../../</span><span class="n">clawpack</span><span class="o">/</span><span class="n">pyclaw</span><span class="o">/</span><span class="n">examples</span><span class="o">/</span><span class="n">shallow</span><span class="o">-</span><span class="n">sphere</span><span class="o">/</span><span class="n">problem</span><span class="o">.</span><span class="n">so</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">Docstring</span><span class="p">:</span>
@@ -187,7 +183,7 @@ other multidimensional arrays, i.e. <code class="docutils literal notranslate"><
 script. For instance, the <code class="docutils literal notranslate"><span class="pre">src2</span></code> function is called in the
 <a class="reference external" href="http://numerics.kaust.edu.sa/pyclaw/examples/shallow-sphere/shallow_4_Rossby_Haurwitz_wave.py">script</a> by using a fortran_src_wrapper function whose main part reads:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Call src2 function</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">problem</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">problem</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">state</span><span class="o">.</span><span class="n">q</span> <span class="o">=</span> <span class="n">problem</span><span class="o">.</span><span class="n">src2</span><span class="p">(</span><span class="n">mx</span><span class="p">,</span><span class="n">my</span><span class="p">,</span><span class="n">num_ghost</span><span class="p">,</span><span class="n">xlowerg</span><span class="p">,</span><span class="n">ylowerg</span><span class="p">,</span><span class="n">dx</span><span class="p">,</span><span class="n">dy</span><span class="p">,</span><span class="n">q</span><span class="p">,</span><span class="n">aux</span><span class="p">,</span><span class="n">t</span><span class="p">,</span><span class="n">dt</span><span class="p">,</span><span class="n">Rsphere</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -227,7 +223,7 @@ low-level Fortran routines.</p>
           </div>
         </div>
       </div>
-      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
         <div class="sphinxsidebarwrapper">
 <p><a href="http://clawpack.org/">
     <img class="logo" src= "../_static/clawlogo.jpg" alt="Logo"/>
@@ -264,7 +260,7 @@ low-level Fortran routines.</p>
              target="_blank">Raise an Issue</a></li>
   </ul>
 </div>
-<div id="searchbox" style="display: none" role="search">
+<search id="searchbox" style="display: none" role="search">
   <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="../search.html" method="get">
@@ -272,7 +268,7 @@ low-level Fortran routines.</p>
       <input type="submit" value="Go" />
     </form>
     </div>
-</div>
+</search>
 <script>document.getElementById('searchbox').style.display = "block"</script>
 <h4>Latest Version</h4>
 <ul>

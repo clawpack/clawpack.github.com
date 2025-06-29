@@ -1,25 +1,21 @@
-
 <!DOCTYPE html>
 
-<html lang="en">
+<html lang="en" data-content_root="./">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
     <title>Riemann solvers &#8212; Clawpack dev documentation</title>
     <link rel="stylesheet" href="_static/base.css" type="text/css" />
     <link rel="stylesheet" href="_static/layout.css" type="text/css" />
-    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="_static/flasky.css" />
-    <link rel="stylesheet" type="text/css" href="_static/graphviz.css" />
-    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
-    <script src="_static/jquery.js"></script>
-    <script src="_static/underscore.js"></script>
-    <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
-    <script src="_static/doctools.js"></script>
-    <script src="_static/sphinx_highlight.js"></script>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="_static/flasky.css?v=59fe8e2d" />
+    <link rel="stylesheet" type="text/css" href="_static/graphviz.css?v=4ae1632d" />
+    <script src="_static/documentation_options.js?v=3ce10a4d"></script>
+    <script src="_static/doctools.js?v=9bcbadda"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script async="async" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    <link rel="shortcut icon" href="_static/clawicon.ico"/>
+    <link rel="icon" href="_static/clawicon.ico"/>
     <link rel="author" title="About these documents" href="about.html" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -60,7 +56,7 @@
 <div class="decoration"></div>
 </div>
 
-    <div class="related" role="navigation" aria-label="related navigation">
+    <div class="related" role="navigation" aria-label="Related">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -86,7 +82,7 @@
           <div class="body" role="main">
             
   <section id="riemann-solvers">
-<span id="riemann"></span><h1>Riemann solvers<a class="headerlink" href="#riemann-solvers" title="Permalink to this heading">¶</a></h1>
+<span id="riemann"></span><h1>Riemann solvers<a class="headerlink" href="#riemann-solvers" title="Link to this heading">¶</a></h1>
 <p>The Riemann solver defines the hyperbolic equation that is being solved and
 does the bulk of the computational work – it is called at every cell
 interface at every time step and returns the information about waves and speeds
@@ -98,7 +94,7 @@ equations, traffic flow, Burgers’ equation, etc.</p>
 which consists of a set of Jupyter notebooks illustrating
 the basic concepts of Riemann problems and approximate solvers.</p>
 <section id="one-dimensional-riemann-solver">
-<span id="rp1"></span><h2>One-dimensional Riemann solver<a class="headerlink" href="#one-dimensional-riemann-solver" title="Permalink to this heading">¶</a></h2>
+<span id="rp1"></span><h2>One-dimensional Riemann solver<a class="headerlink" href="#one-dimensional-riemann-solver" title="Link to this heading">¶</a></h2>
 <p>Understanding the 1-dimensional solver is a critical first step since in 2
 or 3 dimensions the bulk of the work is done by a “normal solver” that
 solves a 1-dimensional Riemann problem normal to each cell edge.  In multiple
@@ -176,7 +172,7 @@ be helpful as a starting point for development of new solvers:</p>
 </ul>
 </section>
 <section id="pointwise-riemann-solvers">
-<span id="riemann-pointwise"></span><h2>Pointwise Riemann solvers<a class="headerlink" href="#pointwise-riemann-solvers" title="Permalink to this heading">¶</a></h2>
+<span id="riemann-pointwise"></span><h2>Pointwise Riemann solvers<a class="headerlink" href="#pointwise-riemann-solvers" title="Link to this heading">¶</a></h2>
 <p>Most of the solvers available are written (as described above) in <strong>vectorized
 form</strong>, meaning that there is a loop over a 1-dimensional slice of the grid
 inside the Riemann solver itself.  This used to be necessary in order to get
@@ -216,7 +212,7 @@ real(kind=8), intent(in out) :: apdq(num_eqn), amdq(num_eqn)
 </ul>
 </section>
 <section id="f-wave-riemann-solvers">
-<span id="riemann-fwave"></span><h2>f-wave Riemann solvers<a class="headerlink" href="#f-wave-riemann-solvers" title="Permalink to this heading">¶</a></h2>
+<span id="riemann-fwave"></span><h2>f-wave Riemann solvers<a class="headerlink" href="#f-wave-riemann-solvers" title="Link to this heading">¶</a></h2>
 <p>As described in <a class="reference internal" href="wp_algorithms.html#wp-fwave"><span class="std std-ref">f-wave formulation</span></a>, for spatially-varying flux functions it is
 often best to use the f-wave formulation of the wave-propagation algorithms.
 This can be implemented in Clawpack by providing a
@@ -236,7 +232,7 @@ in <cite>setrun</cite> should be set to <cite>True</cite>, see <a class="referen
 </ul>
 </section>
 <section id="d-riemann-solvers">
-<span id="riemann-2d"></span><h2>2D Riemann solvers<a class="headerlink" href="#d-riemann-solvers" title="Permalink to this heading">¶</a></h2>
+<span id="riemann-2d"></span><h2>2D Riemann solvers<a class="headerlink" href="#d-riemann-solvers" title="Link to this heading">¶</a></h2>
 <p>In two dimensions, all Clawpack algorithms require a <em>normal</em> Riemann
 solver, that solves a one-dimensional (planar) Riemann problem in the
 direction normal to a cell interface.  Some Clawpack algorithms also
@@ -264,7 +260,7 @@ x direction (<cite>ixy=1</cite>) or the y direction (<cite>ixy=2</cite>).</p>
 <p>TODO: Continue description – 3d, transverse solvers.</p>
 </section>
 <section id="using-a-custom-solver">
-<h2>Using a custom solver<a class="headerlink" href="#using-a-custom-solver" title="Permalink to this heading">¶</a></h2>
+<h2>Using a custom solver<a class="headerlink" href="#using-a-custom-solver" title="Link to this heading">¶</a></h2>
 <p>Many solvers are provided in the Clawpack Riemann repository.
 If you develop your own Riemann solver, you can use it as follows:</p>
 <p>With the Fortran codes (Classic, AMRClaw, Geoclaw) simply compile your
@@ -278,14 +274,14 @@ via a command like</p>
 <p>Here <cite>solver_name</cite> can be replaced by whatever you like.  Then in your
 PyClaw script, simply import the Riemann solver and pass it as the sole argument
 when you initialize your ClawSolver object; e.g.:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">solver_name</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">solver_name</span>
 <span class="o">...</span>
 <span class="n">solver</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">ClawSolver1D</span><span class="p">(</span><span class="n">solver_name</span><span class="p">)</span>
 </pre></div>
 </div>
 </section>
 <section id="adding-a-solver-to-the-riemann-repository">
-<h2>Adding a solver to the Riemann repository<a class="headerlink" href="#adding-a-solver-to-the-riemann-repository" title="Permalink to this heading">¶</a></h2>
+<h2>Adding a solver to the Riemann repository<a class="headerlink" href="#adding-a-solver-to-the-riemann-repository" title="Link to this heading">¶</a></h2>
 <p>If you have developed a new Riemann solver, <strong>please</strong> let us know!
 We’d love to include it in the Clawpack Riemann repository so that
 others can make use of it.  You can simply send us a note on the
@@ -302,7 +298,7 @@ codes, then follow the additional steps
           </div>
         </div>
       </div>
-      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
         <div class="sphinxsidebarwrapper">
 <p><a href="http://clawpack.org/">
     <img class="logo" src= "_static/clawlogo.jpg" alt="Logo"/>
@@ -350,7 +346,7 @@ codes, then follow the additional steps
              target="_blank">Raise an Issue</a></li>
   </ul>
 </div>
-<div id="searchbox" style="display: none" role="search">
+<search id="searchbox" style="display: none" role="search">
   <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="search.html" method="get">
@@ -358,7 +354,7 @@ codes, then follow the additional steps
       <input type="submit" value="Go" />
     </form>
     </div>
-</div>
+</search>
 <script>document.getElementById('searchbox').style.display = "block"</script>
 <h4>Latest Version</h4>
 <ul>
