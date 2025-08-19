@@ -109,9 +109,94 @@ workflow in a <cite>setrun.py</cite> file would do the following:</p>
 <li><p>JMA (reading only)</p></li>
 <li><p>IMD (planned)</p></li>
 <li><p>tcvitals (reading only)</p></li>
+<li><p>HWRF (data-derived)</p></li>
+<li><p>OWI (data-derived)</p></li>
 </ul>
 </dd>
 </dl>
+<dl class="py class">
+<dt class="sig sig-object py" id="clawpack.geoclaw.surge.storm.DataDerivedStorms">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">clawpack.geoclaw.surge.storm.</span></span><span class="sig-name descname"><span class="pre">DataDerivedStorms</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wind_file_ext</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'WND'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pressure_file_ext</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'PRE'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.geoclaw.surge.storm.DataDerivedStorms" title="Link to this definition">¶</a></dt>
+<dd><p>Storm object to accommodate storms in the Oceanweather Inc. format.
+The data is structured as wind and pressure files that contain the wind
+and pressure fields for time steps every XX minutes.</p>
+<p>This storm object is initialized to read in both files and parse the data
+into a netcdf file for reading with the data_storm_module.f90</p>
+<blockquote>
+<div><blockquote>
+<div><dl class="field-list simple">
+<dt class="field-odd">Attributes<span class="colon">:</span></dt>
+<dd class="field-odd"><p></p></dd>
+</dl>
+</div></blockquote>
+<aside class="system-message">
+<p class="system-message-title">System Message: WARNING/2 (<span class="docutils literal">/Users/rjl/clawpack_src/clawpack_master/geoclaw/src/python/geoclaw/surge/storm.py:docstring of clawpack.geoclaw.surge.storm.DataDerivedStorms</span>, line 9)</p>
+<p>Block quote ends without a blank line; unexpected unindent.</p>
+</aside>
+<ul class="simple">
+<li><p><em>t</em> (list(np.datetime64)) Contains the time at which each entry of
+the other arrays are at.  These are expected to be <em>datetime</em> objects.
+Note that when written some formats require a <em>time_offset</em> to be set.</p></li>
+<li><p><em>wind_speed</em> (ndarray(:, :)) Wind speeds defined in every record, such
+as 34kt, 50kt, 64kt, etc and their radii. Default units are meters/second
+and meters.</p></li>
+<li><dl class="simple">
+<dt><em>pressure</em> (ndarray(:,,:)) Pressure arrays every 15 minutes for the region</dt><dd><p>of interest, Default units are bars</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><em>u</em> (ndarray(:,:)) Wind velocity in the x direction in arrays for every 15 minutes</dt><dd><p>Default units are m/s</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><em>v</em> (ndarray(:,:)) Wind velocity in the y direction in arrays for every 15 minutes</dt><dd><p>Default units are m/s</p>
+</dd>
+</dl>
+</li>
+</ul>
+</div></blockquote>
+<aside class="system-message">
+<p class="system-message-title">System Message: WARNING/2 (<span class="docutils literal">/Users/rjl/clawpack_src/clawpack_master/geoclaw/src/python/geoclaw/surge/storm.py:docstring of clawpack.geoclaw.surge.storm.DataDerivedStorms</span>, line 21)</p>
+<p>Block quote ends without a blank line; unexpected unindent.</p>
+</aside>
+<ul class="simple">
+<li><p><em>latitude</em> (ndarray(:,:)) Array of latitudes for the wind and pressure arrays</p></li>
+<li><p><em>longitude</em> (ndarray(:,:)) Array of longitudes for the wind and pressure arrays</p></li>
+</ul>
+<dl class="field-list simple">
+<dt class="field-odd">Initialization<span class="colon">:</span></dt>
+<dd class="field-odd"><ol class="arabic simple">
+<li><p>Read in existing wind and pressure files at <em>path</em>.</p></li>
+<li><p>Construct a data derived storm object and parse data into attributes using
+data_storms.py for the parsing functions</p></li>
+</ol>
+</dd>
+<dt class="field-even">Input<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><em>path</em> (string) Path to file to be read in if requested.</p></li>
+<li><p><em>kwargs</em> (dict) Other key-word arguments are passed to the appropriate
+read routine.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="clawpack.geoclaw.surge.storm.DataDerivedStorms.write_data_derived">
+<span class="sig-name descname"><span class="pre">write_data_derived</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.geoclaw.surge.storm.DataDerivedStorms.write_data_derived" title="Link to this definition">¶</a></dt>
+<dd><p>This method writes the derived wind, pressure, and wind speed data to a NetCDF file using xarray.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>filename</strong> – The name of the output NetCDF file (without the extension).</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
 <dl class="py exception">
 <dt class="sig sig-object py" id="clawpack.geoclaw.surge.storm.NoDataError">
 <em class="property"><span class="k"><span class="pre">exception</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">clawpack.geoclaw.surge.storm.</span></span><span class="sig-name descname"><span class="pre">NoDataError</span></span><a class="headerlink" href="#clawpack.geoclaw.surge.storm.NoDataError" title="Link to this definition">¶</a></dt>
@@ -134,9 +219,9 @@ surge simulations.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Attributes<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><em>t</em> (list(float) or list(datetime.datetiem)) Contains the time at which
+<li><p><em>t</em> (list(float) or list(np.datetiem64)) Contains the time at which
 each entry of the other arrays are at.  These are expected to
-be <em>datetime</em> objects. Note that when written some formats require
+be <em>datetime64</em> objects. Note that when written some formats require
 a <em>time_offset</em> to be set.</p></li>
 <li><p><em>eye_location</em> (ndarray(:, :)) location of the eye of the storm. Default
 units are in signed decimal longitude and latitude.</p></li>
@@ -148,7 +233,7 @@ occurs.  Default units are meters.</p></li>
 are Pascals.</p></li>
 <li><p><em>storm_radius</em> (ndarray(:)) Radius of storm, often defined as the last
 closed iso-bar of pressure.  Default units are meters.</p></li>
-<li><p><em>time_offset</em> (datetime.datetime) A date time that as an offset for the
+<li><p><em>time_offset</em> (np.datetiem64) A date time that as an offset for the
 simulation time.  This will default to the beginning of the first of
 the year that the first time point is found in.</p></li>
 <li><p><em>wind_speeds</em> (ndarray(:, :)) Wind speeds defined in every record, such
@@ -198,8 +283,46 @@ storm.</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="clawpack.geoclaw.surge.storm.Storm.plot">
-<span class="sig-name descname"><span class="pre">plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ax</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">radius</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t_range</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coordinate_system</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">track_style</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'ko--'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">categorization</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'NHC'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fill_alpha</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.25</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fill_color</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'red'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.geoclaw.surge.storm.Storm.plot" title="Link to this definition">¶</a></dt>
-<dd><p>TO DO:  Write doc-string</p>
+<span class="sig-name descname"><span class="pre">plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ax</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t_range</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">categorization</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cat_colors</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plot_swath</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">radius</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coordinate_system</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fill_alpha</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.25</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fill_color</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'red'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.geoclaw.surge.storm.Storm.plot" title="Link to this definition">¶</a></dt>
+<dd><p>Plot this storm’s track in the given axes object</p>
+<dl class="field-list simple">
+<dt class="field-odd">Input<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><em>ax</em> (matplotlib.pyplot.axes) Axes to plot into.</p></li>
+<li><dl class="simple">
+<dt><em>t_range</em> (list) Time range to plot the track for.  If None then use</dt><dd><p>entire range.  Default is None.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><em>categorization</em> (str) Type of categorization to be used.  This is </dt><dd><p>used to map to the keys in the cat_colors dictionary.  Default is 
+None and will cause no categorization to occur.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><em>cat_colors</em> (dict) Color mapping between numeric categorization and</dt><dd><p>colors to be plotted for the track.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><em>plot_swath</em> (bool) Plot a swath around the track using one of the </dt><dd><p>methods determined by what radius information is provided.  Default 
+is False.</p>
+</dd>
+</dl>
+</li>
+<li><p><em>radius</em> (None or float or numpy.ndarray)</p></li>
+<li><p><em>coordinate_system</em> (int)</p></li>
+<li><p><em>fill_alpha</em> (float)</p></li>
+<li><p><em>fill_color</em> (color)</p></li>
+<li><dl class="simple">
+<dt><em>kwargs</em> All additional keyword arguments are passed to the plotting</dt><dd><p>command for the track.</p>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
@@ -287,6 +410,20 @@ value error is risen.</p></li>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="clawpack.geoclaw.surge.storm.Storm.read_hwrf">
+<span class="sig-name descname"><span class="pre">read_hwrf</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.geoclaw.surge.storm.Storm.read_hwrf" title="Link to this definition">¶</a></dt>
+<dd><p>Read in HWRF information file</p>
+<dl class="field-list simple">
+<dt class="field-odd">Input<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><em>path</em> (string) Path to the file to be read.</p></li>
+<li><p><em>verbose</em> (bool) Output more info regarding reading.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="clawpack.geoclaw.surge.storm.Storm.read_ibtracs">
 <span class="sig-name descname"><span class="pre">read_ibtracs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sid</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">storm_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">year</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start_date</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">agency_pref</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">['wmo',</span> <span class="pre">'usa',</span> <span class="pre">'tokyo',</span> <span class="pre">'newdelhi',</span> <span class="pre">'reunion',</span> <span class="pre">'bom',</span> <span class="pre">'nadi',</span> <span class="pre">'wellington',</span> <span class="pre">'cma',</span> <span class="pre">'hko',</span> <span class="pre">'ds824',</span> <span class="pre">'td9636',</span> <span class="pre">'td9635',</span> <span class="pre">'neumann',</span> <span class="pre">'mlc']</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.geoclaw.surge.storm.Storm.read_ibtracs" title="Link to this definition">¶</a></dt>
 <dd><p>Read in IBTrACS formatted storm file</p>
@@ -319,7 +456,7 @@ see if any more non-missing values are available.</p>
 </dl>
 </li>
 <li><dl class="simple">
-<dt><em>start_date</em> (<code class="xref py py-class docutils literal notranslate"><span class="pre">datetime.datetime</span></code>, optional) If storm is not</dt><dd><p>named, will find closest unnamed storm to this start date. Only
+<dt><em>start_date</em> (np.datetime64, optional) If storm is not</dt><dd><p>named, will find closest unnamed storm to this start date. Only
 used for unnamed storms when specifying <em>storm_name</em> and <em>year</em>
 does not uniquely identify storm.</p>
 </dd>
@@ -380,6 +517,22 @@ does not uniquely identify storm.</p>
 <li><p><em>ValueError</em> If the method cannot find the name/year matching the
 storm or they are not provided when <em>single_storm == False</em> then a
 value error is risen.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="clawpack.geoclaw.surge.storm.Storm.read_owi">
+<span class="sig-name descname"><span class="pre">read_owi</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.geoclaw.surge.storm.Storm.read_owi" title="Link to this definition">¶</a></dt>
+<dd><p>Read in OWI information file</p>
+<p>Reads in file that provides information about the forcing for an OWI
+produced wind and pressure field as well as the paths to those files.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Input<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><em>path</em> (string) Path to the file to be read.</p></li>
+<li><p><em>verbose</em> (bool) Output more info regarding reading.</p></li>
 </ul>
 </dd>
 </dl>
@@ -497,6 +650,20 @@ default function is for <cite>storm_radius</cite>, which sets the value to
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="clawpack.geoclaw.surge.storm.Storm.write_hwrf">
+<span class="sig-name descname"><span class="pre">write_hwrf</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.geoclaw.surge.storm.Storm.write_hwrf" title="Link to this definition">¶</a></dt>
+<dd><p>Write out an TCVITALS formatted storm file</p>
+<dl class="field-list simple">
+<dt class="field-odd">Input<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><em>path</em> (string) Path to the file to be written.</p></li>
+<li><p><em>verbose</em> (bool) Print out additional information when writing.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="clawpack.geoclaw.surge.storm.Storm.write_imd">
 <span class="sig-name descname"><span class="pre">write_imd</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.geoclaw.surge.storm.Storm.write_imd" title="Link to this definition">¶</a></dt>
 <dd><p>Write out an IMD formatted storm file</p>
@@ -514,6 +681,20 @@ default function is for <cite>storm_radius</cite>, which sets the value to
 <dt class="sig sig-object py" id="clawpack.geoclaw.surge.storm.Storm.write_jma">
 <span class="sig-name descname"><span class="pre">write_jma</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.geoclaw.surge.storm.Storm.write_jma" title="Link to this definition">¶</a></dt>
 <dd><p>Write out a JMA formatted storm file</p>
+<dl class="field-list simple">
+<dt class="field-odd">Input<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><em>path</em> (string) Path to the file to be written.</p></li>
+<li><p><em>verbose</em> (bool) Print out additional information when writing.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="clawpack.geoclaw.surge.storm.Storm.write_owi">
+<span class="sig-name descname"><span class="pre">write_owi</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.geoclaw.surge.storm.Storm.write_owi" title="Link to this definition">¶</a></dt>
+<dd><p>Write out an OWI information formatted storm file</p>
 <dl class="field-list simple">
 <dt class="field-odd">Input<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -571,12 +752,12 @@ with (<em>t</em>, <em>storm</em>) arguments to <em>max_wind_radius_fill</em> or
 <dd class="field-odd"><p></p></dd>
 </dl>
 <aside class="system-message">
-<p class="system-message-title">System Message: WARNING/2 (<span class="docutils literal">/Users/rjl/git/clawpack/geoclaw/src/python/geoclaw/surge/storm.py:docstring of clawpack.geoclaw.surge.storm.fill_rad_w_other_source</span>, line 15)</p>
+<p class="system-message-title">System Message: WARNING/2 (<span class="docutils literal">/Users/rjl/clawpack_src/clawpack_master/geoclaw/src/python/geoclaw/surge/storm.py:docstring of clawpack.geoclaw.surge.storm.fill_rad_w_other_source</span>, line 15)</p>
 <p>Field list ends without a blank line; unexpected unindent.</p>
 </aside>
 <ul class="simple">
 <li><dl class="simple">
-<dt><em>t</em> (<code class="xref py py-class docutils literal notranslate"><span class="pre">datetime.datetime</span></code>) the time corresponding to</dt><dd><p>a missing value of <em>max_wind_radius</em> or <em>storm_radius</em></p>
+<dt><em>t</em> (np.datetime64) the time corresponding to</dt><dd><p>a missing value of <em>max_wind_radius</em> or <em>storm_radius</em></p>
 </dd>
 </dl>
 </li>
@@ -602,7 +783,7 @@ with (<em>t</em>, <em>storm</em>) arguments to <em>max_wind_radius_fill</em> or
 <dd class="field-odd"><p></p></dd>
 </dl>
 <aside class="system-message">
-<p class="system-message-title">System Message: WARNING/2 (<span class="docutils literal">/Users/rjl/git/clawpack/geoclaw/src/python/geoclaw/surge/storm.py:docstring of clawpack.geoclaw.surge.storm.fill_rad_w_other_source</span>, line 26)</p>
+<p class="system-message-title">System Message: WARNING/2 (<span class="docutils literal">/Users/rjl/clawpack_src/clawpack_master/geoclaw/src/python/geoclaw/surge/storm.py:docstring of clawpack.geoclaw.surge.storm.fill_rad_w_other_source</span>, line 26)</p>
 <p>Field list ends without a blank line; unexpected unindent.</p>
 </aside>
 <ul class="simple">
@@ -655,6 +836,10 @@ with (<em>t</em>, <em>storm</em>) arguments to <em>max_wind_radius_fill</em> or
     <h3><a href="contents.html">Table of Contents</a></h3>
     <ul>
 <li><a class="reference internal" href="#">Storm Specification Class and Tools</a><ul>
+<li><a class="reference internal" href="#clawpack.geoclaw.surge.storm.DataDerivedStorms"><code class="docutils literal notranslate"><span class="pre">DataDerivedStorms</span></code></a><ul>
+<li><a class="reference internal" href="#clawpack.geoclaw.surge.storm.DataDerivedStorms.write_data_derived"><code class="docutils literal notranslate"><span class="pre">DataDerivedStorms.write_data_derived()</span></code></a></li>
+</ul>
+</li>
 <li><a class="reference internal" href="#clawpack.geoclaw.surge.storm.NoDataError"><code class="docutils literal notranslate"><span class="pre">NoDataError</span></code></a></li>
 <li><a class="reference internal" href="#clawpack.geoclaw.surge.storm.Storm"><code class="docutils literal notranslate"><span class="pre">Storm</span></code></a><ul>
 <li><a class="reference internal" href="#clawpack.geoclaw.surge.storm.Storm.category"><code class="docutils literal notranslate"><span class="pre">Storm.category()</span></code></a></li>
@@ -663,16 +848,20 @@ with (<em>t</em>, <em>storm</em>) arguments to <em>max_wind_radius_fill</em> or
 <li><a class="reference internal" href="#clawpack.geoclaw.surge.storm.Storm.read_atcf"><code class="docutils literal notranslate"><span class="pre">Storm.read_atcf()</span></code></a></li>
 <li><a class="reference internal" href="#clawpack.geoclaw.surge.storm.Storm.read_geoclaw"><code class="docutils literal notranslate"><span class="pre">Storm.read_geoclaw()</span></code></a></li>
 <li><a class="reference internal" href="#clawpack.geoclaw.surge.storm.Storm.read_hurdat"><code class="docutils literal notranslate"><span class="pre">Storm.read_hurdat()</span></code></a></li>
+<li><a class="reference internal" href="#clawpack.geoclaw.surge.storm.Storm.read_hwrf"><code class="docutils literal notranslate"><span class="pre">Storm.read_hwrf()</span></code></a></li>
 <li><a class="reference internal" href="#clawpack.geoclaw.surge.storm.Storm.read_ibtracs"><code class="docutils literal notranslate"><span class="pre">Storm.read_ibtracs()</span></code></a></li>
 <li><a class="reference internal" href="#clawpack.geoclaw.surge.storm.Storm.read_imd"><code class="docutils literal notranslate"><span class="pre">Storm.read_imd()</span></code></a></li>
 <li><a class="reference internal" href="#clawpack.geoclaw.surge.storm.Storm.read_jma"><code class="docutils literal notranslate"><span class="pre">Storm.read_jma()</span></code></a></li>
+<li><a class="reference internal" href="#clawpack.geoclaw.surge.storm.Storm.read_owi"><code class="docutils literal notranslate"><span class="pre">Storm.read_owi()</span></code></a></li>
 <li><a class="reference internal" href="#clawpack.geoclaw.surge.storm.Storm.read_tcvitals"><code class="docutils literal notranslate"><span class="pre">Storm.read_tcvitals()</span></code></a></li>
 <li><a class="reference internal" href="#clawpack.geoclaw.surge.storm.Storm.write"><code class="docutils literal notranslate"><span class="pre">Storm.write()</span></code></a></li>
 <li><a class="reference internal" href="#clawpack.geoclaw.surge.storm.Storm.write_atcf"><code class="docutils literal notranslate"><span class="pre">Storm.write_atcf()</span></code></a></li>
 <li><a class="reference internal" href="#clawpack.geoclaw.surge.storm.Storm.write_geoclaw"><code class="docutils literal notranslate"><span class="pre">Storm.write_geoclaw()</span></code></a></li>
 <li><a class="reference internal" href="#clawpack.geoclaw.surge.storm.Storm.write_hurdat"><code class="docutils literal notranslate"><span class="pre">Storm.write_hurdat()</span></code></a></li>
+<li><a class="reference internal" href="#clawpack.geoclaw.surge.storm.Storm.write_hwrf"><code class="docutils literal notranslate"><span class="pre">Storm.write_hwrf()</span></code></a></li>
 <li><a class="reference internal" href="#clawpack.geoclaw.surge.storm.Storm.write_imd"><code class="docutils literal notranslate"><span class="pre">Storm.write_imd()</span></code></a></li>
 <li><a class="reference internal" href="#clawpack.geoclaw.surge.storm.Storm.write_jma"><code class="docutils literal notranslate"><span class="pre">Storm.write_jma()</span></code></a></li>
+<li><a class="reference internal" href="#clawpack.geoclaw.surge.storm.Storm.write_owi"><code class="docutils literal notranslate"><span class="pre">Storm.write_owi()</span></code></a></li>
 <li><a class="reference internal" href="#clawpack.geoclaw.surge.storm.Storm.write_tcvitals"><code class="docutils literal notranslate"><span class="pre">Storm.write_tcvitals()</span></code></a></li>
 </ul>
 </li>
