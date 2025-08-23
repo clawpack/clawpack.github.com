@@ -122,7 +122,7 @@ topography (bathymetry) files.</p>
 <dd class="field-odd"><ul class="simple">
 <li><p>Add sub and super sampling capababilities</p></li>
 <li><p>Add functions for creating topography based off a topo function, incorporate
-the create_topo_func into Topography class, maybe allow more broad 
+the create_topo_func into Topography class, maybe allow more broad
 initialization ability to the class to handle this?</p></li>
 <li><p>Fix <cite>in_poly</cite> function</p></li>
 <li><p>Add remove/fill no data value</p></li>
@@ -141,7 +141,7 @@ initialization ability to the class to handle this?</p></li>
 </dl>
 <p>Note: Modified to check the <cite>grid_registration</cite> when reading or writing
 topo files and properly deal with <cite>llcorner</cite> registration in which case
-the x,y data should be offset by dx/2, dy/2 from the lower left corner 
+the x,y data should be offset by dx/2, dy/2 from the lower left corner
 specified in the header of a DEM file.</p>
 <dl class="field-list">
 <dt class="field-odd">Initialization<span class="colon">:</span></dt>
@@ -246,26 +246,26 @@ configuration.</p></li>
 <span class="sig-name descname"><span class="pre">interp_unstructured</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fill_topo</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'nearest'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delta</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delta_limit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">20.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">no_data_value</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-99999</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">buffer_length</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">proximity_radius</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resolution_limit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2000</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.geoclaw.topotools.Topography.interp_unstructured" title="Link to this definition">¶</a></dt>
 <dd><p>Interpolate unstructured data on to regular grid.</p>
 <p>Function to interpolate the unstructured data in the topo object onto a
-structured grid.  Utilizes a bounding box plus a buffer of size 
+structured grid.  Utilizes a bounding box plus a buffer of size
 <em>buffer_length</em> (meters) containing all data unless <em>extent is not None</em>
 is <em>True</em>.  Then uses the fill topography <em>fill_topo</em> to fill in the
-gaps in the unstructured data.  By default this is done by masking the 
-fill data with the extents, the value <em>no_data_value</em> and if 
-<em>proximity_radius</em> (meters) is not 0, by a radius of <em>proximity_radius</em> 
-from all grid points in the object.  Stores the 
+gaps in the unstructured data.  By default this is done by masking the
+fill data with the extents, the value <em>no_data_value</em> and if
+<em>proximity_radius</em> (meters) is not 0, by a radius of <em>proximity_radius</em>
+from all grid points in the object.  Stores the
 result in the <em>self.X</em>, <em>self.Y</em> and <em>self.Z</em> object attributes.  The
 resolution of the final grid is determined by calculating the minimum
-distance between all <em>x</em> and <em>y</em> data with a hard lower limit of 
+distance between all <em>x</em> and <em>y</em> data with a hard lower limit of
 <em>delta_limit</em> (meters).</p>
 <p>Note that the function <em>scipy.interpolate.griddata</em> does not respect
-masks so a call to <em>numpy.ma.MaskedArray.compressed()</em> must be made to 
+masks so a call to <em>numpy.ma.MaskedArray.compressed()</em> must be made to
 remove the masked data.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Input<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><em>fill_topo</em> (list) - List of Topography objects to use as fill data
 in the projection.</p></li>
-<li><p><em>extent</em> (tuple) - A tuple defining the rectangle of the sub-section.  
+<li><p><em>extent</em> (tuple) - A tuple defining the rectangle of the sub-section.
 Must be in the form (x lower,x upper,y lower, y upper).</p></li>
 <li><p><em>method</em> (string) - Method used for interpolation, valid methods are
 found in <em>scipy.interpolate.griddata</em>.  Default is <em>nearest</em>.</p></li>
@@ -273,9 +273,9 @@ found in <em>scipy.interpolate.griddata</em>.  Default is <em>nearest</em>.</p><
 rather than determining it from the data itself.  Defaults to <em>None</em>
 which causes the method to determine this value itself.
 Should be a 2-tuple of floats (delta_x, delta_y).</p></li>
-<li><p><em>delta_limit</em> (float) - Limit of finest horizontal resolution, 
+<li><p><em>delta_limit</em> (float) - Limit of finest horizontal resolution,
 default is 20 meters.</p></li>
-<li><p><em>no_data_value</em> (float) - Value to use if no data was found to fill in a 
+<li><p><em>no_data_value</em> (float) - Value to use if no data was found to fill in a
 missing value, ignored if <cite>method = ‘nearest’</cite>. Default is <cite>-99999</cite>.</p></li>
 <li><p><em>buffer_length</em> (float) - Buffer around bounding box, only applicable
 when <em>extent</em> is None.  Default is <cite>100.0</cite> meters.</p></li>
@@ -294,8 +294,8 @@ Default value is <cite>2000</cite>.</p></li>
 <dt class="sig sig-object py" id="clawpack.geoclaw.topotools.Topography.make_shoreline_xy">
 <span class="sig-name descname"><span class="pre">make_shoreline_xy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sea_level</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.geoclaw.topotools.Topography.make_shoreline_xy" title="Link to this definition">¶</a></dt>
 <dd><p>Returns an array <em>shoreline_xy</em> with 2 columns containing x and y values
-for all segements of the shoreline (defined to be the contour 
-where self.z = sea_level) separated by [nan,nan] pairs.  
+for all segements of the shoreline (defined to be the contour
+where self.z = sea_level) separated by [nan,nan] pairs.
 This allows all shorelines to be quickly plotted via:</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">plot</span><span class="p">(</span><span class="n">shoreline_xy</span><span class="p">[:,</span><span class="mi">0</span><span class="p">],</span> <span class="n">shoreline_xy</span><span class="p">[:,</span><span class="mi">1</span><span class="p">])</span>
 </pre></div>
@@ -304,7 +304,7 @@ This allows all shorelines to be quickly plotted via:</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">numpy</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">shoreline_xy</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>which is much smaller than the original topography file. 
+<p>which is much smaller than the original topography file.
 Reload via:</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">shoreline_xy</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
 </pre></div>
@@ -321,12 +321,12 @@ Reload via:</p>
 <li><p><em>axes</em> (matplotlib.pyplot.axes) - If passed in, plot will be
 added to this axes.  Otherwise a new plot figure will be created
 (using <em>fig_kwargs</em>) and a new <em>axes</em> object created and returned.</p></li>
-<li><p><em>contour_levels</em> (list) - levels for contour lines if these are 
+<li><p><em>contour_levels</em> (list) - levels for contour lines if these are
 to be added (default <em>None</em>).  Set to [0.] to plot shoreline.</p></li>
 <li><p><em>contour_kwargs</em> (dict) - keyword arguments to be passed to
 contour command, e.g. {‘colors’:’r’, ‘linestyles’: ‘-‘}.
 Default is empty dict.</p></li>
-<li><p><em>limits</em> (list) - (min, max) of topo values for color map.  
+<li><p><em>limits</em> (list) - (min, max) of topo values for color map.
 Defaults to None, in which case (self.Z.min(), self.Z.max()) used.</p></li>
 <li><p><em>cmap</em> (matplotlib.colors.Colormap) - colormap, defaults to
 specialized map with blues for bathymetry and green/browns for topo.</p></li>
@@ -334,7 +334,7 @@ specialized map with blues for bathymetry and green/browns for topo.</p></li>
 <li><p><em>plot_box</em> (bool or color specifier) - If evaluates to True, plot
 a box around limits of this topo.</p></li>
 <li><p><em>long_lat</em> (bool) - If this is a longitude-latitude plot then set the
-aspect of the plot to compensate for stretching.  If not then the 
+aspect of the plot to compensate for stretching.  If not then the
 aspect is set to “equal”.</p></li>
 <li><p><em>data_break</em> (float) - when default cmap is used, the value to use
 to break between water and land colormaps.
@@ -364,7 +364,7 @@ e.g. ‘shrink’, ‘extend’, ‘label’.  Can also set ‘title’ for cbar
 <dt class="sig sig-object py" id="clawpack.geoclaw.topotools.Topography.read">
 <span class="sig-name descname"><span class="pre">read</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">topo_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">unstructured</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mask</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filter_region</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stride</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[1,</span> <span class="pre">1]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nc_params</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{}</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.geoclaw.topotools.Topography.read" title="Link to this definition">¶</a></dt>
 <dd><p>Read in the data from the object’s <em>path</em> attribute.</p>
-<p>Stores the resulting data in one of the sets of <em>x</em>, <em>y</em>, and <em>z</em> or 
+<p>Stores the resulting data in one of the sets of <em>x</em>, <em>y</em>, and <em>z</em> or
 <em>X</em>, <em>Y</em>, and <em>Z</em>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Input<span class="colon">:</span></dt>
@@ -390,7 +390,7 @@ implemented for NetCDF reading currently.</p></li>
 <span class="sig-name descname"><span class="pre">read_header</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.geoclaw.topotools.Topography.read_header" title="Link to this definition">¶</a></dt>
 <dd><p>Read in header of topography file at path.</p>
 <p>If a value returns numpy.nan then the value was not retrievable.  Note
-that this routine can read in headers whose values and labels are 
+that this routine can read in headers whose values and labels are
 swapped.</p>
 </dd></dl>
 
@@ -406,7 +406,7 @@ swapped.</p>
 <blockquote>
 <div><ul class="simple">
 <li><p><em>fill</em> - Fill in all <em>no_data_value</em> locations with <em>value</em></p></li>
-<li><p><em>nearest</em> - Fill in <em>no_data_value</em> locations with 
+<li><p><em>nearest</em> - Fill in <em>no_data_value</em> locations with
 average of nearest neighbors.</p></li>
 </ul>
 </div></blockquote>
@@ -443,7 +443,7 @@ first extract x,y</p>
 <dt class="sig sig-object py" id="clawpack.geoclaw.topotools.Topography.smooth_data">
 <span class="sig-name descname"><span class="pre">smooth_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">indices</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">r</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.geoclaw.topotools.Topography.smooth_data" title="Link to this definition">¶</a></dt>
 <dd><p>Filter topo data at <em>indices</em> by averaging surrounding data.</p>
-<p>Surrounding data is considered within the ball of radius <em>r</em> in the 
+<p>Surrounding data is considered within the ball of radius <em>r</em> in the
 inf-norm.  Acts as a low-band pass filter and removes oscillatory data.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Input<span class="colon">:</span></dt>
@@ -470,7 +470,7 @@ data.</p>
 <dt class="field-odd">Input<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><em>path</em> (str)  - file to write</p></li>
-<li><p><em>topo_type</em> (int) - GeoClaw format topo_type 
+<li><p><em>topo_type</em> (int) - GeoClaw format topo_type
 <strong>Note:</strong> this is second positional argument, agreeing with
 the read function in this class.  It was the third argument in
 GeoClaw version 5.3.1 and earlier.</p></li>
@@ -478,9 +478,9 @@ GeoClaw version 5.3.1 and earlier.</p></li>
 <li><p><em>fill_value</em> (float) - value to use if filling a masked array</p></li>
 <li><dl class="simple">
 <dt><em>header_style</em> (str) - indicates format of header lines</dt><dd><dl class="simple">
-<dt>‘geoclaw’ or ‘default’  ==&gt; write value then label </dt><dd><p>with grid_registration == ‘lower’ as default</p>
+<dt>‘geoclaw’ or ‘default’  ==&gt; write value then label</dt><dd><p>with grid_registration == ‘lower’ as default</p>
 </dd>
-<dt>‘arcgis’ or ‘asc’ ==&gt; write label then value  </dt><dd><p>with grid_registration == ‘llcorner’ as default
+<dt>‘arcgis’ or ‘asc’ ==&gt; write label then value</dt><dd><p>with grid_registration == ‘llcorner’ as default
 (needed for .asc files in ArcGIS)</p>
 </dd>
 </dl>
@@ -497,7 +497,7 @@ etopo1 data is integers and so has a resolution of 1 meter.
 In this case a cropped or coarsened version might be written
 with <cite>Z_format = “%7i”</cite>, for example.</p></li>
 <li><dl class="simple">
-<dt><em>grid_registration</em> (str) - ‘lower’, ‘llcorner’, ‘llcenter’ </dt><dd><p>or None for defaults described above.</p>
+<dt><em>grid_registration</em> (str) - ‘lower’, ‘llcorner’, ‘llcenter’</dt><dd><p>or None for defaults described above.</p>
 </dd>
 </dl>
 </li>
@@ -529,8 +529,8 @@ with <cite>Z_format = “%7i”</cite>, for example.</p></li>
 <dl class="py function">
 <dt class="sig sig-object py" id="clawpack.geoclaw.topotools.create_topo_func">
 <span class="sig-prename descclassname"><span class="pre">clawpack.geoclaw.topotools.</span></span><span class="sig-name descname"><span class="pre">create_topo_func</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">loc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.geoclaw.topotools.create_topo_func" title="Link to this definition">¶</a></dt>
-<dd><p>Given a 1-dimensional topography profile specfied by a set of (x,z) 
-values, create a lambda function that when evaluated will give the 
+<dd><p>Given a 1-dimensional topography profile specfied by a set of (x,z)
+values, create a lambda function that when evaluated will give the
 topgraphy at the point (x,y).  (The resulting function is constant in y.)</p>
 <dl class="field-list">
 <dt class="field-odd">Example<span class="colon">:</span></dt>
@@ -542,23 +542,23 @@ topgraphy at the point (x,y).  (The resulting function is constant in y.)</p>
 <dt class="field-even">Input<span class="colon">:</span></dt>
 <dd class="field-even"><ul>
 <li><p><em>loc</em> (list) - Create a topography file with the profile denoted by the
-tuples inside of loc.  A sample set of points are shown below.  Note 
-that the first value of the list is the x location and the second is 
+tuples inside of loc.  A sample set of points are shown below.  Note
+that the first value of the list is the x location and the second is
 the height of the topography.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">z</span> <span class="p">(</span><span class="n">m</span><span class="p">)</span>
 <span class="o">^</span>                                                  <span class="n">o</span> <span class="n">loc</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span>  <span class="n">o</span>
-<span class="o">|</span>                                                    
-<span class="o">|</span>                                          <span class="n">loc</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span>   
+<span class="o">|</span>
+<span class="o">|</span>                                          <span class="n">loc</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span>
 <span class="o">|--------------------------------------------</span><span class="n">o</span><span class="o">-----&gt;</span> <span class="n">x</span> <span class="p">(</span><span class="n">m</span><span class="p">)</span> <span class="p">(</span><span class="n">sea</span> <span class="n">level</span><span class="p">)</span>
-<span class="o">|</span>                                            
+<span class="o">|</span>
 <span class="o">|</span>                                <span class="n">o</span> <span class="n">loc</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="n">o</span> <span class="n">loc</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
-<span class="o">|</span>                         
-<span class="o">|</span>                         
+<span class="o">|</span>
+<span class="o">|</span>
 <span class="o">|</span>                           <span class="n">o</span> <span class="n">loc</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-<span class="o">|</span>           
-<span class="o">|</span>                               
+<span class="o">|</span>
+<span class="o">|</span>
 <span class="o">|</span><span class="n">__________________o</span> <span class="n">loc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-<span class="mf">0.0</span>               
+<span class="mf">0.0</span>
 </pre></div>
 </div>
 </li>
@@ -576,7 +576,7 @@ the height of the topography.</p>
 <dd class="field-odd"><ul class="simple">
 <li><p><em>path</em> (string) - Path to the file.  Can include archive extensions (they
 will be stripped off).</p></li>
-<li><p><em>default</em> (object) - Value returned if no suitable topo type was 
+<li><p><em>default</em> (object) - Value returned if no suitable topo type was
 determined.  Default is <em>None</em>.</p></li>
 </ul>
 </dd>
@@ -595,7 +595,7 @@ already exist locally.</p>
 <dt class="field-odd">Input<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><em>url</em> (str) URL including file name</p></li>
-<li><p><em>local_fname</em> (str) name of local file to create.  
+<li><p><em>local_fname</em> (str) name of local file to create.
 If <em>local_fname == None</em>, take file name from URL</p></li>
 <li><p><em>force</em> (bool) If False, prompt user before downloading.</p></li>
 </ul>
@@ -608,8 +608,8 @@ See that website for a list of archived topo datasets.</p>
 <p>If force==None then check for environment variable CLAW_TOPO_DOWNLOAD
 and if this exists use its value.  This is useful for the script
 python/run_examples.py that runs all examples so it won’t stop to prompt.</p>
-<p>This routine has been deprecated in favor of 
-<em>clawpack.clawutil.data.get_remote_file</em>.  All the functionality should be 
+<p>This routine has been deprecated in favor of
+<em>clawpack.clawutil.data.get_remote_file</em>.  All the functionality should be
 the same but calls the other routine internally.</p>
 </dd></dl>
 
@@ -637,7 +637,7 @@ python/run_examples.py that runs all examples so it won’t stop to prompt.</p>
 <dd class="field-odd"><ul class="simple">
 <li><p><em>path</em> (str) - Path to the file to read, or url to remote file,
 or a key into the topotools.remote_topo_urls dictionary.</p></li>
-<li><p><em>zvar</em> (str) - variable to read as Z=elevation. 
+<li><p><em>zvar</em> (str) - variable to read as Z=elevation.
 if None, will try ‘Band1’, ‘z’, ‘elevation’.</p></li>
 <li><p><em>extent</em> - [x1,x2,y1,y2] for desired subset, or ‘all’ for entire file</p></li>
 <li><p><em>coarsen</em> (int) - factor to coarsen by, 1 by default.</p></li>

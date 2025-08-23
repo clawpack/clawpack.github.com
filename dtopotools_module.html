@@ -330,11 +330,15 @@ They start at (x1,y1) and may go a bit beyond (x2,y2) depending on dx</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="clawpack.geoclaw.dtopotools.Fault.create_dtopography">
-<span class="sig-name descname"><span class="pre">create_dtopography</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">times</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[0.0,</span> <span class="pre">1.0]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.geoclaw.dtopotools.Fault.create_dtopography" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">create_dtopography</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">times</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[0.0,</span> <span class="pre">1.0]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">slip_tol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.001</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.geoclaw.dtopotools.Fault.create_dtopography" title="Link to this definition">¶</a></dt>
 <dd><p>Compute change in topography and construct a dtopography object.</p>
-<p>Use subfaults’ <cite>okada</cite> routine and add all 
+<p>Use subfaults’ <cite>okada</cite> routine and add all
 deformations together.</p>
 <p>Raises a ValueError exception if the <em>rupture_type</em> is an unknown type.</p>
+<p>Subfaults are ignored if abs(subfault.slip) &lt; slip_tol</p>
+<p>If verbose == True then the subfault number is printed as each is
+processed to show progress.  If verbose is an integer, then it is
+printed for the k’th subfault only if mod(k,verbose) == 0.</p>
 <p>returns a :class`DTopography` object.</p>
 </dd></dl>
 
@@ -348,13 +352,13 @@ will be opened.  The <em>axes</em> on which it is plotted is the return
 value of this call.</p>
 <p>If <em>plot_centerline == True</em>, plot a line from the centroid to the
 top center of each subfault to show what direction is up-dip.</p>
-<p>If <em>slip_color == True</em> then use the color map <em>cmap_slip</em> 
+<p>If <em>slip_color == True</em> then use the color map <em>cmap_slip</em>
 (which defaults to <em>matplotlib.cm.jet</em>) to color the subplots based
-on the magnitude of slip, scaled between <em>cmin_slip</em> and <em>cmax_slip</em>.  
+on the magnitude of slip, scaled between <em>cmin_slip</em> and <em>cmax_slip</em>.
 (If these are <em>None</em> then scaled automatically based on range of slip.)
 If <em>slip_time == None</em> then colors are based on the final slip.
-For dynamic faults, <em>slip_time</em> can be set to a time and the 
-dynamic timing of each subfault will be used to compute and 
+For dynamic faults, <em>slip_time</em> can be set to a time and the
+dynamic timing of each subfault will be used to compute and
 plot the slip at this time.</p>
 <p>If <em>plot_rake == True</em>, plot a line from the centroid pointing in
 the direction of the rake (the direction in which the top block is
@@ -389,8 +393,8 @@ of the input file that contains values for this parameter, e.g.</p>
 </div></blockquote>
 </li>
 <li><p><em>coordinate_specification</em> (str) specifies the location on each
-subfault that corresponds to the (longitude,latitude) and depth 
-of the subfault.  See the documentation for 
+subfault that corresponds to the (longitude,latitude) and depth
+of the subfault.  See the documentation for
 <em>SubFault.calculate_geometry</em>.</p></li>
 <li><p><em>rupture_type</em> (str) either “static” or “kinematic”</p></li>
 <li><p><em>skiprows</em> (int) number of header lines to skip before data</p></li>
@@ -431,7 +435,7 @@ is set to static.</p>
 <dt class="sig sig-object py" id="clawpack.geoclaw.dtopotools.Fault.write">
 <span class="sig-name descname"><span class="pre">write</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">style</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">column_list</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_units</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delimiter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'</span>&#160; <span class="pre">'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.geoclaw.dtopotools.Fault.write" title="Link to this definition">¶</a></dt>
 <dd><p>Write subfault format file with one line for each subfault.
-Can either specify a <em>style</em> that determines the columns, 
+Can either specify a <em>style</em> that determines the columns,
 or a <em>column_list</em>.  Must specify one but not both.  See below for
 details.</p>
 <dl>
@@ -531,7 +535,7 @@ Each will be a tuple <em>(x, y, depth)</em>.</p>
 </dd>
 <dt><em>corners[0,1,2,3]</em> refer to the points labeled a,b,c,d resp. below.</dt><dd><p>Each will be a tuple <em>(x, y, depth)</em>.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Top</span> <span class="n">edge</span>    <span class="n">Bottom</span> <span class="n">edge</span>
-  <span class="n">a</span> <span class="o">-----------</span> <span class="n">b</span>          <span class="o">^</span> 
+  <span class="n">a</span> <span class="o">-----------</span> <span class="n">b</span>          <span class="o">^</span>
   <span class="o">|</span>             <span class="o">|</span>          <span class="o">|</span>         <span class="o">^</span>
   <span class="o">|</span>             <span class="o">|</span>          <span class="o">|</span>         <span class="o">|</span>
   <span class="o">|</span>             <span class="o">|</span>          <span class="o">|</span>         <span class="o">|</span> <span class="n">along</span><span class="o">-</span><span class="n">strike</span> <span class="n">direction</span>
@@ -561,11 +565,11 @@ Each will be a tuple <em>(x, y, depth)</em>.</p>
 <dt class="sig sig-object py" id="clawpack.geoclaw.dtopotools.SubFault.calculate_geometry">
 <span class="sig-name descname"><span class="pre">calculate_geometry</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.geoclaw.dtopotools.SubFault.calculate_geometry" title="Link to this definition">¶</a></dt>
 <dd><p>Calculate the fault geometry.</p>
-<p>Routine calculates the class attributes <em>corners</em> and 
-<em>centers</em> which are the corners of the fault plane and 
+<p>Routine calculates the class attributes <em>corners</em> and
+<em>centers</em> which are the corners of the fault plane and
 points along the centerline respecitvely in 3D space.</p>
 <p><strong>Note:</strong> <em>self.coordinate_specification</em>  specifies the location on each
-subfault that corresponds to the (longitude,latitude) and depth 
+subfault that corresponds to the (longitude,latitude) and depth
 of the subfault.
 Currently must be one of these strings:</p>
 <blockquote>
@@ -574,14 +578,14 @@ Currently must be one of these strings:</p>
 <li><p>“top center”: (longitude,latitude) and depth at top center</p></li>
 <li><p>“centroid”: (longitude,latitude) and depth at centroid of plane</p></li>
 <li><dl class="simple">
-<dt>“noaa sift”: (longitude,latitude) at bottom center, depth at top,  </dt><dd><p>This mixed convention is used by the NOAA SIFT
+<dt>“noaa sift”: (longitude,latitude) at bottom center, depth at top,</dt><dd><p>This mixed convention is used by the NOAA SIFT
 database and “unit sources”, see:
 <a class="reference external" href="http://nctr.pmel.noaa.gov/propagation-database.html">http://nctr.pmel.noaa.gov/propagation-database.html</a></p>
 </dd>
 </dl>
 </li>
 <li><dl class="simple">
-<dt>“top upstrike corner”: (longitude,latitude) and depth at </dt><dd><p>corner of fault that is both updip and upstrike.</p>
+<dt>“top upstrike corner”: (longitude,latitude) and depth at</dt><dd><p>corner of fault that is both updip and upstrike.</p>
 </dd>
 </dl>
 </li>
@@ -600,7 +604,7 @@ shifted or other specifications.</p>
 <li><p>Uses <em>corners</em> to calculate <em>centers</em>, <em>longitude</em>, <em>latitude</em>,
 <em>depth</em>, <em>strike</em>, <em>dip</em>, <em>length</em>, <em>width</em>.</p></li>
 <li><p>sets <em>coordinate_specification</em> as “triangular”</p></li>
-<li><p>Note that calculate_geometry() computes 
+<li><p>Note that calculate_geometry() computes
 long/lat/strike/dip/length/width to calculate centers/corners</p></li>
 </ul>
 </dd></dl>
@@ -689,12 +693,18 @@ Assumes the following attributes are set:</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="clawpack.geoclaw.dtopotools.SubFault.okada">
-<span class="sig-name descname"><span class="pre">okada</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.geoclaw.dtopotools.SubFault.okada" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">okada</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">set_dtopo</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.geoclaw.dtopotools.SubFault.okada" title="Link to this definition">¶</a></dt>
 <dd><p>Apply Okada to this subfault and return a DTopography object.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Input<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p>x,y are 1d arrays</p></li>
+<li><p>set_dtopo (bool): If True, also set self.dtopo = dtopo, the
+DTopography object created.
+Defaults to True for backward compatibility, but create_dtopography
+has been refactored so it is no longer necessary to save dtopo
+for each subfault separately, which may use too much memory if
+there are many subfaults with fine resolution dtopo files.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Output<span class="colon">:</span></dt>
@@ -715,10 +725,10 @@ See Okada 1985 <a class="reference internal" href="biblio.html#okada85" id="id1"
 Clawpack 4.6 okada.py routine, with some routines adapted
 from fortran routines written by Xiaoming Wang.</p>
 <p>Rewritten and made more flexible by Randy LeVeque</p>
-<p><strong>Note:</strong> <em>self.coordinate_specification</em> (str) specifies the location on 
-each subfault that corresponds to the (longitude,latitude) and depth 
+<p><strong>Note:</strong> <em>self.coordinate_specification</em> (str) specifies the location on
+each subfault that corresponds to the (longitude,latitude) and depth
 subfault.</p>
-<p>See the documentation for <em>SubFault.calculate_geometry</em> for dicussion of the 
+<p>See the documentation for <em>SubFault.calculate_geometry</em> for dicussion of the
 possible values <em>self.coordinate_specification</em> can take.</p>
 </dd></dl>
 
@@ -833,7 +843,7 @@ possible values <em>self.coordinate_specification</em> can take.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="clawpack.geoclaw.dtopotools.SubdividedPlaneFault">
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">clawpack.geoclaw.dtopotools.</span></span><span class="sig-name descname"><span class="pre">SubdividedPlaneFault</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">base_subfault</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nstrike</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ndip</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">slip_function</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Mo</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.geoclaw.dtopotools.SubdividedPlaneFault" title="Link to this definition">¶</a></dt>
-<dd><p>Define a fault by starting with a single fault plane (specified as 
+<dd><p>Define a fault by starting with a single fault plane (specified as
 <em>base_subfault</em> of class <em>SubFault</em>) and subdividing the fault plane
 into a rectangular array of <em>nstrike</em> by <em>ndip</em> equally sized subfaults.</p>
 <p>By default,the slip on each subfault will be initialized to
@@ -842,7 +852,7 @@ and the seismic moment is independent of the number of subdivisions.</p>
 <p>Alternatively, the slip distribution can be specified by providing a
 function <em>slip_distribution</em>, which should be a function of <em>(xi,eta)</em>
 with each variable ranging from 0 to 1.  <em>xi</em> varies from 0 at the top
-of the fault to 1 at the bottom in the down-dip direction. 
+of the fault to 1 at the bottom in the down-dip direction.
 <em>eta</em> varies from one edge of the fault to the other moving in the
 strike direction.  This function will be evaluated at the centroid of
 each subfault to set the slip.</p>
@@ -861,7 +871,7 @@ between subfaults.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="clawpack.geoclaw.dtopotools.TensorProductFault">
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">clawpack.geoclaw.dtopotools.</span></span><span class="sig-name descname"><span class="pre">TensorProductFault</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fault_plane</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">slip_along_strike</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">slip_down_dip</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nstrike</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ndip</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Mo</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.geoclaw.dtopotools.TensorProductFault" title="Link to this definition">¶</a></dt>
-<dd><p>Define a fault by starting with a single fault plane (specified as 
+<dd><p>Define a fault by starting with a single fault plane (specified as
 <em>fault_plane</em> of class <em>SubFault</em>) and subdividing the fault plane
 into a rectangular array of <em>nstrike</em> by <em>ndip</em> equally sized subfaults.</p>
 <p>Then define the slip on each subfault via
@@ -891,8 +901,8 @@ downloadable from:</p>
 <dd><p>Read in subfault specification at <em>path</em>.</p>
 <p>Creates a list of subfaults from the subfault specification file at
 <em>path</em>.</p>
-<p>Subfault format contains info for dynamic rupture, so can specify 
-rupture_type = ‘static’ or ‘kinematic’ (or ‘dynamic’ for backward 
+<p>Subfault format contains info for dynamic rupture, so can specify
+rupture_type = ‘static’ or ‘kinematic’ (or ‘dynamic’ for backward
 compatibility).</p>
 </dd></dl>
 
@@ -925,19 +935,19 @@ compatibility).</p>
 <dd class="field-odd"><p></p></dd>
 </dl>
 <ul class="simple">
-<li><p><em>t</em> (scalar, list, or np.array): times at which to evaluate the 
+<li><p><em>t</em> (scalar, list, or np.array): times at which to evaluate the
 rise function.</p></li>
 <li><p><em>rupture_time</em> (float): time (seconds) when rupture starts.</p></li>
 <li><p><em>rise_time</em> (float): duration of rupture (seconds).</p></li>
-<li><p><em>rise_time_starting</em> (float or None): If None, it is internally set to 
+<li><p><em>rise_time_starting</em> (float or None): If None, it is internally set to
 <cite>rise_time/2</cite>.</p></li>
-<li><p><em>rise_shape</em> (str): 
+<li><p><em>rise_shape</em> (str):
 If <cite>rise_shape == “quadratic”</cite>, the rise time function is piecewise quadratic,
-continuously differentiable, with maximum slope at 
+continuously differentiable, with maximum slope at
 <cite>t = rupture_time + rise_time_starting</cite>
 and zero slope at <cite>t = rupture_time</cite> and <cite>t = rupture_time + rise_time</cite>.
 If <cite>rise_shape == “linear”</cite>, the rise time function is piecewise linear,
-with value 0.5 at 
+with value 0.5 at
 <cite>t = rupture_time + rise_time_starting</cite>.</p></li>
 </ul>
 <dl class="field-list simple">
