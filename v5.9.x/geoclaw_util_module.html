@@ -10,9 +10,9 @@
     <link rel="stylesheet" href="_static/layout.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="_static/flasky.css?v=59fe8e2d" />
-    <link rel="stylesheet" type="text/css" href="_static/graphviz.css?v=4ae1632d" />
+    <link rel="stylesheet" type="text/css" href="_static/graphviz.css?v=fd3f3429" />
     <script src="_static/documentation_options.js?v=63927f87"></script>
-    <script src="_static/doctools.js?v=9bcbadda"></script>
+    <script src="_static/doctools.js?v=9a2dae69"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <link rel="icon" href="_static/clawicon.ico"/>
     <link rel="author" title="About these documents" href="about.html" />
@@ -113,7 +113,7 @@ or between 0 and 2*pi if bearing_units=’radians’.</p>
 <p>Note: If using this to initialize a radially-symmetric 2d velocity on the
 sphere based on a radial velocity U(r), symmetric about (x0, y0), set:</p>
 <aside class="system-message">
-<p class="system-message-title">System Message: ERROR/3 (<span class="docutils literal">/Users/rjl/git/clawpack/geoclaw/src/python/geoclaw/util.py:docstring of clawpack.geoclaw.util.bearing</span>, line 9)</p>
+<p class="system-message-title">System Message: ERROR/3 (<span class="docutils literal">/Users/rjl/clawpack_src/clawpack_master/geoclaw/src/python/geoclaw/util.py:docstring of clawpack.geoclaw.util.bearing</span>, line 9)</p>
 <p>Unexpected indentation.</p>
 </aside>
 <blockquote>
@@ -230,6 +230,47 @@ kmltools.transect2kml(xtrans,ytrans)
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="clawpack.geoclaw.util.get_netcdf_names">
+<span class="sig-prename descclassname"><span class="pre">clawpack.geoclaw.util.</span></span><span class="sig-name descname"><span class="pre">get_netcdf_names</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lookup_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'dim'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user_mapping</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.geoclaw.util.get_netcdf_names" title="Link to this definition">¶</a></dt>
+<dd><p>Determine names of dimensions/variables in the NetCDF file at <em>path</em></p>
+<p>Note that if a file has multiple matching variables that the first it finds
+will be the one used.  It is best practice to provide the label if there
+are multiple available, e.g. ‘msl’ (mean sealevel pressure) and ‘sp’
+(surface pressure) for pressure.</p>
+<dl class="simple">
+<dt>Default dimension mapping:</dt><dd><ul class="simple">
+<li><p>“x”: [“x”, “longitude”, “lon”]</p></li>
+<li><p>“y”: [“y”, “latitude”, “lat”]</p></li>
+<li><p>“z”: [“z”]</p></li>
+<li><p>“t”: [“t”, “time”]</p></li>
+</ul>
+</dd>
+<dt>Default variable mapping:</dt><dd><ul class="simple">
+<li><p>“wind_u”:   [“wind_x”, “wind_u”, “u10”, “u”]</p></li>
+<li><p>“wind_v”:   [“wind_y”, “wind_v”, “v10”, “v”]</p></li>
+<li><p>“pressure”: [“pressure”, “msl”, “sp”]</p></li>
+<li><p>“topo”:     [“topo”, “elevation”, “z”, “band1”]</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Input<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p>path (Path)</p></li>
+<li><p>lookup_type (str)</p></li>
+<li><p>user_mapping (dict)</p></li>
+<li><p>verbose (bool)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Output<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p>(dict)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="clawpack.geoclaw.util.haversine">
 <span class="sig-prename descclassname"><span class="pre">clawpack.geoclaw.util.</span></span><span class="sig-name descname"><span class="pre">haversine</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x1</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y1</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">units</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'degrees'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.geoclaw.util.haversine" title="Link to this definition">¶</a></dt>
 <dd><p>x0,y0 is assumed to be a point (or an array with the same shapes as x1,y1)
@@ -247,6 +288,26 @@ two points, but this is not suggested since the notation is not consistent.</p>
 <p>Invert the haversine function to find dx given distance d and (x1,y1) and y2.
 The corresponding x2 can be x1+dx or x1-dx.
 May return NaN if no solution.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="clawpack.geoclaw.util.wrap_coords">
+<span class="sig-prename descclassname"><span class="pre">clawpack.geoclaw.util.</span></span><span class="sig-name descname"><span class="pre">wrap_coords</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dim_mapping</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.geoclaw.util.wrap_coords" title="Link to this definition">¶</a></dt>
+<dd><p>Wrap the x coordinates of a NetCDF file from [0, 360] to [-180, 180]</p>
+<dl class="field-list simple">
+<dt class="field-odd">Input<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><em>input_path</em> (path) Path to input file.</p></li>
+<li><p><em>output_path</em> (path) Path to output file.  Default is slightly modified
+version of <em>input_path</em> with ‘wrap’ appended.</p></li>
+<li><p><em>force</em> (bool) By default this routine will not overwrite a file that
+alreaady exists.  The value <em>force = True</em> will overwrite the file.  
+Default is False</p></li>
+<li><p><em>dim_mapping</em> (dict) Dimension mapping for all dimensions in the NetCDF
+file, not just ‘x’.  Default is {}.</p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 </section>
@@ -275,8 +336,10 @@ May return NaN if no solution.</p>
 <li><a class="reference internal" href="#clawpack.geoclaw.util.dms2decimal"><code class="docutils literal notranslate"><span class="pre">dms2decimal()</span></code></a></li>
 <li><a class="reference internal" href="#clawpack.geoclaw.util.fetch_noaa_tide_data"><code class="docutils literal notranslate"><span class="pre">fetch_noaa_tide_data()</span></code></a></li>
 <li><a class="reference internal" href="#clawpack.geoclaw.util.gctransect"><code class="docutils literal notranslate"><span class="pre">gctransect()</span></code></a></li>
+<li><a class="reference internal" href="#clawpack.geoclaw.util.get_netcdf_names"><code class="docutils literal notranslate"><span class="pre">get_netcdf_names()</span></code></a></li>
 <li><a class="reference internal" href="#clawpack.geoclaw.util.haversine"><code class="docutils literal notranslate"><span class="pre">haversine()</span></code></a></li>
 <li><a class="reference internal" href="#clawpack.geoclaw.util.inv_haversine"><code class="docutils literal notranslate"><span class="pre">inv_haversine()</span></code></a></li>
+<li><a class="reference internal" href="#clawpack.geoclaw.util.wrap_coords"><code class="docutils literal notranslate"><span class="pre">wrap_coords()</span></code></a></li>
 </ul>
 </li>
 </ul>
