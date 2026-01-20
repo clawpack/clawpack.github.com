@@ -178,10 +178,54 @@ specified in the header of a DEM file.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="clawpack.geoclaw.topotools.Topography.crop">
-<span class="sig-name descname"><span class="pre">crop</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filter_region</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coarsen</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.geoclaw.topotools.Topography.crop" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">crop</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filter_region</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coarsen</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">buffer</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">align</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.geoclaw.topotools.Topography.crop" title="Link to this definition">¶</a></dt>
 <dd><p>Crop region to <em>filter_region</em></p>
 <p>Create a new Topography object that is identical to this one but cropped
 to the region specified by filter_region</p>
+<dl class="field-list simple">
+<dt class="field-odd">Input<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><em>filter_region</em> (tuple): (x1,x2,y1,y2) desired new extent</p></li>
+<li><p><em>coarsen</em> (int): coarsening factor (by subsampling)</p></li>
+<li><dl class="simple">
+<dt><em>buffer</em> (int): when possible, have at least this many points</dt><dd><p>outside the filter_region on each side</p>
+</dd>
+</dl>
+</li>
+<li><p><em>align</em> (tuple): (xalign,yalign) = desired alignment if coarsening</p></li>
+</ul>
+</dd>
+</dl>
+<p>Setting <em>buffer &gt; 0</em> may be useful to insure that the
+computational domain lies entirely inside a cropped topo file
+(In GeoClaw, cell-centered topo values B are computed by integrating
+topo file values that are viewed as pointwise values, so topo
+point values are needed out to the domain edges.)</p>
+<p>When subsampling with <em>coarsen &gt; 1</em>, the <em>align</em> parameter may be
+useful to insure that the subsampling starts at an appropriate
+index.  For example, if the original topo has</p>
+<blockquote>
+<div><p>topo.x = [0, 0.5, 1, 1.5, 2, 2.5]</p>
+</div></blockquote>
+<p>then coarsening by 2 would result in</p>
+<blockquote>
+<div><p>newtopo.x = [0, 1, 2]   # if align[0] is an integer</p>
+</div></blockquote>
+<p>or</p>
+<blockquote>
+<div><p>newtopo.x = [0.5, 1.5, 2.5]   # if align[0] is an integer + 0.5</p>
+</div></blockquote>
+<p>Often in GeoClaw, if the original topofile is aligned with
+integer longitudes and latitudes, for example, then we want
+any subsampled topo to have the same property.</p>
+<p>In general, it tries to choose a starting index so that</p>
+<blockquote>
+<div><p>(newtopo.x[0] - align[0]) / dx_new</p>
+</div></blockquote>
+<p>is an integer, where <em>dx_new</em> is the spacing of points in the
+new topo after coarsening.  This may not be possible, since it
+depends on the alignment of the original topography, in which
+case it will choose the index for which the misalignment is minimized.</p>
 <dl class="field-list simple">
 <dt class="field-odd">TODO<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -288,6 +332,26 @@ Default value is <cite>2000</cite>.</p></li>
 </dd>
 </dl>
 <p>Sets this object’s <em>unstructured</em> attribute to <em>False</em> if successful.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="clawpack.geoclaw.topotools.Topography.make_function">
+<span class="sig-name descname"><span class="pre">make_function</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">interp_kwargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{}</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.geoclaw.topotools.Topography.make_function" title="Link to this definition">¶</a></dt>
+<dd><p>Create a function of (x,y) that returns the topo Z interpolated to a
+point (or to a 1D transect or 2D grid of points).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Inputs<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><em>interp_kwargs</em>: dictionary of parameter values to be passed to</dt><dd><p>RegularGridInterpolator.  See defaults below.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Outputs<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>topo_func</em>:  The function created</p>
+</dd>
+</dl>
+<p>See the docstring in topo_func below for details on what shapes
+its arguments (x,y) can be.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -631,7 +695,7 @@ python/run_examples.py that runs all examples so it won’t stop to prompt.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="clawpack.geoclaw.topotools.read_netcdf">
-<span class="sig-prename descclassname"><span class="pre">clawpack.geoclaw.topotools.</span></span><span class="sig-name descname"><span class="pre">read_netcdf</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zvar</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'all'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coarsen</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_topo</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_xarray</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.geoclaw.topotools.read_netcdf" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">clawpack.geoclaw.topotools.</span></span><span class="sig-name descname"><span class="pre">read_netcdf</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zvar</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'all'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coarsen</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_topo</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_xarray</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">buffer</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">align</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.geoclaw.topotools.read_netcdf" title="Link to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Input<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -645,6 +709,16 @@ if None, will try ‘Band1’, ‘z’, ‘elevation’.</p></li>
 default is True</p></li>
 <li><p><em>return_xarray</em> (bool) - if True, return an xarray.Dataset object.
 default is False</p></li>
+<li><dl class="simple">
+<dt><em>buffer</em> (int): when possible, have at least this many points</dt><dd><p>outside the filter_region on each side</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><em>align</em> (tuple): (xalign,yalign) = desired alignment if coarsening</dt><dd><p>See the doc string for Topography.crop()</p>
+</dd>
+</dl>
+</li>
 </ul>
 </dd>
 <dt class="field-even">Output<span class="colon">:</span></dt>
@@ -661,7 +735,8 @@ otherwise <cite>netCDF4</cite> is used directly.</p>
 <div><p>from clawpack.geoclaw import topotools
 extent = [-126,-122,46,49]
 path = ‘etopo1’
-topo = topotools.read_netcdf(path, extent=extent, coarsen=2,                                      verbose=True)</p>
+topo = topotools.read_netcdf(path, extent=extent, coarsen=2,                                      buffer=1, align=(-126,46), verbose=True)</p>
+<p># results in topo.x = array([-126.03333333, -126., …])</p>
 <p># to plot:
 topo.plot()</p>
 <p># to save topofile for input to GeoClaw:
@@ -670,6 +745,10 @@ topo.write(‘etopo_sample_2min.tt3’, topo_type=3, Z_format=’%.0f’)</p>
 <p>This should give a 2-minute resolution DEM of the Western Washington coast.
 Note that etopo1 Z values are integers (vertical resolution is 1 meter)
 and using <cite>Z_format=’%.0f’</cite> will save as integers to minimize file size.</p>
+<p>Note that the newer etopo 2022 30 arcsecond DEM can be sampled using
+path = ‘etopo22_30sec’, but this topo is aligned differently with e.g.
+x = -126. falling half way between points. Also note that Z values in the
+newer dataset are no longer integers.</p>
 </dd></dl>
 
 <dl class="py function">
@@ -737,6 +816,7 @@ topography object and writes it out.</p>
 <li><a class="reference internal" href="#clawpack.geoclaw.topotools.Topography.generate_2d_topo"><code class="docutils literal notranslate"><span class="pre">Topography.generate_2d_topo()</span></code></a></li>
 <li><a class="reference internal" href="#clawpack.geoclaw.topotools.Topography.in_poly"><code class="docutils literal notranslate"><span class="pre">Topography.in_poly()</span></code></a></li>
 <li><a class="reference internal" href="#clawpack.geoclaw.topotools.Topography.interp_unstructured"><code class="docutils literal notranslate"><span class="pre">Topography.interp_unstructured()</span></code></a></li>
+<li><a class="reference internal" href="#clawpack.geoclaw.topotools.Topography.make_function"><code class="docutils literal notranslate"><span class="pre">Topography.make_function()</span></code></a></li>
 <li><a class="reference internal" href="#clawpack.geoclaw.topotools.Topography.make_shoreline_xy"><code class="docutils literal notranslate"><span class="pre">Topography.make_shoreline_xy()</span></code></a></li>
 <li><a class="reference internal" href="#clawpack.geoclaw.topotools.Topography.plot"><code class="docutils literal notranslate"><span class="pre">Topography.plot()</span></code></a></li>
 <li><a class="reference internal" href="#clawpack.geoclaw.topotools.Topography.read"><code class="docutils literal notranslate"><span class="pre">Topography.read()</span></code></a></li>
