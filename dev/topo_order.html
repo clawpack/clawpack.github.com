@@ -86,8 +86,8 @@
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
 <p>This feature has bugs in v5.13.0 and v5.13.1 and should not
-be used until the next release.  See
-<a class="reference external" href="https://github.com/clawpack/geoclaw/issues/689">https://github.com/clawpack/geoclaw/issues/689</a></p>
+be used in those versions.  These bugs were fixed (we hope) in v5.14.0.
+See <a class="reference internal" href="release_5_14_0.html#release-5-14-0"><span class="std std-ref">v5.14.0 release notes</span></a> for more discussion.</p>
 </div>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
@@ -112,8 +112,16 @@ resolutions are essentially identical, <cite>dx*dy</cite> maybe be slightly diff
 as “finer” and would be used preferentially.  Even if <cite>dx*dy</cite> is exactly the
 same, it is not obvious which one would be used in GeoClaw.
 (The one listed later in <cite>rundata.topo_data.topofiles</cite>
-would be considered finer in this case.)</p>
-<p>Starting in v5.13.0, there is a new <cite>setrun.py</cite> parameter
+would be considered finer in this case, with a relative tolerance of
+0.001 used to judge whether the resolutions are the same).</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>This relative tolerance was introduced in v5.14.0,
+and in previous versions rounding errors in <cite>dx</cite> and/or <cite>dy</cite> could
+have resulted in a different ordering, and possibly different
+simulation results.</p>
+</div>
+<p>Starting in v5.14.0, there is a <cite>setrun.py</cite> parameter
 <cite>rundata.topo_data.override_order</cite> that is set to <cite>False</cite> by default to
 produce the default behavior described above.</p>
 <p>If <cite>setrun.py</cite> specifies:</p>
@@ -121,11 +129,55 @@ produce the default behavior described above.</p>
 </pre></div>
 </div>
 <p>then the preference order is no longer based on the computed
-resolution. Instead it is assumed that the files in
+resolution. Instead it is assumed that the topo files in
 <cite>rundata.topo_data.topofiles</cite> are ordered from least preferable to most
 preferable (so normally you would list the coarsest DEM first, going down to
 the finest DEM, in order to reproduce the default behavior).
 This allows precise specification of the order of preference.</p>
+<section id="resolution-of-dtopo-files">
+<h2>Resolution of dtopo files<a class="headerlink" href="#resolution-of-dtopo-files" title="Link to this heading">¶</a></h2>
+<p>Note that internally GeoClaw creates a topo array from each topofile read
+in that has the initial topography.  If one or more dtopo files are also
+specified, which specify motion of the topography, then these internal
+topo arrays are modified as the simulation proceeds to incorporate this dtopo.
+The dtopo files may have different resolution than any of the topo files, and
+at any rate the information from the dtopo files is interpolated into each
+topo array that it overlaps at each time step while the ground motion is
+active (as determined by the final time in the dtopo file).</p>
+<p>Internally GeoClaw also creates a set of <cite>topo_for_dtopo</cite> arrays that have
+exactly the same extent and resolution as each dtopo file, and with topo values
+that are interpolated from the best available topo data (based on the ordering
+as discussed above, which has already been performed when these new arrays
+are filled).</p>
+<p>These arrays are then handled as any other topo arrays would be, and are
+inserted into the ranking of topo arrays according to an algorithm described
+below.  So when the cell-average topo value <cite>B</cite> must be computed in a
+finite volume cell on a grid patch (either at the time of regridding or because
+the topo has changed due to dtopo), these <cite>topo_for_dtopo</cite> arrays may be used
+along with the original topo arrays at any point where they provide the
+best resolution according to the ranking algorithm.</p>
+<p>The reason for introducing these new  <cite>topo_for_dtopo</cite> arrays is that the
+dtopo might be specified on a much finder grid than the underlying topo
+in the same geographic region.  For example, a submarine slump landslide
+might be specified on a 2” dtopo file on the continental shelf, in a region
+where the best ocean topography is on a 15” grid.  We do not want to lose
+the resolution of the dtopo when transferring it to topo grids, and so it
+would not be sufficient to only transfer it to the 15” grid and use that to
+set cell values <cite>B</cite> (at least not when the computational grid cell has
+finer resolution than 15”).
+Instead we interpolate the 15” ocean topo to the new
+2” <cite>topo_for_dtopo</cite> array and give this higher priority than the 15” topo
+array in the landslide region.</p>
+<p>Once the original topo arrays have been ordered as discussed above,
+the algorithm for inserting the <cite>topo_for_dtopo</cite> arrays into this ordering
+is to insert it as far down in the ranking as possible (lowest priority)
+with the constraint that all topo arrays with higher priority should have
+finer resolution.  So in the example above, the 2” <cite>topo_for_dtopo</cite> array
+would have higher priority than the 15” ocean topo, but would generally
+have lower priority than any finer-resolution coastal topo arrays that
+might overlap the dtopo extent (since those arrays not only have better topo
+values but also have the dtopo interpolated to their resolution).</p>
+</section>
 </section>
 
 
@@ -139,7 +191,17 @@ This allows precise specification of the order of preference.</p>
     <img class="logo" src= "_static/clawlogo.jpg" alt="Logo"/>
 </a>
 <h2>Version dev</h2>
-</p><h3>Related Topics</h3>
+</p>
+  <div>
+    <h3><a href="contents.html">Table of Contents</a></h3>
+    <ul>
+<li><a class="reference internal" href="#">Topography file ordering</a><ul>
+<li><a class="reference internal" href="#resolution-of-dtopo-files">Resolution of dtopo files</a></li>
+</ul>
+</li>
+</ul>
+
+  </div><h3>Related Topics</h3>
 <ul>
   <li><a href="contents.html">Documentation overview</a><ul>
   <li><a href="geoclaw.html">GeoClaw Description and Contents</a><ul>
@@ -181,7 +243,7 @@ This allows precise specification of the order of preference.</p>
 <h4>Latest Version</h4>
 <ul>
   <li><a href="topo_order.html">dev</a></li>
-  <li><a href="../v5.13.x/topo_order.html">v5.13.x</a></li>
+  <li><a href="../v5.14.x/topo_order.html">v5.14.x</a></li>
 </ul>
 <h4>Older Versions</h4>
 <ul>

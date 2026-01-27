@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="./">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Topography file ordering &#8212; Clawpack 5.14.x documentation</title>
+    <link rel="stylesheet" href="_static/base.css" type="text/css" />
+    <link rel="stylesheet" href="_static/layout.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="_static/flasky.css?v=59fe8e2d" />
+    <link rel="stylesheet" type="text/css" href="_static/graphviz.css?v=fd3f3429" />
+    <script src="_static/documentation_options.js?v=f5e26b61"></script>
+    <script src="_static/doctools.js?v=9a2dae69"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="icon" href="_static/clawicon.ico"/>
+    <link rel="author" title="About these documents" href="about.html" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Python tools for working with topo and dtopo" href="topotools.html" />
+    <link rel="prev" title="Grid registration" href="grid_registration.html" /> 
+  </head><body>
+<div id="main-wrapper" class="sphinx">
+<div id="header-wrapper">
+  <section id="header">
+    <!-- <h1><a href="http://clawpack.org/">Clawpack</a></h1> -->
+    <h1><a href="http://clawpack.org/">Clawpack-5</a></h1> 
+    <nav>
+      <ul>
+        <li>
+          <a href="contents.html">Docs</a>
+        </li>
+        <li>
+          <a href="installing.html">Install</a>
+        </li>
+        <li>
+          <a class="" href="http://clawpack.org/gallery/index.html">Gallery</a>
+        </li>
+        <li>
+          <a href="about.html">Citation</a>
+        </li>
+        <li>
+          <a class="active" href="http://github.com/clawpack">GitHub</a>
+        </li>
+        <li>
+          <a class="" href="community.html">Community</a>
+        </li>
+        <li>
+          <a class="" href="developers.html">Contribute</a>
+        </li>
+      </ul>
+    </nav>
+  </section>
+<div class="decoration"></div>
+</div>
+
+    <div class="related" role="navigation" aria-label="Related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="topotools.html" title="Python tools for working with topo and dtopo"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="grid_registration.html" title="Grid registration"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="contents.html">Clawpack 5.14.x documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="geoclaw.html" accesskey="U">GeoClaw Description and Contents</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Topography file ordering</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="topography-file-ordering">
+<span id="topo-order"></span><h1>Topography file ordering<a class="headerlink" href="#topography-file-ordering" title="Link to this heading">¶</a></h1>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>This feature has bugs in v5.13.0 and v5.13.1 and should not
+be used in those versions.  These bugs were fixed (we hope) in v5.14.0.
+See <a class="reference internal" href="release_5_14_0.html#release-5-14-0"><span class="std std-ref">v5.14.0 release notes</span></a> for more discussion.</p>
+</div>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="topo.html#topo"><span class="std std-ref">Topography data</span></a></p></li>
+</ul>
+</div>
+<p>To compute the cell-averaged topography value in each computational cell,
+the default approach in GeoClaw is to use the finest topography available at
+each point in the cell. Since each topofile (DEM) is on a rectangular grid with
+regular spacing <cite>dx</cite> and <cite>dy</cite>, the resolutions are compared by computing the
+cell areas <cite>dx*dy</cite>.  If two or more topofiles overlap a point in the cell
+then the finer one is used.</p>
+<p>This usually works fine but may not always be what is wanted. In particular
+there may be two DEMs at essentially the same resolution, but one is a more
+recent and hence a better dataset to use
+(but perhaps covers a smaller area, so the
+older DEM is also needed outside this area).  In this case we want to
+guarantee that the newer one is used where available.  Even if the
+resolutions are essentially identical, <cite>dx*dy</cite> maybe be slightly different
+(perhaps at the roundoff level) and so it could be that the older one is viewed
+as “finer” and would be used preferentially.  Even if <cite>dx*dy</cite> is exactly the
+same, it is not obvious which one would be used in GeoClaw.
+(The one listed later in <cite>rundata.topo_data.topofiles</cite>
+would be considered finer in this case, with a relative tolerance of
+0.001 used to judge whether the resolutions are the same).</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>This relative tolerance was introduced in v5.14.0,
+and in previous versions rounding errors in <cite>dx</cite> and/or <cite>dy</cite> could
+have resulted in a different ordering, and possibly different
+simulation results.</p>
+</div>
+<p>Starting in v5.14.0, there is a <cite>setrun.py</cite> parameter
+<cite>rundata.topo_data.override_order</cite> that is set to <cite>False</cite> by default to
+produce the default behavior described above.</p>
+<p>If <cite>setrun.py</cite> specifies:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rundata</span><span class="o">.</span><span class="n">topo_data</span><span class="o">.</span><span class="n">override_order</span> <span class="o">=</span> <span class="kc">True</span>
+</pre></div>
+</div>
+<p>then the preference order is no longer based on the computed
+resolution. Instead it is assumed that the topo files in
+<cite>rundata.topo_data.topofiles</cite> are ordered from least preferable to most
+preferable (so normally you would list the coarsest DEM first, going down to
+the finest DEM, in order to reproduce the default behavior).
+This allows precise specification of the order of preference.</p>
+<section id="resolution-of-dtopo-files">
+<h2>Resolution of dtopo files<a class="headerlink" href="#resolution-of-dtopo-files" title="Link to this heading">¶</a></h2>
+<p>Note that internally GeoClaw creates a topo array from each topofile read
+in that has the initial topography.  If one or more dtopo files are also
+specified, which specify motion of the topography, then these internal
+topo arrays are modified as the simulation proceeds to incorporate this dtopo.
+The dtopo files may have different resolution than any of the topo files, and
+at any rate the information from the dtopo files is interpolated into each
+topo array that it overlaps at each time step while the ground motion is
+active (as determined by the final time in the dtopo file).</p>
+<p>Internally GeoClaw also creates a set of <cite>topo_for_dtopo</cite> arrays that have
+exactly the same extent and resolution as each dtopo file, and with topo values
+that are interpolated from the best available topo data (based on the ordering
+as discussed above, which has already been performed when these new arrays
+are filled).</p>
+<p>These arrays are then handled as any other topo arrays would be, and are
+inserted into the ranking of topo arrays according to an algorithm described
+below.  So when the cell-average topo value <cite>B</cite> must be computed in a
+finite volume cell on a grid patch (either at the time of regridding or because
+the topo has changed due to dtopo), these <cite>topo_for_dtopo</cite> arrays may be used
+along with the original topo arrays at any point where they provide the
+best resolution according to the ranking algorithm.</p>
+<p>The reason for introducing these new  <cite>topo_for_dtopo</cite> arrays is that the
+dtopo might be specified on a much finder grid than the underlying topo
+in the same geographic region.  For example, a submarine slump landslide
+might be specified on a 2” dtopo file on the continental shelf, in a region
+where the best ocean topography is on a 15” grid.  We do not want to lose
+the resolution of the dtopo when transferring it to topo grids, and so it
+would not be sufficient to only transfer it to the 15” grid and use that to
+set cell values <cite>B</cite> (at least not when the computational grid cell has
+finer resolution than 15”).
+Instead we interpolate the 15” ocean topo to the new
+2” <cite>topo_for_dtopo</cite> array and give this higher priority than the 15” topo
+array in the landslide region.</p>
+<p>Once the original topo arrays have been ordered as discussed above,
+the algorithm for inserting the <cite>topo_for_dtopo</cite> arrays into this ordering
+is to insert it as far down in the ranking as possible (lowest priority)
+with the constraint that all topo arrays with higher priority should have
+finer resolution.  So in the example above, the 2” <cite>topo_for_dtopo</cite> array
+would have higher priority than the 15” ocean topo, but would generally
+have lower priority than any finer-resolution coastal topo arrays that
+might overlap the dtopo extent (since those arrays not only have better topo
+values but also have the dtopo interpolated to their resolution).</p>
+</section>
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<p><a href="http://clawpack.org/">
+    <img class="logo" src= "_static/clawlogo.jpg" alt="Logo"/>
+</a>
+<h2>Version 5.14.x</h2>
+</p>
+  <div>
+    <h3><a href="contents.html">Table of Contents</a></h3>
+    <ul>
+<li><a class="reference internal" href="#">Topography file ordering</a><ul>
+<li><a class="reference internal" href="#resolution-of-dtopo-files">Resolution of dtopo files</a></li>
+</ul>
+</li>
+</ul>
+
+  </div><h3>Related Topics</h3>
+<ul>
+  <li><a href="contents.html">Documentation overview</a><ul>
+  <li><a href="geoclaw.html">GeoClaw Description and Contents</a><ul>
+      <li>Previous: <a href="grid_registration.html" title="previous chapter">Grid registration</a></li>
+      <li>Next: <a href="topotools.html" title="next chapter">Python tools for working with topo and dtopo</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+<div class="widget navlinks">
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/topo_order.rst.txt"
+            rel="nofollow"
+            target="_blank">Source .rst</a></li>
+    <li><a href="https://github.com/clawpack/doc/blob/dev/doc/topo_order.rst"
+            rel="nofollow"
+            target="_blank">Source on GitHub</a></li>
+     <li><a href="https://github.com/clawpack/doc/commits/dev/doc/topo_order.rst"
+             rel="nofollow"
+             target="_blank">History</a></li>
+    <li><a href="https://github.com/clawpack/doc/edit/dev/doc/topo_order.rst"
+            rel="nofollow"
+            target="_blank">Suggest Edits</a></li>
+     <li><a href="https://github.com/clawpack/doc/issues/new/choose"
+             rel="nofollow"
+             target="_blank">Raise an Issue</a></li>
+  </ul>
+</div>
+<search id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+<h4>Latest Version</h4>
+<ul>
+  <li><a href="../dev/topo_order.html">dev</a></li>
+  <li><a href="topo_order.html">v5.14.x</a></li>
+</ul>
+<h4>Older Versions</h4>
+<ul>
+  <li><a href="../v5.10.x/index.html">v5.10.x</a></li>
+  <li><a href="../v5.11.x/index.html">v5.11.x</a></li>
+  <li><a href="../v5.12.x/index.html">v5.12.x</a></li>
+  <li><a href="../v5.7.x/index.html">v5.7.x</a></li>
+  <li><a href="../v5.8.x/index.html">v5.8.x</a></li>
+  <li><a href="../v5.9.x/index.html">v5.9.x</a></li>
+</ul>
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+  <div class="footer">
+    &copy; Copyright CC-BY 2024, The Clawpack Development Team.
+    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
+  </div>
+  <script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-44811544-1', 'auto');
+  ga('send', 'pageview');
+
+  </script>
+  
+  </body>
+</html>
