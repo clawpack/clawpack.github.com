@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="./">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Clawpack Testing Refactor &#8212; Clawpack dev documentation</title>
+    <link rel="stylesheet" href="_static/base.css" type="text/css" />
+    <link rel="stylesheet" href="_static/layout.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="_static/flasky.css?v=59fe8e2d" />
+    <link rel="stylesheet" type="text/css" href="_static/graphviz.css?v=4ae1632d" />
+    <script src="_static/documentation_options.js?v=3ce10a4d"></script>
+    <script src="_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <link rel="icon" href="_static/clawicon.ico"/>
+    <link rel="author" title="About these documents" href="about.html" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Compiling the Sphinx documentation locally" href="sphinxdoc.html" />
+    <link rel="prev" title="Testing your installation" href="testing.html" /> 
+  </head><body>
+<div id="main-wrapper" class="sphinx">
+<div id="header-wrapper">
+  <section id="header">
+    <!-- <h1><a href="http://clawpack.org/">Clawpack</a></h1> -->
+    <h1><a href="http://clawpack.org/">Clawpack-5</a></h1> 
+    <nav>
+      <ul>
+        <li>
+          <a href="contents.html">Docs</a>
+        </li>
+        <li>
+          <a href="installing.html">Install</a>
+        </li>
+        <li>
+          <a class="" href="http://clawpack.org/gallery/index.html">Gallery</a>
+        </li>
+        <li>
+          <a href="about.html">Citation</a>
+        </li>
+        <li>
+          <a class="active" href="http://github.com/clawpack">GitHub</a>
+        </li>
+        <li>
+          <a class="" href="community.html">Community</a>
+        </li>
+        <li>
+          <a class="" href="developers.html">Contribute</a>
+        </li>
+      </ul>
+    </nav>
+  </section>
+<div class="decoration"></div>
+</div>
+
+    <div class="related" role="navigation" aria-label="Related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="sphinxdoc.html" title="Compiling the Sphinx documentation locally"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="testing.html" title="Testing your installation"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="contents.html">Clawpack dev documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Clawpack Testing Refactor</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="clawpack-testing-refactor">
+<span id="testing-refactor"></span><h1>Clawpack Testing Refactor<a class="headerlink" href="#clawpack-testing-refactor" title="Link to this heading">¶</a></h1>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="testing.html#testing"><span class="std std-ref">Testing your installation</span></a></p></li>
+</ul>
+</div>
+<section id="overview">
+<h2>Overview<a class="headerlink" href="#overview" title="Link to this heading">¶</a></h2>
+<p>Clawpack is moving to a pytest-based testing model built around example-local regression tests and shared test infrastructure in clawutil.</p>
+<dl class="simple">
+<dt>This refactor is motivated by the need to:</dt><dd><ul class="simple">
+<li><p>simplify test authoring</p></li>
+<li><p>reduce custom test scaffolding</p></li>
+<li><p>better match pytest conventions</p></li>
+<li><p>improve CI integration</p></li>
+<li><p>support incremental migration from the legacy regression framework</p></li>
+</ul>
+</dd>
+<dt>Current reference implementations include:</dt><dd><ul class="simple">
+<li><p><a class="reference external" href="https://github.com/clawpack/clawutil/issues/187">https://github.com/clawpack/clawutil/issues/187</a></p></li>
+<li><p><a class="reference external" href="https://github.com/clawpack/classic/issues/96">https://github.com/clawpack/classic/issues/96</a></p></li>
+<li><p><a class="reference external" href="https://github.com/clawpack/amrclaw/issues/310">https://github.com/clawpack/amrclaw/issues/310</a></p></li>
+</ul>
+</dd>
+</dl>
+</section>
+<section id="design-decisions">
+<h2>Design decisions<a class="headerlink" href="#design-decisions" title="Link to this heading">¶</a></h2>
+<ol class="arabic simple">
+<li><p><strong>Pytest is the system-wide test runner</strong> - All new tests should be written
+for pytest.</p></li>
+<li><p><strong>Example-based regression tests are the primary solver test model</strong> - For
+solver-heavy code, the canonical test is a small example that:
+- writes input data
+- builds using the example Makefile
+- runs in a temporary directory
+- compares output to saved regression data</p></li>
+<li><p><strong>Shared testing infrastructure lives in clawutil</strong> - Common runner logic and
+helpers should be centralized rather than duplicated across repositories.</p></li>
+<li><p><strong>Tests should use the real build workflow</strong> - Tests should exercise the same
+example Makefile workflow that users rely on.</p></li>
+<li><p><strong>Fresh builds should be explicit</strong> - Tests should request a fresh build
+through the runner or build target, rather than relying on import-time
+cleanup or hidden state mutation.</p></li>
+<li><p><strong>Legacy test infrastructure is transitional</strong> - Existing legacy tests may
+remain temporarily, but new tests should follow the pytest model and old
+tests should be migrated over time.</p></li>
+</ol>
+</section>
+<section id="test-layout">
+<h2>Test layout<a class="headerlink" href="#test-layout" title="Link to this heading">¶</a></h2>
+<p>A typical migrated example should contain:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">example_name</span><span class="o">/</span>
+    <span class="n">Makefile</span>
+    <span class="n">setrun</span><span class="o">.</span><span class="n">py</span>
+    <span class="n">test_example_name</span><span class="o">.</span><span class="n">py</span>
+    <span class="n">regression_data</span><span class="o">/</span>
+        <span class="n">frame0001</span><span class="o">.</span><span class="n">txt</span>
+        <span class="n">frame0002</span><span class="o">.</span><span class="n">txt</span>
+</pre></div>
+</div>
+</section>
+<section id="typical-test-workflow">
+<h2>Typical test workflow<a class="headerlink" href="#typical-test-workflow" title="Link to this heading">¶</a></h2>
+<p>A typical example test:
+1.      creates or modifies rundata
+2.      writes data files
+3.      builds the executable
+4.      runs in tmp_path
+5.      compares selected frames or diagnostics</p>
+</section>
+<section id="regression-data-policy">
+<h2>Regression data policy<a class="headerlink" href="#regression-data-policy" title="Link to this heading">¶</a></h2>
+<dl class="simple">
+<dt>Regression data should be:</dt><dd><ul class="simple">
+<li><p>small</p></li>
+<li><p>reviewable in a PR</p></li>
+<li><p>deterministic</p></li>
+<li><p>specific to the example</p></li>
+</ul>
+</dd>
+</dl>
+<p>Use <cite>–save</cite> to regenerate baselines intentionally.</p>
+</section>
+<section id="ci-policy">
+<h2>CI policy<a class="headerlink" href="#ci-policy" title="Link to this heading">¶</a></h2>
+<dl class="simple">
+<dt>CI should:</dt><dd><ul class="simple">
+<li><p>run pytest directly</p></li>
+<li><p>store test artifacts in a predictable directory</p></li>
+<li><p>prefer fast, stable examples in PR checks</p></li>
+<li><p>allow broader coverage in scheduled or extended workflows</p></li>
+</ul>
+</dd>
+</dl>
+<section id="data-included-in-the-repository-for-ci">
+<h3>Data Included in the Repository for CI<a class="headerlink" href="#data-included-in-the-repository-for-ci" title="Link to this heading">¶</a></h3>
+<p>Example regression tests should avoid external downloads when possible. Small,
+stable input files should be checked into the repository. Download and
+conversion logic should be tested separately in focused utility tests.</p>
+</section>
+<section id="compiler-flags-and-numerical-reproducibility">
+<h3>Compiler Flags and Numerical Reproducibility<a class="headerlink" href="#compiler-flags-and-numerical-reproducibility" title="Link to this heading">¶</a></h3>
+<p>Regression tests are sensitive to floating-point roundoff and compiler
+optimizations. To ensure stable and reproducible results across platforms,
+CI uses conservative optimization flags (e.g., <cite>-O1</cite>).</p>
+<p>Higher optimization levels may produce small numerical differences and are
+not currently used for regression validation.</p>
+</section>
+</section>
+<section id="migration-guidance">
+<h2>Migration guidance<a class="headerlink" href="#migration-guidance" title="Link to this heading">¶</a></h2>
+<dl class="simple">
+<dt>When migrating an old test:</dt><dd><ul class="simple">
+<li><p>prefer example-local placement</p></li>
+<li><p>move shared behavior into clawutil</p></li>
+<li><p>remove hidden setup side effects</p></li>
+<li><p>keep the test close to the user-facing workflow</p></li>
+</ul>
+</dd>
+</dl>
+</section>
+<section id="reference-example">
+<h2>Reference example<a class="headerlink" href="#reference-example" title="Link to this heading">¶</a></h2>
+<p><cite>$CLAW/classic/examples/acoustics_1d_heterogeneous/test_acoustics_1d_heterogeneous.py</cite>
+is intended to serve as an example setup.</p>
+</section>
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<p><a href="http://clawpack.org/">
+    <img class="logo" src= "_static/clawlogo.jpg" alt="Logo"/>
+</a>
+<h2>Version dev</h2>
+</p>
+  <div>
+    <h3><a href="contents.html">Table of Contents</a></h3>
+    <ul>
+<li><a class="reference internal" href="#">Clawpack Testing Refactor</a><ul>
+<li><a class="reference internal" href="#overview">Overview</a></li>
+<li><a class="reference internal" href="#design-decisions">Design decisions</a></li>
+<li><a class="reference internal" href="#test-layout">Test layout</a></li>
+<li><a class="reference internal" href="#typical-test-workflow">Typical test workflow</a></li>
+<li><a class="reference internal" href="#regression-data-policy">Regression data policy</a></li>
+<li><a class="reference internal" href="#ci-policy">CI policy</a><ul>
+<li><a class="reference internal" href="#data-included-in-the-repository-for-ci">Data Included in the Repository for CI</a></li>
+<li><a class="reference internal" href="#compiler-flags-and-numerical-reproducibility">Compiler Flags and Numerical Reproducibility</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#migration-guidance">Migration guidance</a></li>
+<li><a class="reference internal" href="#reference-example">Reference example</a></li>
+</ul>
+</li>
+</ul>
+
+  </div><h3>Related Topics</h3>
+<ul>
+  <li><a href="contents.html">Documentation overview</a><ul>
+      <li>Previous: <a href="testing.html" title="previous chapter">Testing your installation</a></li>
+      <li>Next: <a href="sphinxdoc.html" title="next chapter">Compiling the Sphinx documentation locally</a></li>
+  </ul></li>
+</ul>
+<div class="widget navlinks">
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/testing_refactor.rst.txt"
+            rel="nofollow"
+            target="_blank">Source .rst</a></li>
+    <li><a href="https://github.com/clawpack/doc/blob/dev/doc/testing_refactor.rst"
+            rel="nofollow"
+            target="_blank">Source on GitHub</a></li>
+     <li><a href="https://github.com/clawpack/doc/commits/dev/doc/testing_refactor.rst"
+             rel="nofollow"
+             target="_blank">History</a></li>
+    <li><a href="https://github.com/clawpack/doc/edit/dev/doc/testing_refactor.rst"
+            rel="nofollow"
+            target="_blank">Suggest Edits</a></li>
+     <li><a href="https://github.com/clawpack/doc/issues/new/choose"
+             rel="nofollow"
+             target="_blank">Raise an Issue</a></li>
+  </ul>
+</div>
+<search id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+<h4>Latest Version</h4>
+<ul>
+  <li><a href="../v5.14.x/index.html">v5.14.x</a></li>
+  <li><a href="testing_refactor.html">dev</a></li>
+</ul>
+<h4>Older Versions</h4>
+<ul>
+  <li><a href="../v5.7.x/index.html">v5.7.x</a></li>
+  <li><a href="../v5.8.x/index.html">v5.8.x</a></li>
+  <li><a href="../v5.9.x/index.html">v5.9.x</a></li>
+  <li><a href="../v5.10.x/index.html">v5.10.x</a></li>
+  <li><a href="../v5.11.x/index.html">v5.11.x</a></li>
+  <li><a href="../v5.12.x/index.html">v5.12.x</a></li>
+</ul>
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+  <div class="footer">
+    &copy; Copyright CC-BY 2026, The Clawpack Development Team.
+    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
+  </div>
+  <script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-44811544-1', 'auto');
+  ga('send', 'pageview');
+
+  </script>
+  
+  </body>
+</html>

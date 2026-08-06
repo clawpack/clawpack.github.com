@@ -10,15 +10,15 @@
     <link rel="stylesheet" href="_static/layout.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="_static/flasky.css?v=59fe8e2d" />
-    <link rel="stylesheet" type="text/css" href="_static/graphviz.css?v=fd3f3429" />
+    <link rel="stylesheet" type="text/css" href="_static/graphviz.css?v=4ae1632d" />
     <script src="_static/documentation_options.js?v=3ce10a4d"></script>
-    <script src="_static/doctools.js?v=9a2dae69"></script>
-    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <link rel="icon" href="_static/clawicon.ico"/>
     <link rel="author" title="About these documents" href="about.html" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Compiling the Sphinx documentation locally" href="sphinxdoc.html" />
+    <link rel="next" title="Clawpack Testing Refactor" href="testing_refactor.html" />
     <link rel="prev" title="Contributing examples and applications" href="contribute_apps.html" /> 
   </head><body>
 <div id="main-wrapper" class="sphinx">
@@ -65,7 +65,7 @@
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="sphinxdoc.html" title="Compiling the Sphinx documentation locally"
+          <a href="testing_refactor.html" title="Clawpack Testing Refactor"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="contribute_apps.html" title="Contributing examples and applications"
@@ -82,6 +82,162 @@
             
   <section id="testing-your-installation">
 <span id="testing"></span><h1>Testing your installation<a class="headerlink" href="#testing-your-installation" title="Link to this heading">¶</a></h1>
+<p>Clawpack has switched from using <cite>nose</cite> tests to
+<a class="reference external" href="https://docs.pytest.org/">pytest</a>.</p>
+<p>See <a class="reference internal" href="testing_refactor.html#testing-refactor"><span class="std std-ref">Clawpack Testing Refactor</span></a> for more information about the switch,
+and <a class="reference internal" href="#legacy-testing"><span class="std std-ref">Legacy Testing</span></a> for some notes on using <cite>nose</cite>.</p>
+<section id="pyclaw-tests">
+<h2>PyClaw Tests<a class="headerlink" href="#pyclaw-tests" title="Link to this heading">¶</a></h2>
+<p>You can exercise all the tests in PyClaw by running the following command from
+the base of the <cite>pyclaw directory</cite>:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">cd $CLAW/pyclaw</span>
+<span class="go">pytest</span>
+</pre></div>
+</div>
+</section>
+<section id="fortran-regression-tests">
+<h2>Fortran Regression Tests<a class="headerlink" href="#fortran-regression-tests" title="Link to this heading">¶</a></h2>
+<p>The Fortran code in Clawpack has a suite of regression tests that can be run to
+check that the code is working properly.  In each of the Fortran packages there
+are a series of regression tests along side some of the examples as well as some
+tests for Python functionality.  All these tests can be run by going to the base
+directory of the corresponding pacakge and running:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">pytest</span>
+</pre></div>
+</div>
+<p>The most useful option for debugging a failing test is to use:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">pytest --basetemp=./test_output</span>
+</pre></div>
+</div>
+<p>which will save the output from the tests into the directory <cite>test_output</cite>.  The
+package <cite>pytest</cite> also has a number of additional debugging options that you can
+use.  See the <a class="reference external" href="https://docs.pytest.org/">pytest documentation</a> for more
+details.</p>
+<section id="hints">
+<h3>Hints<a class="headerlink" href="#hints" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>Often times the output from a failing test will overwhelm the console output.
+In this case, you can use the following to pipe the output into the file
+<cite>log.txt</cite> and look at it directly:</p></li>
+</ul>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">pytest --basetemp=./test_output &gt; log.txt 2&gt;&amp;1</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>If you would like to use a different default <cite>setrun.py</cite> file for testing you
+can modify the test script to use a different <cite>setrun.py</cite> file.</p></li>
+<li><p>If you would like to plot the output of a test, you can use the same plotting
+tools that are used for the examples.  You can find the output of the test in
+the <cite>test_output</cite> directory if you used the <cite>--basetemp</cite> option above. You
+can then use the plotting tools to plot the output from the test.  For
+example this code will run the test and save the output into a subdirectory
+of <cite>test_output</cite>.  The plotting command will then plot the output from the
+appropriate subdirectory specified:</p></li>
+</ul>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">cd $CLAW/classic/examples/acoustics_1d_example1</span>
+<span class="go">pytest --basetemp=./test_output .</span>
+<span class="go">python plotclaw.py test_output/test_acoustics_1d_example1/ ./_plots ./setplot.py</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>If you would like to plot output from a test that the output was saved for,
+e.g. with <cite>--basetemp=./test_output</cite>, you can use the same plotting commands
+to plot the output from the test.  For example this code will plot the output
+from the test <cite>test_acoustics_1d_example1</cite>:</p></li>
+</ul>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">python plotclaw.py test_output/test_acoustics_1d_example1#/ ./_plots ./setplot.py</span>
+</pre></div>
+</div>
+<p>Note that the <cite>#</cite> in the command above is used to specify the subdirectory of
+<cite>test_output</cite> that contains the output from the test.  You can use this same
+command to plot the output from any test that you have saved the output for.
+The script <cite>plotclaw.py</cite> is in VisClaw.</p>
+</section>
+</section>
+<section id="adding-regression-tests">
+<h2>Adding Regression Tests<a class="headerlink" href="#adding-regression-tests" title="Link to this heading">¶</a></h2>
+<p>If you want to add a new regression test using the new <cite>pytest</cite> framework, you
+can follow along with this example for the acoustics_1d_example1 test.  If
+something more complicated is needed, take a look at the other tests available
+in the packages, or reach out to the developers for help.</p>
+<section id="adding-a-test-for-acoustics-1d-example1">
+<h3>Adding a Test for <cite>acoustics_1d_example1</cite><a class="headerlink" href="#adding-a-test-for-acoustics-1d-example1" title="Link to this heading">¶</a></h3>
+<ol class="arabic simple">
+<li><p>Create a new file in the <cite>examples/acoustics_1d_example1</cite> directory called <cite>test_acoustics_1d_example1.py</cite> by:</p></li>
+</ol>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">touch examples/acoustics_1d_example1/test_acoustics_1d_example1.py</span>
+</pre></div>
+</div>
+<p>and place the following content in it:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="ch">#!/usr/bin/env python</span>
+<span class="linenos"> 2</span>
+<span class="linenos"> 3</span><span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="linenos"> 4</span><span class="kn">import</span><span class="w"> </span><span class="nn">pytest</span>
+<span class="linenos"> 5</span>
+<span class="linenos"> 6</span><span class="kn">import</span><span class="w"> </span><span class="nn">clawpack.classic.test</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">test</span>
+<span class="linenos"> 7</span>
+<span class="linenos"> 8</span>
+<span class="linenos"> 9</span><span class="k">def</span><span class="w"> </span><span class="nf">test_acoustics_1d_example1</span><span class="p">(</span><span class="n">tmp_path</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span> <span class="n">save</span><span class="p">:</span> <span class="nb">bool</span><span class="p">):</span>
+<span class="linenos">10</span>    <span class="n">runner</span> <span class="o">=</span> <span class="n">test</span><span class="o">.</span><span class="n">ClassicTestRunner</span><span class="p">(</span><span class="n">tmp_path</span><span class="p">,</span>
+<span class="linenos">11</span>                                    <span class="n">test_path</span><span class="o">=</span><span class="n">Path</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">parent</span><span class="p">)</span>
+<span class="linenos">12</span>
+<span class="linenos">13</span>    <span class="n">runner</span><span class="o">.</span><span class="n">set_data</span><span class="p">()</span>
+<span class="linenos">14</span>
+<span class="linenos">15</span>    <span class="n">runner</span><span class="o">.</span><span class="n">rundata</span><span class="o">.</span><span class="n">clawdata</span><span class="o">.</span><span class="n">num_output_times</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="linenos">16</span>    <span class="n">runner</span><span class="o">.</span><span class="n">rundata</span><span class="o">.</span><span class="n">clawdata</span><span class="o">.</span><span class="n">tfinal</span> <span class="o">=</span> <span class="mf">1.0</span>
+<span class="linenos">17</span>    <span class="n">runner</span><span class="o">.</span><span class="n">rundata</span><span class="o">.</span><span class="n">clawdata</span><span class="o">.</span><span class="n">output_t0</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="linenos">18</span>
+<span class="linenos">19</span>    <span class="n">runner</span><span class="o">.</span><span class="n">write_data</span><span class="p">()</span>
+<span class="linenos">20</span>
+<span class="linenos">21</span>    <span class="n">runner</span><span class="o">.</span><span class="n">executable_name</span> <span class="o">=</span> <span class="s2">&quot;xclaw&quot;</span>
+<span class="linenos">22</span>    <span class="n">runner</span><span class="o">.</span><span class="n">build_executable</span><span class="p">()</span>
+<span class="linenos">23</span>    <span class="n">runner</span><span class="o">.</span><span class="n">run_code</span><span class="p">()</span>
+<span class="linenos">24</span>
+<span class="linenos">25</span>    <span class="n">runner</span><span class="o">.</span><span class="n">check_frame</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">indices</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">save</span><span class="o">=</span><span class="n">save</span><span class="p">)</span>
+<span class="linenos">26</span>    <span class="n">runner</span><span class="o">.</span><span class="n">check_frame</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">indices</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">save</span><span class="o">=</span><span class="n">save</span><span class="p">)</span>
+<span class="linenos">27</span>
+<span class="linenos">28</span><span class="k">if</span> <span class="vm">__name__</span><span class="o">==</span><span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+<span class="linenos">29</span>    <span class="n">pytest</span><span class="o">.</span><span class="n">main</span><span class="p">([</span><span class="vm">__file__</span><span class="p">])</span>
+</pre></div>
+</div>
+<p>This file is executable from the command line.  The middle section modifies what is in the local <cite>setrun.py</cite> file to make the test small and deterministic.  The final section runs the test when the file is executed from the command line.  You can run this test with:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">python test_acoustics_1d_example1.py</span>
+</pre></div>
+</div>
+<p>or with:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">pytest test_acoustics_1d_example1.py</span>
+</pre></div>
+</div>
+<ol class="arabic simple" start="2">
+<li><p>We now need to generate the expected results for this test.  To do this, run the test with the <cite>--save</cite> option:</p></li>
+</ol>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">pytest test_acoustics_1d_example1.py --save</span>
+</pre></div>
+</div>
+<p>This will run the test and save the results in a directory called <cite>regression_data</cite> in the same directory as the test.  This file contains the expected results for the test, which will be used to compare against future runs of the test.  Note that if you would like to see the full output of the test, you can add <cite>--basetemp=./test_output</cite> to the command above, which will save the output from the test into the directory <cite>test_output</cite>.</p>
+<ol class="arabic simple" start="3">
+<li><p>Now you can run the test without the <cite>--save</cite> option to check that it is working properly.  If the test passes, you should see output similar to this:</p></li>
+</ol>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">============================= test session starts ==============================</span>
+<span class="go">platform darwin -- Python 3.8.10, pytest-7.1.2, pluggy-1.0.0</span>
+<span class="go">rootdir: /path/to/clawpack/classic/examples/acoustics_1d_example1</span>
+<span class="go">collected 1 item</span>
+
+<span class="go">test_acoustics_1d_example1.py .                                         [100%]</span>
+
+<span class="go">============================== 1 passed in 5.00s ===============================</span>
+</pre></div>
+</div>
+<p>To complete the test you will want to add the test script <cite>test_acoustics_1d_example1.py</cite> add the regression data to the repository.</p>
+</section>
+</section>
+<section id="legacy-testing">
+<span id="id1"></span><h2>Legacy Testing<a class="headerlink" href="#legacy-testing" title="Link to this heading">¶</a></h2>
+<p>Tests via <cite>nose</cite> are no longer supported, but if you have an older version of
+Clawpack installed and <cite>nostests</cite> available, you can still run the old tests.
+These are not as comprehensive as the new <cite>pytest</cite> tests, but they can be useful
+for checking that your installation is working properly.</p>
+</section>
 <section id="pyclaw">
 <h2>PyClaw<a class="headerlink" href="#pyclaw" title="Link to this heading">¶</a></h2>
 <p>If you downloaded Clawpack manually, you can test your <a class="reference internal" href="pyclaw/index.html#pyclaw"><span class="std std-ref">PyClaw</span></a>
@@ -137,6 +293,16 @@ archived in the <a class="reference internal" href="galleries.html#galleries"><s
     <h3><a href="contents.html">Table of Contents</a></h3>
     <ul>
 <li><a class="reference internal" href="#">Testing your installation</a><ul>
+<li><a class="reference internal" href="#pyclaw-tests">PyClaw Tests</a></li>
+<li><a class="reference internal" href="#fortran-regression-tests">Fortran Regression Tests</a><ul>
+<li><a class="reference internal" href="#hints">Hints</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#adding-regression-tests">Adding Regression Tests</a><ul>
+<li><a class="reference internal" href="#adding-a-test-for-acoustics-1d-example1">Adding a Test for <cite>acoustics_1d_example1</cite></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#legacy-testing">Legacy Testing</a></li>
 <li><a class="reference internal" href="#pyclaw">PyClaw</a></li>
 <li><a class="reference internal" href="#classic">Classic</a></li>
 </ul>
@@ -147,7 +313,7 @@ archived in the <a class="reference internal" href="galleries.html#galleries"><s
 <ul>
   <li><a href="contents.html">Documentation overview</a><ul>
       <li>Previous: <a href="contribute_apps.html" title="previous chapter">Contributing examples and applications</a></li>
-      <li>Next: <a href="sphinxdoc.html" title="next chapter">Compiling the Sphinx documentation locally</a></li>
+      <li>Next: <a href="testing_refactor.html" title="next chapter">Clawpack Testing Refactor</a></li>
   </ul></li>
 </ul>
 <div class="widget navlinks">
@@ -182,17 +348,17 @@ archived in the <a class="reference internal" href="galleries.html#galleries"><s
 <script>document.getElementById('searchbox').style.display = "block"</script>
 <h4>Latest Version</h4>
 <ul>
-  <li><a href="testing.html">dev</a></li>
   <li><a href="../v5.14.x/testing.html">v5.14.x</a></li>
+  <li><a href="testing.html">dev</a></li>
 </ul>
 <h4>Older Versions</h4>
 <ul>
-  <li><a href="../v5.10.x/testing.html">v5.10.x</a></li>
-  <li><a href="../v5.11.x/testing.html">v5.11.x</a></li>
-  <li><a href="../v5.12.x/testing.html">v5.12.x</a></li>
   <li><a href="../v5.7.x/testing.html">v5.7.x</a></li>
   <li><a href="../v5.8.x/testing.html">v5.8.x</a></li>
   <li><a href="../v5.9.x/testing.html">v5.9.x</a></li>
+  <li><a href="../v5.10.x/testing.html">v5.10.x</a></li>
+  <li><a href="../v5.11.x/testing.html">v5.11.x</a></li>
+  <li><a href="../v5.12.x/testing.html">v5.12.x</a></li>
 </ul>
 
         </div>
@@ -200,7 +366,7 @@ archived in the <a class="reference internal" href="galleries.html#galleries"><s
       <div class="clearer"></div>
     </div>
   <div class="footer">
-    &copy; Copyright CC-BY 2024, The Clawpack Development Team.
+    &copy; Copyright CC-BY 2026, The Clawpack Development Team.
     Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
   </div>
   <script>

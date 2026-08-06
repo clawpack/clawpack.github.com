@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="./">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>topo.data File Format &#8212; Clawpack dev documentation</title>
+    <link rel="stylesheet" href="_static/base.css" type="text/css" />
+    <link rel="stylesheet" href="_static/layout.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="_static/flasky.css?v=59fe8e2d" />
+    <link rel="stylesheet" type="text/css" href="_static/graphviz.css?v=4ae1632d" />
+    <script src="_static/documentation_options.js?v=3ce10a4d"></script>
+    <script src="_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <link rel="icon" href="_static/clawicon.ico"/>
+    <link rel="author" title="About these documents" href="about.html" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="GeoClaw NetCDF Input System" href="netcdf.html" />
+    <link rel="prev" title="Topography file ordering" href="topo_order.html" /> 
+  </head><body>
+<div id="main-wrapper" class="sphinx">
+<div id="header-wrapper">
+  <section id="header">
+    <!-- <h1><a href="http://clawpack.org/">Clawpack</a></h1> -->
+    <h1><a href="http://clawpack.org/">Clawpack-5</a></h1> 
+    <nav>
+      <ul>
+        <li>
+          <a href="contents.html">Docs</a>
+        </li>
+        <li>
+          <a href="installing.html">Install</a>
+        </li>
+        <li>
+          <a class="" href="http://clawpack.org/gallery/index.html">Gallery</a>
+        </li>
+        <li>
+          <a href="about.html">Citation</a>
+        </li>
+        <li>
+          <a class="active" href="http://github.com/clawpack">GitHub</a>
+        </li>
+        <li>
+          <a class="" href="community.html">Community</a>
+        </li>
+        <li>
+          <a class="" href="developers.html">Contribute</a>
+        </li>
+      </ul>
+    </nav>
+  </section>
+<div class="decoration"></div>
+</div>
+
+    <div class="related" role="navigation" aria-label="Related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="netcdf.html" title="GeoClaw NetCDF Input System"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="topo_order.html" title="Topography file ordering"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="contents.html">Clawpack dev documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="geoclaw.html" accesskey="U">GeoClaw Description and Contents</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">topo.data File Format</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="admonition warning" id="topodata-format">
+<p class="admonition-title">Warning</p>
+<p>Many changes are being implemented in the way topo and dtopo
+files are handled, in both the Python tools and the Fortran code.
+See <a class="reference internal" href="topochanges.html#topochanges"><span class="std std-ref">Changes to topo and dtopo handling (planned for v5.15.0)</span></a> for a summary.</p>
+</div>
+<section id="topo-data-file-format">
+<h1>topo.data File Format<a class="headerlink" href="#topo-data-file-format" title="Link to this heading">¶</a></h1>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><code class="docutils literal notranslate"><span class="pre">topo.data</span></code> is generated automatically by <code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">data</span></code> or by calling
+<code class="xref py py-meth docutils literal notranslate"><span class="pre">TopographyData.write()</span></code>.
+It is not intended to be hand-authored.  The format is tied to the GeoClaw
+version; files generated with an older build may be incompatible with a
+newer Fortran binary.</p>
+</div>
+<section id="overview">
+<h2>Overview<a class="headerlink" href="#overview" title="Link to this heading">¶</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">topo.data</span></code> is read by the Fortran routine <code class="docutils literal notranslate"><span class="pre">read_topo_settings</span></code> in
+<code class="docutils literal notranslate"><span class="pre">topo_module.f90</span></code>.  It describes every topography file used in a simulation:
+how to locate the file, its format type, and preprocessing parameters to apply
+at load time.</p>
+<p>The file has two sections:</p>
+<ol class="arabic simple">
+<li><p>A 3-line <strong>global header</strong>.</p></li>
+<li><p>One <strong>per-file block</strong> for each topography file.</p></li>
+</ol>
+</section>
+<section id="global-header-3-lines">
+<h2>Global Header (3 lines)<a class="headerlink" href="#global-header-3-lines" title="Link to this heading">¶</a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">topo_missing</span><span class="o">&gt;</span>      <span class="c1"># replace no_data_value in topofile</span>
+<span class="o">&lt;</span><span class="n">test_topography</span><span class="o">&gt;</span>   <span class="c1"># (Type topography specification)</span>
+<span class="o">&lt;</span><span class="n">ntopofiles</span><span class="o">&gt;</span>        <span class="c1"># number of topo files</span>
+</pre></div>
+</div>
+<dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">topo_missing</span></code></dt><dd><p>Float sentinel (default <code class="docutils literal notranslate"><span class="pre">99999.0</span></code>).  Fortran replaces each file’s own
+<code class="docutils literal notranslate"><span class="pre">no_data_value</span></code> with this value after loading.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">test_topography</span></code></dt><dd><p>Integer.  <code class="docutils literal notranslate"><span class="pre">0</span></code> = use the file list that follows.  Values <code class="docutils literal notranslate"><span class="pre">1</span></code>–<code class="docutils literal notranslate"><span class="pre">3</span></code>
+select built-in analytic test bathymetries (jump discontinuity, oceanic
+shelf); in those cases no per-file blocks are written.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">ntopofiles</span></code></dt><dd><p>Integer count of per-file blocks that follow.</p>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><code class="docutils literal notranslate"><span class="pre">override_order</span></code> is a Python-only attribute of
+<code class="xref py py-class docutils literal notranslate"><span class="pre">TopographyData</span></code>; it controls how Python
+sorts the files before writing but is <strong>not</strong> written to <code class="docutils literal notranslate"><span class="pre">topo.data</span></code>.</p>
+</div>
+</section>
+<section id="per-file-block-10-lines-all-types">
+<h2>Per-File Block (10 lines, all types)<a class="headerlink" href="#per-file-block-10-lines-all-types" title="Link to this heading">¶</a></h2>
+<p>One block follows for each topography file, in priority order (coarsest
+resolution first, finest last; see <a class="reference internal" href="#priority-convention"><span class="std std-ref">Priority Convention</span></a> below).</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;&lt;absolute_path&gt;&#39;</span>           <span class="c1"># topo_path</span>
+<span class="o">&lt;</span><span class="n">topo_type</span><span class="o">&gt;</span>                 <span class="c1"># topo_type</span>
+<span class="o">&lt;</span><span class="n">x1</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="n">x2</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="n">y1</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="n">y2</span><span class="o">&gt;</span>        <span class="c1"># crop_extent [x1 x2 y1 y2]</span>
+<span class="o">&lt;</span><span class="n">coarsen</span><span class="o">&gt;</span>                   <span class="c1"># coarsen</span>
+<span class="o">&lt;</span><span class="n">buffer</span><span class="o">&gt;</span>                    <span class="c1"># buffer</span>
+<span class="o">&lt;</span><span class="n">x_align</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="n">y_align</span><span class="o">&gt;</span>         <span class="c1"># align [x y]</span>
+<span class="o">&lt;</span><span class="n">x_shift</span><span class="o">&gt;</span>                   <span class="c1"># x_shift</span>
+<span class="o">&lt;</span><span class="n">y_shift</span><span class="o">&gt;</span>                   <span class="c1"># y_shift</span>
+<span class="o">&lt;</span><span class="n">z_shift</span><span class="o">&gt;</span>                   <span class="c1"># z_shift</span>
+<span class="n">T</span><span class="o">|</span><span class="n">F</span>                         <span class="c1"># negate_z</span>
+</pre></div>
+</div>
+<dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">topo_path</span></code></dt><dd><p>Absolute path to the topography file, single-quoted.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">topo_type</span></code></dt><dd><p>Integer format code: <code class="docutils literal notranslate"><span class="pre">2</span></code> (one-value-per-line ASCII), <code class="docutils literal notranslate"><span class="pre">3</span></code> (row-major
+ASCII), <code class="docutils literal notranslate"><span class="pre">4</span></code> (NetCDF), <code class="docutils literal notranslate"><span class="pre">5</span></code> (GeoTIFF).  Negative values (e.g. <code class="docutils literal notranslate"><span class="pre">-2</span></code>)
+apply an additional sign flip to Z on load (Fortran convention).</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">crop_extent</span></code></dt><dd><p>Four floats: <code class="docutils literal notranslate"><span class="pre">x1</span> <span class="pre">x2</span> <span class="pre">y1</span> <span class="pre">y2</span></code> defining a bounding box.
+Sentinel <code class="docutils literal notranslate"><span class="pre">&quot;0.</span> <span class="pre">0.</span> <span class="pre">0.</span> <span class="pre">0.&quot;</span></code> means no cropping (sentinel is safe because
+a valid extent requires <code class="docutils literal notranslate"><span class="pre">x1</span> <span class="pre">&lt;</span> <span class="pre">x2</span></code> and <code class="docutils literal notranslate"><span class="pre">y1</span> <span class="pre">&lt;</span> <span class="pre">y2</span></code>).</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">coarsen</span></code></dt><dd><p>Integer stride factor for subsampling (<code class="docutils literal notranslate"><span class="pre">1</span></code> = no coarsening).</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">buffer</span></code></dt><dd><p>Integer number of grid points to retain outside the crop region on each
+side (<code class="docutils literal notranslate"><span class="pre">0</span></code> = no buffer).</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">align</span></code></dt><dd><p>Two floats: <code class="docutils literal notranslate"><span class="pre">x_align</span> <span class="pre">y_align</span></code> alignment target for subsampled grids.
+Sentinel <code class="docutils literal notranslate"><span class="pre">&quot;0.</span> <span class="pre">0.&quot;</span></code> means no alignment constraint.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">x_shift</span></code></dt><dd><p>Float added to all x coordinates after loading (<code class="docutils literal notranslate"><span class="pre">0</span></code> = no shift).
+A registration offset: <code class="docutils literal notranslate"><span class="pre">x_domain</span> <span class="pre">=</span> <span class="pre">x_file</span> <span class="pre">+</span> <span class="pre">x_shift</span></code>.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">y_shift</span></code></dt><dd><p>Float added to all y coordinates after loading (<code class="docutils literal notranslate"><span class="pre">0</span></code> = no shift),
+the y-direction counterpart of <code class="docutils literal notranslate"><span class="pre">x_shift</span></code>.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">z_shift</span></code></dt><dd><p>Float added to all non-missing elevation values (<code class="docutils literal notranslate"><span class="pre">0</span></code> = no shift).</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">negate_z</span></code></dt><dd><p><code class="docutils literal notranslate"><span class="pre">T</span></code> or <code class="docutils literal notranslate"><span class="pre">F</span></code>.  If <code class="docutils literal notranslate"><span class="pre">T</span></code>, all elevation values are negated after loading,
+independently of the <code class="docutils literal notranslate"><span class="pre">topo_type</span></code> sign convention.</p>
+</dd>
+</dl>
+<section id="netcdf-descriptor-block-type-4-only">
+<span id="netcdf-descriptor-block"></span><h3>NetCDF Descriptor Block (type 4 only)<a class="headerlink" href="#netcdf-descriptor-block-type-4-only" title="Link to this heading">¶</a></h3>
+<p>For <code class="docutils literal notranslate"><span class="pre">topo_type</span> <span class="pre">=</span> <span class="pre">4</span></code> files, the 10-line block is followed immediately by a
+CF descriptor block.  The descriptor is a sequence of <code class="docutils literal notranslate"><span class="pre">key=value</span></code> lines
+terminated by a blank line, parsed by Fortran’s <code class="docutils literal notranslate"><span class="pre">read_netcdf_descriptor</span></code>.
+The coordinate keys are projection-agnostic (<code class="docutils literal notranslate"><span class="pre">x_name</span></code>/<code class="docutils literal notranslate"><span class="pre">y_name</span></code>, not
+<code class="docutils literal notranslate"><span class="pre">lon</span></code>/<code class="docutils literal notranslate"><span class="pre">lat</span></code>); only the <code class="docutils literal notranslate"><span class="pre">lon_wrap_offset</span></code> longitude wrap is geographic.
+Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">var_name</span><span class="o">=</span><span class="n">elevation</span>
+<span class="n">x_name</span><span class="o">=</span><span class="n">lon</span>
+<span class="n">y_name</span><span class="o">=</span><span class="n">lat</span>
+<span class="n">y_increasing</span><span class="o">=</span><span class="kc">True</span>
+<span class="n">dim_order</span><span class="o">=</span><span class="n">y</span><span class="p">,</span><span class="n">x</span>
+<span class="n">lon_wrap_offset</span><span class="o">=</span><span class="mf">0.0</span>
+<span class="n">fill_action</span><span class="o">=</span><span class="n">abort</span>
+</pre></div>
+</div>
+<dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">x_name</span></code> / <code class="docutils literal notranslate"><span class="pre">y_name</span></code></dt><dd><p>Names of the x and y coordinate variables in the file (auto-detected by
+the inspector via CF <code class="docutils literal notranslate"><span class="pre">axis</span></code>/<code class="docutils literal notranslate"><span class="pre">standard_name</span></code>/common names).</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">y_increasing</span></code></dt><dd><p><code class="docutils literal notranslate"><span class="pre">True</span></code> if the y coordinate increases with array index, else <code class="docutils literal notranslate"><span class="pre">False</span></code>.
+Informational: the y-axis direction is re-detected from the coordinates
+at read time.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">lon_wrap_offset</span></code></dt><dd><p>Scalar added by Fortran to file longitudes to convert them to domain
+coordinates: <code class="docutils literal notranslate"><span class="pre">x_domain</span> <span class="pre">=</span> <span class="pre">x_file</span> <span class="pre">+</span> <span class="pre">lon_wrap_offset</span></code>.  For a geographic
+file using the <code class="docutils literal notranslate"><span class="pre">[0,</span> <span class="pre">360]</span></code> convention against a <code class="docutils literal notranslate"><span class="pre">[-180,</span> <span class="pre">180]</span></code> domain,
+this is <code class="docutils literal notranslate"><span class="pre">-360.0</span></code>; for a non-geographic (projected) x axis it is <code class="docutils literal notranslate"><span class="pre">0.0</span></code>
+(the wrap is skipped).  Use
+<a class="reference internal" href="netcdf_utils_module.html#clawpack.geoclaw.netcdf_utils.TopoInspector.topo_entries" title="clawpack.geoclaw.netcdf_utils.TopoInspector.topo_entries"><code class="xref py py-meth docutils literal notranslate"><span class="pre">TopoInspector.topo_entries()</span></code></a> to compute
+the correct value automatically.</p>
+</dd>
+</dl>
+</section>
+</section>
+<section id="annotated-examples">
+<h2>Annotated Examples<a class="headerlink" href="#annotated-examples" title="Link to this heading">¶</a></h2>
+<section id="type-2-ascii-file-no-preprocessing">
+<h3>Type-2 ASCII file, no preprocessing<a class="headerlink" href="#type-2-ascii-file-no-preprocessing" title="Link to this heading">¶</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="mf">99999.0</span>                    <span class="c1"># replace no_data_value in topofile</span>
+<span class="mi">0</span>                          <span class="c1"># (Type topography specification)</span>
+<span class="mi">1</span>                          <span class="c1"># number of topo files</span>
+
+<span class="s1">&#39;/data/etopo1.tt2&#39;</span>         <span class="c1"># topo_path</span>
+  <span class="mi">2</span>                        <span class="c1"># topo_type</span>
+<span class="mf">0.</span> <span class="mf">0.</span> <span class="mf">0.</span> <span class="mf">0.</span>                <span class="c1"># crop_extent [x1 x2 y1 y2]</span>
+<span class="mi">1</span>                          <span class="c1"># coarsen</span>
+<span class="mi">0</span>                          <span class="c1"># buffer</span>
+<span class="mf">0.</span> <span class="mf">0.</span>                      <span class="c1"># align [x y]</span>
+<span class="mi">0</span>                          <span class="c1"># x_shift</span>
+<span class="mi">0</span>                          <span class="c1"># y_shift</span>
+<span class="mi">0</span>                          <span class="c1"># z_shift</span>
+<span class="n">F</span>                          <span class="c1"># negate_z</span>
+</pre></div>
+</div>
+</section>
+<section id="type-4-netcdf-file-with-crop-and-negate">
+<h3>Type-4 NetCDF file, with crop and negate<a class="headerlink" href="#type-4-netcdf-file-with-crop-and-negate" title="Link to this heading">¶</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="mf">99999.0</span>                    <span class="c1"># replace no_data_value in topofile</span>
+<span class="mi">0</span>                          <span class="c1"># (Type topography specification)</span>
+<span class="mi">1</span>                          <span class="c1"># number of topo files</span>
+
+<span class="s1">&#39;/data/gebco.nc&#39;</span>           <span class="c1"># topo_path</span>
+  <span class="mi">4</span>                        <span class="c1"># topo_type</span>
+<span class="o">-</span><span class="mf">100.</span> <span class="o">-</span><span class="mf">60.</span> <span class="mf">10.</span> <span class="mf">50.</span>         <span class="c1"># crop_extent [x1 x2 y1 y2]</span>
+<span class="mi">1</span>                          <span class="c1"># coarsen</span>
+<span class="mi">2</span>                          <span class="c1"># buffer</span>
+<span class="mf">0.</span> <span class="mf">0.</span>                      <span class="c1"># align [x y]</span>
+<span class="mi">0</span>                          <span class="c1"># x_shift</span>
+<span class="mi">0</span>                          <span class="c1"># y_shift</span>
+<span class="mi">0</span>                          <span class="c1"># z_shift</span>
+<span class="n">T</span>                          <span class="c1"># negate_z</span>
+
+<span class="n">var_name</span><span class="o">=</span><span class="n">elevation</span>
+<span class="n">x_name</span><span class="o">=</span><span class="n">lon</span>
+<span class="n">y_name</span><span class="o">=</span><span class="n">lat</span>
+<span class="n">y_increasing</span><span class="o">=</span><span class="kc">True</span>
+<span class="n">dim_order</span><span class="o">=</span><span class="n">y</span><span class="p">,</span><span class="n">x</span>
+<span class="n">lon_wrap_offset</span><span class="o">=</span><span class="mf">0.0</span>
+<span class="n">fill_action</span><span class="o">=</span><span class="n">abort</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="priority-convention">
+<span id="id1"></span><h2>Priority Convention<a class="headerlink" href="#priority-convention" title="Link to this heading">¶</a></h2>
+<p>The <strong>last</strong> file block in <code class="docutils literal notranslate"><span class="pre">topo.data</span></code> is assigned <strong>rank 1</strong> by Fortran
+(highest priority in overlap resolution).  Fortran stores this mapping in
+<code class="docutils literal notranslate"><span class="pre">mtopoorder</span></code> using the reversed assignment <code class="docutils literal notranslate"><span class="pre">mtopoorder(i)</span> <span class="pre">=</span> <span class="pre">mtopofiles+1-i</span></code>,
+so the last file listed maps to rank 1.</p>
+<p>Python’s <code class="xref py py-meth docutils literal notranslate"><span class="pre">_compute_priority_order()</span></code>
+sorts files by cell area descending (coarsest = largest <code class="docutils literal notranslate"><span class="pre">dx</span> <span class="pre">*</span> <span class="pre">dy</span></code> first,
+finest last) before writing, so the finest file is automatically written
+last.  This matches the traditional GeoClaw convention of listing topography
+files from coarsest to finest.</p>
+<p>To override this sort and use your own ordering, set
+<code class="docutils literal notranslate"><span class="pre">TopographyData.override_order</span> <span class="pre">=</span> <span class="pre">True</span></code>.  When <code class="docutils literal notranslate"><span class="pre">True</span></code>, you are responsible
+for placing the finest file last in <code class="docutils literal notranslate"><span class="pre">topofiles</span></code>.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p><code class="docutils literal notranslate"><span class="pre">override_order</span></code> is a Python-only attribute.  It is <strong>not</strong> written to
+<code class="docutils literal notranslate"><span class="pre">topo.data</span></code> and has no Fortran-side counterpart.</p>
+</div>
+</section>
+<section id="sentinel-values">
+<h2>Sentinel Values<a class="headerlink" href="#sentinel-values" title="Link to this heading">¶</a></h2>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Sentinel value</p></th>
+<th class="head"><p>Meaning</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">crop_extent</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">0.</span> <span class="pre">0.</span> <span class="pre">0.</span> <span class="pre">0.</span></code></p></td>
+<td><p>No cropping; use full file domain.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">align</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">0.</span> <span class="pre">0.</span></code></p></td>
+<td><p>No alignment constraint.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">negate_z</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">F</span></code></p></td>
+<td><p>No sign flip.</p></td>
+</tr>
+</tbody>
+</table>
+<p>Sentinel values are geometrically invalid as real parameters (a valid extent
+requires <code class="docutils literal notranslate"><span class="pre">x1</span> <span class="pre">&lt;</span> <span class="pre">x2</span></code>; a valid alignment is non-zero in typical cases) so
+Fortran can unambiguously distinguish “not set” from a genuine value.</p>
+</section>
+<section id="deprecated-formats">
+<h2>Deprecated Formats<a class="headerlink" href="#deprecated-formats" title="Link to this heading">¶</a></h2>
+<p>In older setrun.py files, <code class="docutils literal notranslate"><span class="pre">topofiles</span></code> entries were plain Python lists or
+dicts.  These are still accepted by
+<code class="xref py py-class docutils literal notranslate"><span class="pre">TopographyData</span></code> but emit a
+<code class="docutils literal notranslate"><span class="pre">DeprecationWarning</span></code>.</p>
+<p><strong>Old list format (deprecated):</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">rundata</span><span class="o">.</span><span class="n">topo_data</span><span class="o">.</span><span class="n">topofiles</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;/path/to/topo.tt2&#39;</span><span class="p">])</span>
+<span class="c1"># or the older 6-element form (level/time info is ignored):</span>
+<span class="n">rundata</span><span class="o">.</span><span class="n">topo_data</span><span class="o">.</span><span class="n">topofiles</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1e10</span><span class="p">,</span> <span class="s1">&#39;/path/to/topo.tt2&#39;</span><span class="p">])</span>
+</pre></div>
+</div>
+<p><strong>Old dict format (deprecated):</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">rundata</span><span class="o">.</span><span class="n">topo_data</span><span class="o">.</span><span class="n">topofiles</span><span class="o">.</span><span class="n">append</span><span class="p">({</span>
+    <span class="s1">&#39;topo_type&#39;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+    <span class="s1">&#39;topo_path&#39;</span><span class="p">:</span> <span class="s1">&#39;/path/to/topo.tt2&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;extent&#39;</span><span class="p">:</span> <span class="p">[</span><span class="o">-</span><span class="mf">100.</span><span class="p">,</span> <span class="o">-</span><span class="mf">60.</span><span class="p">,</span> <span class="mf">10.</span><span class="p">,</span> <span class="mf">50.</span><span class="p">],</span>   <span class="c1"># note: &#39;extent&#39; → crop_extent</span>
+    <span class="s1">&#39;coarsen&#39;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+<span class="p">})</span>
+</pre></div>
+</div>
+<p>Note: the dict key <code class="docutils literal notranslate"><span class="pre">'extent'</span></code> maps to <code class="docutils literal notranslate"><span class="pre">Topography.crop_extent</span></code>, <strong>not</strong>
+to <code class="docutils literal notranslate"><span class="pre">Topography.extent</span></code> (which is a read-only property returning loaded-data
+bounds).</p>
+<p><strong>Recommended form:</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">clawpack.geoclaw.topotools</span><span class="w"> </span><span class="kn">import</span> <span class="n">Topography</span>
+
+<span class="n">t</span> <span class="o">=</span> <span class="n">Topography</span><span class="p">()</span>
+<span class="n">t</span><span class="o">.</span><span class="n">path</span> <span class="o">=</span> <span class="s1">&#39;/path/to/topo.tt2&#39;</span>
+<span class="n">t</span><span class="o">.</span><span class="n">topo_type</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="n">t</span><span class="o">.</span><span class="n">crop_extent</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mf">100.</span><span class="p">,</span> <span class="o">-</span><span class="mf">60.</span><span class="p">,</span> <span class="mf">10.</span><span class="p">,</span> <span class="mf">50.</span><span class="p">]</span>
+<span class="n">t</span><span class="o">.</span><span class="n">coarsen</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="n">rundata</span><span class="o">.</span><span class="n">topo_data</span><span class="o">.</span><span class="n">topofiles</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>topo_type=1 (deprecated):</strong></p>
+<p>Type-1 files (<code class="docutils literal notranslate"><span class="pre">x</span> <span class="pre">y</span> <span class="pre">z</span></code> ASCII, one point per line) are still readable with a
+<code class="docutils literal notranslate"><span class="pre">DeprecationWarning</span></code>, but preprocessing attributes (<code class="docutils literal notranslate"><span class="pre">crop_extent</span></code>,
+<code class="docutils literal notranslate"><span class="pre">coarsen</span></code>, etc.) raise <code class="docutils literal notranslate"><span class="pre">NotImplementedError</span></code>.  To convert:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">t</span> <span class="o">=</span> <span class="n">Topography</span><span class="p">()</span>
+<span class="n">t</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;old_file.tt1&#39;</span><span class="p">,</span> <span class="n">topo_type</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>   <span class="c1"># DeprecationWarning</span>
+<span class="n">t</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;new_file.tt2&#39;</span><span class="p">,</span> <span class="n">topo_type</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>  <span class="c1"># convert to type 2</span>
+</pre></div>
+</div>
+<p>For genuinely unstructured (scattered) point data, grid it onto a regular,
+logically rectangular grid before use – either with an external tool
+(<code class="docutils literal notranslate"><span class="pre">scipy.interpolate</span></code>, GMT) or with
+<a class="reference internal" href="topotools_module.html#clawpack.geoclaw.topotools.Topography.interp_unstructured" title="clawpack.geoclaw.topotools.Topography.interp_unstructured"><code class="xref py py-meth docutils literal notranslate"><span class="pre">interp_unstructured()</span></code></a> (see
+<a class="reference internal" href="topotools.html#topotools"><span class="std std-ref">Python tools for working with topo and dtopo</span></a>).</p>
+</section>
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<p><a href="http://clawpack.org/">
+    <img class="logo" src= "_static/clawlogo.jpg" alt="Logo"/>
+</a>
+<h2>Version dev</h2>
+</p>
+  <div>
+    <h3><a href="contents.html">Table of Contents</a></h3>
+    <ul>
+<li><a class="reference internal" href="#">topo.data File Format</a><ul>
+<li><a class="reference internal" href="#overview">Overview</a></li>
+<li><a class="reference internal" href="#global-header-3-lines">Global Header (3 lines)</a></li>
+<li><a class="reference internal" href="#per-file-block-10-lines-all-types">Per-File Block (10 lines, all types)</a><ul>
+<li><a class="reference internal" href="#netcdf-descriptor-block-type-4-only">NetCDF Descriptor Block (type 4 only)</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#annotated-examples">Annotated Examples</a><ul>
+<li><a class="reference internal" href="#type-2-ascii-file-no-preprocessing">Type-2 ASCII file, no preprocessing</a></li>
+<li><a class="reference internal" href="#type-4-netcdf-file-with-crop-and-negate">Type-4 NetCDF file, with crop and negate</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#priority-convention">Priority Convention</a></li>
+<li><a class="reference internal" href="#sentinel-values">Sentinel Values</a></li>
+<li><a class="reference internal" href="#deprecated-formats">Deprecated Formats</a></li>
+</ul>
+</li>
+</ul>
+
+  </div><h3>Related Topics</h3>
+<ul>
+  <li><a href="contents.html">Documentation overview</a><ul>
+  <li><a href="geoclaw.html">GeoClaw Description and Contents</a><ul>
+      <li>Previous: <a href="topo_order.html" title="previous chapter">Topography file ordering</a></li>
+      <li>Next: <a href="netcdf.html" title="next chapter">GeoClaw NetCDF Input System</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+<div class="widget navlinks">
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/topodata_format.rst.txt"
+            rel="nofollow"
+            target="_blank">Source .rst</a></li>
+    <li><a href="https://github.com/clawpack/doc/blob/dev/doc/topodata_format.rst"
+            rel="nofollow"
+            target="_blank">Source on GitHub</a></li>
+     <li><a href="https://github.com/clawpack/doc/commits/dev/doc/topodata_format.rst"
+             rel="nofollow"
+             target="_blank">History</a></li>
+    <li><a href="https://github.com/clawpack/doc/edit/dev/doc/topodata_format.rst"
+            rel="nofollow"
+            target="_blank">Suggest Edits</a></li>
+     <li><a href="https://github.com/clawpack/doc/issues/new/choose"
+             rel="nofollow"
+             target="_blank">Raise an Issue</a></li>
+  </ul>
+</div>
+<search id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+<h4>Latest Version</h4>
+<ul>
+  <li><a href="../v5.14.x/index.html">v5.14.x</a></li>
+  <li><a href="topodata_format.html">dev</a></li>
+</ul>
+<h4>Older Versions</h4>
+<ul>
+  <li><a href="../v5.7.x/index.html">v5.7.x</a></li>
+  <li><a href="../v5.8.x/index.html">v5.8.x</a></li>
+  <li><a href="../v5.9.x/index.html">v5.9.x</a></li>
+  <li><a href="../v5.10.x/index.html">v5.10.x</a></li>
+  <li><a href="../v5.11.x/index.html">v5.11.x</a></li>
+  <li><a href="../v5.12.x/index.html">v5.12.x</a></li>
+</ul>
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+  <div class="footer">
+    &copy; Copyright CC-BY 2026, The Clawpack Development Team.
+    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
+  </div>
+  <script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-44811544-1', 'auto');
+  ga('send', 'pageview');
+
+  </script>
+  
+  </body>
+</html>

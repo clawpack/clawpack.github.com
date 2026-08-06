@@ -10,10 +10,10 @@
     <link rel="stylesheet" href="_static/layout.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="_static/flasky.css?v=59fe8e2d" />
-    <link rel="stylesheet" type="text/css" href="_static/graphviz.css?v=fd3f3429" />
+    <link rel="stylesheet" type="text/css" href="_static/graphviz.css?v=4ae1632d" />
     <script src="_static/documentation_options.js?v=3ce10a4d"></script>
-    <script src="_static/doctools.js?v=9a2dae69"></script>
-    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <link rel="icon" href="_static/clawicon.ico"/>
     <link rel="author" title="About these documents" href="about.html" />
     <link rel="index" title="Index" href="genindex.html" />
@@ -81,8 +81,14 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <section id="moving-topography-displacement-files">
-<span id="dtopo"></span><h1>Moving topography displacement files<a class="headerlink" href="#moving-topography-displacement-files" title="Link to this heading">¶</a></h1>
+  <div class="admonition warning" id="dtopo">
+<p class="admonition-title">Warning</p>
+<p>Many changes are being implemented in the way topo and dtopo
+files are handled, in both the Python tools and the Fortran code.
+See <a class="reference internal" href="topochanges.html#topochanges"><span class="std std-ref">Changes to topo and dtopo handling (planned for v5.15.0)</span></a> for a summary.</p>
+</div>
+<section id="moving-topography-displacement-files">
+<h1>Moving topography displacement files<a class="headerlink" href="#moving-topography-displacement-files" title="Link to this heading">¶</a></h1>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
 <ul class="simple">
@@ -182,7 +188,8 @@ on a uniform grid at a sequence of one or more times.</p>
 </section>
 <section id="dtopo-file-formats">
 <span id="dtopo-formats"></span><h2>dtopo file formats<a class="headerlink" href="#dtopo-file-formats" title="Link to this heading">¶</a></h2>
-<p>Currently two formats are supported for this file:</p>
+<p>Three formats are supported for this file: the two ASCII types below and the
+CF-compliant NetCDF <code class="docutils literal notranslate"><span class="pre">dtopotype=4</span></code> (see <span class="xref std std-ref">netcdf_input</span>):</p>
 <blockquote>
 <div><p><strong>dtopotype=1:</strong></p>
 <p>Similar to
@@ -197,6 +204,15 @@ topo files with <em>topotype=3</em> as described above, but the header is
 different, and contains lines specifying <em>mx, my, mt, xlower, ylower, t0,
 dx, dy</em>, and <em>dt</em>.  These are followed by <em>mt</em> sets of <em>my</em> lines,
 each line containing <em>mx</em> values of <em>dz</em>.</p>
+<p><strong>dtopotype=4:</strong></p>
+<p>A CF-compliant NetCDF format.  <code class="docutils literal notranslate"><span class="pre">dtopotools.DTopography</span></code> reads and writes
+this type (<code class="docutils literal notranslate"><span class="pre">dtopo_type=4</span></code>) and GeoClaw reads it directly at runtime.
+The deformation is in meters; the time axis may be a bare CF duration
+(<code class="docutils literal notranslate"><span class="pre">units</span> <span class="pre">=</span> <span class="pre">&quot;seconds&quot;</span></code>, simulation-relative – the default on write) or a
+CF datetime axis (<code class="docutils literal notranslate"><span class="pre">units</span> <span class="pre">=</span> <span class="pre">&quot;seconds</span> <span class="pre">since</span> <span class="pre">&lt;date&gt;&quot;</span></code>, written when
+<code class="docutils literal notranslate"><span class="pre">DTopography.time_reference</span></code> is set to an epoch such as the earthquake
+origin time), and is interpreted on read by its CF <code class="docutils literal notranslate"><span class="pre">units</span></code>.  See
+<span class="xref std std-ref">netcdf_input</span> for details, including the <code class="docutils literal notranslate"><span class="pre">dz_dtype</span></code> write option.</p>
 </div></blockquote>
 <p>Here is an example header for a dtopofile:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>    <span class="mi">721</span>       <span class="n">mx</span>
@@ -312,17 +328,17 @@ component of <em>q</em>) is set accordingly.</p>
 <script>document.getElementById('searchbox').style.display = "block"</script>
 <h4>Latest Version</h4>
 <ul>
-  <li><a href="dtopo.html">dev</a></li>
   <li><a href="../v5.14.x/dtopo.html">v5.14.x</a></li>
+  <li><a href="dtopo.html">dev</a></li>
 </ul>
 <h4>Older Versions</h4>
 <ul>
-  <li><a href="../v5.10.x/index.html">v5.10.x</a></li>
-  <li><a href="../v5.11.x/dtopo.html">v5.11.x</a></li>
-  <li><a href="../v5.12.x/dtopo.html">v5.12.x</a></li>
   <li><a href="../v5.7.x/index.html">v5.7.x</a></li>
   <li><a href="../v5.8.x/index.html">v5.8.x</a></li>
   <li><a href="../v5.9.x/index.html">v5.9.x</a></li>
+  <li><a href="../v5.10.x/index.html">v5.10.x</a></li>
+  <li><a href="../v5.11.x/dtopo.html">v5.11.x</a></li>
+  <li><a href="../v5.12.x/dtopo.html">v5.12.x</a></li>
 </ul>
 
         </div>
@@ -330,7 +346,7 @@ component of <em>q</em>) is set accordingly.</p>
       <div class="clearer"></div>
     </div>
   <div class="footer">
-    &copy; Copyright CC-BY 2024, The Clawpack Development Team.
+    &copy; Copyright CC-BY 2026, The Clawpack Development Team.
     Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
   </div>
   <script>

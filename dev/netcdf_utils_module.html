@@ -1,0 +1,890 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="./">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>netcdf_utils module for NetCDF input &#8212; Clawpack dev documentation</title>
+    <link rel="stylesheet" href="_static/base.css" type="text/css" />
+    <link rel="stylesheet" href="_static/layout.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="_static/flasky.css?v=59fe8e2d" />
+    <link rel="stylesheet" type="text/css" href="_static/graphviz.css?v=4ae1632d" />
+    <script src="_static/documentation_options.js?v=3ce10a4d"></script>
+    <script src="_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <link rel="icon" href="_static/clawicon.ico"/>
+    <link rel="author" title="About these documents" href="about.html" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Marching Front algorithm" href="marching_front.html" />
+    <link rel="prev" title="Meteorological Forcing Python API" href="storm_module.html" /> 
+  </head><body>
+<div id="main-wrapper" class="sphinx">
+<div id="header-wrapper">
+  <section id="header">
+    <!-- <h1><a href="http://clawpack.org/">Clawpack</a></h1> -->
+    <h1><a href="http://clawpack.org/">Clawpack-5</a></h1> 
+    <nav>
+      <ul>
+        <li>
+          <a href="contents.html">Docs</a>
+        </li>
+        <li>
+          <a href="installing.html">Install</a>
+        </li>
+        <li>
+          <a class="" href="http://clawpack.org/gallery/index.html">Gallery</a>
+        </li>
+        <li>
+          <a href="about.html">Citation</a>
+        </li>
+        <li>
+          <a class="active" href="http://github.com/clawpack">GitHub</a>
+        </li>
+        <li>
+          <a class="" href="community.html">Community</a>
+        </li>
+        <li>
+          <a class="" href="developers.html">Contribute</a>
+        </li>
+      </ul>
+    </nav>
+  </section>
+<div class="decoration"></div>
+</div>
+
+    <div class="related" role="navigation" aria-label="Related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="marching_front.html" title="Marching Front algorithm"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="storm_module.html" title="Meteorological Forcing Python API"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="contents.html">Clawpack dev documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="geoclaw.html" accesskey="U">GeoClaw Description and Contents</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">netcdf_utils module for NetCDF input</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="netcdf-utils-module-for-netcdf-input">
+<span id="netcdf-utils-module"></span><h1>netcdf_utils module for NetCDF input<a class="headerlink" href="#netcdf-utils-module-for-netcdf-input" title="Link to this heading">¶</a></h1>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<ul class="simple">
+<li><p><span class="xref std std-ref">netcdf_input</span></p></li>
+<li><p><a class="reference internal" href="topotools_module.html#topotools-module"><span class="std std-ref">topotools module for working with topography data</span></a></p></li>
+<li><p><a class="reference internal" href="storm_module.html#storm-module"><span class="std std-ref">Meteorological Forcing Python API</span></a></p></li>
+</ul>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">netcdf_utils</span></code> module provides the Python layer for reading NetCDF
+topography and meteorological forcing files in GeoClaw.  It handles CF
+attribute parsing, coordinate convention detection, unit resolution
+(recognized non-contract units are converted via a scale factor; missing or
+unrecognized units raise), and descriptor writing so that Fortran only needs
+to open the file and read pre-validated indices.</p>
+<p>The main classes are:</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#clawpack.geoclaw.netcdf_utils.NetCDFInspector" title="clawpack.geoclaw.netcdf_utils.NetCDFInspector"><code class="xref py py-class docutils literal notranslate"><span class="pre">NetCDFInspector</span></code></a> — base class;
+coordinate discovery, fill-value resolution, crop-bound validation.</p></li>
+<li><p><a class="reference internal" href="#clawpack.geoclaw.netcdf_utils.TopoInspector" title="clawpack.geoclaw.netcdf_utils.TopoInspector"><code class="xref py py-class docutils literal notranslate"><span class="pre">TopoInspector</span></code></a> — topography
+subclass; fill-value checking within the crop region, unit enforcement.</p></li>
+<li><p><a class="reference internal" href="#clawpack.geoclaw.netcdf_utils.MetInspector" title="clawpack.geoclaw.netcdf_utils.MetInspector"><code class="xref py py-class docutils literal notranslate"><span class="pre">MetInspector</span></code></a> — meteorological
+subclass; wind/pressure variable discovery, CF datetime decoding, unit
+resolution (recognized non-contract units converted, with a storm-format
+fallback for missing units; unrecognized units raise), and a magnitude
+sanity check.</p></li>
+<li><p><a class="reference internal" href="#clawpack.geoclaw.netcdf_utils.CFNormalizer" title="clawpack.geoclaw.netcdf_utils.CFNormalizer"><code class="xref py py-class docutils literal notranslate"><span class="pre">CFNormalizer</span></code></a> — adds or repairs
+CF attributes in place without modifying data values.</p></li>
+<li><p><a class="reference internal" href="#clawpack.geoclaw.netcdf_utils.DescriptorWriter" title="clawpack.geoclaw.netcdf_utils.DescriptorWriter"><code class="xref py py-class docutils literal notranslate"><span class="pre">DescriptorWriter</span></code></a> — writes the
+key=value topo descriptor lines or the <code class="docutils literal notranslate"><span class="pre">&amp;file_info</span></code> / <code class="docutils literal notranslate"><span class="pre">&amp;variable_info</span></code>
+Fortran namelist blocks for met forcing.</p></li>
+</ul>
+<section id="module-clawpack.geoclaw.netcdf_utils">
+<span id="documentation-auto-generated-from-the-module-docstrings"></span><h2>Documentation auto-generated from the module docstrings<a class="headerlink" href="#module-clawpack.geoclaw.netcdf_utils" title="Link to this heading">¶</a></h2>
+<p>NetCDF utilities for GeoClaw NetCDF input.</p>
+<p>Provides inspector classes that inspect NetCDF files for coordinate
+metadata, unit consistency, and fill values without loading data arrays.
+The inspectors produce metadata dataclasses consumed by DescriptorWriter
+(not yet implemented — pending confirmation of Fortran topo.data parser).</p>
+<section id="classes">
+<h3>Classes<a class="headerlink" href="#classes" title="Link to this heading">¶</a></h3>
+<dl class="simple">
+<dt>NetCDFInspector</dt><dd><p>Base class: opens a file, discovers coordinate variables, detects lon/lat
+conventions, resolves fill value, validates crop bounds.</p>
+</dd>
+<dt>TopoInspector(NetCDFInspector)</dt><dd><p>Adds bathymetry-specific checks: fill values within crop region (fatal),
+unit verification against GEOCLAW_NETCDF_UNITS[‘topo’].</p>
+</dd>
+<dt>MetInspector(NetCDFInspector)</dt><dd><p>Adds met-forcing checks: multi-variable grid/time consistency, unit
+verification and conversion to contract units, CF time -&gt; seconds offset,
+ensemble dimension detection.</p>
+</dd>
+<dt>CFNormalizer</dt><dd><p>Standalone utility: renames coordinates to CF standard names, adds/fixes
+standard_name / axis / units / _FillValue attributes, resolves
+_FillValue vs missing_value conflicts. Does not resample or reproject.</p>
+</dd>
+</dl>
+</section>
+<section id="metadata-dataclasses">
+<h3>Metadata dataclasses<a class="headerlink" href="#metadata-dataclasses" title="Link to this heading">¶</a></h3>
+<p>FileMetadata, TopoMetadata, MetVariableInfo, MetMetadata</p>
+</section>
+<dl class="py class">
+<dt class="sig sig-object py" id="clawpack.geoclaw.netcdf_utils.CFNormalizer">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">clawpack.geoclaw.netcdf_utils.</span></span><span class="sig-name descname"><span class="pre">CFNormalizer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ds</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dataset</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.geoclaw.netcdf_utils.CFNormalizer" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Normalize CF metadata in an xarray Dataset.</p>
+<p>Performs in-memory attribute fixups:
+* Renames coordinate variables to CF standard names where unambiguous.
+* Adds <code class="docutils literal notranslate"><span class="pre">standard_name</span></code>, <code class="docutils literal notranslate"><span class="pre">axis</span></code>, and <code class="docutils literal notranslate"><span class="pre">units</span></code> attributes to coordinate</p>
+<aside class="system-message">
+<p class="system-message-title">System Message: ERROR/3 (<span class="docutils literal">/Users/rjl/clawpack_src/clawpack_master/geoclaw/src/python/geoclaw/netcdf_utils.py:docstring of clawpack.geoclaw.netcdf_utils.CFNormalizer</span>, line 6)</p>
+<p>Unexpected indentation.</p>
+</aside>
+<blockquote>
+<div><p>variables if missing.</p>
+</div></blockquote>
+<aside class="system-message">
+<p class="system-message-title">System Message: WARNING/2 (<span class="docutils literal">/Users/rjl/clawpack_src/clawpack_master/geoclaw/src/python/geoclaw/netcdf_utils.py:docstring of clawpack.geoclaw.netcdf_utils.CFNormalizer</span>, line 7)</p>
+<p>Block quote ends without a blank line; unexpected unindent.</p>
+</aside>
+<ul class="simple">
+<li><p>Resolves <code class="docutils literal notranslate"><span class="pre">_FillValue</span></code> vs <code class="docutils literal notranslate"><span class="pre">missing_value</span></code> conflicts (CF precedence:
+<code class="docutils literal notranslate"><span class="pre">_FillValue</span></code> wins; <code class="docutils literal notranslate"><span class="pre">missing_value</span></code> is promoted if <code class="docutils literal notranslate"><span class="pre">_FillValue</span></code>
+absent; conflict triggers a warning).</p></li>
+</ul>
+<p>Does NOT resample, reproject, or modify data values.</p>
+<section id="parameters">
+<h3>Parameters<a class="headerlink" href="#parameters" title="Link to this heading">¶</a></h3>
+<dl class="simple">
+<dt>ds<span class="classifier">xr.Dataset</span></dt><dd><p>Dataset to normalise.  A copy is made; the original is not modified.</p>
+</dd>
+</dl>
+</section>
+<section id="examples">
+<h3>Examples<a class="headerlink" href="#examples" title="Link to this heading">¶</a></h3>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ds_norm</span> <span class="o">=</span> <span class="n">CFNormalizer</span><span class="p">(</span><span class="n">ds</span><span class="p">)</span><span class="o">.</span><span class="n">normalize</span><span class="p">()</span>
+</pre></div>
+</div>
+<dl class="py method">
+<dt class="sig sig-object py" id="clawpack.geoclaw.netcdf_utils.CFNormalizer.normalize">
+<span class="sig-name descname"><span class="pre">normalize</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dataset</span></span></span><a class="headerlink" href="#clawpack.geoclaw.netcdf_utils.CFNormalizer.normalize" title="Link to this definition">¶</a></dt>
+<dd><p>Apply all normalizations and return the modified dataset.</p>
+</dd></dl>
+
+</section>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="clawpack.geoclaw.netcdf_utils.DTopoInspector">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">clawpack.geoclaw.netcdf_utils.</span></span><span class="sig-name descname"><span class="pre">DTopoInspector</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">var_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_reference</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">crop_bounds</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">assume_units</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.geoclaw.netcdf_utils.DTopoInspector" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#clawpack.geoclaw.netcdf_utils.NetCDFInspector" title="clawpack.geoclaw.netcdf_utils.NetCDFInspector"><code class="xref py py-class docutils literal notranslate"><span class="pre">NetCDFInspector</span></code></a></p>
+<p>Interrogate a NetCDF moving-topography (dtopo) file.</p>
+<p>Required roles: longitude, latitude, time, and the deformation (dZ)
+variable.  Beyond the base class this:</p>
+<ul class="simple">
+<li><p>Discovers the deformation variable (by common names, else the unique
+3-D data variable).</p></li>
+<li><p>Requires time to be the variable’s slowest (first) dimension.</p></li>
+<li><p>Validates that the time axis is uniformly spaced — the Fortran dtopo
+machinery reconstructs times as t0 + k*dt.</p></li>
+<li><p>Converts the time axis to simulation seconds: numeric time values pass
+through unchanged; CF datetime values require an explicit
+<em>time_reference</em> and become seconds since that reference.</p></li>
+</ul>
+<section id="id1">
+<h3>Parameters<a class="headerlink" href="#id1" title="Link to this heading">¶</a></h3>
+<dl class="simple">
+<dt>path<span class="classifier">str or Path</span></dt><dd><p>Path to the NetCDF file.</p>
+</dd>
+<dt>var_name<span class="classifier">str, optional</span></dt><dd><p>Name of the deformation variable; auto-discovered if omitted.</p>
+</dd>
+<dt>time_reference<span class="classifier">str or datetime-like, optional</span></dt><dd><p>Reference datetime when the file’s time axis decodes to datetimes.</p>
+</dd>
+<dt>crop_bounds<span class="classifier">tuple of four floats, optional</span></dt><dd><p>(lon_min, lon_max, lat_min, lat_max); validated against file extent.</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="clawpack.geoclaw.netcdf_utils.DTopoInspector.inspect_dtopo">
+<span class="sig-name descname"><span class="pre">inspect_dtopo</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#clawpack.geoclaw.netcdf_utils.DTopoMetadata" title="clawpack.geoclaw.netcdf_utils.DTopoMetadata"><span class="pre">DTopoMetadata</span></a></span></span><a class="headerlink" href="#clawpack.geoclaw.netcdf_utils.DTopoInspector.inspect_dtopo" title="Link to this definition">¶</a></dt>
+<dd><p>Fully inspect the dtopo file and return a DTopoMetadata.</p>
+<p>Verifies deformation units (meters), records the source unit on
+<code class="docutils literal notranslate"><span class="pre">self.source_units</span></code>, and stores a <code class="docutils literal notranslate"><span class="pre">scale_factor</span></code> in the metadata.
+A recognised non-meter unit yields a scale_factor (applied in memory by
+<code class="docutils literal notranslate"><span class="pre">DTopography.read</span></code> or by Fortran via the descriptor); a missing or
+unrecognised unit still raises (units are never assumed).</p>
+</dd></dl>
+
+</section>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="clawpack.geoclaw.netcdf_utils.DTopoMetadata">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">clawpack.geoclaw.netcdf_utils.</span></span><span class="sig-name descname"><span class="pre">DTopoMetadata</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">source_file</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lon_wrap</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_increasing</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dim_order</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fill_value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">crop_bounds</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">var_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t0</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lon_wrap_offset</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale_factor</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1.0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.geoclaw.netcdf_utils.DTopoMetadata" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#clawpack.geoclaw.netcdf_utils.FileMetadata" title="clawpack.geoclaw.netcdf_utils.FileMetadata"><code class="xref py py-class docutils literal notranslate"><span class="pre">FileMetadata</span></code></a></p>
+<p>FileMetadata plus dtopo-specific fields.</p>
+<p>The time axis is collapsed to (t0, dt) in simulation seconds: the
+Fortran dtopo machinery requires uniform time spacing and reconstructs
+times as t0 + k*dt, so Fortran never parses the file’s time variable.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="clawpack.geoclaw.netcdf_utils.DTopoMetadata.dt">
+<span class="sig-name descname"><span class="pre">dt</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></span><a class="headerlink" href="#clawpack.geoclaw.netcdf_utils.DTopoMetadata.dt" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="clawpack.geoclaw.netcdf_utils.DTopoMetadata.lon_wrap_offset">
+<span class="sig-name descname"><span class="pre">lon_wrap_offset</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0.0</span></span><a class="headerlink" href="#clawpack.geoclaw.netcdf_utils.DTopoMetadata.lon_wrap_offset" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="clawpack.geoclaw.netcdf_utils.DTopoMetadata.mt">
+<span class="sig-name descname"><span class="pre">mt</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></span><a class="headerlink" href="#clawpack.geoclaw.netcdf_utils.DTopoMetadata.mt" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="clawpack.geoclaw.netcdf_utils.DTopoMetadata.scale_factor">
+<span class="sig-name descname"><span class="pre">scale_factor</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1.0</span></span><a class="headerlink" href="#clawpack.geoclaw.netcdf_utils.DTopoMetadata.scale_factor" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="clawpack.geoclaw.netcdf_utils.DTopoMetadata.t0">
+<span class="sig-name descname"><span class="pre">t0</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></span><a class="headerlink" href="#clawpack.geoclaw.netcdf_utils.DTopoMetadata.t0" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="clawpack.geoclaw.netcdf_utils.DTopoMetadata.var_name">
+<span class="sig-name descname"><span class="pre">var_name</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></span><a class="headerlink" href="#clawpack.geoclaw.netcdf_utils.DTopoMetadata.var_name" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="clawpack.geoclaw.netcdf_utils.DescriptorWriter">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">clawpack.geoclaw.netcdf_utils.</span></span><span class="sig-name descname"><span class="pre">DescriptorWriter</span></span><a class="headerlink" href="#clawpack.geoclaw.netcdf_utils.DescriptorWriter" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Write NetCDF descriptor metadata for GeoClaw input files.</p>
+<p>For topo (type 4) entries the descriptor is a block of <code class="docutils literal notranslate"><span class="pre">key</span> <span class="pre">=</span> <span class="pre">value</span></code>
+lines written immediately after the <code class="docutils literal notranslate"><span class="pre">topo_type</span></code> line in <em>topo.data</em>.
+Fortran’s <code class="docutils literal notranslate"><span class="pre">read_netcdf_descriptor</span></code> parses these lines until it
+encounters a blank line.</p>
+<p>Usage — topo:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">meta</span> <span class="o">=</span> <span class="n">TopoInspector</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">var_name</span><span class="o">=</span><span class="s1">&#39;z&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">inspect_topo</span><span class="p">()</span>
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;topo.data&#39;</span><span class="p">,</span> <span class="s1">&#39;a&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+    <span class="n">DescriptorWriter</span><span class="o">.</span><span class="n">write_topo_descriptor</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">meta</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Usage — met (storm file):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">meta</span> <span class="o">=</span> <span class="n">MetInspector</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">var_map</span><span class="p">)</span><span class="o">.</span><span class="n">inspect_met</span><span class="p">()</span>
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;storm.nc&#39;</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;netcdf</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>   <span class="c1"># format header written by caller</span>
+    <span class="n">DescriptorWriter</span><span class="o">.</span><span class="n">write_met_descriptor</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">meta</span><span class="p">)</span>
+</pre></div>
+</div>
+<dl class="py method">
+<dt class="sig sig-object py" id="clawpack.geoclaw.netcdf_utils.DescriptorWriter.write_dtopo_descriptor">
+<span class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">write_dtopo_descriptor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">f</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">meta</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#clawpack.geoclaw.netcdf_utils.DTopoMetadata" title="clawpack.geoclaw.netcdf_utils.DTopoMetadata"><span class="pre">DTopoMetadata</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#clawpack.geoclaw.netcdf_utils.DescriptorWriter.write_dtopo_descriptor" title="Link to this definition">¶</a></dt>
+<dd><p>Write the key=value descriptor block for one dtopo file.</p>
+<p>Same format and parser contract as the topo descriptor (a blank
+line terminates the block), written immediately after the 9-line
+per-file block in <em>dtopo.data</em>.  The time axis is carried as
+(t0, dt) in simulation seconds so Fortran never parses CF time.</p>
+<section id="id2">
+<h3>Parameters<a class="headerlink" href="#id2" title="Link to this heading">¶</a></h3>
+<dl class="simple">
+<dt>f<span class="classifier">file-like object</span></dt><dd><p>Open for writing (text mode).</p>
+</dd>
+<dt>meta<span class="classifier">DTopoMetadata</span></dt><dd><p>Output of <code class="docutils literal notranslate"><span class="pre">DTopoInspector.inspect_dtopo()</span></code>.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="clawpack.geoclaw.netcdf_utils.DescriptorWriter.write_met_descriptor">
+<span class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">write_met_descriptor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">f</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">meta</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#clawpack.geoclaw.netcdf_utils.MetMetadata" title="clawpack.geoclaw.netcdf_utils.MetMetadata"><span class="pre">MetMetadata</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#clawpack.geoclaw.netcdf_utils.DescriptorWriter.write_met_descriptor" title="Link to this definition">¶</a></dt>
+<dd><p>Write the <code class="docutils literal notranslate"><span class="pre">&amp;file_info</span></code> / <code class="docutils literal notranslate"><span class="pre">&amp;variable_info</span></code> namelist-style body
+of a GeoClaw NetCDF met/storm descriptor file.</p>
+<p>The caller is responsible for writing the <code class="docutils literal notranslate"><span class="pre">netcdf</span></code> format header
+line before calling this method.</p>
+<section id="id3">
+<h3>Parameters<a class="headerlink" href="#id3" title="Link to this heading">¶</a></h3>
+<dl class="simple">
+<dt>f<span class="classifier">file-like object</span></dt><dd><p>Open for writing (text mode).</p>
+</dd>
+<dt>meta<span class="classifier">MetMetadata</span></dt><dd><p>Output of <code class="docutils literal notranslate"><span class="pre">MetInspector.inspect_met()</span></code>.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="clawpack.geoclaw.netcdf_utils.DescriptorWriter.write_topo_descriptor">
+<span class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">write_topo_descriptor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">f</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">meta</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#clawpack.geoclaw.netcdf_utils.TopoMetadata" title="clawpack.geoclaw.netcdf_utils.TopoMetadata"><span class="pre">TopoMetadata</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#clawpack.geoclaw.netcdf_utils.DescriptorWriter.write_topo_descriptor" title="Link to this definition">¶</a></dt>
+<dd><p>Write the key=value descriptor block for one topo file.</p>
+<p><em>f</em> should be positioned immediately after the <code class="docutils literal notranslate"><span class="pre">topo_type</span></code> line
+has been written.  A trailing blank line is written to terminate
+the block for the Fortran parser.</p>
+<section id="id4">
+<h3>Parameters<a class="headerlink" href="#id4" title="Link to this heading">¶</a></h3>
+<dl class="simple">
+<dt>f<span class="classifier">file-like object</span></dt><dd><p>Open for writing (text mode).</p>
+</dd>
+<dt>meta<span class="classifier">TopoMetadata</span></dt><dd><p>Output of <code class="docutils literal notranslate"><span class="pre">TopoInspector.inspect_topo()</span></code>.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="clawpack.geoclaw.netcdf_utils.FileMetadata">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">clawpack.geoclaw.netcdf_utils.</span></span><span class="sig-name descname"><span class="pre">FileMetadata</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">source_file</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lon_wrap</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_increasing</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dim_order</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fill_value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">crop_bounds</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.geoclaw.netcdf_utils.FileMetadata" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Coordinate and convention metadata for a single NetCDF file.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="clawpack.geoclaw.netcdf_utils.FileMetadata.crop_bounds">
+<span class="sig-name descname"><span class="pre">crop_bounds</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#clawpack.geoclaw.netcdf_utils.FileMetadata.crop_bounds" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="clawpack.geoclaw.netcdf_utils.FileMetadata.dim_order">
+<span class="sig-name descname"><span class="pre">dim_order</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#clawpack.geoclaw.netcdf_utils.FileMetadata.dim_order" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="clawpack.geoclaw.netcdf_utils.FileMetadata.fill_value">
+<span class="sig-name descname"><span class="pre">fill_value</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#clawpack.geoclaw.netcdf_utils.FileMetadata.fill_value" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="clawpack.geoclaw.netcdf_utils.FileMetadata.lon_wrap">
+<span class="sig-name descname"><span class="pre">lon_wrap</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#clawpack.geoclaw.netcdf_utils.FileMetadata.lon_wrap" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="clawpack.geoclaw.netcdf_utils.FileMetadata.source_file">
+<span class="sig-name descname"><span class="pre">source_file</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Path</span></span><a class="headerlink" href="#clawpack.geoclaw.netcdf_utils.FileMetadata.source_file" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="clawpack.geoclaw.netcdf_utils.FileMetadata.time_name">
+<span class="sig-name descname"><span class="pre">time_name</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#clawpack.geoclaw.netcdf_utils.FileMetadata.time_name" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="clawpack.geoclaw.netcdf_utils.FileMetadata.x_name">
+<span class="sig-name descname"><span class="pre">x_name</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></span><a class="headerlink" href="#clawpack.geoclaw.netcdf_utils.FileMetadata.x_name" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="clawpack.geoclaw.netcdf_utils.FileMetadata.y_increasing">
+<span class="sig-name descname"><span class="pre">y_increasing</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></span><a class="headerlink" href="#clawpack.geoclaw.netcdf_utils.FileMetadata.y_increasing" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="clawpack.geoclaw.netcdf_utils.FileMetadata.y_name">
+<span class="sig-name descname"><span class="pre">y_name</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></span><a class="headerlink" href="#clawpack.geoclaw.netcdf_utils.FileMetadata.y_name" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="clawpack.geoclaw.netcdf_utils.MetInspector">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">clawpack.geoclaw.netcdf_utils.</span></span><span class="sig-name descname"><span class="pre">MetInspector</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">variable_map</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">crop_bounds</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_reference</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fill_action</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'warn'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">assume_units</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">format_units</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">skip_sanity_check</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.geoclaw.netcdf_utils.MetInspector" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#clawpack.geoclaw.netcdf_utils.NetCDFInspector" title="clawpack.geoclaw.netcdf_utils.NetCDFInspector"><code class="xref py py-class docutils literal notranslate"><span class="pre">NetCDFInspector</span></code></a></p>
+<p>Interrogate a NetCDF meteorological forcing file.</p>
+<p>Additional checks beyond the base class:</p>
+<ul class="simple">
+<li><p>Verifies that all requested variables share the same spatial grid and
+time axis.</p></li>
+<li><p>Validates and (if needed) converts units to contract units via units.py.</p></li>
+<li><p>Converts CF time to seconds from a user-provided reference offset.</p></li>
+<li><p>Detects ensemble/member dimensions and raises if any are non-singleton.</p></li>
+</ul>
+<section id="id5">
+<h3>Parameters<a class="headerlink" href="#id5" title="Link to this heading">¶</a></h3>
+<dl>
+<dt>path<span class="classifier">str or Path</span></dt><dd><p>Path to the NetCDF file.</p>
+</dd>
+<dt>variable_map<span class="classifier">dict, optional</span></dt><dd><p>Maps GeoClaw role strings to variable names in the file, e.g.:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="s1">&#39;wind_u&#39;</span><span class="p">:</span> <span class="s1">&#39;u10&#39;</span><span class="p">,</span> <span class="s1">&#39;wind_v&#39;</span><span class="p">:</span> <span class="s1">&#39;v10&#39;</span><span class="p">,</span> <span class="s1">&#39;pressure&#39;</span><span class="p">:</span> <span class="s1">&#39;msl&#39;</span><span class="p">}</span>
+</pre></div>
+</div>
+<p>Roles not given (or the whole map, when omitted) are auto-discovered
+by CF <code class="docutils literal notranslate"><span class="pre">standard_name</span></code> first, then by common variable names.  An
+explicit entry overrides discovery for that role.</p>
+</dd>
+<dt>crop_bounds<span class="classifier">tuple of four floats, optional</span></dt><dd><p>(lon_min, lon_max, lat_min, lat_max).</p>
+</dd>
+<dt>time_reference<span class="classifier">str or datetime-like, optional</span></dt><dd><p>Reference datetime for the time_offset calculation.  The
+<code class="docutils literal notranslate"><span class="pre">time_offset</span></code> written to the descriptor will be the number of
+seconds between <em>time_reference</em> and the first time in the file.
+Defaults to the Unix epoch (1970-01-01T00:00:00).</p>
+</dd>
+<dt>fill_action<span class="classifier">str, optional</span></dt><dd><p>‘abort’ or ‘warn’.  Met files may legitimately have fill values at
+the domain edges (Fortran handles edge fill).  Default is ‘warn’.</p>
+</dd>
+<dt>assume_units<span class="classifier">bool, optional</span></dt><dd><p>Explicit escape hatch for a file whose forcing variables have <em>no</em>
+<code class="docutils literal notranslate"><span class="pre">units</span></code> attribute.  When True, each variable is assumed to already
+be in its contract unit instead of raising.  This must be set
+deliberately; missing units are never silently assumed.</p>
+</dd>
+<dt>format_units<span class="classifier">dict, optional</span></dt><dd><p><code class="docutils literal notranslate"><span class="pre">{geoclaw_role:</span> <span class="pre">unit_string}</span></code> giving the units documented by the
+storm <em>format</em> (e.g. NWS13/OWI pressure is <code class="docutils literal notranslate"><span class="pre">mbar</span></code>).  Used only for a
+variable that has <em>no</em> <code class="docutils literal notranslate"><span class="pre">units</span></code> attribute: the format’s documented
+unit is assumed and converted (e.g. mbar -&gt; Pa).  Takes precedence over
+<code class="docutils literal notranslate"><span class="pre">assume_units</span></code> for the roles it covers.</p>
+</dd>
+<dt>skip_sanity_check<span class="classifier">bool, optional</span></dt><dd><p>Skip the post-unit-resolution magnitude sanity check on pressure/wind
+(see <code class="docutils literal notranslate"><span class="pre">_check_magnitude</span></code>).  Escape hatch for exotic-but-valid files;
+defaults to False.</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="clawpack.geoclaw.netcdf_utils.MetInspector.inspect_met">
+<span class="sig-name descname"><span class="pre">inspect_met</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#clawpack.geoclaw.netcdf_utils.MetMetadata" title="clawpack.geoclaw.netcdf_utils.MetMetadata"><span class="pre">MetMetadata</span></a></span></span><a class="headerlink" href="#clawpack.geoclaw.netcdf_utils.MetInspector.inspect_met" title="Link to this definition">¶</a></dt>
+<dd><p>Fully inspect the met file and return a MetMetadata instance.</p>
+<p>Roles missing from variable_map are auto-discovered (CF
+standard_name first, then common variable names).</p>
+</dd></dl>
+
+</section>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="clawpack.geoclaw.netcdf_utils.MetMetadata">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">clawpack.geoclaw.netcdf_utils.</span></span><span class="sig-name descname"><span class="pre">MetMetadata</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">source_file</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lon_wrap</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_increasing</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dim_order</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fill_value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">crop_bounds</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">variables</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#clawpack.geoclaw.netcdf_utils.MetVariableInfo" title="clawpack.geoclaw.netcdf_utils.MetVariableInfo"><span class="pre">MetVariableInfo</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_offset</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fill_action</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_scale</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1.0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.geoclaw.netcdf_utils.MetMetadata" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#clawpack.geoclaw.netcdf_utils.FileMetadata" title="clawpack.geoclaw.netcdf_utils.FileMetadata"><code class="xref py py-class docutils literal notranslate"><span class="pre">FileMetadata</span></code></a></p>
+<p>FileMetadata plus met-forcing-specific fields.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="clawpack.geoclaw.netcdf_utils.MetMetadata.fill_action">
+<span class="sig-name descname"><span class="pre">fill_action</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></span><a class="headerlink" href="#clawpack.geoclaw.netcdf_utils.MetMetadata.fill_action" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="clawpack.geoclaw.netcdf_utils.MetMetadata.time_offset">
+<span class="sig-name descname"><span class="pre">time_offset</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></span><a class="headerlink" href="#clawpack.geoclaw.netcdf_utils.MetMetadata.time_offset" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="clawpack.geoclaw.netcdf_utils.MetMetadata.time_scale">
+<span class="sig-name descname"><span class="pre">time_scale</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1.0</span></span><a class="headerlink" href="#clawpack.geoclaw.netcdf_utils.MetMetadata.time_scale" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="clawpack.geoclaw.netcdf_utils.MetMetadata.variables">
+<span class="sig-name descname"><span class="pre">variables</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#clawpack.geoclaw.netcdf_utils.MetVariableInfo" title="clawpack.geoclaw.netcdf_utils.MetVariableInfo"><span class="pre">MetVariableInfo</span></a><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#clawpack.geoclaw.netcdf_utils.MetMetadata.variables" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="clawpack.geoclaw.netcdf_utils.MetVariableInfo">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">clawpack.geoclaw.netcdf_utils.</span></span><span class="sig-name descname"><span class="pre">MetVariableInfo</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">var_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">geoclaw_role</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source_units</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale_factor</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1.0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.geoclaw.netcdf_utils.MetVariableInfo" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Maps one NetCDF variable to its GeoClaw role.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="clawpack.geoclaw.netcdf_utils.MetVariableInfo.geoclaw_role">
+<span class="sig-name descname"><span class="pre">geoclaw_role</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></span><a class="headerlink" href="#clawpack.geoclaw.netcdf_utils.MetVariableInfo.geoclaw_role" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="clawpack.geoclaw.netcdf_utils.MetVariableInfo.scale_factor">
+<span class="sig-name descname"><span class="pre">scale_factor</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1.0</span></span><a class="headerlink" href="#clawpack.geoclaw.netcdf_utils.MetVariableInfo.scale_factor" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="clawpack.geoclaw.netcdf_utils.MetVariableInfo.source_units">
+<span class="sig-name descname"><span class="pre">source_units</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></span><a class="headerlink" href="#clawpack.geoclaw.netcdf_utils.MetVariableInfo.source_units" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="clawpack.geoclaw.netcdf_utils.MetVariableInfo.var_name">
+<span class="sig-name descname"><span class="pre">var_name</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></span><a class="headerlink" href="#clawpack.geoclaw.netcdf_utils.MetVariableInfo.var_name" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="clawpack.geoclaw.netcdf_utils.NetCDFInspector">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">clawpack.geoclaw.netcdf_utils.</span></span><span class="sig-name descname"><span class="pre">NetCDFInspector</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">crop_bounds</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.geoclaw.netcdf_utils.NetCDFInspector" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Open a NetCDF file and inspect its coordinate metadata.</p>
+<p>No data arrays are loaded; only coordinate values and variable attributes
+are accessed.  Dask-lazy chunking is enabled so that any accidental
+downstream <cite>.compute()</cite> calls are bounded.</p>
+<section id="id6">
+<h3>Parameters<a class="headerlink" href="#id6" title="Link to this heading">¶</a></h3>
+<dl class="simple">
+<dt>path<span class="classifier">str or Path</span></dt><dd><p>Path to the NetCDF file.</p>
+</dd>
+<dt>crop_bounds<span class="classifier">tuple of four floats, optional</span></dt><dd><p>(lon_min, lon_max, lat_min, lat_max) in the same convention as the
+file.  When provided, bounds are validated against file extent.</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="clawpack.geoclaw.netcdf_utils.NetCDFInspector.close">
+<span class="sig-name descname"><span class="pre">close</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#clawpack.geoclaw.netcdf_utils.NetCDFInspector.close" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="clawpack.geoclaw.netcdf_utils.NetCDFInspector.ds">
+<span class="sig-name descname"><span class="pre">ds</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Dataset</span></span><a class="headerlink" href="#clawpack.geoclaw.netcdf_utils.NetCDFInspector.ds" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="clawpack.geoclaw.netcdf_utils.NetCDFInspector.inspect">
+<span class="sig-name descname"><span class="pre">inspect</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">var_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_name_override</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#clawpack.geoclaw.netcdf_utils.FileMetadata" title="clawpack.geoclaw.netcdf_utils.FileMetadata"><span class="pre">FileMetadata</span></a></span></span><a class="headerlink" href="#clawpack.geoclaw.netcdf_utils.NetCDFInspector.inspect" title="Link to this definition">¶</a></dt>
+<dd><p>Interrogate <em>var_name</em> and return a FileMetadata instance.</p>
+<section id="id7">
+<h4>Parameters<a class="headerlink" href="#id7" title="Link to this heading">¶</a></h4>
+<dl class="simple">
+<dt>var_name<span class="classifier">str</span></dt><dd><p>Name of the primary data variable (used to determine dim_order).</p>
+</dd>
+<dt>time_name_override<span class="classifier">str, optional</span></dt><dd><p>Force a specific time coordinate name instead of auto-detecting.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+</section>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="clawpack.geoclaw.netcdf_utils.TopoInspector">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">clawpack.geoclaw.netcdf_utils.</span></span><span class="sig-name descname"><span class="pre">TopoInspector</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">var_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">crop_bounds</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">assume_units</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">skip_sanity_check</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.geoclaw.netcdf_utils.TopoInspector" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#clawpack.geoclaw.netcdf_utils.NetCDFInspector" title="clawpack.geoclaw.netcdf_utils.NetCDFInspector"><code class="xref py py-class docutils literal notranslate"><span class="pre">NetCDFInspector</span></code></a></p>
+<p>Interrogate a NetCDF bathymetry/topography file.</p>
+<p>Additional checks beyond the base class:</p>
+<ul class="simple">
+<li><p>Verifies the data variable’s units attribute matches the contract unit
+(meters).  If units are convertible via units.py, records the
+source units in the metadata; Fortran will need a conversion factor.
+If units are unrecognised, raises ValueError.</p></li>
+<li><p>Checks for fill values (NaN) within the crop region and raises
+ValueError — silent NaN in bathymetry is numerically fatal.</p></li>
+</ul>
+<section id="id8">
+<h3>Parameters<a class="headerlink" href="#id8" title="Link to this heading">¶</a></h3>
+<dl class="simple">
+<dt>path<span class="classifier">str or Path</span></dt><dd><p>Path to the NetCDF topography file.</p>
+</dd>
+<dt>var_name<span class="classifier">str, optional</span></dt><dd><p>Name of the elevation/bathymetry variable (e.g. <code class="docutils literal notranslate"><span class="pre">'z'</span></code>,
+<code class="docutils literal notranslate"><span class="pre">'elevation'</span></code>).  If omitted, the variable is auto-detected by
+searching for known CF <code class="docutils literal notranslate"><span class="pre">standard_name</span></code> values
+(<code class="docutils literal notranslate"><span class="pre">surface_altitude</span></code>, <code class="docutils literal notranslate"><span class="pre">height_above_mean_sea_level</span></code>, …) and
+then falling back to common names (<code class="docutils literal notranslate"><span class="pre">z</span></code>, <code class="docutils literal notranslate"><span class="pre">elevation</span></code>, <code class="docutils literal notranslate"><span class="pre">topo</span></code>,
+…).  A <code class="docutils literal notranslate"><span class="pre">ValueError</span></code> is raised if no match is found.</p>
+</dd>
+<dt>crop_bounds<span class="classifier">tuple of four floats, optional</span></dt><dd><p>(lon_min, lon_max, lat_min, lat_max).</p>
+</dd>
+<dt>assume_units<span class="classifier">str, optional</span></dt><dd><p>Explicit escape hatch for a file whose elevation variable has <em>no</em>
+<code class="docutils literal notranslate"><span class="pre">units</span></code> attribute.  When given (e.g. <code class="docutils literal notranslate"><span class="pre">'m'</span></code>), that unit is assumed
+instead of raising.  This must be set deliberately by the caller;
+missing units are never silently assumed.</p>
+</dd>
+<dt>skip_sanity_check<span class="classifier">bool, optional</span></dt><dd><p>Skip the post-unit-resolution magnitude sanity check (see
+<code class="docutils literal notranslate"><span class="pre">_check_magnitude</span></code>).  Escape hatch for exotic-but-valid files;
+defaults to False.</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="clawpack.geoclaw.netcdf_utils.TopoInspector.inspect_topo">
+<span class="sig-name descname"><span class="pre">inspect_topo</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#clawpack.geoclaw.netcdf_utils.TopoMetadata" title="clawpack.geoclaw.netcdf_utils.TopoMetadata"><span class="pre">TopoMetadata</span></a></span></span><a class="headerlink" href="#clawpack.geoclaw.netcdf_utils.TopoInspector.inspect_topo" title="Link to this definition">¶</a></dt>
+<dd><p>Fully inspect the topo file and return a TopoMetadata instance.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="clawpack.geoclaw.netcdf_utils.TopoInspector.topo_entries">
+<span class="sig-name descname"><span class="pre">topo_entries</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">list</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#clawpack.geoclaw.netcdf_utils.TopoInspector.topo_entries" title="Link to this definition">¶</a></dt>
+<dd><p>Return a list of ready-to-use topo entries for topofiles.</p>
+<p>Each entry is [4, filepath, TopoMetadata]. When no wrapping is needed
+this returns a list of one entry. When crop_bounds straddle the file’s
+lon cut point, returns two entries pointing to the same file with
+different lon_wrap_offset and crop_bounds values.</p>
+<p>crop_bounds on the inspector are in domain coordinates; this method
+converts them to file coordinates before storing in the returned
+metadata. Fortran can then use crop_bounds directly against file
+coordinate arrays before applying lon_wrap_offset.</p>
+</dd></dl>
+
+</section>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="clawpack.geoclaw.netcdf_utils.TopoMetadata">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">clawpack.geoclaw.netcdf_utils.</span></span><span class="sig-name descname"><span class="pre">TopoMetadata</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">source_file</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lon_wrap</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_increasing</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dim_order</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fill_value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">crop_bounds</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">var_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source_units</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fill_action</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lon_wrap_offset</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale_factor</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1.0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.geoclaw.netcdf_utils.TopoMetadata" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#clawpack.geoclaw.netcdf_utils.FileMetadata" title="clawpack.geoclaw.netcdf_utils.FileMetadata"><code class="xref py py-class docutils literal notranslate"><span class="pre">FileMetadata</span></code></a></p>
+<p>FileMetadata plus topo-specific fields.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="clawpack.geoclaw.netcdf_utils.TopoMetadata.fill_action">
+<span class="sig-name descname"><span class="pre">fill_action</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></span><a class="headerlink" href="#clawpack.geoclaw.netcdf_utils.TopoMetadata.fill_action" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="clawpack.geoclaw.netcdf_utils.TopoMetadata.lon_wrap_offset">
+<span class="sig-name descname"><span class="pre">lon_wrap_offset</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0.0</span></span><a class="headerlink" href="#clawpack.geoclaw.netcdf_utils.TopoMetadata.lon_wrap_offset" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="clawpack.geoclaw.netcdf_utils.TopoMetadata.scale_factor">
+<span class="sig-name descname"><span class="pre">scale_factor</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1.0</span></span><a class="headerlink" href="#clawpack.geoclaw.netcdf_utils.TopoMetadata.scale_factor" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="clawpack.geoclaw.netcdf_utils.TopoMetadata.source_units">
+<span class="sig-name descname"><span class="pre">source_units</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></span><a class="headerlink" href="#clawpack.geoclaw.netcdf_utils.TopoMetadata.source_units" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="clawpack.geoclaw.netcdf_utils.TopoMetadata.var_name">
+<span class="sig-name descname"><span class="pre">var_name</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></span><a class="headerlink" href="#clawpack.geoclaw.netcdf_utils.TopoMetadata.var_name" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="clawpack.geoclaw.netcdf_utils.compression_encoding">
+<span class="sig-prename descclassname"><span class="pre">clawpack.geoclaw.netcdf_utils.</span></span><span class="sig-name descname"><span class="pre">compression_encoding</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">compression</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chunksizes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="headerlink" href="#clawpack.geoclaw.netcdf_utils.compression_encoding" title="Link to this definition">¶</a></dt>
+<dd><p>Translate a <code class="docutils literal notranslate"><span class="pre">compression</span></code> argument into an xarray encoding fragment.</p>
+<p>GeoClaw’s NetCDF writers pass a user-facing <code class="docutils literal notranslate"><span class="pre">compression</span></code> option through
+here to build the per-variable <code class="docutils literal notranslate"><span class="pre">encoding</span></code> dict for <code class="docutils literal notranslate"><span class="pre">to_netcdf</span></code>.  netCDF
+zlib compression is transparent to readers (the netCDF-C library, and hence
+the Fortran reader, decompresses on read) and, being chunked, keeps the
+file randomly accessible – unlike an externally gzipped <code class="docutils literal notranslate"><span class="pre">.nc</span></code>.</p>
+<section id="id9">
+<h3>Parameters<a class="headerlink" href="#id9" title="Link to this heading">¶</a></h3>
+<dl class="simple">
+<dt>compression<span class="classifier">None | bool | int | dict</span></dt><dd><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">None</span></code> / <code class="docutils literal notranslate"><span class="pre">False</span></code> -&gt; no compression (empty fragment; files stay
+bit-identical to the uncompressed default).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">True</span></code> -&gt; the recommended default, zlib level 1 with the byte
+<code class="docutils literal notranslate"><span class="pre">shuffle</span></code> filter (level 1 captures nearly all the size gain; higher
+levels cost CPU for little more).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">int</span></code> -&gt; zlib at that <code class="docutils literal notranslate"><span class="pre">complevel</span></code> (1–9) with <code class="docutils literal notranslate"><span class="pre">shuffle</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">dict</span></code> -&gt; used verbatim (full control, e.g.
+<code class="docutils literal notranslate"><span class="pre">{'zlib':</span> <span class="pre">True,</span> <span class="pre">'complevel':</span> <span class="pre">4,</span> <span class="pre">'shuffle':</span> <span class="pre">False}</span></code>).</p></li>
+</ul>
+</dd>
+<dt>chunksizes<span class="classifier">tuple, optional</span></dt><dd><p>netCDF chunk shape, applied only when compression is enabled and the
+caller supplies it (zlib requires chunking; a per-time-slice chunk also
+matches how Fortran reads dtopo/met time slices).  A <code class="docutils literal notranslate"><span class="pre">dict</span></code>
+<em>compression</em> that already sets <code class="docutils literal notranslate"><span class="pre">chunksizes</span></code> is left untouched.</p>
+</dd>
+</dl>
+</section>
+<section id="returns">
+<h3>Returns<a class="headerlink" href="#returns" title="Link to this heading">¶</a></h3>
+<dl class="simple">
+<dt>dict</dt><dd><p>Encoding keys to merge into the variable’s <code class="docutils literal notranslate"><span class="pre">encoding</span></code> entry.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="clawpack.geoclaw.netcdf_utils.suppress_netcdf4_shape_warning">
+<span class="sig-prename descclassname"><span class="pre">clawpack.geoclaw.netcdf_utils.</span></span><span class="sig-name descname"><span class="pre">suppress_netcdf4_shape_warning</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.geoclaw.netcdf_utils.suppress_netcdf4_shape_warning" title="Link to this definition">¶</a></dt>
+<dd><p>Silence netCDF4-python’s spurious NumPy 2.5 shape-assignment warning.</p>
+<p><code class="docutils literal notranslate"><span class="pre">netCDF4.Variable.__setitem__</span></code> reshapes the incoming array in place via
+<code class="docutils literal notranslate"><span class="pre">data.shape</span> <span class="pre">=</span> <span class="pre">...</span></code> (see <code class="docutils literal notranslate"><span class="pre">netCDF4/_netCDF4.pyx</span></code>), which NumPy &gt;= 2.5
+now deprecates in favor of <code class="docutils literal notranslate"><span class="pre">np.reshape</span></code>. This is entirely internal to
+netCDF4-python (as of 1.7.4, the latest release) and not something callers
+can avoid, so wrap <code class="docutils literal notranslate"><span class="pre">var[:]</span> <span class="pre">=</span> <span class="pre">...</span></code> assignments in this context manager
+rather than letting the warning leak into test output. Safe to remove
+once netCDF4-python ships a fix upstream.</p>
+</dd></dl>
+
+</section>
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<p><a href="http://clawpack.org/">
+    <img class="logo" src= "_static/clawlogo.jpg" alt="Logo"/>
+</a>
+<h2>Version dev</h2>
+</p>
+  <div>
+    <h3><a href="contents.html">Table of Contents</a></h3>
+    <ul>
+<li><a class="reference internal" href="#">netcdf_utils module for NetCDF input</a><ul>
+<li><a class="reference internal" href="#module-clawpack.geoclaw.netcdf_utils">Documentation auto-generated from the module docstrings</a><ul>
+<li><a class="reference internal" href="#classes">Classes</a></li>
+<li><a class="reference internal" href="#metadata-dataclasses">Metadata dataclasses</a></li>
+<li><a class="reference internal" href="#clawpack.geoclaw.netcdf_utils.CFNormalizer"><code class="docutils literal notranslate"><span class="pre">CFNormalizer</span></code></a><ul>
+<li><a class="reference internal" href="#clawpack.geoclaw.netcdf_utils.CFNormalizer.normalize"><code class="docutils literal notranslate"><span class="pre">CFNormalizer.normalize()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#clawpack.geoclaw.netcdf_utils.DTopoInspector"><code class="docutils literal notranslate"><span class="pre">DTopoInspector</span></code></a><ul>
+<li><a class="reference internal" href="#clawpack.geoclaw.netcdf_utils.DTopoInspector.inspect_dtopo"><code class="docutils literal notranslate"><span class="pre">DTopoInspector.inspect_dtopo()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#clawpack.geoclaw.netcdf_utils.DTopoMetadata"><code class="docutils literal notranslate"><span class="pre">DTopoMetadata</span></code></a><ul>
+<li><a class="reference internal" href="#clawpack.geoclaw.netcdf_utils.DTopoMetadata.dt"><code class="docutils literal notranslate"><span class="pre">DTopoMetadata.dt</span></code></a></li>
+<li><a class="reference internal" href="#clawpack.geoclaw.netcdf_utils.DTopoMetadata.lon_wrap_offset"><code class="docutils literal notranslate"><span class="pre">DTopoMetadata.lon_wrap_offset</span></code></a></li>
+<li><a class="reference internal" href="#clawpack.geoclaw.netcdf_utils.DTopoMetadata.mt"><code class="docutils literal notranslate"><span class="pre">DTopoMetadata.mt</span></code></a></li>
+<li><a class="reference internal" href="#clawpack.geoclaw.netcdf_utils.DTopoMetadata.scale_factor"><code class="docutils literal notranslate"><span class="pre">DTopoMetadata.scale_factor</span></code></a></li>
+<li><a class="reference internal" href="#clawpack.geoclaw.netcdf_utils.DTopoMetadata.t0"><code class="docutils literal notranslate"><span class="pre">DTopoMetadata.t0</span></code></a></li>
+<li><a class="reference internal" href="#clawpack.geoclaw.netcdf_utils.DTopoMetadata.var_name"><code class="docutils literal notranslate"><span class="pre">DTopoMetadata.var_name</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#clawpack.geoclaw.netcdf_utils.DescriptorWriter"><code class="docutils literal notranslate"><span class="pre">DescriptorWriter</span></code></a><ul>
+<li><a class="reference internal" href="#clawpack.geoclaw.netcdf_utils.DescriptorWriter.write_dtopo_descriptor"><code class="docutils literal notranslate"><span class="pre">DescriptorWriter.write_dtopo_descriptor()</span></code></a></li>
+<li><a class="reference internal" href="#clawpack.geoclaw.netcdf_utils.DescriptorWriter.write_met_descriptor"><code class="docutils literal notranslate"><span class="pre">DescriptorWriter.write_met_descriptor()</span></code></a></li>
+<li><a class="reference internal" href="#clawpack.geoclaw.netcdf_utils.DescriptorWriter.write_topo_descriptor"><code class="docutils literal notranslate"><span class="pre">DescriptorWriter.write_topo_descriptor()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#clawpack.geoclaw.netcdf_utils.FileMetadata"><code class="docutils literal notranslate"><span class="pre">FileMetadata</span></code></a><ul>
+<li><a class="reference internal" href="#clawpack.geoclaw.netcdf_utils.FileMetadata.crop_bounds"><code class="docutils literal notranslate"><span class="pre">FileMetadata.crop_bounds</span></code></a></li>
+<li><a class="reference internal" href="#clawpack.geoclaw.netcdf_utils.FileMetadata.dim_order"><code class="docutils literal notranslate"><span class="pre">FileMetadata.dim_order</span></code></a></li>
+<li><a class="reference internal" href="#clawpack.geoclaw.netcdf_utils.FileMetadata.fill_value"><code class="docutils literal notranslate"><span class="pre">FileMetadata.fill_value</span></code></a></li>
+<li><a class="reference internal" href="#clawpack.geoclaw.netcdf_utils.FileMetadata.lon_wrap"><code class="docutils literal notranslate"><span class="pre">FileMetadata.lon_wrap</span></code></a></li>
+<li><a class="reference internal" href="#clawpack.geoclaw.netcdf_utils.FileMetadata.source_file"><code class="docutils literal notranslate"><span class="pre">FileMetadata.source_file</span></code></a></li>
+<li><a class="reference internal" href="#clawpack.geoclaw.netcdf_utils.FileMetadata.time_name"><code class="docutils literal notranslate"><span class="pre">FileMetadata.time_name</span></code></a></li>
+<li><a class="reference internal" href="#clawpack.geoclaw.netcdf_utils.FileMetadata.x_name"><code class="docutils literal notranslate"><span class="pre">FileMetadata.x_name</span></code></a></li>
+<li><a class="reference internal" href="#clawpack.geoclaw.netcdf_utils.FileMetadata.y_increasing"><code class="docutils literal notranslate"><span class="pre">FileMetadata.y_increasing</span></code></a></li>
+<li><a class="reference internal" href="#clawpack.geoclaw.netcdf_utils.FileMetadata.y_name"><code class="docutils literal notranslate"><span class="pre">FileMetadata.y_name</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#clawpack.geoclaw.netcdf_utils.MetInspector"><code class="docutils literal notranslate"><span class="pre">MetInspector</span></code></a><ul>
+<li><a class="reference internal" href="#clawpack.geoclaw.netcdf_utils.MetInspector.inspect_met"><code class="docutils literal notranslate"><span class="pre">MetInspector.inspect_met()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#clawpack.geoclaw.netcdf_utils.MetMetadata"><code class="docutils literal notranslate"><span class="pre">MetMetadata</span></code></a><ul>
+<li><a class="reference internal" href="#clawpack.geoclaw.netcdf_utils.MetMetadata.fill_action"><code class="docutils literal notranslate"><span class="pre">MetMetadata.fill_action</span></code></a></li>
+<li><a class="reference internal" href="#clawpack.geoclaw.netcdf_utils.MetMetadata.time_offset"><code class="docutils literal notranslate"><span class="pre">MetMetadata.time_offset</span></code></a></li>
+<li><a class="reference internal" href="#clawpack.geoclaw.netcdf_utils.MetMetadata.time_scale"><code class="docutils literal notranslate"><span class="pre">MetMetadata.time_scale</span></code></a></li>
+<li><a class="reference internal" href="#clawpack.geoclaw.netcdf_utils.MetMetadata.variables"><code class="docutils literal notranslate"><span class="pre">MetMetadata.variables</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#clawpack.geoclaw.netcdf_utils.MetVariableInfo"><code class="docutils literal notranslate"><span class="pre">MetVariableInfo</span></code></a><ul>
+<li><a class="reference internal" href="#clawpack.geoclaw.netcdf_utils.MetVariableInfo.geoclaw_role"><code class="docutils literal notranslate"><span class="pre">MetVariableInfo.geoclaw_role</span></code></a></li>
+<li><a class="reference internal" href="#clawpack.geoclaw.netcdf_utils.MetVariableInfo.scale_factor"><code class="docutils literal notranslate"><span class="pre">MetVariableInfo.scale_factor</span></code></a></li>
+<li><a class="reference internal" href="#clawpack.geoclaw.netcdf_utils.MetVariableInfo.source_units"><code class="docutils literal notranslate"><span class="pre">MetVariableInfo.source_units</span></code></a></li>
+<li><a class="reference internal" href="#clawpack.geoclaw.netcdf_utils.MetVariableInfo.var_name"><code class="docutils literal notranslate"><span class="pre">MetVariableInfo.var_name</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#clawpack.geoclaw.netcdf_utils.NetCDFInspector"><code class="docutils literal notranslate"><span class="pre">NetCDFInspector</span></code></a><ul>
+<li><a class="reference internal" href="#clawpack.geoclaw.netcdf_utils.NetCDFInspector.close"><code class="docutils literal notranslate"><span class="pre">NetCDFInspector.close()</span></code></a></li>
+<li><a class="reference internal" href="#clawpack.geoclaw.netcdf_utils.NetCDFInspector.ds"><code class="docutils literal notranslate"><span class="pre">NetCDFInspector.ds</span></code></a></li>
+<li><a class="reference internal" href="#clawpack.geoclaw.netcdf_utils.NetCDFInspector.inspect"><code class="docutils literal notranslate"><span class="pre">NetCDFInspector.inspect()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#clawpack.geoclaw.netcdf_utils.TopoInspector"><code class="docutils literal notranslate"><span class="pre">TopoInspector</span></code></a><ul>
+<li><a class="reference internal" href="#clawpack.geoclaw.netcdf_utils.TopoInspector.inspect_topo"><code class="docutils literal notranslate"><span class="pre">TopoInspector.inspect_topo()</span></code></a></li>
+<li><a class="reference internal" href="#clawpack.geoclaw.netcdf_utils.TopoInspector.topo_entries"><code class="docutils literal notranslate"><span class="pre">TopoInspector.topo_entries()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#clawpack.geoclaw.netcdf_utils.TopoMetadata"><code class="docutils literal notranslate"><span class="pre">TopoMetadata</span></code></a><ul>
+<li><a class="reference internal" href="#clawpack.geoclaw.netcdf_utils.TopoMetadata.fill_action"><code class="docutils literal notranslate"><span class="pre">TopoMetadata.fill_action</span></code></a></li>
+<li><a class="reference internal" href="#clawpack.geoclaw.netcdf_utils.TopoMetadata.lon_wrap_offset"><code class="docutils literal notranslate"><span class="pre">TopoMetadata.lon_wrap_offset</span></code></a></li>
+<li><a class="reference internal" href="#clawpack.geoclaw.netcdf_utils.TopoMetadata.scale_factor"><code class="docutils literal notranslate"><span class="pre">TopoMetadata.scale_factor</span></code></a></li>
+<li><a class="reference internal" href="#clawpack.geoclaw.netcdf_utils.TopoMetadata.source_units"><code class="docutils literal notranslate"><span class="pre">TopoMetadata.source_units</span></code></a></li>
+<li><a class="reference internal" href="#clawpack.geoclaw.netcdf_utils.TopoMetadata.var_name"><code class="docutils literal notranslate"><span class="pre">TopoMetadata.var_name</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#clawpack.geoclaw.netcdf_utils.compression_encoding"><code class="docutils literal notranslate"><span class="pre">compression_encoding()</span></code></a></li>
+<li><a class="reference internal" href="#clawpack.geoclaw.netcdf_utils.suppress_netcdf4_shape_warning"><code class="docutils literal notranslate"><span class="pre">suppress_netcdf4_shape_warning()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  </div><h3>Related Topics</h3>
+<ul>
+  <li><a href="contents.html">Documentation overview</a><ul>
+  <li><a href="geoclaw.html">GeoClaw Description and Contents</a><ul>
+      <li>Previous: <a href="storm_module.html" title="previous chapter">Meteorological Forcing Python API</a></li>
+      <li>Next: <a href="marching_front.html" title="next chapter">Marching Front algorithm</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+<div class="widget navlinks">
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/netcdf_utils_module.rst.txt"
+            rel="nofollow"
+            target="_blank">Source .rst</a></li>
+    <li><a href="https://github.com/clawpack/doc/blob/dev/doc/netcdf_utils_module.rst"
+            rel="nofollow"
+            target="_blank">Source on GitHub</a></li>
+     <li><a href="https://github.com/clawpack/doc/commits/dev/doc/netcdf_utils_module.rst"
+             rel="nofollow"
+             target="_blank">History</a></li>
+    <li><a href="https://github.com/clawpack/doc/edit/dev/doc/netcdf_utils_module.rst"
+            rel="nofollow"
+            target="_blank">Suggest Edits</a></li>
+     <li><a href="https://github.com/clawpack/doc/issues/new/choose"
+             rel="nofollow"
+             target="_blank">Raise an Issue</a></li>
+  </ul>
+</div>
+<search id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+<h4>Latest Version</h4>
+<ul>
+  <li><a href="../v5.14.x/index.html">v5.14.x</a></li>
+  <li><a href="netcdf_utils_module.html">dev</a></li>
+</ul>
+<h4>Older Versions</h4>
+<ul>
+  <li><a href="../v5.7.x/index.html">v5.7.x</a></li>
+  <li><a href="../v5.8.x/index.html">v5.8.x</a></li>
+  <li><a href="../v5.9.x/index.html">v5.9.x</a></li>
+  <li><a href="../v5.10.x/index.html">v5.10.x</a></li>
+  <li><a href="../v5.11.x/index.html">v5.11.x</a></li>
+  <li><a href="../v5.12.x/index.html">v5.12.x</a></li>
+</ul>
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+  <div class="footer">
+    &copy; Copyright CC-BY 2026, The Clawpack Development Team.
+    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
+  </div>
+  <script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-44811544-1', 'auto');
+  ga('send', 'pageview');
+
+  </script>
+  
+  </body>
+</html>

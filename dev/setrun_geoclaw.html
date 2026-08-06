@@ -10,10 +10,10 @@
     <link rel="stylesheet" href="_static/layout.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="_static/flasky.css?v=59fe8e2d" />
-    <link rel="stylesheet" type="text/css" href="_static/graphviz.css?v=fd3f3429" />
+    <link rel="stylesheet" type="text/css" href="_static/graphviz.css?v=4ae1632d" />
     <script src="_static/documentation_options.js?v=3ce10a4d"></script>
-    <script src="_static/doctools.js?v=9a2dae69"></script>
-    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <link rel="icon" href="_static/clawicon.ico"/>
     <link rel="author" title="About these documents" href="about.html" />
     <link rel="index" title="Index" href="genindex.html" />
@@ -228,30 +228,120 @@ where h &gt;= friction_depth.)</p>
 bathymetry) data files in GeoClaw.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py">
-<span class="sig-name descname"><span class="pre">rundata.topo_data.topofiles</span> <span class="pre">:</span> <span class="pre">list</span> <span class="pre">of</span> <span class="pre">lists</span></span></dt>
-<dd><p><em>topofiles</em> should be a list of the form <em>[file1info, file2info, etc.]</em>
-where each element is itself a list of the form</p>
-<blockquote>
-<div><p>[topotype, fname]</p>
-</div></blockquote>
-<p>with values</p>
-<blockquote>
-<div><blockquote>
-<div><p><em>topotype</em> : integer</p>
-<blockquote>
-<div><p>1,2 or 3 depending on the format of the file (see <a class="reference internal" href="topo.html#topo"><span class="std std-ref">Topography data</span></a>).</p>
-</div></blockquote>
-<p><em>fname</em> : string</p>
-<blockquote>
-<div><p>the name of the topo file.</p>
-</div></blockquote>
-</div></blockquote>
+<span class="sig-name descname"><span class="pre">rundata.topo_data.topofiles</span> <span class="pre">:</span> <span class="pre">list</span></span></dt>
+<dd><p>A list of topography file entries.  The preferred form uses
+<a class="reference internal" href="topotools_module.html#clawpack.geoclaw.topotools.Topography" title="clawpack.geoclaw.topotools.Topography"><code class="xref py py-class docutils literal notranslate"><span class="pre">Topography</span></code></a> objects:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">clawpack.geoclaw.topotools</span><span class="w"> </span><span class="kn">import</span> <span class="n">Topography</span>
+
+<span class="n">t</span> <span class="o">=</span> <span class="n">Topography</span><span class="p">()</span>
+<span class="n">t</span><span class="o">.</span><span class="n">path</span> <span class="o">=</span> <span class="s1">&#39;etopo1.tt2&#39;</span>
+<span class="n">t</span><span class="o">.</span><span class="n">topo_type</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="n">rundata</span><span class="o">.</span><span class="n">topo_data</span><span class="o">.</span><span class="n">topofiles</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="deprecated">
+<p><span class="versionmodified deprecated">Deprecated since version The: </span><code class="docutils literal notranslate"><span class="pre">[topotype,</span> <span class="pre">fname]</span></code> list format is deprecated.  It still works
+but emits a <code class="docutils literal notranslate"><span class="pre">DeprecationWarning</span></code>.  Use <code class="docutils literal notranslate"><span class="pre">Topography</span></code> objects as
+shown above.</p>
+</div>
 <p><strong>Note:</strong> Starting in v5.8.0 implicitly specifying a flag region for
 AMR is no longer supported in the specification of a topo file.
 For more about controlling AMR in various regions, see <a class="reference internal" href="flagregions.html#flagregions"><span class="std std-ref">Specifying flagregions for adaptive refinement</span></a>.</p>
-</div></blockquote>
+<p>See <a class="reference internal" href="topo.html#topo"><span class="std std-ref">Topography data</span></a> for information about the topo file formats
+(<code class="docutils literal notranslate"><span class="pre">topo_type</span></code> values 2, 3, 4).</p>
+<p>See <a class="reference internal" href="topo_order.html#topo-order"><span class="std std-ref">Topography file ordering</span></a> for how priority is determined when topo files
+overlap, and <span class="xref std std-ref">topodata_format</span> for the <code class="docutils literal notranslate"><span class="pre">topo.data</span></code> file format.</p>
 </dd></dl>
 
+<section id="topography-preprocessing-attributes">
+<span id="setrun-topo-preprocessing"></span><h3>Topography preprocessing attributes<a class="headerlink" href="#topography-preprocessing-attributes" title="Link to this heading">¶</a></h3>
+<p>Each <a class="reference internal" href="topotools_module.html#clawpack.geoclaw.topotools.Topography" title="clawpack.geoclaw.topotools.Topography"><code class="xref py py-class docutils literal notranslate"><span class="pre">Topography</span></code></a> entry in <code class="docutils literal notranslate"><span class="pre">topofiles</span></code>
+supports eight preprocessing attributes that are applied automatically when
+the file is loaded by <a class="reference internal" href="topotools_module.html#clawpack.geoclaw.topotools.Topography.read" title="clawpack.geoclaw.topotools.Topography.read"><code class="xref py py-meth docutils literal notranslate"><span class="pre">read()</span></code></a>.
+Set them on the object before appending to <code class="docutils literal notranslate"><span class="pre">topofiles</span></code>:</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 17.8%" />
+<col style="width: 17.8%" />
+<col style="width: 11.1%" />
+<col style="width: 53.3%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Attribute</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Default</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">crop_extent</span></code></p></td>
+<td><p>list or None</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[x1,</span> <span class="pre">x2,</span> <span class="pre">y1,</span> <span class="pre">y2]</span></code> crop region.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">coarsen</span></code></p></td>
+<td><p>int</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">1</span></code></p></td>
+<td><p>Stride-subsampling factor (1 = no coarsen).</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">buffer</span></code></p></td>
+<td><p>int</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">0</span></code></p></td>
+<td><p>Grid-point margin outside crop region.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">align</span></code></p></td>
+<td><p>tuple or None</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">(x,</span> <span class="pre">y)</span></code> alignment for coarsened grids.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">x_shift</span></code></p></td>
+<td><p>float</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">0.0</span></code></p></td>
+<td><p>Constant added to all x coordinates.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">y_shift</span></code></p></td>
+<td><p>float</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">0.0</span></code></p></td>
+<td><p>Constant added to all y coordinates.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">z_shift</span></code></p></td>
+<td><p>float</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">0.0</span></code></p></td>
+<td><p>Constant added to non-missing Z values.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">negate_z</span></code></p></td>
+<td><p>bool</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">False</span></code></p></td>
+<td><p>If <code class="docutils literal notranslate"><span class="pre">True</span></code>, flip the sign of all Z values.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><strong>Non-obvious behaviors:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">crop_extent</span></code> is a preprocessing input. It is distinct from
+<code class="docutils literal notranslate"><span class="pre">Topography.extent</span></code>, which is a read-only property returning the
+spatial bounds of the already-loaded data.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">buffer</span></code> is in grid points, not degrees.  Float values are truncated
+via <code class="docutils literal notranslate"><span class="pre">int()</span></code>, so <code class="docutils literal notranslate"><span class="pre">buffer=0.5</span></code> is equivalent to <code class="docutils literal notranslate"><span class="pre">buffer=0</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">negate_z</span></code> is independent of the <code class="docutils literal notranslate"><span class="pre">topo_type</span> <span class="pre">&lt;</span> <span class="pre">0</span></code> sign convention.
+If both <code class="docutils literal notranslate"><span class="pre">topo_type</span> <span class="pre">&lt;</span> <span class="pre">0</span></code> <strong>and</strong> <code class="docutils literal notranslate"><span class="pre">negate_z=True</span></code> are active, two
+sign flips are applied and the result is the original Z (net identity).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">coarsen</span></code> uses stride subsampling (every nth point), not cell
+averaging.</p></li>
+</ul>
+</div>
+<p>Example using several attributes:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">t</span> <span class="o">=</span> <span class="n">Topography</span><span class="p">()</span>
+<span class="n">t</span><span class="o">.</span><span class="n">path</span> <span class="o">=</span> <span class="s1">&#39;gebco_2023.nc&#39;</span>
+<span class="n">t</span><span class="o">.</span><span class="n">topo_type</span> <span class="o">=</span> <span class="mi">4</span>
+<span class="n">t</span><span class="o">.</span><span class="n">crop_extent</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mf">100.</span><span class="p">,</span> <span class="o">-</span><span class="mf">60.</span><span class="p">,</span> <span class="mf">10.</span><span class="p">,</span> <span class="mf">50.</span><span class="p">]</span>
+<span class="n">t</span><span class="o">.</span><span class="n">coarsen</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="n">t</span><span class="o">.</span><span class="n">z_shift</span> <span class="o">=</span> <span class="mf">10.0</span>
+<span class="n">rundata</span><span class="o">.</span><span class="n">topo_data</span><span class="o">.</span><span class="n">topofiles</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+</pre></div>
+</div>
 <dl class="py attribute">
 <dt class="sig sig-object py">
 <span class="sig-name descname"><span class="pre">rundata.dtopo_data.dtopofiles</span> <span class="pre">:</span> <span class="pre">list</span> <span class="pre">of</span> <span class="pre">lists</span></span></dt>
@@ -294,6 +384,7 @@ changes.  You must also set <cite>rundata.clawdata.dt_initial</cite> to the same
 value (or smaller) to insure that the first time step is sufficiently small.</p>
 </dd></dl>
 
+</section>
 </section>
 <section id="qinit-data-file-parameters">
 <span id="setrun-qinit"></span><h2>qinit data file parameters<a class="headerlink" href="#qinit-data-file-parameters" title="Link to this heading">¶</a></h2>
@@ -470,16 +561,22 @@ See <a class="reference internal" href="fgmax.html#fgmax"><span class="std std-r
 </section>
 <section id="storm-specification-data">
 <span id="setrun-surge"></span><h2>Storm Specification Data<a class="headerlink" href="#storm-specification-data" title="Link to this heading">¶</a></h2>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><code class="docutils literal notranslate"><span class="pre">rundata.met_data</span></code> is the meteorological-forcing name for these settings;
+<code class="docutils literal notranslate"><span class="pre">rundata.surge_data</span></code> remains an accepted alias for the same object.  The
+settings are written to the <code class="docutils literal notranslate"><span class="pre">surge.data</span></code> file that GeoClaw reads.</p>
+</div>
 <dl class="py attribute">
 <dt class="sig sig-object py">
-<span class="sig-name descname"><span class="pre">rundata.surge_data.wind_forcing</span> <span class="pre">:</span> <span class="pre">bool</span></span></dt>
+<span class="sig-name descname"><span class="pre">rundata.met_data.wind_forcing</span> <span class="pre">:</span> <span class="pre">bool</span></span></dt>
 <dd><p>Includes the wind forcing term if <cite>True</cite>.  The drag coefficient is specified
-by <cite>rundata.surge_data.drag_law</cite>.</p>
+by <cite>rundata.met_data.drag_law</cite>.</p>
 </dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py">
-<span class="sig-name descname"><span class="pre">rundata.surge_data.drag_law</span> <span class="pre">:</span> <span class="pre">integer</span></span></dt>
+<span class="sig-name descname"><span class="pre">rundata.met_data.drag_law</span> <span class="pre">:</span> <span class="pre">integer</span></span></dt>
 <dd><p>This specifies how to deterimine the wind drag coefficient.  Valid options
 include include <cite>0</cite> implying use no wind drag (effectively eliminates the
 wind source term but still computes the wind), <cite>1</cite> uses the Garret wind
@@ -488,13 +585,13 @@ drag law, and <cite>2</cite> uses the Powell (2006) wind drag law.</p>
 
 <dl class="py attribute">
 <dt class="sig sig-object py">
-<span class="sig-name descname"><span class="pre">rundata.surge_data.pressure_forcing</span> <span class="pre">:</span> <span class="pre">bool</span></span></dt>
+<span class="sig-name descname"><span class="pre">rundata.met_data.pressure_forcing</span> <span class="pre">:</span> <span class="pre">bool</span></span></dt>
 <dd><p>Includes the pressure forcing term if <cite>True</cite>.</p>
 </dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py">
-<span class="sig-name descname"><span class="pre">rundata.surge_data.wind_index</span> <span class="pre">:</span> <span class="pre">int</span></span></dt>
+<span class="sig-name descname"><span class="pre">rundata.met_data.wind_index</span> <span class="pre">:</span> <span class="pre">int</span></span></dt>
 <dd><p>Specifies at what index into the <cite>aux</cite> array the wind velocities are stored.
 Note that this is Python indexed in the setrun but will be corrected in the
 FORTRAN code (1 is added to the index).</p>
@@ -502,7 +599,7 @@ FORTRAN code (1 is added to the index).</p>
 
 <dl class="py attribute">
 <dt class="sig sig-object py">
-<span class="sig-name descname"><span class="pre">rundata.surge_data.pressure_index</span> <span class="pre">:</span> <span class="pre">int</span></span></dt>
+<span class="sig-name descname"><span class="pre">rundata.met_data.pressure_index</span> <span class="pre">:</span> <span class="pre">int</span></span></dt>
 <dd><p>Specifies at what index into the <cite>aux</cite> array the wind velocities are stored.
 Note that this is Python indexed in the setrun but will be corrected in the
 FORTRAN code (1 is added to the index).</p>
@@ -510,7 +607,7 @@ FORTRAN code (1 is added to the index).</p>
 
 <dl class="py attribute">
 <dt class="sig sig-object py">
-<span class="sig-name descname"><span class="pre">rundata.surge_data.display_landfall_time</span> <span class="pre">:</span> <span class="pre">bool</span></span></dt>
+<span class="sig-name descname"><span class="pre">rundata.met_data.display_landfall_time</span> <span class="pre">:</span> <span class="pre">bool</span></span></dt>
 <dd><p>Sets whether the console output displays time relative to land fall in days.
 In GeoClaw versions past 5.5 this only deterimines whether the time is
 displayed in seconds or days.</p>
@@ -518,7 +615,7 @@ displayed in seconds or days.</p>
 
 <dl class="py attribute">
 <dt class="sig sig-object py">
-<span class="sig-name descname"><span class="pre">rundata.surge_data.wind_refine</span> <span class="pre">:</span> <span class="pre">list</span></span></dt>
+<span class="sig-name descname"><span class="pre">rundata.met_data.wind_refine</span> <span class="pre">:</span> <span class="pre">list</span></span></dt>
 <dd><p>Similar to the <cite>speed_tolerance</cite> data, cells are flagged for refinement at
 a level if the magnitude of the wind velocity in m/s is greater than the
 corresponding value in the list.  For
@@ -531,7 +628,7 @@ wind speed of 30.0 would refine to level 3, and cells with a wind speed of
 
 <dl class="py attribute">
 <dt class="sig sig-object py">
-<span class="sig-name descname"><span class="pre">rundata.surge_data.R_refine</span> <span class="pre">:</span> <span class="pre">list</span></span></dt>
+<span class="sig-name descname"><span class="pre">rundata.met_data.R_refine</span> <span class="pre">:</span> <span class="pre">list</span></span></dt>
 <dd><p>Similar to the <cite>wind_refine</cite> data, cells are flagged based on the radial
 distance to the storm’s center.  This can also be set to a boolean which if
 <cite>False</cite> disables storm radial based refinement.</p>
@@ -539,31 +636,88 @@ distance to the storm’s center.  This can also be set to a boolean which if
 
 <dl class="py attribute">
 <dt class="sig sig-object py">
-<span class="sig-name descname"><span class="pre">rundata.surge_data.storm_specification_type</span> <span class="pre">:</span> <span class="pre">int</span></span></dt>
-<dd><p>Specifies the type of storm being used.  Positive options refer to a
-parameterized storm model where as negative integers refer to fully
-specified storms, for instance from HWRF, to be specified.</p>
-<p>Valid options</p>
+<span class="sig-name descname"><span class="pre">rundata.met_data.storm_family</span> <span class="pre">:</span> <span class="pre">string</span></span></dt>
+<dd><p>The forcing family, and the preferred (explicit) way to select forcing
+together with <code class="docutils literal notranslate"><span class="pre">storm_subtype</span></code>.  Valid values:</p>
 <blockquote>
 <div><ul class="simple">
-<li><p><cite>-1</cite>: The input data is specified in the HWRF format.</p></li>
-<li><p><cite>0</cite>: No storm specified</p></li>
-<li><p><cite>1</cite>: Parameterized storm requested using the Holland 1980 modeled storm.</p></li>
-<li><p><cite>2</cite>: Parameterized storm requested using the Holland 2010 modeled storm.</p></li>
-<li><p><cite>3</cite>: Parameterized storm requested using the Chava, Lin, Emmanuel modeled
-storm.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&quot;parametric&quot;</span></code>: an analytic model with a storm center/track (see
+<code class="docutils literal notranslate"><span class="pre">storm_subtype</span></code> for the model list).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&quot;gridded&quot;</span></code>: file-backed wind/pressure fields (OWI/ASCII or NetCDF).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&quot;none&quot;</span></code>: forcing off.</p></li>
 </ul>
 </div></blockquote>
 </dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py">
-<span class="sig-name descname"><span class="pre">rundata.surge_data.storm_file</span> <span class="pre">:</span> <span class="pre">string</span></span></dt>
+<span class="sig-name descname"><span class="pre">rundata.met_data.storm_subtype</span> <span class="pre">:</span> <span class="pre">string</span></span></dt>
+<dd><p>The forcing subtype within the family.  For <code class="docutils literal notranslate"><span class="pre">&quot;parametric&quot;</span></code> this is a model
+name – one of <code class="docutils literal notranslate"><span class="pre">&quot;holland80&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;holland2008&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;holland2010&quot;</span></code>,
+<code class="docutils literal notranslate"><span class="pre">&quot;cle&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;slosh&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;rankine&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;modified_rankine&quot;</span></code>,
+<code class="docutils literal notranslate"><span class="pre">&quot;demaria&quot;</span></code>, or <code class="docutils literal notranslate"><span class="pre">&quot;willoughby&quot;</span></code>.  For <code class="docutils literal notranslate"><span class="pre">&quot;gridded&quot;</span></code> use <code class="docutils literal notranslate"><span class="pre">&quot;gridded&quot;</span></code>
+(the concrete OWI/NetCDF format is carried by the storm descriptor file).</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">rundata.met_data.storm_specification_type</span> <span class="pre">:</span> <span class="pre">int</span> <span class="pre">or</span> <span class="pre">string</span></span></dt>
+<dd><p>Legacy forcing selector, retained for backwards compatibility and still
+fully supported.  Used when <code class="docutils literal notranslate"><span class="pre">storm_family</span></code>/<code class="docutils literal notranslate"><span class="pre">storm_subtype</span></code> are not set;
+it may be a model-name string (e.g. <code class="docutils literal notranslate"><span class="pre">'holland80'</span></code>, <code class="docutils literal notranslate"><span class="pre">'data'</span></code>) or the
+signed integer code below, and resolves to the same forcing.</p>
+<p>Integer codes: <code class="docutils literal notranslate"><span class="pre">0</span></code> no storm; positive values select a parametric model
+(<code class="docutils literal notranslate"><span class="pre">1</span></code> Holland 1980, <code class="docutils literal notranslate"><span class="pre">2</span></code> Holland 2010, <code class="docutils literal notranslate"><span class="pre">3</span></code> Chavas–Lin–Emanuel, <code class="docutils literal notranslate"><span class="pre">4</span></code>
+SLOSH, <code class="docutils literal notranslate"><span class="pre">5</span></code> Rankine, <code class="docutils literal notranslate"><span class="pre">6</span></code> modified Rankine, <code class="docutils literal notranslate"><span class="pre">7</span></code> DeMaria, <code class="docutils literal notranslate"><span class="pre">8</span></code> Holland
+2008, <code class="docutils literal notranslate"><span class="pre">9</span></code> Willoughby); a negative value (<code class="docutils literal notranslate"><span class="pre">-1</span></code>) selects gridded/data
+forcing.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">rundata.met_data.storm_file</span> <span class="pre">:</span> <span class="pre">string</span></span></dt>
 <dd><p>Specifies the path to the storm data.  IF <cite>storm_specification_type &gt; 0</cite> then
-this should point to a GeoClaw formatted storm file (see <a class="reference internal" href="storm_module.html#storm-module"><span class="std std-ref">Storm Specification Class and Tools</span></a> for
+this should point to a GeoClaw formatted storm file (see <a class="reference internal" href="storm_module.html#storm-module"><span class="std std-ref">Meteorological Forcing Python API</span></a> for
 details).  If <cite>storm_specification &lt; 0</cite> then this should either specify a path
 to files specifying the storm or a single file depending on the type of input
 data.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">rundata.met_data.storm_time_scale</span> <span class="pre">:</span> <span class="pre">float</span></span></dt>
+<dd><p>A multiplicative scale factor applied to the storm’s time axis.  Values
+greater than 1 slow the storm down (it takes longer to traverse the
+domain); values less than 1 speed it up.  The default is <code class="docutils literal notranslate"><span class="pre">1.0</span></code> (no
+scaling).  This is primarily useful for sensitivity studies and for
+creating synthetic storms whose tracks are spatially identical to a
+historical event but travel at a different speed.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">rundata.met_data.t_ramp_on</span> <span class="pre">:</span> <span class="pre">float</span></span></dt>
+<dd><p>Number of seconds over which the wind/pressure forcing ramps on after the
+simulation start time.  <code class="docutils literal notranslate"><span class="pre">0.0</span></code> (the default) disables the onset ramp.
+Useful for avoiding an impulsive start when the forcing is already
+significant at <code class="docutils literal notranslate"><span class="pre">t0</span></code>.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">rundata.met_data.t_ramp_off</span> <span class="pre">:</span> <span class="pre">float</span></span></dt>
+<dd><p>Number of seconds over which the wind/pressure forcing ramps off before the
+final time.  <code class="docutils literal notranslate"><span class="pre">0.0</span></code> (the default) disables the cutoff ramp.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">rundata.met_data.rotation_override</span> <span class="pre">:</span> <span class="pre">int</span> <span class="pre">or</span> <span class="pre">string</span></span></dt>
+<dd><p>Overrides the hemisphere-based sense of the storm’s rotation.  The default
+(<code class="docutils literal notranslate"><span class="pre">0</span></code> or <code class="docutils literal notranslate"><span class="pre">&quot;normal&quot;</span></code>) chooses the rotation from the hemisphere of the
+storm center; <code class="docutils literal notranslate"><span class="pre">1</span></code> / <code class="docutils literal notranslate"><span class="pre">&quot;N&quot;</span></code> forces northern (counter-clockwise) and
+<code class="docutils literal notranslate"><span class="pre">2</span></code> / <code class="docutils literal notranslate"><span class="pre">&quot;S&quot;</span></code> forces southern (clockwise).  Primarily useful for
+idealized or cross-hemisphere synthetic storms.</p>
 </dd></dl>
 
 </section>
@@ -587,7 +741,10 @@ data.</p>
 <li><a class="reference internal" href="#">Specifying GeoClaw parameters in <cite>setrun.py</cite></a><ul>
 <li><a class="reference internal" href="#additional-amr-parameters">Additional AMR parameters</a></li>
 <li><a class="reference internal" href="#general-geo-parameters">General geo parameters</a></li>
-<li><a class="reference internal" href="#topography-data-file-parameters">Topography data file parameters</a></li>
+<li><a class="reference internal" href="#topography-data-file-parameters">Topography data file parameters</a><ul>
+<li><a class="reference internal" href="#topography-preprocessing-attributes">Topography preprocessing attributes</a></li>
+</ul>
+</li>
 <li><a class="reference internal" href="#qinit-data-file-parameters">qinit data file parameters</a></li>
 <li><a class="reference internal" href="#force-some-cells-to-be-initially-dry">Force some cells to be initially dry</a></li>
 <li><a class="reference internal" href="#adjust-sea-level-in-some-regions">Adjust sea level in some regions</a></li>
@@ -641,17 +798,17 @@ data.</p>
 <script>document.getElementById('searchbox').style.display = "block"</script>
 <h4>Latest Version</h4>
 <ul>
-  <li><a href="setrun_geoclaw.html">dev</a></li>
   <li><a href="../v5.14.x/setrun_geoclaw.html">v5.14.x</a></li>
+  <li><a href="setrun_geoclaw.html">dev</a></li>
 </ul>
 <h4>Older Versions</h4>
 <ul>
-  <li><a href="../v5.10.x/setrun_geoclaw.html">v5.10.x</a></li>
-  <li><a href="../v5.11.x/setrun_geoclaw.html">v5.11.x</a></li>
-  <li><a href="../v5.12.x/setrun_geoclaw.html">v5.12.x</a></li>
   <li><a href="../v5.7.x/setrun_geoclaw.html">v5.7.x</a></li>
   <li><a href="../v5.8.x/setrun_geoclaw.html">v5.8.x</a></li>
   <li><a href="../v5.9.x/setrun_geoclaw.html">v5.9.x</a></li>
+  <li><a href="../v5.10.x/setrun_geoclaw.html">v5.10.x</a></li>
+  <li><a href="../v5.11.x/setrun_geoclaw.html">v5.11.x</a></li>
+  <li><a href="../v5.12.x/setrun_geoclaw.html">v5.12.x</a></li>
 </ul>
 
         </div>
@@ -659,7 +816,7 @@ data.</p>
       <div class="clearer"></div>
     </div>
   <div class="footer">
-    &copy; Copyright CC-BY 2024, The Clawpack Development Team.
+    &copy; Copyright CC-BY 2026, The Clawpack Development Team.
     Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
   </div>
   <script>

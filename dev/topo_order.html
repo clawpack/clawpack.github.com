@@ -10,15 +10,15 @@
     <link rel="stylesheet" href="_static/layout.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="_static/flasky.css?v=59fe8e2d" />
-    <link rel="stylesheet" type="text/css" href="_static/graphviz.css?v=fd3f3429" />
+    <link rel="stylesheet" type="text/css" href="_static/graphviz.css?v=4ae1632d" />
     <script src="_static/documentation_options.js?v=3ce10a4d"></script>
-    <script src="_static/doctools.js?v=9a2dae69"></script>
-    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <link rel="icon" href="_static/clawicon.ico"/>
     <link rel="author" title="About these documents" href="about.html" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Python tools for working with topo and dtopo" href="topotools.html" />
+    <link rel="next" title="topo.data File Format" href="topodata_format.html" />
     <link rel="prev" title="Grid registration" href="grid_registration.html" /> 
   </head><body>
 <div id="main-wrapper" class="sphinx">
@@ -65,7 +65,7 @@
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="topotools.html" title="Python tools for working with topo and dtopo"
+          <a href="topodata_format.html" title="topo.data File Format"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="grid_registration.html" title="Grid registration"
@@ -85,6 +85,12 @@
 <span id="topo-order"></span><h1>Topography file ordering<a class="headerlink" href="#topography-file-ordering" title="Link to this heading">¶</a></h1>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
+<p>Many changes are being implemented in the way topo and dtopo
+files are handled, in both the Python tools and the Fortran code.
+See <a class="reference internal" href="topochanges.html#topochanges"><span class="std std-ref">Changes to topo and dtopo handling (planned for v5.15.0)</span></a> for a summary.</p>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
 <p>This feature has bugs in v5.13.0 and v5.13.1 and should not
 be used in those versions.  These bugs were fixed (we hope) in v5.14.0.
 See <a class="reference internal" href="release_5_14_0.html#release-5-14-0"><span class="std std-ref">v5.14.0 release notes</span></a> for more discussion.</p>
@@ -101,6 +107,12 @@ each point in the cell. Since each topofile (DEM) is on a rectangular grid with
 regular spacing <cite>dx</cite> and <cite>dy</cite>, the resolutions are compared by computing the
 cell areas <cite>dx*dy</cite>.  If two or more topofiles overlap a point in the cell
 then the finer one is used.</p>
+<p>This ordering is computed entirely in Python by
+<code class="docutils literal notranslate"><span class="pre">TopographyData._compute_priority_order</span></code> and written into <code class="docutils literal notranslate"><span class="pre">topo.data</span></code>
+before the Fortran run.  Files are written coarsest-first (finest last),
+matching the traditional GeoClaw listing order; the <strong>last</strong> file listed in
+<code class="docutils literal notranslate"><span class="pre">topo.data</span></code> is assigned rank 1 (highest priority) by Fortran.  No
+Fortran-side sorting occurs.</p>
 <p>This usually works fine but may not always be what is wanted. In particular
 there may be two DEMs at essentially the same resolution, but one is a more
 recent and hence a better dataset to use
@@ -111,8 +123,8 @@ resolutions are essentially identical, <cite>dx*dy</cite> maybe be slightly diff
 (perhaps at the roundoff level) and so it could be that the older one is viewed
 as “finer” and would be used preferentially.  Even if <cite>dx*dy</cite> is exactly the
 same, it is not obvious which one would be used in GeoClaw.
-(The one listed later in <cite>rundata.topo_data.topofiles</cite>
-would be considered finer in this case, with a relative tolerance of
+(The one listed last in <cite>rundata.topo_data.topofiles</cite>
+is given higher priority in this case, with a relative tolerance of
 0.001 used to judge whether the resolutions are the same).</p>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
@@ -128,12 +140,15 @@ produce the default behavior described above.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rundata</span><span class="o">.</span><span class="n">topo_data</span><span class="o">.</span><span class="n">override_order</span> <span class="o">=</span> <span class="kc">True</span>
 </pre></div>
 </div>
-<p>then the preference order is no longer based on the computed
-resolution. Instead it is assumed that the topo files in
-<cite>rundata.topo_data.topofiles</cite> are ordered from least preferable to most
-preferable (so normally you would list the coarsest DEM first, going down to
-the finest DEM, in order to reproduce the default behavior).
-This allows precise specification of the order of preference.</p>
+<p>then the preference order is no longer based on the computed resolution.
+Instead the list order in <cite>rundata.topo_data.topofiles</cite> is used as-is: the
+last file in the list is given the highest priority (rank 1).  Normally you
+should list the coarsest DEM first and the finest (highest-resolution) last,
+to reproduce the default behavior.  This allows precise specification of the
+order of preference when automatic sorting by resolution is not appropriate.</p>
+<p><code class="docutils literal notranslate"><span class="pre">override_order</span></code> is a Python-only attribute of <code class="docutils literal notranslate"><span class="pre">rundata.topo_data</span></code>.
+It controls how Python orders the list before writing <code class="docutils literal notranslate"><span class="pre">topo.data</span></code> but is
+not itself written to <code class="docutils literal notranslate"><span class="pre">topo.data</span></code> and has no Fortran-side counterpart.</p>
 <section id="resolution-of-dtopo-files">
 <h2>Resolution of dtopo files<a class="headerlink" href="#resolution-of-dtopo-files" title="Link to this heading">¶</a></h2>
 <p>Note that internally GeoClaw creates a topo array from each topofile read
@@ -206,7 +221,7 @@ values but also have the dtopo interpolated to their resolution).</p>
   <li><a href="contents.html">Documentation overview</a><ul>
   <li><a href="geoclaw.html">GeoClaw Description and Contents</a><ul>
       <li>Previous: <a href="grid_registration.html" title="previous chapter">Grid registration</a></li>
-      <li>Next: <a href="topotools.html" title="next chapter">Python tools for working with topo and dtopo</a></li>
+      <li>Next: <a href="topodata_format.html" title="next chapter">topo.data File Format</a></li>
   </ul></li>
   </ul></li>
 </ul>
@@ -242,17 +257,17 @@ values but also have the dtopo interpolated to their resolution).</p>
 <script>document.getElementById('searchbox').style.display = "block"</script>
 <h4>Latest Version</h4>
 <ul>
-  <li><a href="topo_order.html">dev</a></li>
   <li><a href="../v5.14.x/topo_order.html">v5.14.x</a></li>
+  <li><a href="topo_order.html">dev</a></li>
 </ul>
 <h4>Older Versions</h4>
 <ul>
-  <li><a href="../v5.10.x/index.html">v5.10.x</a></li>
-  <li><a href="../v5.11.x/index.html">v5.11.x</a></li>
-  <li><a href="../v5.12.x/index.html">v5.12.x</a></li>
   <li><a href="../v5.7.x/index.html">v5.7.x</a></li>
   <li><a href="../v5.8.x/index.html">v5.8.x</a></li>
   <li><a href="../v5.9.x/index.html">v5.9.x</a></li>
+  <li><a href="../v5.10.x/index.html">v5.10.x</a></li>
+  <li><a href="../v5.11.x/index.html">v5.11.x</a></li>
+  <li><a href="../v5.12.x/index.html">v5.12.x</a></li>
 </ul>
 
         </div>
@@ -260,7 +275,7 @@ values but also have the dtopo interpolated to their resolution).</p>
       <div class="clearer"></div>
     </div>
   <div class="footer">
-    &copy; Copyright CC-BY 2024, The Clawpack Development Team.
+    &copy; Copyright CC-BY 2026, The Clawpack Development Team.
     Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
   </div>
   <script>

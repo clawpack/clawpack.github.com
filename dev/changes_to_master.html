@@ -5,15 +5,15 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Changes to master since v5.13.1 &#8212; Clawpack dev documentation</title>
+    <title>Changes to master since v5.14.0 &#8212; Clawpack dev documentation</title>
     <link rel="stylesheet" href="_static/base.css" type="text/css" />
     <link rel="stylesheet" href="_static/layout.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="_static/flasky.css?v=59fe8e2d" />
-    <link rel="stylesheet" type="text/css" href="_static/graphviz.css?v=fd3f3429" />
+    <link rel="stylesheet" type="text/css" href="_static/graphviz.css?v=4ae1632d" />
     <script src="_static/documentation_options.js?v=3ce10a4d"></script>
-    <script src="_static/doctools.js?v=9a2dae69"></script>
-    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <link rel="icon" href="_static/clawicon.ico"/>
     <link rel="author" title="About these documents" href="about.html" />
     <link rel="index" title="Index" href="genindex.html" />
@@ -63,7 +63,7 @@
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="nav-item nav-item-0"><a href="contents.html">Clawpack dev documentation</a> &#187;</li>
-        <li class="nav-item nav-item-this"><a href="">Changes to master since v5.13.1</a></li> 
+        <li class="nav-item nav-item-this"><a href="">Changes to master since v5.14.0</a></li> 
       </ul>
     </div>  
 
@@ -72,10 +72,10 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <section id="changes-to-master-since-v5-13-1">
-<span id="changes-to-master"></span><h1>Changes to master since v5.13.1<a class="headerlink" href="#changes-to-master-since-v5-13-1" title="Link to this heading">¶</a></h1>
+  <section id="changes-to-master-since-v5-14-0">
+<span id="changes-to-master"></span><h1>Changes to master since v5.14.0<a class="headerlink" href="#changes-to-master-since-v5-14-0" title="Link to this heading">¶</a></h1>
 <p>Follow the links to see changes that have been made to the master branch of
-each repository since the last release (v5.13.1) on Sept. 12, 2025.</p>
+each repository since the last release (v5.14.0) on January 26, 2026.</p>
 <p>These changes should appear in the next release.  If you need them now,
 see <a class="reference internal" href="developers.html#developers"><span class="std std-ref">Developers’ Guide</span></a> for instructions on cloning and installing from the
 master branch.</p>
@@ -84,37 +84,120 @@ features listed below, click on the “dev” branch of the documentation, in
 the menu on the left hand side of this page.</p>
 <section id="changes-that-are-not-backward-compatible">
 <h2>Changes that are not backward compatible<a class="headerlink" href="#changes-that-are-not-backward-compatible" title="Link to this heading">¶</a></h2>
+<ul class="simple">
+<li><p><strong>NetCDF input units are now required, and recognized units are converted
+automatically (geoclaw).</strong>  NetCDF input variables must declare a CF
+<code class="docutils literal notranslate"><span class="pre">units</span></code> attribute.  A variable already in the contract unit (topo/dtopo
+<code class="docutils literal notranslate"><span class="pre">m</span></code>, wind <code class="docutils literal notranslate"><span class="pre">m/s</span></code>, pressure <code class="docutils literal notranslate"><span class="pre">Pa</span></code>) passes through unchanged; a
+<em>recognized</em> non-contract unit (e.g. <code class="docutils literal notranslate"><span class="pre">km</span></code>/<code class="docutils literal notranslate"><span class="pre">cm</span></code>, <code class="docutils literal notranslate"><span class="pre">hPa</span></code>/<code class="docutils literal notranslate"><span class="pre">mbar</span></code>,
+<code class="docutils literal notranslate"><span class="pre">knots</span></code>, or a <code class="docutils literal notranslate"><span class="pre">&quot;hours</span> <span class="pre">since</span> <span class="pre">...&quot;</span></code> time axis) is now <strong>converted
+automatically</strong> – Python resolves it to a multiplicative scale factor that
+Fortran applies on read.  A <strong>missing</strong> <code class="docutils literal notranslate"><span class="pre">units</span></code> attribute or an
+<strong>unrecognized</strong> unit still raises a <code class="docutils literal notranslate"><span class="pre">ValueError</span></code> rather than being
+silently misread (met forcing falls back to the storm format’s documented
+unit when the attribute is absent, e.g. NWS13/OWI pressure <code class="docutils literal notranslate"><span class="pre">mbar</span></code>).  Pass
+<code class="docutils literal notranslate"><span class="pre">assume_units</span></code> (<code class="docutils literal notranslate"><span class="pre">TopoInspector</span></code> / <code class="docutils literal notranslate"><span class="pre">Topography.read</span></code> via <code class="docutils literal notranslate"><span class="pre">nc_params</span></code>,
+or <code class="docutils literal notranslate"><span class="pre">MetInspector(assume_units=True)</span></code>) for a file that omits the attribute.
+A resolved field is also magnitude-checked: a pressure field mislabeled
+<code class="docutils literal notranslate"><span class="pre">Pa</span></code> but really <code class="docutils literal notranslate"><span class="pre">hPa</span></code>/<code class="docutils literal notranslate"><span class="pre">mbar</span></code> is auto-corrected with a warning, and a
+physically implausible field raises (bypass with <code class="docutils literal notranslate"><span class="pre">skip_sanity_check</span></code>).
+Met NetCDF forcing requires a CF <em>absolute</em> datetime time axis; a bare
+numeric time axis with no reference date is rejected.  See
+<span class="xref std std-ref">netcdf_input</span>.</p></li>
+</ul>
 </section>
 <section id="general-changes">
 <h2>General changes<a class="headerlink" href="#general-changes" title="Link to this heading">¶</a></h2>
 </section>
 <section id="changes-to-classic">
 <h2>Changes to classic<a class="headerlink" href="#changes-to-classic" title="Link to this heading">¶</a></h2>
-<p>See <a class="reference external" href="https://github.com/clawpack/classic/compare/v5.13.1...master">classic diffs</a></p>
+<p>See <a class="reference external" href="https://github.com/clawpack/classic/compare/v5.14.0...master">classic diffs</a></p>
 </section>
 <section id="changes-to-clawutil">
 <h2>Changes to clawutil<a class="headerlink" href="#changes-to-clawutil" title="Link to this heading">¶</a></h2>
-<p>See <a class="reference external" href="https://github.com/clawpack/clawutil/compare/v5.13.1...master">clawutil diffs</a></p>
+<p>See <a class="reference external" href="https://github.com/clawpack/clawutil/compare/v5.14.0...master">clawutil diffs</a></p>
 </section>
 <section id="changes-to-visclaw">
 <h2>Changes to visclaw<a class="headerlink" href="#changes-to-visclaw" title="Link to this heading">¶</a></h2>
-<p>See <a class="reference external" href="https://github.com/clawpack/visclaw/compare/v5.13.1...master">visclaw diffs</a></p>
+<p>See <a class="reference external" href="https://github.com/clawpack/visclaw/compare/v5.14.0...master">visclaw diffs</a></p>
 </section>
 <section id="changes-to-riemann">
 <h2>Changes to riemann<a class="headerlink" href="#changes-to-riemann" title="Link to this heading">¶</a></h2>
-<p>See <a class="reference external" href="https://github.com/clawpack/riemann/compare/v5.13.1...master">riemann diffs</a></p>
+<p>See <a class="reference external" href="https://github.com/clawpack/riemann/compare/v5.14.0...master">riemann diffs</a></p>
 </section>
 <section id="changes-to-amrclaw">
 <h2>Changes to amrclaw<a class="headerlink" href="#changes-to-amrclaw" title="Link to this heading">¶</a></h2>
-<p>See <a class="reference external" href="https://github.com/clawpack/amrclaw/compare/v5.13.1...master">amrclaw diffs</a></p>
+<p>See <a class="reference external" href="https://github.com/clawpack/amrclaw/compare/v5.14.0...master">amrclaw diffs</a></p>
 </section>
 <section id="changes-to-geoclaw">
 <h2>Changes to geoclaw<a class="headerlink" href="#changes-to-geoclaw" title="Link to this heading">¶</a></h2>
-<p>See <a class="reference external" href="https://github.com/clawpack/geoclaw/compare/v5.13.1...master">geoclaw diffs</a></p>
+<ul>
+<li><p><strong>Overview of changes related to topo and dtopo files</strong>
+See <a class="reference internal" href="topochanges.html#topochanges"><span class="std std-ref">Changes to topo and dtopo handling (planned for v5.15.0)</span></a>.</p></li>
+<li><p><strong>Topography preprocessing attributes.</strong>
+<a class="reference internal" href="topotools_module.html#clawpack.geoclaw.topotools.Topography" title="clawpack.geoclaw.topotools.Topography"><code class="xref py py-class docutils literal notranslate"><span class="pre">Topography</span></code></a> now supports seven
+preprocessing attributes (<code class="docutils literal notranslate"><span class="pre">crop_extent</span></code>, <code class="docutils literal notranslate"><span class="pre">coarsen</span></code>, <code class="docutils literal notranslate"><span class="pre">buffer</span></code>,
+<code class="docutils literal notranslate"><span class="pre">align</span></code>, <code class="docutils literal notranslate"><span class="pre">x_shift</span></code>, <code class="docutils literal notranslate"><span class="pre">z_shift</span></code>, <code class="docutils literal notranslate"><span class="pre">negate_z</span></code>) that are applied
+automatically when <a class="reference internal" href="topotools_module.html#clawpack.geoclaw.topotools.Topography.read" title="clawpack.geoclaw.topotools.Topography.read"><code class="xref py py-meth docutils literal notranslate"><span class="pre">read()</span></code></a>
+loads a file.  See <a class="reference internal" href="setrun_geoclaw.html#setrun-topo-preprocessing"><span class="std std-ref">Topography preprocessing attributes</span></a> for the full table
+and <a class="reference internal" href="topotools.html#topotools"><span class="std std-ref">Python tools for working with topo and dtopo</span></a> for usage examples and operation order.</p></li>
+<li><p><strong>CF-aware NetCDF reading.</strong>
+NetCDF topography files (<code class="docutils literal notranslate"><span class="pre">topo_type=4</span></code>) are now read via
+<a class="reference internal" href="netcdf_utils_module.html#clawpack.geoclaw.netcdf_utils.TopoInspector" title="clawpack.geoclaw.netcdf_utils.TopoInspector"><code class="xref py py-class docutils literal notranslate"><span class="pre">TopoInspector</span></code></a>, which auto-detects
+coordinate variable names using CF conventions (<code class="docutils literal notranslate"><span class="pre">standard_name</span></code>, <code class="docutils literal notranslate"><span class="pre">axis</span></code>,
+and common fallback names).  Files with non-standard coordinate names and
+non-standard dimension orders are handled automatically.
+<a class="reference internal" href="topotools_module.html#clawpack.geoclaw.topotools.Topography.read_header" title="clawpack.geoclaw.topotools.Topography.read_header"><code class="xref py py-meth docutils literal notranslate"><span class="pre">read_header()</span></code></a> also uses CF
+detection for type-4 files, enabling a lazy-load pattern where coordinates
+are available without loading the elevation array.
+See <a class="reference internal" href="topotools.html#topotools"><span class="std std-ref">Python tools for working with topo and dtopo</span></a> for an example.</p></li>
+<li><p><strong>Python-owned priority ordering.</strong>
+Topography files in <code class="docutils literal notranslate"><span class="pre">topo.data</span></code> are now sorted entirely in Python by
+<code class="xref py py-meth docutils literal notranslate"><span class="pre">_compute_priority_order()</span></code>
+before writing.  Files are written coarsest-first (finest last), matching
+the traditional GeoClaw listing order; the last file listed in <code class="docutils literal notranslate"><span class="pre">topo.data</span></code>
+is assigned rank 1 (highest priority) by Fortran, with no Fortran-side
+sorting.  <code class="docutils literal notranslate"><span class="pre">rundata.topo_data.override_order</span> <span class="pre">=</span> <span class="pre">True</span></code> preserves
+user-specified list order; when used, the finest (highest-resolution) file
+should be listed last.  See <a class="reference internal" href="topo_order.html#topo-order"><span class="std std-ref">Topography file ordering</span></a>.</p></li>
+<li><p><strong>topo_type=1 deprecated.</strong>
+Reading and writing <code class="docutils literal notranslate"><span class="pre">topo_type=1</span></code> (<code class="docutils literal notranslate"><span class="pre">x</span> <span class="pre">y</span> <span class="pre">z</span></code> one-point-per-line ASCII)
+now emit a <code class="docutils literal notranslate"><span class="pre">DeprecationWarning</span></code>.  Setting any preprocessing attribute
+before reading a type-1 file raises <code class="docutils literal notranslate"><span class="pre">NotImplementedError</span></code>.  To convert:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">topo</span> <span class="o">=</span> <span class="n">Topography</span><span class="p">()</span>
+<span class="n">topo</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;old.tt1&#39;</span><span class="p">,</span> <span class="n">topo_type</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>   <span class="c1"># gives DeprecationWarning</span>
+<span class="n">topo</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;new.tt2&#39;</span><span class="p">,</span> <span class="n">topo_type</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+</pre></div>
+</div>
+</li>
+<li><p><strong>New</strong> <code class="docutils literal notranslate"><span class="pre">topo.data</span></code> <strong>format.</strong>
+Each per-file block in <code class="docutils literal notranslate"><span class="pre">topo.data</span></code> now contains 9 lines (up from 2),
+recording all preprocessing attributes.  See <span class="xref std std-ref">topodata_format</span> for
+the complete format specification.</p></li>
+<li><p><strong>dtopo NetCDF (</strong><code class="docutils literal notranslate"><span class="pre">dtopo_type=4</span></code><strong>).</strong>
+<a class="reference internal" href="dtopotools_module.html#clawpack.geoclaw.dtopotools.DTopography" title="clawpack.geoclaw.dtopotools.DTopography"><code class="xref py py-class docutils literal notranslate"><span class="pre">DTopography</span></code></a> reads and writes
+CF-compliant NetCDF dtopo files.  The optional <code class="docutils literal notranslate"><span class="pre">time_reference</span></code> attribute
+selects a CF datetime time axis (<code class="docutils literal notranslate"><span class="pre">units</span> <span class="pre">=</span> <span class="pre">&quot;seconds</span> <span class="pre">since</span> <span class="pre">&lt;ref&gt;&quot;</span></code>) that a
+plain <code class="docutils literal notranslate"><span class="pre">xarray.open_dataset</span></code> decodes to <code class="docutils literal notranslate"><span class="pre">datetime64</span></code>; without it a bare
+<code class="docutils literal notranslate"><span class="pre">units</span> <span class="pre">=</span> <span class="pre">&quot;seconds&quot;</span></code> (simulation-relative) axis is written.  The reader
+scales the time axis by its CF <code class="docutils literal notranslate"><span class="pre">units</span></code>, fixing an earlier bug where a
+<code class="docutils literal notranslate"><span class="pre">&quot;hours&quot;</span></code>/<code class="docutils literal notranslate"><span class="pre">&quot;minutes&quot;</span></code> axis was misread as seconds.  See
+<span class="xref std std-ref">netcdf_input</span> and <a class="reference internal" href="dtopo.html#dtopo-formats"><span class="std std-ref">dtopo file formats</span></a>.</p></li>
+<li><p><strong>NetCDF write dtype control.</strong>
+<code class="docutils literal notranslate"><span class="pre">Topography.write(topo_type=4,</span> <span class="pre">z_dtype=...)</span></code> and
+<code class="docutils literal notranslate"><span class="pre">DTopography.write(dtopo_type=4,</span> <span class="pre">dz_dtype=...)</span></code> override the on-disk
+elevation/deformation dtype (default <code class="docutils literal notranslate"><span class="pre">&quot;float32&quot;</span></code>; pass <code class="docutils literal notranslate"><span class="pre">&quot;float64&quot;</span></code> for
+full double precision).</p></li>
+<li><p><strong>Robust NetCDF file opening.</strong>
+A NetCDF backend engine is now selected explicitly, so a valid file opens
+even when its name uses a non-standard extension (e.g. <code class="docutils literal notranslate"><span class="pre">.dtt3</span></code>) that
+xarray’s extension-based engine guessing would not recognize.</p></li>
+</ul>
+<p>See <a class="reference external" href="https://github.com/clawpack/geoclaw/compare/v5.14.0...master">geoclaw diffs</a></p>
 </section>
 <section id="changes-to-pyclaw">
 <h2>Changes to PyClaw<a class="headerlink" href="#changes-to-pyclaw" title="Link to this heading">¶</a></h2>
-<p>See <a class="reference external" href="https://github.com/clawpack/pyclaw/compare/v5.13.1...master">pyclaw diffs</a></p>
+<p>See <a class="reference external" href="https://github.com/clawpack/pyclaw/compare/v5.14.0...master">pyclaw diffs</a></p>
 </section>
 </section>
 <section id="other-clawpack-repositories">
@@ -122,9 +205,9 @@ the menu on the left hand side of this page.</p>
 <p>The repositories below are not included in the Clawpack tarfile or pip
 install, but changes to these repositories may also be of interest.</p>
 <ul class="simple">
-<li><p><a class="reference external" href="https://github.com/clawpack/apps/compare/v5.13.1...master">apps diffs</a></p></li>
+<li><p><a class="reference external" href="https://github.com/clawpack/apps/compare/v5.14.0...master">apps diffs</a></p></li>
 <li><p><a class="reference external" href="https://github.com/clawpack/doc/compare/v5.13.x...dev">doc diffs</a></p></li>
-<li><p><a class="reference external" href="https://github.com/clawpack/docker-files/compare/v5.13.1...master">docker-files diffs</a></p></li>
+<li><p><a class="reference external" href="https://github.com/clawpack/docker-files/compare/v5.14.0...master">docker-files diffs</a></p></li>
 </ul>
 </section>
 
@@ -143,7 +226,7 @@ install, but changes to these repositories may also be of interest.</p>
   <div>
     <h3><a href="contents.html">Table of Contents</a></h3>
     <ul>
-<li><a class="reference internal" href="#">Changes to master since v5.13.1</a><ul>
+<li><a class="reference internal" href="#">Changes to master since v5.14.0</a><ul>
 <li><a class="reference internal" href="#changes-that-are-not-backward-compatible">Changes that are not backward compatible</a></li>
 <li><a class="reference internal" href="#general-changes">General changes</a></li>
 <li><a class="reference internal" href="#changes-to-classic">Changes to classic</a></li>
@@ -195,17 +278,17 @@ install, but changes to these repositories may also be of interest.</p>
 <script>document.getElementById('searchbox').style.display = "block"</script>
 <h4>Latest Version</h4>
 <ul>
-  <li><a href="changes_to_master.html">dev</a></li>
   <li><a href="../v5.14.x/changes_to_master.html">v5.14.x</a></li>
+  <li><a href="changes_to_master.html">dev</a></li>
 </ul>
 <h4>Older Versions</h4>
 <ul>
-  <li><a href="../v5.10.x/changes_to_master.html">v5.10.x</a></li>
-  <li><a href="../v5.11.x/changes_to_master.html">v5.11.x</a></li>
-  <li><a href="../v5.12.x/changes_to_master.html">v5.12.x</a></li>
   <li><a href="../v5.7.x/changes_to_master.html">v5.7.x</a></li>
   <li><a href="../v5.8.x/changes_to_master.html">v5.8.x</a></li>
   <li><a href="../v5.9.x/changes_to_master.html">v5.9.x</a></li>
+  <li><a href="../v5.10.x/changes_to_master.html">v5.10.x</a></li>
+  <li><a href="../v5.11.x/changes_to_master.html">v5.11.x</a></li>
+  <li><a href="../v5.12.x/changes_to_master.html">v5.12.x</a></li>
 </ul>
 
         </div>
@@ -213,7 +296,7 @@ install, but changes to these repositories may also be of interest.</p>
       <div class="clearer"></div>
     </div>
   <div class="footer">
-    &copy; Copyright CC-BY 2024, The Clawpack Development Team.
+    &copy; Copyright CC-BY 2026, The Clawpack Development Team.
     Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
   </div>
   <script>

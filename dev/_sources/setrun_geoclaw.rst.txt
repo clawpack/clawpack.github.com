@@ -155,26 +155,111 @@ See :ref:`topo` for more information about specifying topography (and
 bathymetry) data files in GeoClaw.
 
 
-.. attribute:: rundata.topo_data.topofiles : list of lists
+.. attribute:: rundata.topo_data.topofiles : list
 
-   *topofiles* should be a list of the form *[file1info, file2info, etc.]*
-   where each element is itself a list of the form 
+   A list of topography file entries.  The preferred form uses
+   :class:`~clawpack.geoclaw.topotools.Topography` objects::
 
-     [topotype, fname]
+      from clawpack.geoclaw.topotools import Topography
 
-   with values
+      t = Topography()
+      t.path = 'etopo1.tt2'
+      t.topo_type = 2
+      rundata.topo_data.topofiles.append(t)
 
-     *topotype* : integer
+   .. deprecated::
+      The ``[topotype, fname]`` list format is deprecated.  It still works
+      but emits a ``DeprecationWarning``.  Use ``Topography`` objects as
+      shown above.
 
-       1,2 or 3 depending on the format of the file (see :ref:`topo`).
+   **Note:** Starting in v5.8.0 implicitly specifying a flag region for
+   AMR is no longer supported in the specification of a topo file.
+   For more about controlling AMR in various regions, see :ref:`flagregions`.
 
-     *fname* : string
+   See :ref:`topo` for information about the topo file formats
+   (``topo_type`` values 2, 3, 4).
 
-       the name of the topo file.
+   See :ref:`topo_order` for how priority is determined when topo files
+   overlap, and :ref:`topodata_format` for the ``topo.data`` file format.
 
-    **Note:** Starting in v5.8.0 implicitly specifying a flag region for
-    AMR is no longer supported in the specification of a topo file.
-    For more about controlling AMR in various regions, see :ref:`flagregions`.
+.. _setrun_topo_preprocessing:
+
+Topography preprocessing attributes
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Each :class:`~clawpack.geoclaw.topotools.Topography` entry in ``topofiles``
+supports eight preprocessing attributes that are applied automatically when
+the file is loaded by :meth:`~clawpack.geoclaw.topotools.Topography.read`.
+Set them on the object before appending to ``topofiles``:
+
+.. list-table::
+   :header-rows: 1
+   :widths: 16 16 10 48
+
+   * - Attribute
+     - Type
+     - Default
+     - Description
+   * - ``crop_extent``
+     - list or None
+     - ``None``
+     - ``[x1, x2, y1, y2]`` crop region.
+   * - ``coarsen``
+     - int
+     - ``1``
+     - Stride-subsampling factor (1 = no coarsen).
+   * - ``buffer``
+     - int
+     - ``0``
+     - Grid-point margin outside crop region.
+   * - ``align``
+     - tuple or None
+     - ``None``
+     - ``(x, y)`` alignment for coarsened grids.
+   * - ``x_shift``
+     - float
+     - ``0.0``
+     - Constant added to all x coordinates.
+   * - ``y_shift``
+     - float
+     - ``0.0``
+     - Constant added to all y coordinates.
+   * - ``z_shift``
+     - float
+     - ``0.0``
+     - Constant added to non-missing Z values.
+   * - ``negate_z``
+     - bool
+     - ``False``
+     - If ``True``, flip the sign of all Z values.
+
+.. note::
+
+   **Non-obvious behaviors:**
+
+   - ``crop_extent`` is a preprocessing input. It is distinct from
+     ``Topography.extent``, which is a read-only property returning the
+     spatial bounds of the already-loaded data.
+
+   - ``buffer`` is in grid points, not degrees.  Float values are truncated
+     via ``int()``, so ``buffer=0.5`` is equivalent to ``buffer=0``.
+
+   - ``negate_z`` is independent of the ``topo_type < 0`` sign convention.
+     If both ``topo_type < 0`` **and** ``negate_z=True`` are active, two
+     sign flips are applied and the result is the original Z (net identity).
+
+   - ``coarsen`` uses stride subsampling (every nth point), not cell
+     averaging.
+
+Example using several attributes::
+
+   t = Topography()
+   t.path = 'gebco_2023.nc'
+   t.topo_type = 4
+   t.crop_extent = [-100., -60., 10., 50.]
+   t.coarsen = 2
+   t.z_shift = 10.0
+   rundata.topo_data.topofiles.append(t)
 
 .. attribute:: rundata.dtopo_data.dtopofiles : list of lists
 
@@ -384,41 +469,47 @@ Fixed grid output
 Storm Specification Data
 ------------------------
 
-.. attribute:: rundata.surge_data.wind_forcing : bool
+.. note::
+
+   ``rundata.met_data`` is the meteorological-forcing name for these settings;
+   ``rundata.surge_data`` remains an accepted alias for the same object.  The
+   settings are written to the ``surge.data`` file that GeoClaw reads.
+
+.. attribute:: rundata.met_data.wind_forcing : bool
 
    Includes the wind forcing term if `True`.  The drag coefficient is specified
-   by `rundata.surge_data.drag_law`.
+   by `rundata.met_data.drag_law`.
 
-.. attribute:: rundata.surge_data.drag_law : integer
+.. attribute:: rundata.met_data.drag_law : integer
 
    This specifies how to deterimine the wind drag coefficient.  Valid options
    include include `0` implying use no wind drag (effectively eliminates the
    wind source term but still computes the wind), `1` uses the Garret wind
    drag law, and `2` uses the Powell (2006) wind drag law.
 
-.. attribute:: rundata.surge_data.pressure_forcing : bool
+.. attribute:: rundata.met_data.pressure_forcing : bool
 
    Includes the pressure forcing term if `True`.
 
-.. attribute:: rundata.surge_data.wind_index : int
+.. attribute:: rundata.met_data.wind_index : int
 
    Specifies at what index into the `aux` array the wind velocities are stored.
    Note that this is Python indexed in the setrun but will be corrected in the
    FORTRAN code (1 is added to the index).
 
-.. attribute:: rundata.surge_data.pressure_index : int
+.. attribute:: rundata.met_data.pressure_index : int
 
    Specifies at what index into the `aux` array the wind velocities are stored.
    Note that this is Python indexed in the setrun but will be corrected in the
    FORTRAN code (1 is added to the index).
 
-.. attribute:: rundata.surge_data.display_landfall_time : bool
+.. attribute:: rundata.met_data.display_landfall_time : bool
 
    Sets whether the console output displays time relative to land fall in days.
    In GeoClaw versions past 5.5 this only deterimines whether the time is 
    displayed in seconds or days.
 
-.. attribute:: rundata.surge_data.wind_refine : list
+.. attribute:: rundata.met_data.wind_refine : list
 
    Similar to the `speed_tolerance` data, cells are flagged for refinement at 
    a level if the magnitude of the wind velocity in m/s is greater than the 
@@ -429,31 +520,76 @@ Storm Specification Data
    40.0 would refine to level 4.  This can also be set to a boolean which if
    `False` disables wind based refinement.
 
-.. attribute:: rundata.surge_data.R_refine : list
+.. attribute:: rundata.met_data.R_refine : list
 
    Similar to the `wind_refine` data, cells are flagged based on the radial
    distance to the storm's center.  This can also be set to a boolean which if
    `False` disables storm radial based refinement.
 
-.. attribute:: rundata.surge_data.storm_specification_type : int
+.. attribute:: rundata.met_data.storm_family : string
 
-   Specifies the type of storm being used.  Positive options refer to a 
-   parameterized storm model where as negative integers refer to fully 
-   specified storms, for instance from HWRF, to be specified.
+   The forcing family, and the preferred (explicit) way to select forcing
+   together with ``storm_subtype``.  Valid values:
 
-   Valid options 
+    - ``"parametric"``: an analytic model with a storm center/track (see
+      ``storm_subtype`` for the model list).
+    - ``"gridded"``: file-backed wind/pressure fields (OWI/ASCII or NetCDF).
+    - ``"none"``: forcing off.
 
-    - `-1`: The input data is specified in the HWRF format.
-    - `0`: No storm specified
-    - `1`: Parameterized storm requested using the Holland 1980 modeled storm.
-    - `2`: Parameterized storm requested using the Holland 2010 modeled storm.
-    - `3`: Parameterized storm requested using the Chava, Lin, Emmanuel modeled 
-      storm.
+.. attribute:: rundata.met_data.storm_subtype : string
 
-.. attribute:: rundata.surge_data.storm_file : string
+   The forcing subtype within the family.  For ``"parametric"`` this is a model
+   name -- one of ``"holland80"``, ``"holland2008"``, ``"holland2010"``,
+   ``"cle"``, ``"slosh"``, ``"rankine"``, ``"modified_rankine"``,
+   ``"demaria"``, or ``"willoughby"``.  For ``"gridded"`` use ``"gridded"``
+   (the concrete OWI/NetCDF format is carried by the storm descriptor file).
+
+.. attribute:: rundata.met_data.storm_specification_type : int or string
+
+   Legacy forcing selector, retained for backwards compatibility and still
+   fully supported.  Used when ``storm_family``/``storm_subtype`` are not set;
+   it may be a model-name string (e.g. ``'holland80'``, ``'data'``) or the
+   signed integer code below, and resolves to the same forcing.
+
+   Integer codes: ``0`` no storm; positive values select a parametric model
+   (``1`` Holland 1980, ``2`` Holland 2010, ``3`` Chavas--Lin--Emanuel, ``4``
+   SLOSH, ``5`` Rankine, ``6`` modified Rankine, ``7`` DeMaria, ``8`` Holland
+   2008, ``9`` Willoughby); a negative value (``-1``) selects gridded/data
+   forcing.
+
+.. attribute:: rundata.met_data.storm_file : string
 
    Specifies the path to the storm data.  IF `storm_specification_type > 0` then
-   this should point to a GeoClaw formatted storm file (see :ref:`storm_module` for 
+   this should point to a GeoClaw formatted storm file (see :ref:`storm_module` for
    details).  If `storm_specification < 0` then this should either specify a path
    to files specifying the storm or a single file depending on the type of input
    data.
+
+.. attribute:: rundata.met_data.storm_time_scale : float
+
+   A multiplicative scale factor applied to the storm's time axis.  Values
+   greater than 1 slow the storm down (it takes longer to traverse the
+   domain); values less than 1 speed it up.  The default is ``1.0`` (no
+   scaling).  This is primarily useful for sensitivity studies and for
+   creating synthetic storms whose tracks are spatially identical to a
+   historical event but travel at a different speed.
+
+.. attribute:: rundata.met_data.t_ramp_on : float
+
+   Number of seconds over which the wind/pressure forcing ramps on after the
+   simulation start time.  ``0.0`` (the default) disables the onset ramp.
+   Useful for avoiding an impulsive start when the forcing is already
+   significant at ``t0``.
+
+.. attribute:: rundata.met_data.t_ramp_off : float
+
+   Number of seconds over which the wind/pressure forcing ramps off before the
+   final time.  ``0.0`` (the default) disables the cutoff ramp.
+
+.. attribute:: rundata.met_data.rotation_override : int or string
+
+   Overrides the hemisphere-based sense of the storm's rotation.  The default
+   (``0`` or ``"normal"``) chooses the rotation from the hemisphere of the
+   storm center; ``1`` / ``"N"`` forces northern (counter-clockwise) and
+   ``2`` / ``"S"`` forces southern (clockwise).  Primarily useful for
+   idealized or cross-hemisphere synthetic storms.

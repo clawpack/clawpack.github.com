@@ -10,10 +10,10 @@
     <link rel="stylesheet" href="_static/layout.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="_static/flasky.css?v=59fe8e2d" />
-    <link rel="stylesheet" type="text/css" href="_static/graphviz.css?v=fd3f3429" />
+    <link rel="stylesheet" type="text/css" href="_static/graphviz.css?v=4ae1632d" />
     <script src="_static/documentation_options.js?v=3ce10a4d"></script>
-    <script src="_static/doctools.js?v=9a2dae69"></script>
-    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <link rel="icon" href="_static/clawicon.ico"/>
     <link rel="author" title="About these documents" href="about.html" />
     <link rel="index" title="Index" href="genindex.html" />
@@ -137,6 +137,16 @@ Clawpack compilation to support optional dependencies, such as NetCDF support,
 and some testing abilities.  The <cite>PPFLAGS</cite> environment variable is meant to
 provide further control of the pre-processor.</p>
 </section>
+<section id="compiling-with-netcdf-support">
+<span id="fortran-netcdf"></span><h2>Compiling with NetCDF Support<a class="headerlink" href="#compiling-with-netcdf-support" title="Link to this heading">¶</a></h2>
+<p>For NetCDF we provide convenience flags for compiling with the NetCDF library:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>FFLAGS = -DNETCDF $(NETCDF_FFLAGS)
+LFLAGS = $(NETCDF_LFLAGS)
+</pre></div>
+</div>
+<p>These flags are determined using the utility <cite>nf-config</cite> and <cite>pkg-config</cite>. If
+these are not available the older <cite>NETCDF4_DIR</cite> is used and still supported.</p>
+</section>
 <section id="gfortran-compiler">
 <span id="fortran-gfortran"></span><h2>gfortran compiler<a class="headerlink" href="#gfortran-compiler" title="Link to this heading">¶</a></h2>
 <p><em>Some useful flags:</em></p>
@@ -158,14 +168,6 @@ provide further control of the pre-processor.</p>
 <p>In this case you should also set some  environment variables.  See
 <a class="reference internal" href="openmp.html#openmp"><span class="std std-ref">Using OpenMP</span></a> for details.</p>
 <p><strong>Note:</strong> Versions of gfortran before 4.6 are known to have OpenMP bugs.</p>
-</li>
-<li><p>For using NetCDF:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>FFLAGS = -DNETCDF -lnetcdf -I$(NETCDF4_DIR)/include
-LFLAGS = -lnetcdf
-</pre></div>
-</div>
-<p>The <cite>FFLAGS</cite> can also be put into <cite>PPFLAGS</cite>.  Note that the variable
-<cite>NETCDF4_DIR</cite> should be defined in the environment.</p>
 </li>
 </ul>
 </section>
@@ -226,6 +228,7 @@ LFLAGS = -lnetcdf
 <li><a class="reference internal" href="#fflags-environment-variable"><cite>FFLAGS</cite> environment variable</a></li>
 <li><a class="reference internal" href="#lflags-environment-variable"><cite>LFLAGS</cite> environment variable</a></li>
 <li><a class="reference internal" href="#pre-processor-and-the-ppflags-environment-variable">Pre-Processor and the <cite>PPFLAGS</cite> environment variable</a></li>
+<li><a class="reference internal" href="#compiling-with-netcdf-support">Compiling with NetCDF Support</a></li>
 <li><a class="reference internal" href="#gfortran-compiler">gfortran compiler</a></li>
 <li><a class="reference internal" href="#intel-fortran-compiler">Intel fortran compiler</a></li>
 </ul>
@@ -271,17 +274,17 @@ LFLAGS = -lnetcdf
 <script>document.getElementById('searchbox').style.display = "block"</script>
 <h4>Latest Version</h4>
 <ul>
-  <li><a href="fortran_compilers.html">dev</a></li>
   <li><a href="../v5.14.x/fortran_compilers.html">v5.14.x</a></li>
+  <li><a href="fortran_compilers.html">dev</a></li>
 </ul>
 <h4>Older Versions</h4>
 <ul>
-  <li><a href="../v5.10.x/fortran_compilers.html">v5.10.x</a></li>
-  <li><a href="../v5.11.x/fortran_compilers.html">v5.11.x</a></li>
-  <li><a href="../v5.12.x/fortran_compilers.html">v5.12.x</a></li>
   <li><a href="../v5.7.x/fortran_compilers.html">v5.7.x</a></li>
   <li><a href="../v5.8.x/fortran_compilers.html">v5.8.x</a></li>
   <li><a href="../v5.9.x/fortran_compilers.html">v5.9.x</a></li>
+  <li><a href="../v5.10.x/fortran_compilers.html">v5.10.x</a></li>
+  <li><a href="../v5.11.x/fortran_compilers.html">v5.11.x</a></li>
+  <li><a href="../v5.12.x/fortran_compilers.html">v5.12.x</a></li>
 </ul>
 
         </div>
@@ -289,7 +292,7 @@ LFLAGS = -lnetcdf
       <div class="clearer"></div>
     </div>
   <div class="footer">
-    &copy; Copyright CC-BY 2024, The Clawpack Development Team.
+    &copy; Copyright CC-BY 2026, The Clawpack Development Team.
     Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
   </div>
   <script>

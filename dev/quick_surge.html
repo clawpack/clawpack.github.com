@@ -10,10 +10,10 @@
     <link rel="stylesheet" href="_static/layout.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="_static/flasky.css?v=59fe8e2d" />
-    <link rel="stylesheet" type="text/css" href="_static/graphviz.css?v=fd3f3429" />
+    <link rel="stylesheet" type="text/css" href="_static/graphviz.css?v=4ae1632d" />
     <script src="_static/documentation_options.js?v=3ce10a4d"></script>
-    <script src="_static/doctools.js?v=9a2dae69"></script>
-    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <link rel="icon" href="_static/clawicon.ico"/>
     <link rel="author" title="About these documents" href="about.html" />
     <link rel="index" title="Index" href="genindex.html" />
@@ -84,49 +84,110 @@
   <section id="quick-start-guide-for-storm-surge-modeling">
 <span id="quick-surge"></span><h1>Quick start guide for storm surge modeling<a class="headerlink" href="#quick-start-guide-for-storm-surge-modeling" title="Link to this heading">¶</a></h1>
 <p>See also this <a class="reference external" href="https://www.youtube.com/watch?v=YurKRmYgGfk&amp;t=10s">youtube video</a>
-and the related materials from the <a class="reference external" href="http://www.clawpack.org/geoclawdev-2020/">2020 GeoClaw Developers Workshop</a>.</p>
-<p>To get started with a storm surge computation it is best to refer to a previous
-working example.  For example, you might start with
-<cite>$CLAW/geoclaw/examples/storm-surge/ike</cite>.  There are also a number of additional
-examples in the <cite>$CLAW/geoclaw/examples/storm-surge</cite> directory as well as some
-in the <cite>$CLAW/apps/surge-examples</cite> directory (this is actually a repository of
-examples that is actively updated).  The primary input that one needs to provide
-for a new example usually involves two data source</p>
-<blockquote>
-<div><ul class="simple">
-<li><p>Topography data:  Data that specifies the topography and bathymetry of the
-region around the area of interest.  For storm surge computations it is
-generally good practice to include entire oceanic basins so that you can
-ensure that flow into and out of the basin is resolved by the computation
-and is sufficiently distant from the computational domain’s boundaries.</p></li>
-<li><p>Storm data:  Of course we need to specify the particular storm that you
-are interested in.  There are a number of ways to specify a storm which
-are described in <a class="reference internal" href="setrun_geoclaw.html#setrun-surge"><span class="std std-ref">Storm Specification Data</span></a>.  Sources for parameterized storms
-can also be found in <a class="reference internal" href="surgedata.html#surgedata"><span class="std std-ref">Sources for Storm Surge Data</span></a> and a description of how to include
-them in <span class="xref std std-ref">_surge_module</span>.</p></li>
-</ul>
-</div></blockquote>
-<div class="admonition warning">
-<p class="admonition-title">Warning</p>
-<p>This is a work in progress and only partially has been filled out.
-If you are interested in the rest of the steps or wish to contribute your
-own workflow please let us know!</p>
+and the related materials from the <a class="reference external" href="http://www.clawpack.org/geoclawdev-2020/">2020 GeoClaw Developers Workshop</a>, the <a class="reference internal" href="met_forcing.html#met-forcing"><span class="std std-ref">Meteorological (Storm) Forcing</span></a> overview,
+and the <a class="reference internal" href="setrun_geoclaw.html#setrun-surge"><span class="std std-ref">Storm Specification Data</span></a> reference.</p>
+<p>The quickest way to get started is to run a working example and then adapt it.
+A good starting point is <code class="docutils literal notranslate"><span class="pre">$CLAW/geoclaw/examples/storm-surge/ike</span></code> (Hurricane
+Ike, parametric Holland 1980 forcing).  There are further examples in
+<code class="docutils literal notranslate"><span class="pre">$CLAW/geoclaw/examples/storm-surge</span></code> and in the actively maintained
+<code class="docutils literal notranslate"><span class="pre">$CLAW/apps/surge-examples</span></code> repository.</p>
+<section id="running-the-ike-example">
+<h2>Running the Ike example<a class="headerlink" href="#running-the-ike-example" title="Link to this heading">¶</a></h2>
+<p>From <code class="docutils literal notranslate"><span class="pre">$CLAW/geoclaw/examples/storm-surge/ike</span></code>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">make</span> <span class="nb">all</span>
+</pre></div>
 </div>
-<p>Here we will concentrate on changing the Hurricane Ike example into one for
-Hurricane Katrina.</p>
+<p>This downloads the topography, writes the storm forcing file, compiles
+<code class="docutils literal notranslate"><span class="pre">xgeoclaw</span></code>, runs the simulation, and produces plots in <code class="docutils literal notranslate"><span class="pre">_plots</span></code>.  The
+individual steps are also available as separate targets:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">make</span> <span class="o">.</span><span class="n">exe</span>       <span class="c1"># compile xgeoclaw</span>
+<span class="n">make</span> <span class="n">data</span>       <span class="c1"># write the *.data files from setrun.py</span>
+<span class="n">make</span> <span class="o">.</span><span class="n">output</span>    <span class="c1"># run the simulation</span>
+<span class="n">make</span> <span class="o">.</span><span class="n">plots</span>     <span class="c1"># generate plots with setplot.py</span>
+</pre></div>
+</div>
+</section>
+<section id="the-two-inputs-a-surge-computation-needs">
+<h2>The two inputs a surge computation needs<a class="headerlink" href="#the-two-inputs-a-surge-computation-needs" title="Link to this heading">¶</a></h2>
+<ul class="simple">
+<li><p><strong>Topography / bathymetry</strong> for the region of interest.  For surge it is good
+practice to include entire oceanic basins so that flow into and out of the
+basin is resolved and the domain boundaries are far from the area of interest.
+See <a class="reference internal" href="topo.html#topo"><span class="std std-ref">Topography data</span></a> for supported formats.</p></li>
+<li><p><strong>Storm forcing</strong> describing the wind and pressure.  There are two families
+(parametric and gridded); see <a class="reference internal" href="met_forcing.html#met-forcing"><span class="std std-ref">Meteorological (Storm) Forcing</span></a> for the overview and
+<a class="reference internal" href="surgedata.html#surgedata"><span class="std std-ref">Sources for Storm Surge Data</span></a> for data sources.</p></li>
+</ul>
+</section>
+<section id="configuring-the-forcing-in-setrun-py">
+<h2>Configuring the forcing in <code class="docutils literal notranslate"><span class="pre">setrun.py</span></code><a class="headerlink" href="#configuring-the-forcing-in-setrun-py" title="Link to this heading">¶</a></h2>
+<p>Storm forcing is configured through <code class="docutils literal notranslate"><span class="pre">rundata.met_data</span></code> (full reference in
+<a class="reference internal" href="setrun_geoclaw.html#setrun-surge"><span class="std std-ref">Storm Specification Data</span></a>).  The Ike example enables the wind and pressure source
+terms and selects a parametric Holland 1980 storm:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">data</span> <span class="o">=</span> <span class="n">rundata</span><span class="o">.</span><span class="n">met_data</span>
+<span class="n">data</span><span class="o">.</span><span class="n">wind_forcing</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="n">data</span><span class="o">.</span><span class="n">pressure_forcing</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="n">data</span><span class="o">.</span><span class="n">drag_law</span> <span class="o">=</span> <span class="mi">1</span>                      <span class="c1"># Garratt wind drag</span>
+
+<span class="c1"># Preferred, explicit forcing selection:</span>
+<span class="n">data</span><span class="o">.</span><span class="n">storm_family</span> <span class="o">=</span> <span class="s2">&quot;parametric&quot;</span>
+<span class="n">data</span><span class="o">.</span><span class="n">storm_subtype</span> <span class="o">=</span> <span class="s2">&quot;holland80&quot;</span>
+<span class="n">data</span><span class="o">.</span><span class="n">storm_file</span> <span class="o">=</span> <span class="s2">&quot;ike.storm&quot;</span>          <span class="c1"># GeoClaw-format storm file</span>
+
+<span class="c1"># AMR refinement on wind speed (m/s) and distance to the eye (m):</span>
+<span class="n">data</span><span class="o">.</span><span class="n">wind_refine</span> <span class="o">=</span> <span class="p">[</span><span class="mf">20.0</span><span class="p">,</span> <span class="mf">40.0</span><span class="p">,</span> <span class="mf">60.0</span><span class="p">]</span>
+<span class="n">data</span><span class="o">.</span><span class="n">R_refine</span> <span class="o">=</span> <span class="p">[</span><span class="mf">60.0e3</span><span class="p">,</span> <span class="mf">40.0e3</span><span class="p">,</span> <span class="mf">20.0e3</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>The legacy selector <code class="docutils literal notranslate"><span class="pre">data.storm_specification_type</span> <span class="pre">=</span> <span class="pre">'holland80'</span></code> is
+equivalent and still supported.</p>
+</section>
+<section id="building-the-storm-file">
+<h2>Building the storm file<a class="headerlink" href="#building-the-storm-file" title="Link to this heading">¶</a></h2>
+<p>The GeoClaw-format storm file (<code class="docutils literal notranslate"><span class="pre">ike.storm</span></code> above) is produced from a track in
+one of the ingest formats (ATCF, HURDAT, IBTrACS, JMA, TCVITALS).  Using the
+Python API (see <a class="reference internal" href="storm_module.html#storm-module"><span class="std std-ref">Meteorological Forcing Python API</span></a>):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">clawpack.geoclaw.met.storm</span><span class="w"> </span><span class="kn">import</span> <span class="n">Storm</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="n">storm</span> <span class="o">=</span> <span class="n">Storm</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="s2">&quot;track.dat&quot;</span><span class="p">,</span> <span class="n">file_format</span><span class="o">=</span><span class="s2">&quot;ATCF&quot;</span><span class="p">)</span>
+<span class="n">storm</span><span class="o">.</span><span class="n">time_offset</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">datetime64</span><span class="p">(</span><span class="s2">&quot;2008-09-13T07:00&quot;</span><span class="p">)</span>   <span class="c1"># e.g. landfall</span>
+<span class="n">storm</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;ike.storm&quot;</span><span class="p">,</span> <span class="n">file_format</span><span class="o">=</span><span class="s2">&quot;geoclaw&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="plotting-and-gauges">
+<h2>Plotting and gauges<a class="headerlink" href="#plotting-and-gauges" title="Link to this heading">¶</a></h2>
+<p>The example <code class="docutils literal notranslate"><span class="pre">setplot.py</span></code> uses the <code class="docutils literal notranslate"><span class="pre">clawpack.geoclaw.met.plot</span></code> helpers
+(imported as <code class="docutils literal notranslate"><span class="pre">met_plot</span></code>) to plot the surface elevation, wind speed, and
+pressure fields, overlay the storm track, and plot gauge time series.  Gauges
+record the wind and pressure aux fields when <code class="docutils literal notranslate"><span class="pre">rundata.gaugedata.aux_out_fields</span></code>
+includes the wind/pressure aux indices.</p>
+</section>
+<section id="using-gridded-owi-netcdf-forcing">
+<h2>Using gridded (OWI / NetCDF) forcing<a class="headerlink" href="#using-gridded-owi-netcdf-forcing" title="Link to this heading">¶</a></h2>
+<p>To force GeoClaw with gridded fields instead of a parametric model, set the
+family to <code class="docutils literal notranslate"><span class="pre">&quot;gridded&quot;</span></code> and provide the field files.  For NetCDF this is a
+CF-compliant file of wind (<code class="docutils literal notranslate"><span class="pre">u10</span></code>, <code class="docutils literal notranslate"><span class="pre">v10</span></code>) and mean-sea-level pressure
+(<code class="docutils literal notranslate"><span class="pre">msl</span></code>); GeoClaw discovers the variables and coordinates automatically.  See
+<span class="xref std std-ref">netcdf_input</span> for the full workflow and the
+<code class="docutils literal notranslate"><span class="pre">$CLAW/geoclaw/examples/storm-surge/isaac</span></code> example, which drives both
+parametric and gridded forcing from the same ATCF track.</p>
+</section>
+<section id="adapting-to-a-different-storm">
+<h2>Adapting to a different storm<a class="headerlink" href="#adapting-to-a-different-storm" title="Link to this heading">¶</a></h2>
+<p>To model a different event, copy the Ike example directory and then:</p>
 <ol class="arabic simple">
-<li><p>First copy the files located in the Hurricane Ike directorty located at
-<cite>$CLAW/geoclaw/examples/storm-surge/ike</cite>.</p></li>
-<li><p>Next let’s find some better topography for the New Orleans area…</p></li>
-<li><p>Now let’s find a storm specification for Hurricane Katrina.  In this
-example we will use the ATCF database.  For Katrina this ends up being
-the file located <a href="#id1"><span class="problematic" id="id2">`here &lt;&gt;`_</span></a>.</p></li>
-<li><p>We now need to modify the <cite>setrun.py</cite> to use our new storm format and
-topography we now added…</p></li>
-<li><p>Finally we need to also modify the plotting so that we have an</p></li>
-<li><p>Gauges…</p></li>
-<li><p>Running the simulation…</p></li>
+<li><p>Obtain topography covering the affected basin (see <a class="reference internal" href="topo.html#topo"><span class="std std-ref">Topography data</span></a> and the data
+sources linked from <a class="reference internal" href="surgedata.html#surgedata"><span class="std std-ref">Sources for Storm Surge Data</span></a>).</p></li>
+<li><p>Obtain the storm track (e.g. an ATCF best-track file; see <a class="reference internal" href="surgedata.html#surgedata"><span class="std std-ref">Sources for Storm Surge Data</span></a>)
+and build the storm file as shown above, or point <code class="docutils literal notranslate"><span class="pre">storm_file</span></code> at a
+gridded descriptor for gridded forcing.</p></li>
+<li><p>Update <code class="docutils literal notranslate"><span class="pre">setrun.py</span></code> – the domain extent, refinement regions, <code class="docutils literal notranslate"><span class="pre">met_data</span></code>
+selection, gauges, and run time – for the new event.</p></li>
+<li><p>Update <code class="docutils literal notranslate"><span class="pre">setplot.py</span></code> for the new domain and gauges.</p></li>
 </ol>
+</section>
 </section>
 
 
@@ -140,7 +201,23 @@ topography we now added…</p></li>
     <img class="logo" src= "_static/clawlogo.jpg" alt="Logo"/>
 </a>
 <h2>Version dev</h2>
-</p><h3>Related Topics</h3>
+</p>
+  <div>
+    <h3><a href="contents.html">Table of Contents</a></h3>
+    <ul>
+<li><a class="reference internal" href="#">Quick start guide for storm surge modeling</a><ul>
+<li><a class="reference internal" href="#running-the-ike-example">Running the Ike example</a></li>
+<li><a class="reference internal" href="#the-two-inputs-a-surge-computation-needs">The two inputs a surge computation needs</a></li>
+<li><a class="reference internal" href="#configuring-the-forcing-in-setrun-py">Configuring the forcing in <code class="docutils literal notranslate"><span class="pre">setrun.py</span></code></a></li>
+<li><a class="reference internal" href="#building-the-storm-file">Building the storm file</a></li>
+<li><a class="reference internal" href="#plotting-and-gauges">Plotting and gauges</a></li>
+<li><a class="reference internal" href="#using-gridded-owi-netcdf-forcing">Using gridded (OWI / NetCDF) forcing</a></li>
+<li><a class="reference internal" href="#adapting-to-a-different-storm">Adapting to a different storm</a></li>
+</ul>
+</li>
+</ul>
+
+  </div><h3>Related Topics</h3>
 <ul>
   <li><a href="contents.html">Documentation overview</a><ul>
   <li><a href="geoclaw.html">GeoClaw Description and Contents</a><ul>
@@ -181,17 +258,17 @@ topography we now added…</p></li>
 <script>document.getElementById('searchbox').style.display = "block"</script>
 <h4>Latest Version</h4>
 <ul>
-  <li><a href="quick_surge.html">dev</a></li>
   <li><a href="../v5.14.x/quick_surge.html">v5.14.x</a></li>
+  <li><a href="quick_surge.html">dev</a></li>
 </ul>
 <h4>Older Versions</h4>
 <ul>
-  <li><a href="../v5.10.x/quick_surge.html">v5.10.x</a></li>
-  <li><a href="../v5.11.x/quick_surge.html">v5.11.x</a></li>
-  <li><a href="../v5.12.x/quick_surge.html">v5.12.x</a></li>
   <li><a href="../v5.7.x/quick_surge.html">v5.7.x</a></li>
   <li><a href="../v5.8.x/quick_surge.html">v5.8.x</a></li>
   <li><a href="../v5.9.x/quick_surge.html">v5.9.x</a></li>
+  <li><a href="../v5.10.x/quick_surge.html">v5.10.x</a></li>
+  <li><a href="../v5.11.x/quick_surge.html">v5.11.x</a></li>
+  <li><a href="../v5.12.x/quick_surge.html">v5.12.x</a></li>
 </ul>
 
         </div>
@@ -199,7 +276,7 @@ topography we now added…</p></li>
       <div class="clearer"></div>
     </div>
   <div class="footer">
-    &copy; Copyright CC-BY 2024, The Clawpack Development Team.
+    &copy; Copyright CC-BY 2026, The Clawpack Development Team.
     Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
   </div>
   <script>
