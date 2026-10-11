@@ -238,6 +238,44 @@ able to import what the docs reference:</p>
 </div>
 <p>To bump the pinned Clawpack, edit <cite>tools/clawpack-ref.txt</cite> and repeat the
 regeneration above in the same commit.</p>
+</section>
+<section id="released-versions-one-source-tree-each">
+<span id="howto-doc-release-trees"></span><h3>Released versions: one source tree each<a class="headerlink" href="#released-versions-one-source-tree-each" title="Link to this heading">¶</a></h3>
+<p><cite>tools/clawpack-ref.txt</cite> is the tree for <cite>dev</cite>.  A multiversion build documents
+each <strong>released</strong> version against the code that release shipped instead:
+<cite>tools/clawpack-release-refs.txt</cite> maps every built release (<cite>v5.7.x</cite>,
+<cite>v5.8.x</cite>, …) to the <cite>clawpack/clawpack</cite> commit of its newest patch tag, and
+the subrepos come from that commit’s submodule pointers.</p>
+<p>This matters because <cite>sphinx-multiversion</cite> builds every version with <em>this</em>
+checkout’s <cite>conf.py</cite>.  Against one current tree, a release’s API pages
+document code it never had, and a module renamed since the release documents
+nothing at all: <cite>storm_module.html</cite> came out empty on every release once
+<cite>surge.storm</cite> became a re-export of <cite>met.storm</cite>, with no warning.</p>
+<p><cite>make claw-releases</cite> clones one tree per row into <cite>$CLAW/doc/.claw-releases</cite>
+(borrowing objects from your checkouts, so all of them take about a minute),
+and <cite>ext/clawpack_source.py</cite> swaps the right one onto <cite>sys.path</cite> as each
+version starts.  <cite>$CLAW_VERSION_TREES</cite> points the build at trees somewhere
+else.  So a full local multiversion build is:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>make claw-pin
+make claw-releases
+CLAW=$(cd ../.claw-pin &amp;&amp; pwd) make versions-publish
+</pre></div>
+</div>
+<p>Three checks keep this honest:</p>
+<ul class="simple">
+<li><p><cite>make check-versions</cite> fails if a built release has no row in
+<cite>tools/clawpack-release-refs.txt</cite>, a row names a version that is not built,
+or a release tree is missing or at the wrong commit.</p></li>
+<li><p>The build fails if autodoc cannot import anything, in any version.  (That
+catches modules that are gone; it cannot catch the re-export case above,
+which imports fine and documents nothing.)</p></li>
+<li><p>The publish workflow’s <cite>stage</cite> summary lists every page that loses API
+entries compared with the published site, before anyone approves a publish.</p></li>
+</ul>
+<p>When cutting a release, add its row to <cite>tools/clawpack-release-refs.txt</cite> (see
+<a class="reference internal" href="howto_release.html#howto-release-doc"><span class="std std-ref">Updating the documentation</span></a>).  Releases before 5.8 import the <cite>imp</cite> module, which
+Python 3.12 removed; <cite>ext/clawpack_source.py</cite> provides the one function they
+use.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>One warning class is never baselined, however long it has been present:
@@ -557,6 +595,7 @@ under <cite>Settings</cite>.</p>
 <li><a class="reference internal" href="#updating-the-docs-for-a-new-release">Updating the docs for a new release</a></li>
 <li><a class="reference internal" href="#checking-for-documentation-warnings">Checking for documentation warnings</a><ul>
 <li><a class="reference internal" href="#the-pinned-source-tree">The pinned source tree</a></li>
+<li><a class="reference internal" href="#released-versions-one-source-tree-each">Released versions: one source tree each</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#to-generate-docs-including-previous-versions">To generate docs including previous versions</a><ul>
