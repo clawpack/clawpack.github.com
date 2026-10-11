@@ -5,14 +5,14 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Running in parallel &#8212; Clawpack 5.13.x documentation</title>
+    <title>Running in parallel &#8212; Clawpack dev documentation</title>
     <link rel="stylesheet" href="../_static/base.css" type="text/css" />
     <link rel="stylesheet" href="../_static/layout.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../_static/flasky.css?v=59fe8e2d" />
-    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=fd3f3429" />
-    <script src="../_static/documentation_options.js?v=7bb99aaf"></script>
-    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
+    <script src="../_static/documentation_options.js?v=3ce10a4d"></script>
+    <script src="../_static/doctools.js?v=9bcbadda"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <link rel="icon" href="../_static/clawicon.ico"/>
     <link rel="author" title="About these documents" href="../about.html" />
@@ -70,7 +70,7 @@
         <li class="right" >
           <a href="solvers.html" title="Using PyClaw’s solvers: Classic and SharpClaw"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../contents.html">Clawpack 5.13.x documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../contents.html">Clawpack dev documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="index.html" >PyClaw</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="going_further.html" accesskey="U">Going Further</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">Running in parallel</a></li> 
@@ -170,11 +170,11 @@ $ python runtests.py
 </div>
 <p>All the tests cases should pass, i.e. OK should be printed at the screen.</p>
 <p><strong>NOTE:</strong> To run a python code that uses petsc4py in parallel you will need to use mpiexec or mpirun commands. It is important to remember to use the mpiexec or mpirun executables that come with the MPI installation that was used for configuring PETSc installation. If you have used the option –download-mpich=1 while installing PETSc, then the correct mpiexec to use is the one in ${PETSC_DIR}/${PETSC_ARCH}/bin. You can set this mpiexec to be your default by adding this line to your sh, bash, or zsh shell start-up file:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ export PATH=&quot;${PETSC_DIR}/${PETSC_ARCH}/bin:${PATH}&quot;
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ export PATH="${PETSC_DIR}/${PETSC_ARCH}/bin:${PATH}"
 </pre></div>
 </div>
 <p>or this line in case you are using csh or tcsh shells:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ setenv PATH &quot;${PETSC_DIR}/${PETSC_ARCH}/bin:${PATH}&quot;
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ setenv PATH "${PETSC_DIR}/${PETSC_ARCH}/bin:${PATH}"
 </pre></div>
 </div>
 <p>You can test that you are using the right mpiexec by running a demonstration script that can be found in $PYCLAW/demo as follows:</p>
@@ -242,11 +242,11 @@ part of the grid belonging to the current process.  Typically you should use
 <cite>grid.lowerg</cite>.</p>
 <p>Additionally, be aware that when a Grid object is instantiated in a parallel run,
 it is not instantiated as a parallel object.  A typical code excerpt looks like</p>
-<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">clawpack.petclaw</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pyclaw</span> 
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">clawpack.petclaw</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pyclaw</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">clawpack</span><span class="w"> </span><span class="kn">import</span> <span class="n">pyclaw</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">mx</span> <span class="o">=</span> <span class="mi">320</span><span class="p">;</span> <span class="n">my</span> <span class="o">=</span> <span class="mi">80</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">Dimension</span><span class="p">(</span><span class="s1">&#39;x&#39;</span><span class="p">,</span><span class="mf">0.0</span><span class="p">,</span><span class="mf">2.0</span><span class="p">,</span><span class="n">mx</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">y</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">Dimension</span><span class="p">(</span><span class="s1">&#39;y&#39;</span><span class="p">,</span><span class="mf">0.0</span><span class="p">,</span><span class="mf">0.5</span><span class="p">,</span><span class="n">my</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">Dimension</span><span class="p">(</span><span class="s1">'x'</span><span class="p">,</span><span class="mf">0.0</span><span class="p">,</span><span class="mf">2.0</span><span class="p">,</span><span class="n">mx</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">y</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">Dimension</span><span class="p">(</span><span class="s1">'y'</span><span class="p">,</span><span class="mf">0.0</span><span class="p">,</span><span class="mf">0.5</span><span class="p">,</span><span class="n">my</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">grid</span> <span class="o">=</span> <span class="n">pyclaw</span><span class="o">.</span><span class="n">Domain</span><span class="p">([</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">])</span>
 </pre></div>
 </div>
@@ -277,7 +277,7 @@ command-line options starting with a dash (“-”) to PETSc.</p>
 <p><a href="http://clawpack.org/">
     <img class="logo" src= "../_static/clawlogo.jpg" alt="Logo"/>
 </a>
-<h2>Version 5.13.x</h2>
+<h2>Version dev</h2>
 </p>
   <div>
     <h3><a href="../contents.html">Table of Contents</a></h3>
@@ -336,13 +336,14 @@ command-line options starting with a dash (“-”) to PETSc.</p>
 <h4>Latest Version</h4>
 <ul>
   <li><a href="../../dev/pyclaw/parallel.html">dev</a></li>
-  <li><a href="parallel.html">v5.13.x</a></li>
+  <li><a href="../../v5.14.x/pyclaw/parallel.html">v5.14.x</a></li>
 </ul>
 <h4>Older Versions</h4>
 <ul>
   <li><a href="../../v5.10.x/pyclaw/parallel.html">v5.10.x</a></li>
   <li><a href="../../v5.11.x/pyclaw/parallel.html">v5.11.x</a></li>
   <li><a href="../../v5.12.x/pyclaw/parallel.html">v5.12.x</a></li>
+  <li><a href="parallel.html">v5.13.x</a></li>
   <li><a href="../../v5.7.x/pyclaw/parallel.html">v5.7.x</a></li>
   <li><a href="../../v5.8.x/pyclaw/parallel.html">v5.8.x</a></li>
   <li><a href="../../v5.9.x/pyclaw/parallel.html">v5.9.x</a></li>
@@ -353,7 +354,7 @@ command-line options starting with a dash (“-”) to PETSc.</p>
       <div class="clearer"></div>
     </div>
   <div class="footer">
-    &copy; Copyright CC-BY 2024, The Clawpack Development Team.
+    &copy; Copyright CC-BY 2026, The Clawpack Development Team.
     Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
   </div>
   <script>

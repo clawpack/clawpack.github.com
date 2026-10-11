@@ -12,8 +12,8 @@
     <link rel="stylesheet" type="text/css" href="_static/flasky.css?v=59fe8e2d" />
     <link rel="stylesheet" type="text/css" href="_static/graphviz.css?v=4ae1632d" />
     <script src="_static/documentation_options.js?v=63927f87"></script>
-    <script src="_static/doctools.js?v=fd6eb6e6"></script>
-    <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="_static/doctools.js?v=9bcbadda"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <link rel="icon" href="_static/clawicon.ico"/>
     <link rel="author" title="About these documents" href="about.html" />
     <link rel="index" title="Index" href="genindex.html" />
@@ -122,15 +122,17 @@ topography (bathymetry) files.</p>
 <dd class="field-odd"><ul class="simple">
 <li><p>Add sub and super sampling capababilities</p></li>
 <li><p>Add functions for creating topography based off a topo function, incorporate
-the create_topo_func into Topography class, maybe allow more broad
+the create_topo_func into Topography class, maybe allow more broad 
 initialization ability to the class to handle this?</p></li>
+<li><p>Fix <cite>in_poly</cite> function</p></li>
+<li><p>Add remove/fill no data value</p></li>
 <li><p>Add more robust plotting capabilities</p></li>
 </ul>
 </dd>
 </dl>
 <dl class="py class">
 <dt class="sig sig-object py" id="clawpack.geoclaw.topotools.Topography">
-<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">clawpack.geoclaw.topotools.</span></span><span class="sig-name descname"><span class="pre">Topography</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">topo_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">topo_func</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">unstructured</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.geoclaw.topotools.Topography" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">clawpack.geoclaw.topotools.</span></span><span class="sig-name descname"><span class="pre">Topography</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">topo_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">topo_func</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">unstructured</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.geoclaw.topotools.Topography" title="Link to this definition">¶</a></dt>
 <dd><p>Base topography class.</p>
 <p>A class representing a single topography file.</p>
 <dl class="field-list simple">
@@ -139,7 +141,7 @@ initialization ability to the class to handle this?</p></li>
 </dl>
 <p>Note: Modified to check the <cite>grid_registration</cite> when reading or writing
 topo files and properly deal with <cite>llcorner</cite> registration in which case
-the x,y data should be offset by dx/2, dy/2 from the lower left corner
+the x,y data should be offset by dx/2, dy/2 from the lower left corner 
 specified in the header of a DEM file.</p>
 <dl class="field-list">
 <dt class="field-odd">Initialization<span class="colon">:</span></dt>
@@ -150,7 +152,7 @@ specified in the header of a DEM file.</p>
 <dt class="field-even">Examples<span class="colon">:</span></dt>
 <dd class="field-even"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">clawpack.geoclaw.topotools</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">topo</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">topo_file</span> <span class="o">=</span> <span class="n">topo</span><span class="o">.</span><span class="n">Topography</span><span class="p">()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">topo_file</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;./topo.tt3&#39;</span><span class="p">,</span> <span class="n">topo_type</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">topo_file</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">'./topo.tt3'</span><span class="p">,</span> <span class="n">topo_type</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">topo_file</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
 </pre></div>
 </div>
@@ -158,72 +160,28 @@ specified in the header of a DEM file.</p>
 </dl>
 <dl class="py property">
 <dt class="sig sig-object py" id="clawpack.geoclaw.topotools.Topography.X">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">X</span></span><a class="headerlink" href="#clawpack.geoclaw.topotools.Topography.X" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">X</span></span><a class="headerlink" href="#clawpack.geoclaw.topotools.Topography.X" title="Link to this definition">¶</a></dt>
 <dd><p>Two dimensional coordinate array in x direction.</p>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="clawpack.geoclaw.topotools.Topography.Y">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">Y</span></span><a class="headerlink" href="#clawpack.geoclaw.topotools.Topography.Y" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Y</span></span><a class="headerlink" href="#clawpack.geoclaw.topotools.Topography.Y" title="Link to this definition">¶</a></dt>
 <dd><p>Two dimensional coordinate array in y direction.</p>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="clawpack.geoclaw.topotools.Topography.Z">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">Z</span></span><a class="headerlink" href="#clawpack.geoclaw.topotools.Topography.Z" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Z</span></span><a class="headerlink" href="#clawpack.geoclaw.topotools.Topography.Z" title="Link to this definition">¶</a></dt>
 <dd><p>A representation of the data as a 2d array.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="clawpack.geoclaw.topotools.Topography.crop">
-<span class="sig-name descname"><span class="pre">crop</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filter_region</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coarsen</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">buffer</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">align</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.geoclaw.topotools.Topography.crop" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">crop</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filter_region</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coarsen</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.geoclaw.topotools.Topography.crop" title="Link to this definition">¶</a></dt>
 <dd><p>Crop region to <em>filter_region</em></p>
 <p>Create a new Topography object that is identical to this one but cropped
 to the region specified by filter_region</p>
-<dl class="field-list simple">
-<dt class="field-odd">Input<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><em>filter_region</em> (tuple): (x1,x2,y1,y2) desired new extent</p></li>
-<li><p><em>coarsen</em> (int): coarsening factor (by subsampling)</p></li>
-<li><dl class="simple">
-<dt><em>buffer</em> (int): when possible, have at least this many points</dt><dd><p>outside the filter_region on each side</p>
-</dd>
-</dl>
-</li>
-<li><p><em>align</em> (tuple): (xalign,yalign) = desired alignment if coarsening</p></li>
-</ul>
-</dd>
-</dl>
-<p>Setting <em>buffer &gt; 0</em> may be useful to insure that the
-computational domain lies entirely inside a cropped topo file
-(In GeoClaw, cell-centered topo values B are computed by integrating
-topo file values that are viewed as pointwise values, so topo
-point values are needed out to the domain edges.)</p>
-<p>When subsampling with <em>coarsen &gt; 1</em>, the <em>align</em> parameter may be
-useful to insure that the subsampling starts at an appropriate
-index.  For example, if the original topo has</p>
-<blockquote>
-<div><p>topo.x = [0, 0.5, 1, 1.5, 2, 2.5]</p>
-</div></blockquote>
-<p>then coarsening by 2 would result in</p>
-<blockquote>
-<div><p>newtopo.x = [0, 1, 2]   # if align[0] is an integer</p>
-</div></blockquote>
-<p>or</p>
-<blockquote>
-<div><p>newtopo.x = [0.5, 1.5, 2.5]   # if align[0] is an integer + 0.5</p>
-</div></blockquote>
-<p>Often in GeoClaw, if the original topofile is aligned with
-integer longitudes and latitudes, for example, then we want
-any subsampled topo to have the same property.</p>
-<p>In general, it tries to choose a starting index so that</p>
-<blockquote>
-<div><p>(newtopo.x[0] - align[0]) / dx_new</p>
-</div></blockquote>
-<p>is an integer, where <em>dx_new</em> is the spacing of points in the
-new topo after coarsening.  This may not be possible, since it
-depends on the alignment of the original topography, in which
-case it will choose the index for which the misalignment is minimized.</p>
 <dl class="field-list simple">
 <dt class="field-odd">TODO<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -237,13 +195,13 @@ leave the resulting topography as unstructured effectively.</p></li>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="clawpack.geoclaw.topotools.Topography.delta">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">delta</span></span><a class="headerlink" href="#clawpack.geoclaw.topotools.Topography.delta" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">delta</span></span><a class="headerlink" href="#clawpack.geoclaw.topotools.Topography.delta" title="Link to this definition">¶</a></dt>
 <dd><p>Spacing of data points.</p>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="clawpack.geoclaw.topotools.Topography.extent">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">extent</span></span><a class="headerlink" href="#clawpack.geoclaw.topotools.Topography.extent" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">extent</span></span><a class="headerlink" href="#clawpack.geoclaw.topotools.Topography.extent" title="Link to this definition">¶</a></dt>
 <dd><p>Extent of the topography.</p>
 </dd></dl>
 
@@ -262,58 +220,52 @@ leave the resulting topography as unstructured effectively.</p></li>
 <dl class="py method">
 <dt class="sig sig-object py" id="clawpack.geoclaw.topotools.Topography.in_poly">
 <span class="sig-name descname"><span class="pre">in_poly</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">polygon</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.geoclaw.topotools.Topography.in_poly" title="Link to this definition">¶</a></dt>
-<dd><p>Return a boolean mask of grid points inside <em>polygon</em>.</p>
+<dd><p>Mask points (x,y) that are not in the specified polygon.</p>
+<p>Uses simple ray casting algorithm for speed so beware of corner cases!</p>
 <dl class="field-list simple">
 <dt class="field-odd">Input<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><em>polygon</em> - sequence of <code class="docutils literal notranslate"><span class="pre">(x,</span> <span class="pre">y)</span></code> vertices describing a closed
-polygon (the closing edge from the last vertex back to the first is
-implied).</p></li>
+<li><p><em>polygon</em> (list) List of points that comprise the polygon.  Note that
+order of the points will effect if this works (positive versus negative
+winding order).  Points should be in counter-clockwise arrangement.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Output<span class="colon">:</span></dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><ul class="simple">
-<li><p><em>mask</em> (numpy.ndarray of bool) - <code class="docutils literal notranslate"><span class="pre">True</span></code> at points lying inside
-<em>polygon</em>, <code class="docutils literal notranslate"><span class="pre">False</span></code> elsewhere.  For a structured grid the mask has
-the same shape as <code class="docutils literal notranslate"><span class="pre">self.X</span></code> / <code class="docutils literal notranslate"><span class="pre">self.Y</span></code>; for unstructured data it
-is 1-D over the scattered <code class="docutils literal notranslate"><span class="pre">self.x</span></code> / <code class="docutils literal notranslate"><span class="pre">self.y</span></code> points.</p></li>
+<li><p><em>X_mask</em> (numpy.ma.MaskedArray) Masked array of X coordinates where those
+points outside of the polygon have been masked.</p></li>
+<li><p><em>Y</em> (numpy.ndarray) Coordinates in y direction in a meshgrid type of
+configuration.</p></li>
 </ul>
 </dd>
 </dl>
-<p>Uses <code class="xref py py-class docutils literal notranslate"><span class="pre">matplotlib.path.Path</span></code> for a robust point-in-polygon test:
-it handles concave polygons and is independent of vertex winding order.</p>
-<p>Example – keep only topography inside a region of interest:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">mask</span> <span class="o">=</span> <span class="n">topo</span><span class="o">.</span><span class="n">in_poly</span><span class="p">(</span><span class="n">region_vertices</span><span class="p">)</span>
-<span class="n">topo</span><span class="o">.</span><span class="n">Z</span><span class="p">[</span><span class="o">~</span><span class="n">mask</span><span class="p">]</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">nan</span>
-</pre></div>
-</div>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="clawpack.geoclaw.topotools.Topography.interp_unstructured">
-<span class="sig-name descname"><span class="pre">interp_unstructured</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fill_topo</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'nearest'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delta</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delta_limit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">20.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">no_data_value</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-99999</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">buffer_length</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">proximity_radius</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resolution_limit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2000</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.geoclaw.topotools.Topography.interp_unstructured" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">interp_unstructured</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fill_topo</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'nearest'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delta</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delta_limit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">20.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">no_data_value</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-9999</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">buffer_length</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">proximity_radius</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resolution_limit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2000</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.geoclaw.topotools.Topography.interp_unstructured" title="Link to this definition">¶</a></dt>
 <dd><p>Interpolate unstructured data on to regular grid.</p>
 <p>Function to interpolate the unstructured data in the topo object onto a
-structured grid.  Utilizes a bounding box plus a buffer of size
+structured grid.  Utilizes a bounding box plus a buffer of size 
 <em>buffer_length</em> (meters) containing all data unless <em>extent is not None</em>
 is <em>True</em>.  Then uses the fill topography <em>fill_topo</em> to fill in the
-gaps in the unstructured data.  By default this is done by masking the
-fill data with the extents, the value <em>no_data_value</em> and if
-<em>proximity_radius</em> (meters) is not 0, by a radius of <em>proximity_radius</em>
-from all grid points in the object.  Stores the
+gaps in the unstructured data.  By default this is done by masking the 
+fill data with the extents, the value <em>no_data_value</em> and if 
+<em>proximity_radius</em> (meters) is not 0, by a radius of <em>proximity_radius</em> 
+from all grid points in the object.  Stores the 
 result in the <em>self.X</em>, <em>self.Y</em> and <em>self.Z</em> object attributes.  The
 resolution of the final grid is determined by calculating the minimum
-distance between all <em>x</em> and <em>y</em> data with a hard lower limit of
+distance between all <em>x</em> and <em>y</em> data with a hard lower limit of 
 <em>delta_limit</em> (meters).</p>
 <p>Note that the function <em>scipy.interpolate.griddata</em> does not respect
-masks so a call to <em>numpy.ma.MaskedArray.compressed()</em> must be made to
+masks so a call to <em>numpy.ma.MaskedArray.compressed()</em> must be made to 
 remove the masked data.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Input<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><em>fill_topo</em> (list) - List of Topography objects to use as fill data
 in the projection.</p></li>
-<li><p><em>extent</em> (tuple) - A tuple defining the rectangle of the sub-section.
+<li><p><em>extent</em> (tuple) - A tuple defining the rectangle of the sub-section.  
 Must be in the form (x lower,x upper,y lower, y upper).</p></li>
 <li><p><em>method</em> (string) - Method used for interpolation, valid methods are
 found in <em>scipy.interpolate.griddata</em>.  Default is <em>nearest</em>.</p></li>
@@ -321,10 +273,10 @@ found in <em>scipy.interpolate.griddata</em>.  Default is <em>nearest</em>.</p><
 rather than determining it from the data itself.  Defaults to <em>None</em>
 which causes the method to determine this value itself.
 Should be a 2-tuple of floats (delta_x, delta_y).</p></li>
-<li><p><em>delta_limit</em> (float) - Limit of finest horizontal resolution,
+<li><p><em>delta_limit</em> (float) - Limit of finest horizontal resolution, 
 default is 20 meters.</p></li>
-<li><p><em>no_data_value</em> (float) - Value to use if no data was found to fill in a
-missing value, ignored if <cite>method = ‘nearest’</cite>. Default is <cite>-99999</cite>.</p></li>
+<li><p><em>no_data_value</em> (float) - Value to use if no data was found to fill in a 
+missing value, ignored if <cite>method = ‘nearest’</cite>. Default is <cite>-9999</cite>.</p></li>
 <li><p><em>buffer_length</em> (float) - Buffer around bounding box, only applicable
 when <em>extent</em> is None.  Default is <cite>100.0</cite> meters.</p></li>
 <li><p><em>proximity_radius</em> (float) - Radius every unstructured data point
@@ -339,31 +291,11 @@ Default value is <cite>2000</cite>.</p></li>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="clawpack.geoclaw.topotools.Topography.make_function">
-<span class="sig-name descname"><span class="pre">make_function</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">interp_kwargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{}</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.geoclaw.topotools.Topography.make_function" title="Link to this definition">¶</a></dt>
-<dd><p>Create a function of (x,y) that returns the topo Z interpolated to a
-point (or to a 1D transect or 2D grid of points).</p>
-<dl class="field-list simple">
-<dt class="field-odd">Inputs<span class="colon">:</span></dt>
-<dd class="field-odd"><dl class="simple">
-<dt><em>interp_kwargs</em>: dictionary of parameter values to be passed to</dt><dd><p>RegularGridInterpolator.  See defaults below.</p>
-</dd>
-</dl>
-</dd>
-<dt class="field-even">Outputs<span class="colon">:</span></dt>
-<dd class="field-even"><p><em>topo_func</em>:  The function created</p>
-</dd>
-</dl>
-<p>See the docstring in topo_func below for details on what shapes
-its arguments (x,y) can be.</p>
-</dd></dl>
-
-<dl class="py method">
 <dt class="sig sig-object py" id="clawpack.geoclaw.topotools.Topography.make_shoreline_xy">
 <span class="sig-name descname"><span class="pre">make_shoreline_xy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sea_level</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.geoclaw.topotools.Topography.make_shoreline_xy" title="Link to this definition">¶</a></dt>
 <dd><p>Returns an array <em>shoreline_xy</em> with 2 columns containing x and y values
-for all segements of the shoreline (defined to be the contour
-where self.z = sea_level) separated by [nan,nan] pairs.
+for all segements of the shoreline (defined to be the contour 
+where self.z = sea_level) separated by [nan,nan] pairs.  
 This allows all shorelines to be quickly plotted via:</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">plot</span><span class="p">(</span><span class="n">shoreline_xy</span><span class="p">[:,</span><span class="mi">0</span><span class="p">],</span> <span class="n">shoreline_xy</span><span class="p">[:,</span><span class="mi">1</span><span class="p">])</span>
 </pre></div>
@@ -372,7 +304,7 @@ This allows all shorelines to be quickly plotted via:</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">numpy</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">shoreline_xy</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>which is much smaller than the original topography file.
+<p>which is much smaller than the original topography file. 
 Reload via:</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">shoreline_xy</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
 </pre></div>
@@ -389,12 +321,12 @@ Reload via:</p>
 <li><p><em>axes</em> (matplotlib.pyplot.axes) - If passed in, plot will be
 added to this axes.  Otherwise a new plot figure will be created
 (using <em>fig_kwargs</em>) and a new <em>axes</em> object created and returned.</p></li>
-<li><p><em>contour_levels</em> (list) - levels for contour lines if these are
+<li><p><em>contour_levels</em> (list) - levels for contour lines if these are 
 to be added (default <em>None</em>).  Set to [0.] to plot shoreline.</p></li>
 <li><p><em>contour_kwargs</em> (dict) - keyword arguments to be passed to
 contour command, e.g. {‘colors’:’r’, ‘linestyles’: ‘-‘}.
 Default is empty dict.</p></li>
-<li><p><em>limits</em> (list) - (min, max) of topo values for color map.
+<li><p><em>limits</em> (list) - (min, max) of topo values for color map.  
 Defaults to None, in which case (self.Z.min(), self.Z.max()) used.</p></li>
 <li><p><em>cmap</em> (matplotlib.colors.Colormap) - colormap, defaults to
 specialized map with blues for bathymetry and green/browns for topo.</p></li>
@@ -402,7 +334,7 @@ specialized map with blues for bathymetry and green/browns for topo.</p></li>
 <li><p><em>plot_box</em> (bool or color specifier) - If evaluates to True, plot
 a box around limits of this topo.</p></li>
 <li><p><em>long_lat</em> (bool) - If this is a longitude-latitude plot then set the
-aspect of the plot to compensate for stretching.  If not then the
+aspect of the plot to compensate for stretching.  If not then the 
 aspect is set to “equal”.</p></li>
 <li><p><em>data_break</em> (float) - when default cmap is used, the value to use
 to break between water and land colormaps.
@@ -432,11 +364,11 @@ e.g. ‘shrink’, ‘extend’, ‘label’.  Can also set ‘title’ for cbar
 <dt class="sig sig-object py" id="clawpack.geoclaw.topotools.Topography.read">
 <span class="sig-name descname"><span class="pre">read</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">topo_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">unstructured</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mask</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filter_region</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stride</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[1,</span> <span class="pre">1]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nc_params</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{}</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.geoclaw.topotools.Topography.read" title="Link to this definition">¶</a></dt>
 <dd><p>Read in the data from the object’s <em>path</em> attribute.</p>
-<p>Stores the resulting data in one of the sets of <em>x</em>, <em>y</em>, and <em>z</em> or
+<p>Stores the resulting data in one of the sets of <em>x</em>, <em>y</em>, and <em>z</em> or 
 <em>X</em>, <em>Y</em>, and <em>Z</em>.</p>
-<dl class="field-list">
+<dl class="field-list simple">
 <dt class="field-odd">Input<span class="colon">:</span></dt>
-<dd class="field-odd"><ul>
+<dd class="field-odd"><ul class="simple">
 <li><p><em>path</em> (str)  file to read</p></li>
 <li><p><em>topo_type</em> (int) - GeoClaw format topo_type</p></li>
 <li><p><em>unstructured</em> (bool) - default is False for lat-long grids.</p></li>
@@ -446,20 +378,7 @@ values (default if False)</p></li>
 <li><p><em>stride</em> (list) - List of strides for the x and y dimensions
 respectively.  Default is <em>[1, 1]</em>.  Note that this is only
 implemented for NetCDF reading currently.</p></li>
-<li><p><em>nc_params</em> (dict) - options for NetCDF (<cite>topo_type=4</cite>) reading:</p>
-<blockquote>
-<div><ul class="simple">
-<li><p><cite>z_var</cite> (str): name of the elevation variable, if it cannot be
-auto-detected by CF <cite>standard_name</cite> or common names.</p></li>
-<li><p><cite>assume_units</cite> (str): unit to assume for the elevation variable
-when the file has <strong>no</strong> <cite>units</cite> attribute (e.g. <cite>“m”</cite>).  Units
-are otherwise required and never silently assumed: a file whose
-elevation variable lacks <cite>units</cite>, or whose units are not meters,
-raises <cite>ValueError</cite> (GeoClaw does not convert on read; pre-
-convert non-meter data to meters first).</p></li>
-</ul>
-</div></blockquote>
-</li>
+<li><p><em>nc_params</em> (dict) -</p></li>
 </ul>
 </dd>
 </dl>
@@ -471,23 +390,27 @@ convert non-meter data to meters first).</p></li>
 <span class="sig-name descname"><span class="pre">read_header</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.geoclaw.topotools.Topography.read_header" title="Link to this definition">¶</a></dt>
 <dd><p>Read in header of topography file at path.</p>
 <p>If a value returns numpy.nan then the value was not retrievable.  Note
-that this routine can read in headers whose values and labels are
+that this routine can read in headers whose values and labels are 
 swapped.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="clawpack.geoclaw.topotools.Topography.replace_no_data_values">
-<span class="sig-name descname"><span class="pre">replace_no_data_values</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">nan</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'fill'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.geoclaw.topotools.Topography.replace_no_data_values" title="Link to this definition">¶</a></dt>
-<dd><p>Replace missing (NaN) cells in Z using <em>method</em>.</p>
-<p>Missing data is represented in memory as <code class="docutils literal notranslate"><span class="pre">numpy.nan</span></code> (the numeric
-<code class="docutils literal notranslate"><span class="pre">no_data_value</span></code> is only the on-file sentinel).  This locates those
-cells and replaces them via <a class="reference internal" href="#clawpack.geoclaw.topotools.Topography.replace_values" title="clawpack.geoclaw.topotools.Topography.replace_values"><code class="xref py py-meth docutils literal notranslate"><span class="pre">replace_values()</span></code></a>.</p>
-<dl class="field-list simple">
+<span class="sig-name descname"><span class="pre">replace_no_data_values</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'fill'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.geoclaw.topotools.Topography.replace_no_data_values" title="Link to this definition">¶</a></dt>
+<dd><p>Replace <em>no_data_value</em> with other values as specified by <em>method</em>.</p>
+<p>self.no_data_value</p>
+<dl class="field-list">
 <dt class="field-odd">Input<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><em>value</em> (float) - constant used when <code class="docutils literal notranslate"><span class="pre">method</span> <span class="pre">==</span> <span class="pre">'value'</span></code>.</p></li>
-<li><p><em>method</em> (str) - one of <code class="docutils literal notranslate"><span class="pre">'value'</span></code>, <code class="docutils literal notranslate"><span class="pre">'nearest'</span></code>, <code class="docutils literal notranslate"><span class="pre">'linear'</span></code>,
-or <code class="docutils literal notranslate"><span class="pre">'fill'</span></code>; see <a class="reference internal" href="#clawpack.geoclaw.topotools.Topography.replace_values" title="clawpack.geoclaw.topotools.Topography.replace_values"><code class="xref py py-meth docutils literal notranslate"><span class="pre">replace_values()</span></code></a>.</p></li>
+<dd class="field-odd"><ul>
+<li><p><em>method</em> can be one of:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><em>fill</em> - Fill in all <em>no_data_value</em> locations with <em>value</em></p></li>
+<li><p><em>nearest</em> - Fill in <em>no_data_value</em> locations with 
+average of nearest neighbors.</p></li>
+</ul>
+</div></blockquote>
+</li>
 </ul>
 </dd>
 </dl>
@@ -496,34 +419,15 @@ or <code class="docutils literal notranslate"><span class="pre">'fill'</span></c
 <dl class="py method">
 <dt class="sig sig-object py" id="clawpack.geoclaw.topotools.Topography.replace_values">
 <span class="sig-name descname"><span class="pre">replace_values</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">indices</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">nan</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'fill'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.geoclaw.topotools.Topography.replace_values" title="Link to this definition">¶</a></dt>
-<dd><p>Replace the Z values at <em>indices</em> in place using <em>method</em>.</p>
-<dl class="field-list">
-<dt class="field-odd">Input<span class="colon">:</span></dt>
-<dd class="field-odd"><ul>
-<li><p><em>indices</em> - sequence of <code class="docutils literal notranslate"><span class="pre">(i,</span> <span class="pre">j)</span></code> index pairs identifying the
-cells to replace, e.g. the output of <code class="docutils literal notranslate"><span class="pre">numpy.argwhere(condition)</span></code>.</p></li>
-<li><p><em>value</em> (float) - constant used when <code class="docutils literal notranslate"><span class="pre">method</span> <span class="pre">==</span> <span class="pre">'value'</span></code>.
-Default <code class="docutils literal notranslate"><span class="pre">numpy.nan</span></code>.</p></li>
-<li><p><em>method</em> (str) - how to choose replacement values:</p>
-<blockquote>
-<div><ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">'value'</span></code>   - set the cells to the constant <em>value</em>.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">'nearest'</span></code> - nearest-neighbor value from the remaining
-(non-replaced) cells.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">'linear'</span></code>  - linear interpolation from the remaining cells;
-cells outside the convex hull of the remaining data are left
-as <code class="docutils literal notranslate"><span class="pre">numpy.nan</span></code>.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">'fill'</span></code>    - replace each cell with the average of the
-nearest surrounding non-replaced cells, growing the search box
-until at least one is found (the default).</p></li>
-</ul>
-</div></blockquote>
-</li>
+<dd><p>Replace the values at <em>indices</em> by the specified method</p>
+<dl class="field-list simple">
+<dt class="field-odd">Methods<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p>“fill”</p></li>
+<li><p>“nearest”</p></li>
 </ul>
 </dd>
 </dl>
-<p><code class="docutils literal notranslate"><span class="pre">'nearest'</span></code> and <code class="docutils literal notranslate"><span class="pre">'linear'</span></code> interpolate in index space, which is
-equivalent to physical space for a regularly spaced grid.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -539,7 +443,7 @@ first extract x,y</p>
 <dt class="sig sig-object py" id="clawpack.geoclaw.topotools.Topography.smooth_data">
 <span class="sig-name descname"><span class="pre">smooth_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">indices</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">r</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.geoclaw.topotools.Topography.smooth_data" title="Link to this definition">¶</a></dt>
 <dd><p>Filter topo data at <em>indices</em> by averaging surrounding data.</p>
-<p>Surrounding data is considered within the ball of radius <em>r</em> in the
+<p>Surrounding data is considered within the ball of radius <em>r</em> in the 
 inf-norm.  Acts as a low-band pass filter and removes oscillatory data.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Input<span class="colon">:</span></dt>
@@ -556,7 +460,7 @@ inf-norm.  Acts as a low-band pass filter and removes oscillatory data.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="clawpack.geoclaw.topotools.Topography.write">
-<span class="sig-name descname"><span class="pre">write</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">topo_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">no_data_value</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fill_value</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">header_style</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'geoclaw'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Z_format</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'%15.7e'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid_registration</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z_dtype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'float32'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">compression</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.geoclaw.topotools.Topography.write" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">write</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">topo_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">no_data_value</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fill_value</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">header_style</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'geoclaw'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Z_format</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'%15.7e'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid_registration</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.geoclaw.topotools.Topography.write" title="Link to this definition">¶</a></dt>
 <dd><p>Write out a topography file to path of type <em>topo_type</em>.</p>
 <p>Writes out a topography file of topo type specified with <em>topo_type</em> or
 inferred from the output file’s extension, defaulting to 3, to path
@@ -566,7 +470,7 @@ data.</p>
 <dt class="field-odd">Input<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><em>path</em> (str)  - file to write</p></li>
-<li><p><em>topo_type</em> (int) - GeoClaw format topo_type
+<li><p><em>topo_type</em> (int) - GeoClaw format topo_type 
 <strong>Note:</strong> this is second positional argument, agreeing with
 the read function in this class.  It was the third argument in
 GeoClaw version 5.3.1 and earlier.</p></li>
@@ -574,9 +478,9 @@ GeoClaw version 5.3.1 and earlier.</p></li>
 <li><p><em>fill_value</em> (float) - value to use if filling a masked array</p></li>
 <li><dl class="simple">
 <dt><em>header_style</em> (str) - indicates format of header lines</dt><dd><dl class="simple">
-<dt>‘geoclaw’ or ‘default’  ==&gt; write value then label</dt><dd><p>with grid_registration == ‘lower’ as default</p>
+<dt>‘geoclaw’ or ‘default’  ==&gt; write value then label </dt><dd><p>with grid_registration == ‘lower’ as default</p>
 </dd>
-<dt>‘arcgis’ or ‘asc’ ==&gt; write label then value</dt><dd><p>with grid_registration == ‘llcorner’ as default
+<dt>‘arcgis’ or ‘asc’ ==&gt; write label then value  </dt><dd><p>with grid_registration == ‘llcorner’ as default
 (needed for .asc files in ArcGIS)</p>
 </dd>
 </dl>
@@ -593,26 +497,7 @@ etopo1 data is integers and so has a resolution of 1 meter.
 In this case a cropped or coarsened version might be written
 with <cite>Z_format = “%7i”</cite>, for example.</p></li>
 <li><dl class="simple">
-<dt><em>grid_registration</em> (str) - ‘lower’, ‘llcorner’, ‘llcenter’</dt><dd><p>or None for defaults described above.</p>
-</dd>
-</dl>
-</li>
-<li><dl class="simple">
-<dt><em>z_dtype</em> (str) - on-disk dtype of the elevation variable when</dt><dd><p>writing NetCDF (<cite>topo_type=4</cite>).  Default <cite>“float32”</cite>, which
-still gives sub-millimeter precision for Earth topography
-(abs(Z) &lt; 10000 m) while halving file size; pass <cite>“float64”</cite>
-for full double precision.  Ignored for ASCII topo types.
-The elevation is always written with a CF <cite>units = “m”</cite>
-attribute (GeoClaw requires meters; see <a class="reference internal" href="topo.html#topo-netcdf"><span class="std std-ref">NetCDF format</span></a>).</p>
-</dd>
-</dl>
-</li>
-<li><dl class="simple">
-<dt><em>compression</em> - NetCDF (<cite>topo_type=4</cite>) zlib compression for the</dt><dd><p>elevation variable.  <cite>None</cite>/<cite>False</cite> (default) writes
-uncompressed; <cite>True</cite> uses zlib level 1 + byte shuffle; an int
-selects the zlib complevel; a dict is passed through verbatim.
-The compressed file stays randomly readable and needs no reader
-change.  See <cite>netcdf_utils.compression_encoding</cite>.</p>
+<dt><em>grid_registration</em> (str) - ‘lower’, ‘llcorner’, ‘llcenter’ </dt><dd><p>or None for defaults described above.</p>
 </dd>
 </dl>
 </li>
@@ -623,19 +508,19 @@ change.  See <cite>netcdf_utils.compression_encoding</cite>.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="clawpack.geoclaw.topotools.Topography.x">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">x</span></span><a class="headerlink" href="#clawpack.geoclaw.topotools.Topography.x" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">x</span></span><a class="headerlink" href="#clawpack.geoclaw.topotools.Topography.x" title="Link to this definition">¶</a></dt>
 <dd><p>One dimensional coorindate array in x direction.</p>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="clawpack.geoclaw.topotools.Topography.y">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">y</span></span><a class="headerlink" href="#clawpack.geoclaw.topotools.Topography.y" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">y</span></span><a class="headerlink" href="#clawpack.geoclaw.topotools.Topography.y" title="Link to this definition">¶</a></dt>
 <dd><p>One dimensional coordinate array in y direction.</p>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="clawpack.geoclaw.topotools.Topography.z">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">z</span></span><a class="headerlink" href="#clawpack.geoclaw.topotools.Topography.z" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">z</span></span><a class="headerlink" href="#clawpack.geoclaw.topotools.Topography.z" title="Link to this definition">¶</a></dt>
 <dd><p>A representation of the data as an 1d array.</p>
 </dd></dl>
 
@@ -644,8 +529,8 @@ change.  See <cite>netcdf_utils.compression_encoding</cite>.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="clawpack.geoclaw.topotools.create_topo_func">
 <span class="sig-prename descclassname"><span class="pre">clawpack.geoclaw.topotools.</span></span><span class="sig-name descname"><span class="pre">create_topo_func</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">loc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.geoclaw.topotools.create_topo_func" title="Link to this definition">¶</a></dt>
-<dd><p>Given a 1-dimensional topography profile specfied by a set of (x,z)
-values, create a lambda function that when evaluated will give the
+<dd><p>Given a 1-dimensional topography profile specfied by a set of (x,z) 
+values, create a lambda function that when evaluated will give the 
 topgraphy at the point (x,y).  (The resulting function is constant in y.)</p>
 <dl class="field-list">
 <dt class="field-odd">Example<span class="colon">:</span></dt>
@@ -657,23 +542,23 @@ topgraphy at the point (x,y).  (The resulting function is constant in y.)</p>
 <dt class="field-even">Input<span class="colon">:</span></dt>
 <dd class="field-even"><ul>
 <li><p><em>loc</em> (list) - Create a topography file with the profile denoted by the
-tuples inside of loc.  A sample set of points are shown below.  Note
-that the first value of the list is the x location and the second is
+tuples inside of loc.  A sample set of points are shown below.  Note 
+that the first value of the list is the x location and the second is 
 the height of the topography.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">z</span> <span class="p">(</span><span class="n">m</span><span class="p">)</span>
 <span class="o">^</span>                                                  <span class="n">o</span> <span class="n">loc</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span>  <span class="n">o</span>
-<span class="o">|</span>
-<span class="o">|</span>                                          <span class="n">loc</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span>
+<span class="o">|</span>                                                    
+<span class="o">|</span>                                          <span class="n">loc</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span>   
 <span class="o">|--------------------------------------------</span><span class="n">o</span><span class="o">-----&gt;</span> <span class="n">x</span> <span class="p">(</span><span class="n">m</span><span class="p">)</span> <span class="p">(</span><span class="n">sea</span> <span class="n">level</span><span class="p">)</span>
-<span class="o">|</span>
+<span class="o">|</span>                                            
 <span class="o">|</span>                                <span class="n">o</span> <span class="n">loc</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="n">o</span> <span class="n">loc</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
-<span class="o">|</span>
-<span class="o">|</span>
+<span class="o">|</span>                         
+<span class="o">|</span>                         
 <span class="o">|</span>                           <span class="n">o</span> <span class="n">loc</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-<span class="o">|</span>
-<span class="o">|</span>
+<span class="o">|</span>           
+<span class="o">|</span>                               
 <span class="o">|</span><span class="n">__________________o</span> <span class="n">loc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-<span class="mf">0.0</span>
+<span class="mf">0.0</span>               
 </pre></div>
 </div>
 </li>
@@ -691,22 +576,12 @@ the height of the topography.</p>
 <dd class="field-odd"><ul class="simple">
 <li><p><em>path</em> (string) - Path to the file.  Can include archive extensions (they
 will be stripped off).</p></li>
-<li><p><em>default</em> (object) - Value returned if no suitable topo type was
+<li><p><em>default</em> (object) - Value returned if no suitable topo type was 
 determined.  Default is <em>None</em>.</p></li>
 </ul>
 </dd>
 </dl>
 <p>returns integer between 1-3 or <em>default</em> if nothing matches.</p>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="clawpack.geoclaw.topotools.extract_datum">
-<span class="sig-prename descclassname"><span class="pre">clawpack.geoclaw.topotools.</span></span><span class="sig-name descname"><span class="pre">extract_datum</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">attr_dicts</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.geoclaw.topotools.extract_datum" title="Link to this definition">¶</a></dt>
-<dd><p>Return the first recognized vertical-datum attribute, or None.</p>
-<p>Searches each mapping in <em>attr_dicts</em> (e.g. a NetCDF variable’s attrs then
-the dataset’s global attrs) for any of <code class="xref py py-data docutils literal notranslate"><span class="pre">_DATUM_ATTR_NAMES</span></code> and
-returns the first value found.  Informational only; GeoClaw applies no
-vertical-datum transformation.</p>
 </dd></dl>
 
 <dl class="py function">
@@ -720,7 +595,7 @@ already exist locally.</p>
 <dt class="field-odd">Input<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><em>url</em> (str) URL including file name</p></li>
-<li><p><em>local_fname</em> (str) name of local file to create.
+<li><p><em>local_fname</em> (str) name of local file to create.  
 If <em>local_fname == None</em>, take file name from URL</p></li>
 <li><p><em>force</em> (bool) If False, prompt user before downloading.</p></li>
 </ul>
@@ -733,8 +608,8 @@ See that website for a list of archived topo datasets.</p>
 <p>If force==None then check for environment variable CLAW_TOPO_DOWNLOAD
 and if this exists use its value.  This is useful for the script
 python/run_examples.py that runs all examples so it won’t stop to prompt.</p>
-<p>This routine has been deprecated in favor of
-<em>clawpack.clawutil.data.get_remote_file</em>.  All the functionality should be
+<p>This routine has been deprecated in favor of 
+<em>clawpack.clawutil.data.get_remote_file</em>.  All the functionality should be 
 the same but calls the other routine internally.</p>
 </dd></dl>
 
@@ -756,13 +631,13 @@ python/run_examples.py that runs all examples so it won’t stop to prompt.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="clawpack.geoclaw.topotools.read_netcdf">
-<span class="sig-prename descclassname"><span class="pre">clawpack.geoclaw.topotools.</span></span><span class="sig-name descname"><span class="pre">read_netcdf</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zvar</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'all'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coarsen</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_topo</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_xarray</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">buffer</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">align</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.geoclaw.topotools.read_netcdf" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">clawpack.geoclaw.topotools.</span></span><span class="sig-name descname"><span class="pre">read_netcdf</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zvar</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'all'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coarsen</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_topo</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_xarray</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.geoclaw.topotools.read_netcdf" title="Link to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Input<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><em>path</em> (str) - Path to the file to read, or url to remote file,
 or a key into the topotools.remote_topo_urls dictionary.</p></li>
-<li><p><em>zvar</em> (str) - variable to read as Z=elevation.
+<li><p><em>zvar</em> (str) - variable to read as Z=elevation. 
 if None, will try ‘Band1’, ‘z’, ‘elevation’.</p></li>
 <li><p><em>extent</em> - [x1,x2,y1,y2] for desired subset, or ‘all’ for entire file</p></li>
 <li><p><em>coarsen</em> (int) - factor to coarsen by, 1 by default.</p></li>
@@ -770,16 +645,6 @@ if None, will try ‘Band1’, ‘z’, ‘elevation’.</p></li>
 default is True</p></li>
 <li><p><em>return_xarray</em> (bool) - if True, return an xarray.Dataset object.
 default is False</p></li>
-<li><dl class="simple">
-<dt><em>buffer</em> (int): when possible, have at least this many points</dt><dd><p>outside the filter_region on each side</p>
-</dd>
-</dl>
-</li>
-<li><dl class="simple">
-<dt><em>align</em> (tuple): (xalign,yalign) = desired alignment if coarsening</dt><dd><p>See the doc string for Topography.crop()</p>
-</dd>
-</dl>
-</li>
 </ul>
 </dd>
 <dt class="field-even">Output<span class="colon">:</span></dt>
@@ -796,8 +661,7 @@ otherwise <cite>netCDF4</cite> is used directly.</p>
 <div><p>from clawpack.geoclaw import topotools
 extent = [-126,-122,46,49]
 path = ‘etopo1’
-topo = topotools.read_netcdf(path, extent=extent, coarsen=2,                                      buffer=1, align=(-126,46), verbose=True)</p>
-<p># results in topo.x = array([-126.03333333, -126., …])</p>
+topo = topotools.read_netcdf(path, extent=extent, coarsen=2,                                      verbose=True)</p>
 <p># to plot:
 topo.plot()</p>
 <p># to save topofile for input to GeoClaw:
@@ -806,10 +670,6 @@ topo.write(‘etopo_sample_2min.tt3’, topo_type=3, Z_format=’%.0f’)</p>
 <p>This should give a 2-minute resolution DEM of the Western Washington coast.
 Note that etopo1 Z values are integers (vertical resolution is 1 meter)
 and using <cite>Z_format=’%.0f’</cite> will save as integers to minimize file size.</p>
-<p>Note that the newer etopo 2022 30 arcsecond DEM can be sampled using
-path = ‘etopo22_30sec’, but this topo is aligned differently with e.g.
-x = -126. falling half way between points. Also note that Z values in the
-newer dataset are no longer integers.</p>
 </dd></dl>
 
 <dl class="py function">
@@ -877,7 +737,6 @@ topography object and writes it out.</p>
 <li><a class="reference internal" href="#clawpack.geoclaw.topotools.Topography.generate_2d_topo"><code class="docutils literal notranslate"><span class="pre">Topography.generate_2d_topo()</span></code></a></li>
 <li><a class="reference internal" href="#clawpack.geoclaw.topotools.Topography.in_poly"><code class="docutils literal notranslate"><span class="pre">Topography.in_poly()</span></code></a></li>
 <li><a class="reference internal" href="#clawpack.geoclaw.topotools.Topography.interp_unstructured"><code class="docutils literal notranslate"><span class="pre">Topography.interp_unstructured()</span></code></a></li>
-<li><a class="reference internal" href="#clawpack.geoclaw.topotools.Topography.make_function"><code class="docutils literal notranslate"><span class="pre">Topography.make_function()</span></code></a></li>
 <li><a class="reference internal" href="#clawpack.geoclaw.topotools.Topography.make_shoreline_xy"><code class="docutils literal notranslate"><span class="pre">Topography.make_shoreline_xy()</span></code></a></li>
 <li><a class="reference internal" href="#clawpack.geoclaw.topotools.Topography.plot"><code class="docutils literal notranslate"><span class="pre">Topography.plot()</span></code></a></li>
 <li><a class="reference internal" href="#clawpack.geoclaw.topotools.Topography.read"><code class="docutils literal notranslate"><span class="pre">Topography.read()</span></code></a></li>
@@ -894,7 +753,6 @@ topography object and writes it out.</p>
 </li>
 <li><a class="reference internal" href="#clawpack.geoclaw.topotools.create_topo_func"><code class="docutils literal notranslate"><span class="pre">create_topo_func()</span></code></a></li>
 <li><a class="reference internal" href="#clawpack.geoclaw.topotools.determine_topo_type"><code class="docutils literal notranslate"><span class="pre">determine_topo_type()</span></code></a></li>
-<li><a class="reference internal" href="#clawpack.geoclaw.topotools.extract_datum"><code class="docutils literal notranslate"><span class="pre">extract_datum()</span></code></a></li>
 <li><a class="reference internal" href="#clawpack.geoclaw.topotools.fetch_topo_url"><code class="docutils literal notranslate"><span class="pre">fetch_topo_url()</span></code></a></li>
 <li><a class="reference internal" href="#clawpack.geoclaw.topotools.get_topo"><code class="docutils literal notranslate"><span class="pre">get_topo()</span></code></a></li>
 <li><a class="reference internal" href="#clawpack.geoclaw.topotools.read_netcdf"><code class="docutils literal notranslate"><span class="pre">read_netcdf()</span></code></a></li>
@@ -951,17 +809,18 @@ topography object and writes it out.</p>
 <script>document.getElementById('searchbox').style.display = "block"</script>
 <h4>Latest Version</h4>
 <ul>
-  <li><a href="../v5.14.x/topotools_module.html">v5.14.x</a></li>
   <li><a href="../dev/topotools_module.html">dev</a></li>
+  <li><a href="../v5.14.x/topotools_module.html">v5.14.x</a></li>
 </ul>
 <h4>Older Versions</h4>
 <ul>
-  <li><a href="../v5.7.x/topotools_module.html">v5.7.x</a></li>
-  <li><a href="../v5.8.x/topotools_module.html">v5.8.x</a></li>
-  <li><a href="topotools_module.html">v5.9.x</a></li>
   <li><a href="../v5.10.x/topotools_module.html">v5.10.x</a></li>
   <li><a href="../v5.11.x/topotools_module.html">v5.11.x</a></li>
   <li><a href="../v5.12.x/topotools_module.html">v5.12.x</a></li>
+  <li><a href="../v5.13.x/topotools_module.html">v5.13.x</a></li>
+  <li><a href="../v5.7.x/topotools_module.html">v5.7.x</a></li>
+  <li><a href="../v5.8.x/topotools_module.html">v5.8.x</a></li>
+  <li><a href="topotools_module.html">v5.9.x</a></li>
 </ul>
 
         </div>
