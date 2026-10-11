@@ -12,8 +12,8 @@
     <link rel="stylesheet" type="text/css" href="_static/flasky.css?v=59fe8e2d" />
     <link rel="stylesheet" type="text/css" href="_static/graphviz.css?v=4ae1632d" />
     <script src="_static/documentation_options.js?v=3ce10a4d"></script>
-    <script src="_static/doctools.js?v=fd6eb6e6"></script>
-    <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="_static/doctools.js?v=9bcbadda"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <link rel="icon" href="_static/clawicon.ico"/>
     <link rel="author" title="About these documents" href="about.html" />
     <link rel="index" title="Index" href="genindex.html" />
@@ -88,7 +88,7 @@
 <ul class="simple">
 <li><p><a class="reference internal" href="met_forcing.html#met-forcing"><span class="std std-ref">Meteorological (Storm) Forcing</span></a> – overview of met forcing and the object model</p></li>
 <li><p><a class="reference internal" href="setrun_geoclaw.html#setrun-surge"><span class="std std-ref">Storm Specification Data</span></a> – the <code class="docutils literal notranslate"><span class="pre">rundata.met_data</span></code> attribute reference</p></li>
-<li><p><span class="xref std std-ref">netcdf_input</span> – gridded NetCDF met forcing</p></li>
+<li><p><a class="reference internal" href="netcdf.html#netcdf-input"><span class="std std-ref">GeoClaw NetCDF Input System</span></a> – gridded NetCDF met forcing</p></li>
 </ul>
 </div>
 <p>This is the Python API for building and writing GeoClaw meteorological forcing.
@@ -99,20 +99,1367 @@ The object model separates the evolving feature (a <code class="xref py py-class
 <p>Readers ingest many track/data formats; writers emit only the two files
 GeoClaw consumes – a parametric storm file (<code class="docutils literal notranslate"><span class="pre">write_geoclaw</span></code>) and a gridded
 descriptor (<code class="docutils literal notranslate"><span class="pre">write_data</span></code>).</p>
-<section id="storm-compatibility-wrapper">
-<h2>Storm (compatibility wrapper)<a class="headerlink" href="#storm-compatibility-wrapper" title="Link to this heading">¶</a></h2>
+<section id="module-clawpack.geoclaw.met.storm">
+<span id="storm-compatibility-wrapper"></span><h2>Storm (compatibility wrapper)<a class="headerlink" href="#module-clawpack.geoclaw.met.storm" title="Link to this heading">¶</a></h2>
+<p>Module defines a class and routines for managing storm best-track type input and
+testing reconstructed wind and pressure fields.  Additionally some support for
+ensembles of storms from various providers is also included.</p>
+<p>The primary class of interest in the module is the <cite>Storm</cite> class that
+facilitates dealing with various best-track formats found around the world and
+the expected GeoClaw storm format that is read into the FORTRAN code.  The basic
+workflow in a <cite>setrun.py</cite> file would do the following:</p>
+<ol class="arabic">
+<li><p>Create a <cite>Storm</cite> object by reading in from a file:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">storm</span> <span class="o">=</span> <span class="n">clawpack</span><span class="o">.</span><span class="n">geoclaw</span><span class="o">.</span><span class="n">met</span><span class="o">.</span><span class="n">storm</span><span class="o">.</span><span class="n">Storm</span><span class="p">(</span><span class="s2">"my_storm.txt"</span><span class="p">,</span> <span class="n">file_format</span><span class="o">=</span><span class="s1">'ATCF'</span><span class="p">)</span>
+</pre></div>
+</div>
+</li>
+<li><p>Write out the storm object created into the GeoClaw format:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">storm</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">"my_geoclaw_storm.txt"</span><span class="p">,</span> <span class="n">file_format</span><span class="o">=</span><span class="s2">"geoclaw"</span><span class="p">)</span>
+</pre></div>
+</div>
+</li>
+<li><p>Specify the path to the GeoClaw formatted storm file, in this case
+“my_geoclaw_storm.txt”.</p></li>
+</ol>
+<dl class="field-list simple">
+<dt class="field-odd">Formats Supported<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p>GeoClaw (fully)</p></li>
+<li><p>ATCF (reading only)</p></li>
+<li><p>HURDAT (reading only)</p></li>
+<li><p>IBTrACS (reading only)</p></li>
+<li><p>JMA (reading only)</p></li>
+<li><p>IMD (planned)</p></li>
+<li><p>tcvitals (reading only)</p></li>
+<li><p>Data</p></li>
+</ul>
+</dd>
+<dt class="field-even">Object model<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">Storm</span></code> is a thin backwards-compatibility wrapper over the meteorological
+forcing object model introduced by the refactor:
+<a class="reference internal" href="#clawpack.geoclaw.met.track.StormTrack" title="clawpack.geoclaw.met.track.StormTrack"><code class="xref py py-class docutils literal notranslate"><span class="pre">StormTrack</span></code></a>,
+<a class="reference internal" href="#clawpack.geoclaw.met.parametric.ParametricMetForcing" title="clawpack.geoclaw.met.parametric.ParametricMetForcing"><code class="xref py py-class docutils literal notranslate"><span class="pre">ParametricMetForcing</span></code></a>, and
+<a class="reference internal" href="#clawpack.geoclaw.met.gridded.GriddedMetForcing" title="clawpack.geoclaw.met.gridded.GriddedMetForcing"><code class="xref py py-class docutils literal notranslate"><span class="pre">GriddedMetForcing</span></code></a>.  Every legacy
+attribute is exposed as a property delegating to the underlying object.</p>
+</dd>
+</dl>
+<dl class="py class">
+<dt class="sig sig-object py" id="clawpack.geoclaw.met.storm.Storm">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">clawpack.geoclaw.met.storm.</span></span><span class="sig-name descname"><span class="pre">Storm</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_format</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'ATCF'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.geoclaw.met.storm.Storm" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Storm data object</p>
+<p>This object contains a time series of time data that describe a particular
+storm.  This includes the attributes below and the ability to read from
+multiple sources for data such as the U.S. National Hurricane Center (NHC),
+the Japanese Meterological Agency (JMA), and the Indian Meteorlogical
+Department (IMD).  This class can then write out in any of these formats,
+construct the wind and pressure fields using a supported parameterized
+model, or output the GeoClaw supported storm format used for running storm
+surge simulations.</p>
+<p><code class="docutils literal notranslate"><span class="pre">Storm</span></code> is a thin compatibility wrapper: it holds a
+<a class="reference internal" href="#clawpack.geoclaw.met.track.StormTrack" title="clawpack.geoclaw.met.track.StormTrack"><code class="xref py py-class docutils literal notranslate"><span class="pre">StormTrack</span></code></a> (plus a
+<a class="reference internal" href="#clawpack.geoclaw.met.parametric.ParametricMetForcing" title="clawpack.geoclaw.met.parametric.ParametricMetForcing"><code class="xref py py-class docutils literal notranslate"><span class="pre">ParametricMetForcing</span></code></a> for the
+parameterized/track path) and a
+<a class="reference internal" href="#clawpack.geoclaw.met.gridded.GriddedMetForcing" title="clawpack.geoclaw.met.gridded.GriddedMetForcing"><code class="xref py py-class docutils literal notranslate"><span class="pre">GriddedMetForcing</span></code></a> for the gridded
+(data) path, and exposes every legacy attribute as a property delegating to
+the appropriate underlying object.</p>
+<p><em>TODO:</em>  Add description of unit handling</p>
+<dl class="field-list simple">
+<dt class="field-odd">Attributes<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><em>t</em> (list(float) or list(np.datetiem64)) Contains the time at which
+each entry of the other arrays are at.  These are expected to
+be <em>datetime64</em> objects. Note that when written some formats require
+a <em>time_offset</em> to be set.</p></li>
+<li><p><em>eye_location</em> (ndarray(:, :)) location of the eye of the storm. Default
+units are in signed decimal longitude and latitude.</p></li>
+<li><p><em>max_wind_speed</em> (ndarray(:)) Maximum wind speed.  Default units are
+meters/second.</p></li>
+<li><p><em>max_wind_radius</em> (ndarray(:)) Radius at which the maximum wind speed
+occurs.  Default units are meters.</p></li>
+<li><p><em>central_pressure</em> (ndarray(:)) Central pressure of storm.  Default units
+are Pascals.</p></li>
+<li><p><em>storm_radius</em> (ndarray(:)) Radius of storm, often defined as the last
+closed iso-bar of pressure.  Default units are meters.</p></li>
+<li><p><em>time_offset</em> (np.datetiem64) A date time that as an offset for the
+simulation time.  This will default to the beginning of the first of
+the year that the first time point is found in.</p></li>
+<li><p><em>wind_speeds</em> (ndarray(:, :)) Wind speeds defined in every record, such
+as 34kt, 50kt, 64kt, etc and their radii. Default units are
+meters/second and meters.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Initialization<span class="colon">:</span></dt>
+<dd class="field-even"><ol class="arabic simple">
+<li><p>Read in existing file at <em>path</em>.</p></li>
+<li><p>Construct an empty storm and supply the fields needed.  Note that these
+fields must be converted to the appropriate units.</p></li>
+</ol>
+</dd>
+<dt class="field-odd">Input<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><em>path</em> (string) Path to file to be read in if requested.</p></li>
+<li><p><em>file_format</em> (string) Format of file at path.  Default is “hurdat”</p></li>
+<li><p><em>kwargs</em> (dict) Other key-word arguments are passed to the appropriate
+read routine.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py property">
+<dt class="sig sig-object py" id="clawpack.geoclaw.met.storm.Storm.ID">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">ID</span></span><a class="headerlink" href="#clawpack.geoclaw.met.storm.Storm.ID" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="clawpack.geoclaw.met.storm.Storm.basin">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">basin</span></span><a class="headerlink" href="#clawpack.geoclaw.met.storm.Storm.basin" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="clawpack.geoclaw.met.storm.Storm.category">
+<span class="sig-name descname"><span class="pre">category</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">categorization</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'NHC'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cat_names</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.geoclaw.met.storm.Storm.category" title="Link to this definition">¶</a></dt>
+<dd><p>Categorize the storm (delegates to <code class="xref py py-meth docutils literal notranslate"><span class="pre">StormTrack.category()</span></code>).</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="clawpack.geoclaw.met.storm.Storm.central_pressure">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">central_pressure</span></span><a class="headerlink" href="#clawpack.geoclaw.met.storm.Storm.central_pressure" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="clawpack.geoclaw.met.storm.Storm.classification">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">classification</span></span><a class="headerlink" href="#clawpack.geoclaw.met.storm.Storm.classification" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="clawpack.geoclaw.met.storm.Storm.crop_extent">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">crop_extent</span></span><a class="headerlink" href="#clawpack.geoclaw.met.storm.Storm.crop_extent" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="clawpack.geoclaw.met.storm.Storm.event">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">event</span></span><a class="headerlink" href="#clawpack.geoclaw.met.storm.Storm.event" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="clawpack.geoclaw.met.storm.Storm.eye_location">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">eye_location</span></span><a class="headerlink" href="#clawpack.geoclaw.met.storm.Storm.eye_location" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="clawpack.geoclaw.met.storm.Storm.file_format">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">file_format</span></span><a class="headerlink" href="#clawpack.geoclaw.met.storm.Storm.file_format" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="clawpack.geoclaw.met.storm.Storm.file_paths">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">file_paths</span></span><a class="headerlink" href="#clawpack.geoclaw.met.storm.Storm.file_paths" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="clawpack.geoclaw.met.storm.Storm.max_wind_radius">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">max_wind_radius</span></span><a class="headerlink" href="#clawpack.geoclaw.met.storm.Storm.max_wind_radius" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="clawpack.geoclaw.met.storm.Storm.max_wind_speed">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">max_wind_speed</span></span><a class="headerlink" href="#clawpack.geoclaw.met.storm.Storm.max_wind_speed" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="clawpack.geoclaw.met.storm.Storm.met_fill_action">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">met_fill_action</span></span><a class="headerlink" href="#clawpack.geoclaw.met.storm.Storm.met_fill_action" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="clawpack.geoclaw.met.storm.Storm.met_fill_value">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">met_fill_value</span></span><a class="headerlink" href="#clawpack.geoclaw.met.storm.Storm.met_fill_value" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="clawpack.geoclaw.met.storm.Storm.met_lon_wrap">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">met_lon_wrap</span></span><a class="headerlink" href="#clawpack.geoclaw.met.storm.Storm.met_lon_wrap" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="clawpack.geoclaw.met.storm.Storm.met_time_name">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">met_time_name</span></span><a class="headerlink" href="#clawpack.geoclaw.met.storm.Storm.met_time_name" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="clawpack.geoclaw.met.storm.Storm.met_time_offset">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">met_time_offset</span></span><a class="headerlink" href="#clawpack.geoclaw.met.storm.Storm.met_time_offset" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="clawpack.geoclaw.met.storm.Storm.met_variable_map">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">met_variable_map</span></span><a class="headerlink" href="#clawpack.geoclaw.met.storm.Storm.met_variable_map" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="clawpack.geoclaw.met.storm.Storm.met_x_name">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">met_x_name</span></span><a class="headerlink" href="#clawpack.geoclaw.met.storm.Storm.met_x_name" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="clawpack.geoclaw.met.storm.Storm.met_y_increasing">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">met_y_increasing</span></span><a class="headerlink" href="#clawpack.geoclaw.met.storm.Storm.met_y_increasing" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="clawpack.geoclaw.met.storm.Storm.met_y_name">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">met_y_name</span></span><a class="headerlink" href="#clawpack.geoclaw.met.storm.Storm.met_y_name" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="clawpack.geoclaw.met.storm.Storm.name">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">name</span></span><a class="headerlink" href="#clawpack.geoclaw.met.storm.Storm.name" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="clawpack.geoclaw.met.storm.Storm.plot">
+<span class="sig-name descname"><span class="pre">plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ax</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.geoclaw.met.storm.Storm.plot" title="Link to this definition">¶</a></dt>
+<dd><p>Plot this storm’s track (delegates to <code class="xref py py-meth docutils literal notranslate"><span class="pre">StormTrack.plot()</span></code>).</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="clawpack.geoclaw.met.storm.Storm.ramp_width">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">ramp_width</span></span><a class="headerlink" href="#clawpack.geoclaw.met.storm.Storm.ramp_width" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="clawpack.geoclaw.met.storm.Storm.read">
+<span class="sig-name descname"><span class="pre">read</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_format</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'atcf'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.geoclaw.met.storm.Storm.read" title="Link to this definition">¶</a></dt>
+<dd><p>Read in storm data from <em>path</em> with format <em>file_format</em></p>
+<dl class="field-list simple">
+<dt class="field-odd">Input<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><em>path</em> (string) Path to data file.</p></li>
+<li><p><em>file_format</em> (string) Format of the data file.  See list of
+supported formats for a list of valid strings.  Defaults to
+“hurdat”.</p></li>
+<li><p><em>kwargs</em> (dict) Keyword dictionary for additional arguments that can
+be passed down to the appropriate read functions.  Please refer to
+the specific routine for a list of valid options.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><em>ValueError</em> If the <em>file_format</em> requested does not match any of
+the available supported formats a <em>ValueError</em> is raised.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="clawpack.geoclaw.met.storm.Storm.read_atcf">
+<span class="sig-name descname"><span class="pre">read_atcf</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.geoclaw.met.storm.Storm.read_atcf" title="Link to this definition">¶</a></dt>
+<dd><p>Read in an ATCF formatted storm file (delegates to
+<code class="xref py py-meth docutils literal notranslate"><span class="pre">StormTrack.read_atcf()</span></code>).</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="clawpack.geoclaw.met.storm.Storm.read_data">
+<span class="sig-name descname"><span class="pre">read_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.geoclaw.met.storm.Storm.read_data" title="Link to this definition">¶</a></dt>
+<dd><p>Read in a data-derived (gridded) storm file (delegates to
+<code class="xref py py-meth docutils literal notranslate"><span class="pre">GriddedMetForcing.read_data()</span></code>).</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="clawpack.geoclaw.met.storm.Storm.read_geoclaw">
+<span class="sig-name descname"><span class="pre">read_geoclaw</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.geoclaw.met.storm.Storm.read_geoclaw" title="Link to this definition">¶</a></dt>
+<dd><p>Read in a GeoClaw formatted storm file (delegates to
+<code class="xref py py-meth docutils literal notranslate"><span class="pre">ParametricMetForcing.read_geoclaw()</span></code>).</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="clawpack.geoclaw.met.storm.Storm.read_hurdat">
+<span class="sig-name descname"><span class="pre">read_hurdat</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.geoclaw.met.storm.Storm.read_hurdat" title="Link to this definition">¶</a></dt>
+<dd><p>Read in a HURDAT formatted storm file (delegates to
+<code class="xref py py-meth docutils literal notranslate"><span class="pre">StormTrack.read_hurdat()</span></code>).</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="clawpack.geoclaw.met.storm.Storm.read_ibtracs">
+<span class="sig-name descname"><span class="pre">read_ibtracs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.geoclaw.met.storm.Storm.read_ibtracs" title="Link to this definition">¶</a></dt>
+<dd><p>Read in an IBTrACS formatted storm file (delegates to
+<code class="xref py py-meth docutils literal notranslate"><span class="pre">StormTrack.read_ibtracs()</span></code>).</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="clawpack.geoclaw.met.storm.Storm.read_imd">
+<span class="sig-name descname"><span class="pre">read_imd</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.geoclaw.met.storm.Storm.read_imd" title="Link to this definition">¶</a></dt>
+<dd><p>Read in an IMD formatted storm file (delegates to
+<code class="xref py py-meth docutils literal notranslate"><span class="pre">StormTrack.read_imd()</span></code>).</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="clawpack.geoclaw.met.storm.Storm.read_jma">
+<span class="sig-name descname"><span class="pre">read_jma</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.geoclaw.met.storm.Storm.read_jma" title="Link to this definition">¶</a></dt>
+<dd><p>Read in a JMA formatted storm file (delegates to
+<code class="xref py py-meth docutils literal notranslate"><span class="pre">StormTrack.read_jma()</span></code>).</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="clawpack.geoclaw.met.storm.Storm.read_tcvitals">
+<span class="sig-name descname"><span class="pre">read_tcvitals</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.geoclaw.met.storm.Storm.read_tcvitals" title="Link to this definition">¶</a></dt>
+<dd><p>Read in a TCVITALS formatted storm file (delegates to
+<code class="xref py py-meth docutils literal notranslate"><span class="pre">StormTrack.read_tcvitals()</span></code>).</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="clawpack.geoclaw.met.storm.Storm.scaling">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">scaling</span></span><a class="headerlink" href="#clawpack.geoclaw.met.storm.Storm.scaling" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="clawpack.geoclaw.met.storm.Storm.storm_radius">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">storm_radius</span></span><a class="headerlink" href="#clawpack.geoclaw.met.storm.Storm.storm_radius" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="clawpack.geoclaw.met.storm.Storm.storm_time_scale">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">storm_time_scale</span></span><a class="headerlink" href="#clawpack.geoclaw.met.storm.Storm.storm_time_scale" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="clawpack.geoclaw.met.storm.Storm.t">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">t</span></span><a class="headerlink" href="#clawpack.geoclaw.met.storm.Storm.t" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="clawpack.geoclaw.met.storm.Storm.time_offset">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">time_offset</span></span><a class="headerlink" href="#clawpack.geoclaw.met.storm.Storm.time_offset" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="clawpack.geoclaw.met.storm.Storm.wind_speeds">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">wind_speeds</span></span><a class="headerlink" href="#clawpack.geoclaw.met.storm.Storm.wind_speeds" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="clawpack.geoclaw.met.storm.Storm.write">
+<span class="sig-name descname"><span class="pre">write</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_format</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'geoclaw'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.geoclaw.met.storm.Storm.write" title="Link to this definition">¶</a></dt>
+<dd><p>Write out the storm data to <em>path</em> in format <em>file_format</em></p>
+<dl class="field-list simple">
+<dt class="field-odd">Input<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><em>path</em> (string) Path to data file.</p></li>
+<li><p><em>file_format</em> (string) Format of the data file.  See list of
+supported formats for a list of valid strings.  Defaults to
+“geoclaw”.</p></li>
+<li><p><em>kwargs</em> (dict) Keyword dictionary for additional arguments that can
+be passed down to the appropriate write functions.  Please refer to
+the specific routine for a list of valid options.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><em>ValueError</em> If the <em>file_format</em> requested does not match any of
+the available supported formats a <em>ValueError</em> is raised.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="clawpack.geoclaw.met.storm.Storm.write_atcf">
+<span class="sig-name descname"><span class="pre">write_atcf</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.geoclaw.met.storm.Storm.write_atcf" title="Link to this definition">¶</a></dt>
+<dd><p>(Not implemented) Write out a ATCF formatted storm file.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="clawpack.geoclaw.met.storm.Storm.write_data">
+<span class="sig-name descname"><span class="pre">write_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.geoclaw.met.storm.Storm.write_data" title="Link to this definition">¶</a></dt>
+<dd><p>Write out a data-derived (gridded) storm descriptor (delegates to
+<code class="xref py py-meth docutils literal notranslate"><span class="pre">GriddedMetForcing.write_data()</span></code>).</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="clawpack.geoclaw.met.storm.Storm.write_geoclaw">
+<span class="sig-name descname"><span class="pre">write_geoclaw</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.geoclaw.met.storm.Storm.write_geoclaw" title="Link to this definition">¶</a></dt>
+<dd><p>Write out a GeoClaw formatted storm file (delegates to
+<code class="xref py py-meth docutils literal notranslate"><span class="pre">ParametricMetForcing.write_geoclaw()</span></code>).</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="clawpack.geoclaw.met.storm.Storm.write_hurdat">
+<span class="sig-name descname"><span class="pre">write_hurdat</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.geoclaw.met.storm.Storm.write_hurdat" title="Link to this definition">¶</a></dt>
+<dd><p>(Not implemented) Write out a HURDAT formatted storm file.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="clawpack.geoclaw.met.storm.Storm.write_imd">
+<span class="sig-name descname"><span class="pre">write_imd</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.geoclaw.met.storm.Storm.write_imd" title="Link to this definition">¶</a></dt>
+<dd><p>(Not implemented) Write out an IMD formatted storm file.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="clawpack.geoclaw.met.storm.Storm.write_jma">
+<span class="sig-name descname"><span class="pre">write_jma</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.geoclaw.met.storm.Storm.write_jma" title="Link to this definition">¶</a></dt>
+<dd><p>(Not implemented) Write out a JMA formatted storm file.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="clawpack.geoclaw.met.storm.Storm.write_tcvitals">
+<span class="sig-name descname"><span class="pre">write_tcvitals</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.geoclaw.met.storm.Storm.write_tcvitals" title="Link to this definition">¶</a></dt>
+<dd><p>(Not implemented) Write out a TCVITALS formatted storm file.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="clawpack.geoclaw.met.storm.Storm.x_shift">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">x_shift</span></span><a class="headerlink" href="#clawpack.geoclaw.met.storm.Storm.x_shift" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="clawpack.geoclaw.met.storm.Storm.y_shift">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">y_shift</span></span><a class="headerlink" href="#clawpack.geoclaw.met.storm.Storm.y_shift" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="clawpack.geoclaw.met.storm.available_formats">
+<span class="sig-prename descclassname"><span class="pre">clawpack.geoclaw.met.storm.</span></span><span class="sig-name descname"><span class="pre">available_formats</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.geoclaw.met.storm.available_formats" title="Link to this definition">¶</a></dt>
+<dd><p>Construct a string suitable for listing available storm file formats.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="clawpack.geoclaw.met.storm.available_models">
+<span class="sig-prename descclassname"><span class="pre">clawpack.geoclaw.met.storm.</span></span><span class="sig-name descname"><span class="pre">available_models</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.geoclaw.met.storm.available_models" title="Link to this definition">¶</a></dt>
+<dd><p>Construct a string listing the available parameterized-forcing models.</p>
+<p>The models are split into those supported by the GeoClaw Fortran code and
+those implemented in Python (currently none), both clearly labeled.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="clawpack.geoclaw.met.storm.cle_2015">
+<span class="sig-prename descclassname"><span class="pre">clawpack.geoclaw.met.storm.</span></span><span class="sig-name descname"><span class="pre">cle_2015</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">storm</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">r</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.geoclaw.met.storm.cle_2015" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="clawpack.geoclaw.met.storm.construct_fields">
+<span class="sig-prename descclassname"><span class="pre">clawpack.geoclaw.met.storm.</span></span><span class="sig-name descname"><span class="pre">construct_fields</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">storm</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">r</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'holland_1980'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.geoclaw.met.storm.construct_fields" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="clawpack.geoclaw.met.storm.holland_1980">
+<span class="sig-prename descclassname"><span class="pre">clawpack.geoclaw.met.storm.</span></span><span class="sig-name descname"><span class="pre">holland_1980</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">storm</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">r</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.geoclaw.met.storm.holland_1980" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="clawpack.geoclaw.met.storm.holland_2010">
+<span class="sig-prename descclassname"><span class="pre">clawpack.geoclaw.met.storm.</span></span><span class="sig-name descname"><span class="pre">holland_2010</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">storm</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">r</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.geoclaw.met.storm.holland_2010" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
 </section>
-<section id="track-and-stormtrack">
-<h2>Track and StormTrack<a class="headerlink" href="#track-and-stormtrack" title="Link to this heading">¶</a></h2>
+<section id="module-clawpack.geoclaw.met.track">
+<span id="track-and-stormtrack"></span><h2>Track and StormTrack<a class="headerlink" href="#module-clawpack.geoclaw.met.track" title="Link to this heading">¶</a></h2>
+<p>Track and StormTrack objects for meteorological forcing.</p>
+<p>This module defines the <code class="docutils literal notranslate"><span class="pre">Track</span></code> and <code class="docutils literal notranslate"><span class="pre">StormTrack</span></code> objects used by the
+meteorological-forcing refactor along with the track-format readers that
+produce a <code class="docutils literal notranslate"><span class="pre">StormTrack</span></code> (ATCF, HURDAT, IBTrACS, JMA, TCVITALS).  The parsing
+logic here is moved verbatim from the original <code class="docutils literal notranslate"><span class="pre">Storm</span></code> readers so the parsed
+values (and any downstream emitted bytes) are byte-for-byte identical.</p>
+<p>A <code class="docutils literal notranslate"><span class="pre">Track</span></code> is a generic evolving spatial feature (a center location over
+time).  A <code class="docutils literal notranslate"><span class="pre">StormTrack</span></code> adds storm-specific metadata (intensity, radii,
+classification, basin).  The time axis is a NumPy <code class="docutils literal notranslate"><span class="pre">datetime64</span></code> array,
+uniform with the gridded field axis (see <code class="docutils literal notranslate"><span class="pre">met_forcing_refactor.md</span></code> Section
+6).</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="clawpack.geoclaw.met.track.Basin">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">clawpack.geoclaw.met.track.</span></span><span class="sig-name descname"><span class="pre">Basin</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">values</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.geoclaw.met.track.Basin" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Enum</span></code></p>
+<p>Canonical tropical-cyclone basin, independent of source vocabulary.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="clawpack.geoclaw.met.track.Basin.CENTRAL_PACIFIC">
+<span class="sig-name descname"><span class="pre">CENTRAL_PACIFIC</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'central_pacific'</span></em><a class="headerlink" href="#clawpack.geoclaw.met.track.Basin.CENTRAL_PACIFIC" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="clawpack.geoclaw.met.track.Basin.EAST_PACIFIC">
+<span class="sig-name descname"><span class="pre">EAST_PACIFIC</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'east_pacific'</span></em><a class="headerlink" href="#clawpack.geoclaw.met.track.Basin.EAST_PACIFIC" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="clawpack.geoclaw.met.track.Basin.NORTH_ATLANTIC">
+<span class="sig-name descname"><span class="pre">NORTH_ATLANTIC</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'north_atlantic'</span></em><a class="headerlink" href="#clawpack.geoclaw.met.track.Basin.NORTH_ATLANTIC" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="clawpack.geoclaw.met.track.Basin.NORTH_INDIAN">
+<span class="sig-name descname"><span class="pre">NORTH_INDIAN</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'north_indian'</span></em><a class="headerlink" href="#clawpack.geoclaw.met.track.Basin.NORTH_INDIAN" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="clawpack.geoclaw.met.track.Basin.SOUTHERN_HEMISPHERE">
+<span class="sig-name descname"><span class="pre">SOUTHERN_HEMISPHERE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'southern_hemisphere'</span></em><a class="headerlink" href="#clawpack.geoclaw.met.track.Basin.SOUTHERN_HEMISPHERE" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="clawpack.geoclaw.met.track.Basin.SOUTH_ATLANTIC">
+<span class="sig-name descname"><span class="pre">SOUTH_ATLANTIC</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'south_atlantic'</span></em><a class="headerlink" href="#clawpack.geoclaw.met.track.Basin.SOUTH_ATLANTIC" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="clawpack.geoclaw.met.track.Basin.SOUTH_INDIAN">
+<span class="sig-name descname"><span class="pre">SOUTH_INDIAN</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'south_indian'</span></em><a class="headerlink" href="#clawpack.geoclaw.met.track.Basin.SOUTH_INDIAN" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="clawpack.geoclaw.met.track.Basin.SOUTH_PACIFIC">
+<span class="sig-name descname"><span class="pre">SOUTH_PACIFIC</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'south_pacific'</span></em><a class="headerlink" href="#clawpack.geoclaw.met.track.Basin.SOUTH_PACIFIC" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="clawpack.geoclaw.met.track.Basin.UNKNOWN">
+<span class="sig-name descname"><span class="pre">UNKNOWN</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'unknown'</span></em><a class="headerlink" href="#clawpack.geoclaw.met.track.Basin.UNKNOWN" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="clawpack.geoclaw.met.track.Basin.WEST_PACIFIC">
+<span class="sig-name descname"><span class="pre">WEST_PACIFIC</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'west_pacific'</span></em><a class="headerlink" href="#clawpack.geoclaw.met.track.Basin.WEST_PACIFIC" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="clawpack.geoclaw.met.track.NoDataError">
+<em class="property"><span class="k"><span class="pre">exception</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">clawpack.geoclaw.met.track.</span></span><span class="sig-name descname"><span class="pre">NoDataError</span></span><a class="headerlink" href="#clawpack.geoclaw.met.track.NoDataError" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">ValueError</span></code></p>
+<p>Exception to raise when no valid data in input file</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="clawpack.geoclaw.met.track.StormStatus">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">clawpack.geoclaw.met.track.</span></span><span class="sig-name descname"><span class="pre">StormStatus</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">values</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.geoclaw.met.track.StormStatus" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Enum</span></code></p>
+<p>Canonical storm status (development stage), not Saffir-Simpson category.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="clawpack.geoclaw.met.track.StormStatus.DISSIPATING">
+<span class="sig-name descname"><span class="pre">DISSIPATING</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'dissipating'</span></em><a class="headerlink" href="#clawpack.geoclaw.met.track.StormStatus.DISSIPATING" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="clawpack.geoclaw.met.track.StormStatus.DISTURBANCE">
+<span class="sig-name descname"><span class="pre">DISTURBANCE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'disturbance'</span></em><a class="headerlink" href="#clawpack.geoclaw.met.track.StormStatus.DISTURBANCE" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="clawpack.geoclaw.met.track.StormStatus.EXTRATROPICAL">
+<span class="sig-name descname"><span class="pre">EXTRATROPICAL</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'extratropical'</span></em><a class="headerlink" href="#clawpack.geoclaw.met.track.StormStatus.EXTRATROPICAL" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="clawpack.geoclaw.met.track.StormStatus.HURRICANE">
+<span class="sig-name descname"><span class="pre">HURRICANE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'hurricane'</span></em><a class="headerlink" href="#clawpack.geoclaw.met.track.StormStatus.HURRICANE" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="clawpack.geoclaw.met.track.StormStatus.INLAND">
+<span class="sig-name descname"><span class="pre">INLAND</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'inland'</span></em><a class="headerlink" href="#clawpack.geoclaw.met.track.StormStatus.INLAND" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="clawpack.geoclaw.met.track.StormStatus.LOW">
+<span class="sig-name descname"><span class="pre">LOW</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'low'</span></em><a class="headerlink" href="#clawpack.geoclaw.met.track.StormStatus.LOW" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="clawpack.geoclaw.met.track.StormStatus.SUBTROPICAL_DEPRESSION">
+<span class="sig-name descname"><span class="pre">SUBTROPICAL_DEPRESSION</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'subtropical_depression'</span></em><a class="headerlink" href="#clawpack.geoclaw.met.track.StormStatus.SUBTROPICAL_DEPRESSION" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="clawpack.geoclaw.met.track.StormStatus.SUBTROPICAL_STORM">
+<span class="sig-name descname"><span class="pre">SUBTROPICAL_STORM</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'subtropical_storm'</span></em><a class="headerlink" href="#clawpack.geoclaw.met.track.StormStatus.SUBTROPICAL_STORM" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="clawpack.geoclaw.met.track.StormStatus.SUPER_TYPHOON">
+<span class="sig-name descname"><span class="pre">SUPER_TYPHOON</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'super_typhoon'</span></em><a class="headerlink" href="#clawpack.geoclaw.met.track.StormStatus.SUPER_TYPHOON" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="clawpack.geoclaw.met.track.StormStatus.TROPICAL_CYCLONE">
+<span class="sig-name descname"><span class="pre">TROPICAL_CYCLONE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'tropical_cyclone'</span></em><a class="headerlink" href="#clawpack.geoclaw.met.track.StormStatus.TROPICAL_CYCLONE" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="clawpack.geoclaw.met.track.StormStatus.TROPICAL_DEPRESSION">
+<span class="sig-name descname"><span class="pre">TROPICAL_DEPRESSION</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'tropical_depression'</span></em><a class="headerlink" href="#clawpack.geoclaw.met.track.StormStatus.TROPICAL_DEPRESSION" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="clawpack.geoclaw.met.track.StormStatus.TROPICAL_STORM">
+<span class="sig-name descname"><span class="pre">TROPICAL_STORM</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'tropical_storm'</span></em><a class="headerlink" href="#clawpack.geoclaw.met.track.StormStatus.TROPICAL_STORM" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="clawpack.geoclaw.met.track.StormStatus.TROPICAL_WAVE">
+<span class="sig-name descname"><span class="pre">TROPICAL_WAVE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'tropical_wave'</span></em><a class="headerlink" href="#clawpack.geoclaw.met.track.StormStatus.TROPICAL_WAVE" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="clawpack.geoclaw.met.track.StormStatus.TYPHOON">
+<span class="sig-name descname"><span class="pre">TYPHOON</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'typhoon'</span></em><a class="headerlink" href="#clawpack.geoclaw.met.track.StormStatus.TYPHOON" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="clawpack.geoclaw.met.track.StormStatus.UNKNOWN">
+<span class="sig-name descname"><span class="pre">UNKNOWN</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'unknown'</span></em><a class="headerlink" href="#clawpack.geoclaw.met.track.StormStatus.UNKNOWN" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="clawpack.geoclaw.met.track.StormTrack">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">clawpack.geoclaw.met.track.</span></span><span class="sig-name descname"><span class="pre">StormTrack</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.geoclaw.met.track.StormTrack" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#clawpack.geoclaw.met.track.Track" title="clawpack.geoclaw.met.track.Track"><code class="xref py py-class docutils literal notranslate"><span class="pre">Track</span></code></a></p>
+<p>A <a class="reference internal" href="#clawpack.geoclaw.met.track.Track" title="clawpack.geoclaw.met.track.Track"><code class="xref py py-class docutils literal notranslate"><span class="pre">Track</span></code></a> carrying storm-specific metadata.</p>
+<p>Adds intensity-like parameters (<code class="docutils literal notranslate"><span class="pre">max_wind_speed</span></code>, <code class="docutils literal notranslate"><span class="pre">max_wind_radius</span></code>,
+<code class="docutils literal notranslate"><span class="pre">central_pressure</span></code>, <code class="docutils literal notranslate"><span class="pre">storm_radius</span></code>) and optional descriptors
+(<code class="docutils literal notranslate"><span class="pre">classification</span></code>, <code class="docutils literal notranslate"><span class="pre">basin</span></code>, <code class="docutils literal notranslate"><span class="pre">wind_speeds</span></code>).  Supports both tropical
+and extratropical systems.  The track-format readers below are classmethods
+that produce a populated <code class="docutils literal notranslate"><span class="pre">StormTrack</span></code>.</p>
+<p>Quadrant wind radii, where the source provides them, are in
+<code class="docutils literal notranslate"><span class="pre">wind_radii</span></code> with shape <code class="docutils literal notranslate"><span class="pre">(n_times,</span> <span class="pre">n_thresholds,</span> <span class="pre">4)</span></code> in metres, the last
+axis ordered NE, SE, SW, NW (<code class="xref py py-data docutils literal notranslate"><span class="pre">WIND_RADII_QUADRANTS</span></code>) and the middle
+axis matching <code class="docutils literal notranslate"><span class="pre">wind_radii_thresholds</span></code> (34/50/64 kt as m/s).  <code class="docutils literal notranslate"><span class="pre">np.nan</span></code>
+means <em>not reported</em>.  Note the archives differ on whether a zero is data:
+HURDAT2 has an explicit <code class="docutils literal notranslate"><span class="pre">-999</span></code> for unknown, so a zero radius there is a
+real zero and is kept; ATCF leaves an unavailable quadrant as <code class="docutils literal notranslate"><span class="pre">0</span></code>, which
+is indistinguishable from a genuine zero, so those become <code class="docutils literal notranslate"><span class="pre">np.nan</span></code>.</p>
+<p><code class="docutils literal notranslate"><span class="pre">basin</span></code> and <code class="docutils literal notranslate"><span class="pre">classification</span></code> remain the source’s own strings.  For
+comparisons across formats use <a class="reference internal" href="#clawpack.geoclaw.met.track.StormTrack.basin_standard" title="clawpack.geoclaw.met.track.StormTrack.basin_standard"><code class="xref py py-meth docutils literal notranslate"><span class="pre">basin_standard()</span></code></a> and <a class="reference internal" href="#clawpack.geoclaw.met.track.StormTrack.status" title="clawpack.geoclaw.met.track.StormTrack.status"><code class="xref py py-meth docutils literal notranslate"><span class="pre">status()</span></code></a>,
+which map onto the <a class="reference internal" href="#clawpack.geoclaw.met.track.Basin" title="clawpack.geoclaw.met.track.Basin"><code class="xref py py-class docutils literal notranslate"><span class="pre">Basin</span></code></a> and <a class="reference internal" href="#clawpack.geoclaw.met.track.StormStatus" title="clawpack.geoclaw.met.track.StormStatus"><code class="xref py py-class docutils literal notranslate"><span class="pre">StormStatus</span></code></a> enums.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="clawpack.geoclaw.met.track.StormTrack.basin_standard">
+<span class="sig-name descname"><span class="pre">basin_standard</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.geoclaw.met.track.StormTrack.basin_standard" title="Link to this definition">¶</a></dt>
+<dd><p>This track’s basin as a <a class="reference internal" href="#clawpack.geoclaw.met.track.Basin" title="clawpack.geoclaw.met.track.Basin"><code class="xref py py-class docutils literal notranslate"><span class="pre">Basin</span></code></a>, or <code class="docutils literal notranslate"><span class="pre">Basin.UNKNOWN</span></code>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="clawpack.geoclaw.met.track.StormTrack.category">
+<span class="sig-name descname"><span class="pre">category</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">categorization</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'NHC'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cat_names</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.geoclaw.met.track.StormTrack.category" title="Link to this definition">¶</a></dt>
+<dd><p>Categorizes storm based on relevant storm data</p>
+<dl class="field-list simple">
+<dt class="field-odd">Input<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><em>categorization</em> (string) Type of categorization to use.  Defaults
+to the National Hurricane Center “NHC”.</p></li>
+<li><p><em>cat_names</em> (bool) If True returns the category name rather than a
+number.  Default to <em>False</em>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Output<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p>(ndarray) Integer array of categories at each time point of the
+storm.</p></li>
+<li><p>(list) Similar to the above but the name of the category as a
+<em>string</em>.  This is only returned if <em>car_names = True</em>.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="clawpack.geoclaw.met.track.StormTrack.plot">
+<span class="sig-name descname"><span class="pre">plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ax</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t_range</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">categorization</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cat_colors</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plot_swath</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">radius</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coordinate_system</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fill_alpha</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.25</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fill_color</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'red'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.geoclaw.met.track.StormTrack.plot" title="Link to this definition">¶</a></dt>
+<dd><p>Plot this storm’s track in the given axes object</p>
+<dl class="field-list simple">
+<dt class="field-odd">Input<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><em>ax</em> (matplotlib.pyplot.axes) Axes to plot into.</p></li>
+<li><dl class="simple">
+<dt><em>t_range</em> (list) Time range to plot the track for.  If None then use</dt><dd><p>entire range.  Default is None.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><em>categorization</em> (str) Type of categorization to be used.  This is</dt><dd><p>used to map to the keys in the cat_colors dictionary.  Default is
+None and will cause no categorization to occur.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><em>cat_colors</em> (dict) Color mapping between numeric categorization and</dt><dd><p>colors to be plotted for the track.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><em>plot_swath</em> (bool) Plot a swath around the track using one of the</dt><dd><p>methods determined by what radius information is provided.  Default
+is False.</p>
+</dd>
+</dl>
+</li>
+<li><p><em>radius</em> (None or float or numpy.ndarray)</p></li>
+<li><p><em>coordinate_system</em> (int)</p></li>
+<li><p><em>fill_alpha</em> (float)</p></li>
+<li><p><em>fill_color</em> (color)</p></li>
+<li><dl class="simple">
+<dt><em>kwargs</em> All additional keyword arguments are passed to the plotting</dt><dd><p>command for the track.</p>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="clawpack.geoclaw.met.track.StormTrack.read_atcf">
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">read_atcf</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.geoclaw.met.track.StormTrack.read_atcf" title="Link to this definition">¶</a></dt>
+<dd><p>Read in a ATCF formatted storm file</p>
+<p>ATCF format has storm stored individually so there is no support for
+multiple storms in a particular file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Input<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><em>path</em> (string) Path to the file to be read.</p></li>
+<li><p><em>verbose</em> (bool) Output more info regarding reading.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="clawpack.geoclaw.met.track.StormTrack.read_hurdat">
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">read_hurdat</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">storm_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">year</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.geoclaw.met.track.StormTrack.read_hurdat" title="Link to this definition">¶</a></dt>
+<dd><p>Read a HURDAT2 formatted storm file.</p>
+<p>This is the current version of HURDAT data available (HURDAT 2).  The
+archives NOAA/AOML distributes hold <em>every</em> storm in a basin in one file
+(~2000 storms for the Atlantic, 1851-present), so pass a selector to pick
+one; a file containing a single storm needs no selector.  Use
+<a class="reference internal" href="#clawpack.geoclaw.met.track.iter_hurdat" title="clawpack.geoclaw.met.track.iter_hurdat"><code class="xref py py-func docutils literal notranslate"><span class="pre">iter_hurdat()</span></code></a> to walk every storm, or <a class="reference internal" href="#clawpack.geoclaw.met.track.catalog_hurdat" title="clawpack.geoclaw.met.track.catalog_hurdat"><code class="xref py py-func docutils literal notranslate"><span class="pre">catalog_hurdat()</span></code></a> for an
+index of what a file contains.</p>
+<p>For more details on the HURDAT format and getting data see</p>
+<p><a class="reference external" href="http://www.aoml.noaa.gov/hrd/hurdat/Data_Storm.html">http://www.aoml.noaa.gov/hrd/hurdat/Data_Storm.html</a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Input<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><em>path</em> (string) Path to the file to be read.</p></li>
+<li><p><em>verbose</em> (bool) Output more info regarding reading.</p></li>
+<li><p><em>storm_id</em> (string) ATCF-style id to select, e.g. <code class="docutils literal notranslate"><span class="pre">&quot;AL092008&quot;</span></code>.</p></li>
+<li><p><em>name</em> (string) Storm name to select, e.g. <code class="docutils literal notranslate"><span class="pre">&quot;IKE&quot;</span></code>
+(case-insensitive).</p></li>
+<li><p><em>year</em> (int) Season to select; combine with <em>name</em> when a name has
+been reused across seasons.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><em>ValueError</em> If no storm matches the selector, or if the file holds
+more than one storm and no selector narrows it to exactly one.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="clawpack.geoclaw.met.track.StormTrack.read_ibtracs">
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">read_ibtracs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sid</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">storm_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">year</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start_date</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">agency_pref</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.geoclaw.met.track.StormTrack.read_ibtracs" title="Link to this definition">¶</a></dt>
+<dd><p>Read in IBTrACS formatted storm file</p>
+<p>This reads in the netcdf-formatted IBTrACS v4 data. You must either pass
+the <em>sid</em> of the storm (a unique identifier supplied by IBTrACS) OR
+<em>storm_name</em> and <em>year</em>. The latter will not be unique for unnamed storms,
+so you may optionally pass <em>start_date</em> as well. The <cite>wmo_*</cite> variable is
+used when non-missing, with missing values filled in by the corresponding
+variable of the agency specified in <cite>wmo_agency</cite> and/or <cite>usa_agency</cite>. If
+still missing, the other agencies are checked in order of <em>agency_pref</em> to
+see if any more non-missing values are available.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Input<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><em>path</em> (string) Path to the file to be read.</p></li>
+<li><dl class="simple">
+<dt><em>sid</em> (string, optional) IBTrACS-supplied unique track identifier.</dt><dd><p>Either <em>sid</em> OR <em>storm_name</em> and <em>year</em> must not be None.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><em>storm_name</em> (string, optional) name of storm of interest</dt><dd><p>(NAME field in IBTrACS). Either <em>sid</em> OR <em>storm_name</em> and
+<em>year</em> must not be None.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><em>year</em> (int, optional) year of storm of interest.</dt><dd><p>Either <em>sid</em> OR <em>storm_name</em> and <em>year</em> must not be None.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><em>start_date</em> (np.datetime64, optional) If storm is not</dt><dd><p>named, will find closest unnamed storm to this start date. Only
+used for unnamed storms when specifying <em>storm_name</em> and <em>year</em>
+does not uniquely identify storm.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><em>agency_pref</em> (list, optional) Preference order to use if <cite>wmo_*</cite> variable</dt><dd><p>is missing and <cite>wmo_agency</cite> and <cite>usa_agency</cite> are also missing.</p>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><dl class="simple">
+<dt><em>ValueError</em> If the method cannot find the matching storm then a</dt><dd><p>value error is risen.</p>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="clawpack.geoclaw.met.track.StormTrack.read_imd">
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">read_imd</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.geoclaw.met.track.StormTrack.read_imd" title="Link to this definition">¶</a></dt>
+<dd><dl class="simple">
+<dt>Extract relevant hurricane data from IMD file</dt><dd><p>and update storm fields with proper values.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Input<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><em>path</em> (string) Path to the file to be read.</p></li>
+</ul>
+</dd>
+</dl>
+<p>Return ValueError if format incorrect or if file not IMD.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="clawpack.geoclaw.met.track.StormTrack.read_jma">
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">read_jma</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.geoclaw.met.track.StormTrack.read_jma" title="Link to this definition">¶</a></dt>
+<dd><p>Read in JMA formatted storm file</p>
+<p>Note that only files that contain one storm are currently supported.</p>
+<p>For more details on the JMA format and getting data see</p>
+<p><a class="reference external" href="http://www.jma.go.jp/jma/jma-eng/jma-center/rsmc-hp-pub-eg/Besttracks/e_format_bst.html">http://www.jma.go.jp/jma/jma-eng/jma-center/rsmc-hp-pub-eg/Besttracks/e_format_bst.html</a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Input<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><em>path</em> (string) Path to the file to be read.</p></li>
+<li><p><em>verbose</em> (bool) Output more info regarding reading.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><em>ValueError</em> If the method cannot find the name/year matching the
+storm or they are not provided when <em>single_storm == False</em> then a
+value error is risen.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="clawpack.geoclaw.met.track.StormTrack.read_tcvitals">
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">read_tcvitals</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.geoclaw.met.track.StormTrack.read_tcvitals" title="Link to this definition">¶</a></dt>
+<dd><dl class="simple">
+<dt>Extract relevant hurricane data from TCVITALS file</dt><dd><p>and update storm fields with proper values.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Input<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><em>path</em> (string) Path to the file to be read.</p></li>
+<li><p><em>verbose</em> (bool) Output more info regarding reading.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="clawpack.geoclaw.met.track.StormTrack.status">
+<span class="sig-name descname"><span class="pre">status</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.geoclaw.met.track.StormTrack.status" title="Link to this definition">¶</a></dt>
+<dd><p>Per-time storm status as <a class="reference internal" href="#clawpack.geoclaw.met.track.StormStatus" title="clawpack.geoclaw.met.track.StormStatus"><code class="xref py py-class docutils literal notranslate"><span class="pre">StormStatus</span></code></a> values.</p>
+<p><code class="docutils literal notranslate"><span class="pre">None</span></code> when the source carried no classification.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="clawpack.geoclaw.met.track.Track">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">clawpack.geoclaw.met.track.</span></span><span class="sig-name descname"><span class="pre">Track</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">center</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">event</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">meta</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.geoclaw.met.track.Track" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Generic evolving feature with a spatial center over time.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Attributes<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><em>t</em> (ndarray) datetime64 array of times for each track point.</p></li>
+<li><p><em>center</em> (ndarray(:, :)) <code class="docutils literal notranslate"><span class="pre">(n,</span> <span class="pre">2)</span></code> array of <code class="docutils literal notranslate"><span class="pre">(lon,</span> <span class="pre">lat)</span></code>.  For a
+tropical cyclone this is the eye; for other systems it is the central
+point (e.g. a pressure minimum).</p></li>
+<li><p><em>name</em>, <em>id</em>, <em>event</em> optional metadata.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py property">
+<dt class="sig sig-object py" id="clawpack.geoclaw.met.track.Track.ID">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">ID</span></span><a class="headerlink" href="#clawpack.geoclaw.met.track.Track.ID" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="clawpack.geoclaw.met.track.Track.eye_location">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">eye_location</span></span><a class="headerlink" href="#clawpack.geoclaw.met.track.Track.eye_location" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="clawpack.geoclaw.met.track.Track.file_format">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">file_format</span></span><a class="headerlink" href="#clawpack.geoclaw.met.track.Track.file_format" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="clawpack.geoclaw.met.track.Track.file_paths">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">file_paths</span></span><a class="headerlink" href="#clawpack.geoclaw.met.track.Track.file_paths" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="clawpack.geoclaw.met.track.Track.time_offset">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">time_offset</span></span><a class="headerlink" href="#clawpack.geoclaw.met.track.Track.time_offset" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="clawpack.geoclaw.met.track.catalog_hurdat">
+<span class="sig-prename descclassname"><span class="pre">clawpack.geoclaw.met.track.</span></span><span class="sig-name descname"><span class="pre">catalog_hurdat</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">years</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">basins</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.geoclaw.met.track.catalog_hurdat" title="Link to this definition">¶</a></dt>
+<dd><p>Index of the storms in a HURDAT2 file, as a <code class="xref py py-class docutils literal notranslate"><span class="pre">pandas.DataFrame</span></code>.</p>
+<p>Columns: <code class="docutils literal notranslate"><span class="pre">storm_id</span></code>, <code class="docutils literal notranslate"><span class="pre">name</span></code>, <code class="docutils literal notranslate"><span class="pre">year</span></code>, <code class="docutils literal notranslate"><span class="pre">basin</span></code>, <code class="docutils literal notranslate"><span class="pre">num_records</span></code>,
+<code class="docutils literal notranslate"><span class="pre">t_start</span></code>, <code class="docutils literal notranslate"><span class="pre">t_end</span></code>.  Reads only each storm’s first and last record, so it
+is much cheaper than building every track – use it to decide what to run
+before running it.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="clawpack.geoclaw.met.track.catalog_ibtracs">
+<span class="sig-prename descclassname"><span class="pre">clawpack.geoclaw.met.track.</span></span><span class="sig-name descname"><span class="pre">catalog_ibtracs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">basin</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">years</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.geoclaw.met.track.catalog_ibtracs" title="Link to this definition">¶</a></dt>
+<dd><p>Index of the storms in an IBTrACS file, as a <code class="xref py py-class docutils literal notranslate"><span class="pre">pandas.DataFrame</span></code>.</p>
+<p>Columns: <code class="docutils literal notranslate"><span class="pre">sid</span></code>, <code class="docutils literal notranslate"><span class="pre">name</span></code>, <code class="docutils literal notranslate"><span class="pre">season</span></code>, <code class="docutils literal notranslate"><span class="pre">basin</span></code>, <code class="docutils literal notranslate"><span class="pre">num_records</span></code>,
+<code class="docutils literal notranslate"><span class="pre">t_start</span></code>, <code class="docutils literal notranslate"><span class="pre">t_end</span></code>, <code class="docutils literal notranslate"><span class="pre">max_wind</span></code> (m/s, from <code class="docutils literal notranslate"><span class="pre">wmo_wind</span></code> where present).
+Reads summary variables only, so it is far cheaper than building every
+track – use it to decide what to run before running it.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="clawpack.geoclaw.met.track.fill_rad_w_other_source">
+<span class="sig-prename descclassname"><span class="pre">clawpack.geoclaw.met.track.</span></span><span class="sig-name descname"><span class="pre">fill_rad_w_other_source</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">storm_targ</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">storm_fill</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">var</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">interp_kwargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{}</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.geoclaw.met.track.fill_rad_w_other_source" title="Link to this definition">¶</a></dt>
+<dd><p>Fill in storm radius variable (<em>max_wind_radius</em> or <em>storm_radius</em>) with values from another source. i.e.
+if you have missing radii in IBTrACS, you can fill with ATCF.
+This function will assume <em>storm_fill</em> has more non-missing
+values than <em>storm_targ</em> for this particular radius variable.
+Thus, it first attempts to interpolate the variable in <em>storm_fill</em>
+to the desired timestep. If that is missing, it tries to interpolate
+the non-missing values of the variable in <em>storm_targ</em>. If that
+also fails, it returns <code class="docutils literal notranslate"><span class="pre">np.nan</span></code>. The proper usage of this
+function is to wrap it such that you can pass a function
+with (<em>t</em>, <em>storm</em>) arguments to <em>max_wind_radius_fill</em> or
+<em>storm_radius_fill</em> when calling <em>write_geoclaw</em>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Input<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><em>t</em> (np.datetime64) the time corresponding to
+a missing value of <em>max_wind_radius</em> or <em>storm_radius</em></p></li>
+<li><p><em>storm_targ</em> (<code class="xref py py-class docutils literal notranslate"><span class="pre">clawpack.geoclaw.storm.Storm</span></code>) storm
+that has missing values you want to fill</p></li>
+<li><p><em>storm_fill</em> (<code class="xref py py-class docutils literal notranslate"><span class="pre">clawpack.geoclaw.storm.Storm</span></code>) storm
+that has non-missing values you want to use to fill <em>storm_targ</em></p></li>
+<li><p><em>var</em> (str) Either ‘max_wind_radius’ or ‘storm_radius’</p></li>
+<li><p><em>interp_kwargs</em> (dict) Additional keywords passed to scipy’s
+interpolator.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p>(float) value to use to fill this time point in <em>storm_targ</em>.
+<code class="docutils literal notranslate"><span class="pre">np.nan</span></code> if still missing after using <em>storm_fill</em> to fill, so a
+failed fill is skipped by <code class="docutils literal notranslate"><span class="pre">write_geoclaw</span></code> rather than written out.</p></li>
+</ul>
+</dd>
+<dt class="field-odd">Examples<span class="colon">:</span></dt>
+<dd class="field-odd"><p></p></dd>
+</dl>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">storm_ibtracs</span> <span class="o">=</span> <span class="n">Storm</span><span class="p">(</span><span class="n">file_format</span><span class="o">=</span><span class="s1">'IBTrACS'</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="s1">'path_to_ibtracs.nc'</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">sid</span><span class="o">=</span><span class="s1">'2018300N26315'</span><span class="p">)</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">storm_atcf</span> <span class="o">=</span> <span class="n">Storm</span><span class="p">(</span><span class="n">file_format</span><span class="o">=</span><span class="s1">'ATCF'</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="s1">'path_to_atcf.dat'</span><span class="p">)</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="k">def</span><span class="w"> </span><span class="nf">fill_mwr</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">storm</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="k">return</span> <span class="n">fill_rad_w_other_source</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">storm</span><span class="p">,</span> <span class="n">storm_atcf</span><span class="p">,</span> <span class="s1">'max_wind_radius'</span><span class="p">)</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">storm_ibtracs</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">file_format</span> <span class="o">=</span> <span class="s1">'geoclaw'</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">path</span> <span class="o">=</span> <span class="s1">'out_path.storm'</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">max_wind_radius_fill</span> <span class="o">=</span> <span class="n">fill_mwr</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="clawpack.geoclaw.met.track.iter_hurdat">
+<span class="sig-prename descclassname"><span class="pre">clawpack.geoclaw.met.track.</span></span><span class="sig-name descname"><span class="pre">iter_hurdat</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">storm_ids</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">names</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">years</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">basins</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.geoclaw.met.track.iter_hurdat" title="Link to this definition">¶</a></dt>
+<dd><p>Iterate the storms in a HURDAT2 file as <a class="reference internal" href="#clawpack.geoclaw.met.track.StormTrack" title="clawpack.geoclaw.met.track.StormTrack"><code class="xref py py-class docutils literal notranslate"><span class="pre">StormTrack</span></code></a> objects.</p>
+<p>One pass over the file, yielding in file order.  Every filter is optional and
+they combine; <code class="docutils literal notranslate"><span class="pre">years</span></code> accepts an int or any iterable of ints, so a season
+range is <code class="docutils literal notranslate"><span class="pre">years=range(1980,</span> <span class="pre">2026)</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Input<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><em>path</em> (string) Path to a HURDAT2 file (one or many storms).</p></li>
+<li><p><em>storm_ids</em> (iterable) ATCF-style ids to keep, e.g. <code class="docutils literal notranslate"><span class="pre">[&quot;AL092008&quot;]</span></code>.</p></li>
+<li><p><em>names</em> (iterable) Storm names to keep (case-insensitive).</p></li>
+<li><p><em>years</em> (int or iterable) Seasons to keep.</p></li>
+<li><p><em>basins</em> (string or iterable) Two-letter basin codes to keep.</p></li>
+<li><p><em>verbose</em> (bool) Print each storm as it is read.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Output<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p>Generator of <a class="reference internal" href="#clawpack.geoclaw.met.track.StormTrack" title="clawpack.geoclaw.met.track.StormTrack"><code class="xref py py-class docutils literal notranslate"><span class="pre">StormTrack</span></code></a>, each with <code class="docutils literal notranslate"><span class="pre">file_format</span> <span class="pre">=</span> <span class="pre">&quot;hurdat&quot;</span></code>.</p></li>
+</ul>
+</dd>
+</dl>
+<p>Missing RMW/ROCI is warned about once for the whole iteration rather than
+once per storm; HURDAT2 never carries either.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="clawpack.geoclaw.met.track.iter_ibtracs">
+<span class="sig-prename descclassname"><span class="pre">clawpack.geoclaw.met.track.</span></span><span class="sig-name descname"><span class="pre">iter_ibtracs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">basin</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">years</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sids</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">names</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">agency_pref</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">skip_invalid</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.geoclaw.met.track.iter_ibtracs" title="Link to this definition">¶</a></dt>
+<dd><p>Iterate storms in an IBTrACS v4 netCDF file as :class:<a href="#id1"><span class="problematic" id="id2">`</span></a>StormTrack`s.</p>
+<p>Opens the file once and slices per storm, rather than re-scanning it for
+every <a class="reference internal" href="#clawpack.geoclaw.met.track.StormTrack.read_ibtracs" title="clawpack.geoclaw.met.track.StormTrack.read_ibtracs"><code class="xref py py-meth docutils literal notranslate"><span class="pre">StormTrack.read_ibtracs()</span></code></a> call.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Input<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><em>path</em> (string) Path to an IBTrACS v4 netCDF file.</p></li>
+<li><p><em>basin</em> (string or iterable) Two-letter basin code(s) of storm <em>origin</em>,
+e.g. <code class="docutils literal notranslate"><span class="pre">&quot;NA&quot;</span></code>; matches what the reader stores as <code class="docutils literal notranslate"><span class="pre">basin</span></code>.</p></li>
+<li><p><em>years</em> (int or iterable) Seasons to keep, e.g. <code class="docutils literal notranslate"><span class="pre">range(1980,</span> <span class="pre">2026)</span></code>.</p></li>
+<li><p><em>sids</em> (iterable) IBTrACS storm ids to keep.</p></li>
+<li><p><em>names</em> (iterable) Storm names to keep (case-insensitive).</p></li>
+<li><p><em>agency_pref</em> (list) As <a class="reference internal" href="#clawpack.geoclaw.met.track.StormTrack.read_ibtracs" title="clawpack.geoclaw.met.track.StormTrack.read_ibtracs"><code class="xref py py-meth docutils literal notranslate"><span class="pre">StormTrack.read_ibtracs()</span></code></a>.</p></li>
+<li><p><em>skip_invalid</em> (bool) Skip storms with no time at which both a wind and a
+pressure were reported, instead of raising.  Load-bearing over a whole
+basin: such storms exist, and one of them should not abort the sweep.</p></li>
+<li><p><em>verbose</em> (bool) Report each storm as it is read.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Output<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p>Generator of <a class="reference internal" href="#clawpack.geoclaw.met.track.StormTrack" title="clawpack.geoclaw.met.track.StormTrack"><code class="xref py py-class docutils literal notranslate"><span class="pre">StormTrack</span></code></a>, in file order.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="clawpack.geoclaw.met.track.standardize_basin">
+<span class="sig-prename descclassname"><span class="pre">clawpack.geoclaw.met.track.</span></span><span class="sig-name descname"><span class="pre">standardize_basin</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">code</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'atcf'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.geoclaw.met.track.standardize_basin" title="Link to this definition">¶</a></dt>
+<dd><p>Map a format’s basin <em>code</em> onto a <a class="reference internal" href="#clawpack.geoclaw.met.track.Basin" title="clawpack.geoclaw.met.track.Basin"><code class="xref py py-class docutils literal notranslate"><span class="pre">Basin</span></code></a>.</p>
+<p>Unrecognized codes give <code class="docutils literal notranslate"><span class="pre">Basin.UNKNOWN</span></code> rather than raising: a new or
+misspelled code in an archive should not stop a track from being read.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="clawpack.geoclaw.met.track.standardize_status">
+<span class="sig-prename descclassname"><span class="pre">clawpack.geoclaw.met.track.</span></span><span class="sig-name descname"><span class="pre">standardize_status</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">code</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'atcf'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.geoclaw.met.track.standardize_status" title="Link to this definition">¶</a></dt>
+<dd><p>Map a format’s status <em>code</em> onto a <a class="reference internal" href="#clawpack.geoclaw.met.track.StormStatus" title="clawpack.geoclaw.met.track.StormStatus"><code class="xref py py-class docutils literal notranslate"><span class="pre">StormStatus</span></code></a>.</p>
+<p>Unrecognized codes give <code class="docutils literal notranslate"><span class="pre">StormStatus.UNKNOWN</span></code> rather than raising.</p>
+</dd></dl>
+
 </section>
-<section id="parametric-met-forcing">
-<h2>Parametric met forcing<a class="headerlink" href="#parametric-met-forcing" title="Link to this heading">¶</a></h2>
+<section id="module-clawpack.geoclaw.met.parametric">
+<span id="parametric-met-forcing"></span><h2>Parametric met forcing<a class="headerlink" href="#module-clawpack.geoclaw.met.parametric" title="Link to this heading">¶</a></h2>
+<p>Parameterized meteorological forcing.</p>
+<p><code class="docutils literal notranslate"><span class="pre">ParametricMetForcing</span></code> holds a <a class="reference internal" href="#clawpack.geoclaw.met.track.Track" title="clawpack.geoclaw.met.track.Track"><code class="xref py py-class docutils literal notranslate"><span class="pre">Track</span></code></a>
+(or <a class="reference internal" href="#clawpack.geoclaw.met.track.StormTrack" title="clawpack.geoclaw.met.track.StormTrack"><code class="xref py py-class docutils literal notranslate"><span class="pre">StormTrack</span></code></a>), a model identifier, and
+model configuration.  It provides the GeoClaw parametric-forcing reader
+(<code class="docutils literal notranslate"><span class="pre">read_geoclaw</span></code>) and writer (<code class="docutils literal notranslate"><span class="pre">write_geoclaw</span></code>), both moved verbatim from the
+original <code class="docutils literal notranslate"><span class="pre">Storm</span></code> implementation so the emitted bytes stay identical.</p>
+<p><code class="docutils literal notranslate"><span class="pre">time_offset</span></code> is Python-to-Fortran conversion metadata resolved at the write
+boundary exactly as before (it is stored on the track’s shared <code class="docutils literal notranslate"><span class="pre">_Meta</span></code> and
+proxied here).</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="clawpack.geoclaw.met.parametric.ParametricMetForcing">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">clawpack.geoclaw.met.parametric.</span></span><span class="sig-name descname"><span class="pre">ParametricMetForcing</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">track</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.geoclaw.met.parametric.ParametricMetForcing" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Forcing generated from a parameterized model referencing a track.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Attributes<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><em>track</em> (<code class="xref py py-class docutils literal notranslate"><span class="pre">StormTrack</span></code>) The track/event the forcing references.</p></li>
+<li><p><em>model</em> (str) Model identifier (e.g. <code class="docutils literal notranslate"><span class="pre">&quot;holland80&quot;</span></code>).  Not required by
+the GeoClaw writer, which emits the compact track-parameter file.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py property">
+<dt class="sig sig-object py" id="clawpack.geoclaw.met.parametric.ParametricMetForcing.central_pressure">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">central_pressure</span></span><a class="headerlink" href="#clawpack.geoclaw.met.parametric.ParametricMetForcing.central_pressure" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="clawpack.geoclaw.met.parametric.ParametricMetForcing.eye_location">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">eye_location</span></span><a class="headerlink" href="#clawpack.geoclaw.met.parametric.ParametricMetForcing.eye_location" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="clawpack.geoclaw.met.parametric.ParametricMetForcing.file_format">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">file_format</span></span><a class="headerlink" href="#clawpack.geoclaw.met.parametric.ParametricMetForcing.file_format" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="clawpack.geoclaw.met.parametric.ParametricMetForcing.file_paths">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">file_paths</span></span><a class="headerlink" href="#clawpack.geoclaw.met.parametric.ParametricMetForcing.file_paths" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="clawpack.geoclaw.met.parametric.ParametricMetForcing.max_wind_radius">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">max_wind_radius</span></span><a class="headerlink" href="#clawpack.geoclaw.met.parametric.ParametricMetForcing.max_wind_radius" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="clawpack.geoclaw.met.parametric.ParametricMetForcing.max_wind_speed">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">max_wind_speed</span></span><a class="headerlink" href="#clawpack.geoclaw.met.parametric.ParametricMetForcing.max_wind_speed" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="clawpack.geoclaw.met.parametric.ParametricMetForcing.name">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">name</span></span><a class="headerlink" href="#clawpack.geoclaw.met.parametric.ParametricMetForcing.name" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="clawpack.geoclaw.met.parametric.ParametricMetForcing.read_geoclaw">
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">read_geoclaw</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.geoclaw.met.parametric.ParametricMetForcing.read_geoclaw" title="Link to this definition">¶</a></dt>
+<dd><p>Read in a GeoClaw formatted storm file</p>
+<p>GeoClaw storm files are read in by the Fortran code and are not meant
+to be human readable.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Input<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><em>path</em> (string) Path to the file to be read.</p></li>
+<li><p><em>verbose</em> (bool) Output more info regarding reading.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="clawpack.geoclaw.met.parametric.ParametricMetForcing.storm_radius">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">storm_radius</span></span><a class="headerlink" href="#clawpack.geoclaw.met.parametric.ParametricMetForcing.storm_radius" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="clawpack.geoclaw.met.parametric.ParametricMetForcing.t">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">t</span></span><a class="headerlink" href="#clawpack.geoclaw.met.parametric.ParametricMetForcing.t" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="clawpack.geoclaw.met.parametric.ParametricMetForcing.time_offset">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">time_offset</span></span><a class="headerlink" href="#clawpack.geoclaw.met.parametric.ParametricMetForcing.time_offset" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="clawpack.geoclaw.met.parametric.ParametricMetForcing.write_geoclaw">
+<span class="sig-name descname"><span class="pre">write_geoclaw</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">skip</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fill_dict</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.geoclaw.met.parametric.ParametricMetForcing.write_geoclaw" title="Link to this definition">¶</a></dt>
+<dd><p>Write out a GeoClaw formatted storm file</p>
+<p>GeoClaw storm files are read in by the GeoClaw Fortran code.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Input<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><em>path</em> (string) Path to the file to be written.</p></li>
+<li><dl class="simple">
+<dt><em>skip</em> (bool) Skip a time if NaNs are found and are not replaced.</dt><dd><p>Default is <cite>True</cite>.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><em>force</em> (bool) Force output of storm even if there is missing data.</dt><dd><p>Default is <cite>False</cite>.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><em>verbose</em> (bool) Print out additional information when writing.</dt><dd><p>Default is <cite>False</cite>.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><em>fill_dict</em> (dict) Dictionary of functions to use to fill in missing</dt><dd><p>data represented by NaNs.  The keys are the field to be filled and
+the function signature should be <cite>my_func(t, storm)</cite> where t is the
+time of the forecast and <cite>storm</cite> is the storm object.  If the
+field remains a NaN or a function is not provided these lines will
+be assumed redundant and will be ommitted.  Note that the older
+keyword arguments are put in this dictionary.  Currently the one
+default function is for <cite>storm_radius</cite>, which sets the value to
+500 km; a caller-supplied <cite>storm_radius</cite> fill overrides it.</p>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+</dl>
+<p>Missing data is marked by <cite>numpy.nan</cite>.  A negative value in one of the
+four intensity/geometry fields is also accepted as missing, for objects
+built against the older <cite>-1</cite> convention, and warns.  Zero is <em>not</em>
+treated as missing.  A fill function’s return value is re-checked, so a
+fill that cannot produce a value leaves the row skipped rather than
+writing a sentinel into the file.  Fills are applied to internal copies;
+the storm object is not modified.</p>
+</dd></dl>
+
+</dd></dl>
+
 </section>
-<section id="gridded-met-forcing">
-<h2>Gridded met forcing<a class="headerlink" href="#gridded-met-forcing" title="Link to this heading">¶</a></h2>
+<section id="module-clawpack.geoclaw.met.gridded">
+<span id="gridded-met-forcing"></span><h2>Gridded met forcing<a class="headerlink" href="#module-clawpack.geoclaw.met.gridded" title="Link to this heading">¶</a></h2>
+<p>Gridded meteorological forcing.</p>
+<p><code class="docutils literal notranslate"><span class="pre">GriddedMetForcing</span></code> describes file-backed wind/pressure fields (OWI/ASCII and
+NetCDF).  It owns the file paths, the numeric <code class="docutils literal notranslate"><span class="pre">file_format</span></code> tag, the NetCDF
+variable/dimension mapping and interpolation metadata, and the forcing controls
+(scaling, storm time scaling, spatial crop, edge ramping, registration shift).</p>
+<p>The descriptor reader (<code class="docutils literal notranslate"><span class="pre">read_data</span></code>) and writer (<code class="docutils literal notranslate"><span class="pre">write_data</span></code>) are moved
+verbatim from the original <code class="docutils literal notranslate"><span class="pre">Storm</span></code> implementation so the emitted descriptor
+bytes are byte-for-byte identical.  <code class="docutils literal notranslate"><span class="pre">write_data</span></code> reuses
+<code class="docutils literal notranslate"><span class="pre">clawpack.geoclaw.netcdf_utils.MetInspector</span></code> / <code class="docutils literal notranslate"><span class="pre">DescriptorWriter</span></code>.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="clawpack.geoclaw.met.gridded.GriddedMetForcing">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">clawpack.geoclaw.met.gridded.</span></span><span class="sig-name descname"><span class="pre">GriddedMetForcing</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">meta</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.geoclaw.met.gridded.GriddedMetForcing" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Forcing read from external gridded wind/pressure field datasets.</p>
+<dl class="py property">
+<dt class="sig sig-object py" id="clawpack.geoclaw.met.gridded.GriddedMetForcing.file_format">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">file_format</span></span><a class="headerlink" href="#clawpack.geoclaw.met.gridded.GriddedMetForcing.file_format" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="clawpack.geoclaw.met.gridded.GriddedMetForcing.file_paths">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">file_paths</span></span><a class="headerlink" href="#clawpack.geoclaw.met.gridded.GriddedMetForcing.file_paths" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="clawpack.geoclaw.met.gridded.GriddedMetForcing.from_owi">
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_owi</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pressure_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wind_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_offset</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">meta</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.geoclaw.met.gridded.GriddedMetForcing.from_owi" title="Link to this definition">¶</a></dt>
+<dd><p>Build a descriptor-ready forcing for an existing OWI WIN/PRE pair.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Input<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><em>pressure_path</em> (path-like) the <code class="docutils literal notranslate"><span class="pre">.PRE</span></code> file.</p></li>
+<li><p><em>wind_path</em> (path-like) the <code class="docutils literal notranslate"><span class="pre">.WIN</span></code> file.</p></li>
+<li><p><em>time_offset</em> (datetime64, optional) forcing time reference; if
+omitted it is read from the first record of <code class="docutils literal notranslate"><span class="pre">pressure_path</span></code>.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="clawpack.geoclaw.met.gridded.GriddedMetForcing.read_data">
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">read_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.geoclaw.met.gridded.GriddedMetForcing.read_data" title="Link to this definition">¶</a></dt>
+<dd><p>Read in a data derived storm data information file</p>
+<dl class="field-list simple">
+<dt class="field-odd">Input<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><em>path</em> (string) Path to the file to be read.</p></li>
+<li><p><em>verbose</em> (bool) Output more info regarding reading.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="clawpack.geoclaw.met.gridded.GriddedMetForcing.time_offset">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">time_offset</span></span><a class="headerlink" href="#clawpack.geoclaw.met.gridded.GriddedMetForcing.time_offset" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="clawpack.geoclaw.met.gridded.GriddedMetForcing.to_owi">
+<span class="sig-name descname"><span class="pre">to_owi</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pressure_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wind_path</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.geoclaw.met.gridded.GriddedMetForcing.to_owi" title="Link to this definition">¶</a></dt>
+<dd><p>Write <code class="docutils literal notranslate"><span class="pre">data</span></code> to an OWI WIN/PRE pair and point this forcing at it.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Input<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><em>data</em> (<code class="xref py py-class docutils literal notranslate"><span class="pre">OWIData</span></code>) fields.</p></li>
+<li><p><em>pressure_path</em>, <em>wind_path</em> (path-like) output files ([PRE, WIN]).</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="clawpack.geoclaw.met.gridded.GriddedMetForcing.write_data">
+<span class="sig-name descname"><span class="pre">write_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dim_mapping</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">var_mapping</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">met_inspector</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.geoclaw.met.gridded.GriddedMetForcing.write_data" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
 </section>
-<section id="workflow-tools">
-<h2>Workflow tools<a class="headerlink" href="#workflow-tools" title="Link to this heading">¶</a></h2>
+<section id="module-clawpack.geoclaw.met.tools">
+<span id="workflow-tools"></span><h2>Workflow tools<a class="headerlink" href="#module-clawpack.geoclaw.met.tools" title="Link to this heading">¶</a></h2>
+<p>Workflow tools for meteorological-forcing / storm data.</p>
+<p>This module hosts higher-level workflow helpers that operate on storm files but
+are not part of the core object model.  It provides <code class="docutils literal notranslate"><span class="pre">iter_atcf</span></code> for walking a
+multi-track ATCF file in memory and <code class="docutils literal notranslate"><span class="pre">make_multi_structure</span></code> for the older
+split-to-disk workflow (now a thin wrapper over <code class="docutils literal notranslate"><span class="pre">iter_atcf</span></code>).  <code class="docutils literal notranslate"><span class="pre">storm.py</span></code>
+keeps an import shim so the historical import path continues to work.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="clawpack.geoclaw.met.tools.iter_atcf">
+<span class="sig-prename descclassname"><span class="pre">clawpack.geoclaw.met.tools.</span></span><span class="sig-name descname"><span class="pre">iter_atcf</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.geoclaw.met.tools.iter_atcf" title="Link to this definition">¶</a></dt>
+<dd><p>Iterate the storms in a multi-storm ATCF file, without writing to disk.</p>
+<p>The in-memory counterpart to <a class="reference internal" href="#clawpack.geoclaw.met.tools.make_multi_structure" title="clawpack.geoclaw.met.tools.make_multi_structure"><code class="xref py py-func docutils literal notranslate"><span class="pre">make_multi_structure()</span></code></a>, and the companion
+of <code class="docutils literal notranslate"><span class="pre">met.track.iter_hurdat</span></code> / <code class="docutils literal notranslate"><span class="pre">iter_ibtracs</span></code> for the other two archive
+formats.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Input<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><em>path</em> (path-like) - the (possibly multi-storm) ATCF file to read.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Output<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p>Generator of <code class="docutils literal notranslate"><span class="pre">(storm_id,</span> <span class="pre">Storm)</span></code> pairs, where <em>storm_id</em> is basin plus
+cyclone number (e.g. <code class="docutils literal notranslate"><span class="pre">&quot;AL09&quot;</span></code>), in the order the storms first appear.</p></li>
+</ul>
+</dd>
+</dl>
+<p><code class="docutils literal notranslate"><span class="pre">read_atcf</span></code> takes a path rather than an open handle, so each storm’s
+records are staged through a temporary file that is removed immediately
+afterwards; nothing is left in the working directory.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="clawpack.geoclaw.met.tools.make_multi_structure">
+<span class="sig-prename descclassname"><span class="pre">clawpack.geoclaw.met.tools.</span></span><span class="sig-name descname"><span class="pre">make_multi_structure</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Clipped_ATCFs'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#clawpack.geoclaw.met.tools.make_multi_structure" title="Link to this definition">¶</a></dt>
+<dd><p>Split a multi-storm ATCF file into individual <code class="xref py py-class docutils literal notranslate"><span class="pre">Storm</span></code> objects.</p>
+<p>Some ATCF files bundle several storms in one file, distinguished by their
+basin and cyclone number (the first two comma-separated fields of each
+b-deck record, e.g. <code class="docutils literal notranslate"><span class="pre">AL</span></code> and <code class="docutils literal notranslate"><span class="pre">09</span></code>).  This groups the records by that
+identity, writes each storm’s records to its own file under <em>output_dir</em>,
+and reads them back as <code class="xref py py-class docutils literal notranslate"><span class="pre">Storm</span></code> objects.</p>
+<p>Use <a class="reference internal" href="#clawpack.geoclaw.met.tools.iter_atcf" title="clawpack.geoclaw.met.tools.iter_atcf"><code class="xref py py-func docutils literal notranslate"><span class="pre">iter_atcf()</span></code></a> instead when the per-storm files are not wanted; this
+function exists for the workflow where they are.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Input<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><em>path</em> (path-like) - the multi-storm ATCF file to split.</p></li>
+<li><p><em>output_dir</em> (path-like) - directory the per-storm ATCF files are
+written into (created if it does not exist).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Output<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p>(OrderedDict) mapping each storm id (basin + cyclone number, e.g.
+<code class="docutils literal notranslate"><span class="pre">&quot;AL09&quot;</span></code>) to a <code class="xref py py-class docutils literal notranslate"><span class="pre">Storm</span></code> read from that storm’s records, in the
+order the storms first appear in the file.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
 </section>
 <section id="met-forcing-data-object">
 <h2>Met forcing data object<a class="headerlink" href="#met-forcing-data-object" title="Link to this heading">¶</a></h2>
@@ -123,7 +1470,7 @@ descriptor (<code class="docutils literal notranslate"><span class="pre">write_d
 the per-attribute reference.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="clawpack.geoclaw.data.SurgeData">
-<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">clawpack.geoclaw.data.</span></span><span class="sig-name descname"><span class="pre">SurgeData</span></span><a class="headerlink" href="#clawpack.geoclaw.data.SurgeData" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">clawpack.geoclaw.data.</span></span><span class="sig-name descname"><span class="pre">SurgeData</span></span><a class="headerlink" href="#clawpack.geoclaw.data.SurgeData" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">ClawData</span></code></p>
 <p>Meteorological (storm) forcing parameters written to <code class="docutils literal notranslate"><span class="pre">surge.data</span></code>.</p>
 <p>Set as <code class="docutils literal notranslate"><span class="pre">rundata.surge_data</span></code> in a <code class="docutils literal notranslate"><span class="pre">setrun.py</span></code> and written to
@@ -179,12 +1526,12 @@ descriptor.</p></li>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="clawpack.geoclaw.data.SurgeData.storm_spec_dict_mapping">
-<span class="sig-name descname"><span class="pre">storm_spec_dict_mapping</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'cle':</span> <span class="pre">3,</span> <span class="pre">'data':</span> <span class="pre">-1,</span> <span class="pre">'demaria':</span> <span class="pre">7,</span> <span class="pre">'gridded':</span> <span class="pre">-1,</span> <span class="pre">'holland08':</span> <span class="pre">8,</span> <span class="pre">'holland10':</span> <span class="pre">2,</span> <span class="pre">'holland2008':</span> <span class="pre">8,</span> <span class="pre">'holland2010':</span> <span class="pre">2,</span> <span class="pre">'holland80':</span> <span class="pre">1,</span> <span class="pre">'modified-rankine':</span> <span class="pre">6,</span> <span class="pre">'modified_rankine':</span> <span class="pre">6,</span> <span class="pre">'none':</span> <span class="pre">0,</span> <span class="pre">'rankine':</span> <span class="pre">5,</span> <span class="pre">'slosh':</span> <span class="pre">4,</span> <span class="pre">'willoughby':</span> <span class="pre">9,</span> <span class="pre">None:</span> <span class="pre">0}</span></span><a class="headerlink" href="#clawpack.geoclaw.data.SurgeData.storm_spec_dict_mapping" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">storm_spec_dict_mapping</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'cle':</span> <span class="pre">3,</span> <span class="pre">'data':</span> <span class="pre">-1,</span> <span class="pre">'demaria':</span> <span class="pre">7,</span> <span class="pre">'gridded':</span> <span class="pre">-1,</span> <span class="pre">'holland08':</span> <span class="pre">8,</span> <span class="pre">'holland10':</span> <span class="pre">2,</span> <span class="pre">'holland2008':</span> <span class="pre">8,</span> <span class="pre">'holland2010':</span> <span class="pre">2,</span> <span class="pre">'holland80':</span> <span class="pre">1,</span> <span class="pre">'modified-rankine':</span> <span class="pre">6,</span> <span class="pre">'modified_rankine':</span> <span class="pre">6,</span> <span class="pre">'none':</span> <span class="pre">0,</span> <span class="pre">'rankine':</span> <span class="pre">5,</span> <span class="pre">'slosh':</span> <span class="pre">4,</span> <span class="pre">'willoughby':</span> <span class="pre">9,</span> <span class="pre">None:</span> <span class="pre">0}</span></em><a class="headerlink" href="#clawpack.geoclaw.data.SurgeData.storm_spec_dict_mapping" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="clawpack.geoclaw.data.SurgeData.storm_spec_not_implemented">
-<span class="sig-name descname"><span class="pre">storm_spec_not_implemented</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{}</span></span><a class="headerlink" href="#clawpack.geoclaw.data.SurgeData.storm_spec_not_implemented" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">storm_spec_not_implemented</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{}</span></em><a class="headerlink" href="#clawpack.geoclaw.data.SurgeData.storm_spec_not_implemented" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
@@ -214,11 +1561,166 @@ descriptor.</p></li>
     <h3><a href="contents.html">Table of Contents</a></h3>
     <ul>
 <li><a class="reference internal" href="#">Meteorological Forcing Python API</a><ul>
-<li><a class="reference internal" href="#storm-compatibility-wrapper">Storm (compatibility wrapper)</a></li>
-<li><a class="reference internal" href="#track-and-stormtrack">Track and StormTrack</a></li>
-<li><a class="reference internal" href="#parametric-met-forcing">Parametric met forcing</a></li>
-<li><a class="reference internal" href="#gridded-met-forcing">Gridded met forcing</a></li>
-<li><a class="reference internal" href="#workflow-tools">Workflow tools</a></li>
+<li><a class="reference internal" href="#module-clawpack.geoclaw.met.storm">Storm (compatibility wrapper)</a><ul>
+<li><a class="reference internal" href="#clawpack.geoclaw.met.storm.Storm"><code class="docutils literal notranslate"><span class="pre">Storm</span></code></a><ul>
+<li><a class="reference internal" href="#clawpack.geoclaw.met.storm.Storm.ID"><code class="docutils literal notranslate"><span class="pre">Storm.ID</span></code></a></li>
+<li><a class="reference internal" href="#clawpack.geoclaw.met.storm.Storm.basin"><code class="docutils literal notranslate"><span class="pre">Storm.basin</span></code></a></li>
+<li><a class="reference internal" href="#clawpack.geoclaw.met.storm.Storm.category"><code class="docutils literal notranslate"><span class="pre">Storm.category()</span></code></a></li>
+<li><a class="reference internal" href="#clawpack.geoclaw.met.storm.Storm.central_pressure"><code class="docutils literal notranslate"><span class="pre">Storm.central_pressure</span></code></a></li>
+<li><a class="reference internal" href="#clawpack.geoclaw.met.storm.Storm.classification"><code class="docutils literal notranslate"><span class="pre">Storm.classification</span></code></a></li>
+<li><a class="reference internal" href="#clawpack.geoclaw.met.storm.Storm.crop_extent"><code class="docutils literal notranslate"><span class="pre">Storm.crop_extent</span></code></a></li>
+<li><a class="reference internal" href="#clawpack.geoclaw.met.storm.Storm.event"><code class="docutils literal notranslate"><span class="pre">Storm.event</span></code></a></li>
+<li><a class="reference internal" href="#clawpack.geoclaw.met.storm.Storm.eye_location"><code class="docutils literal notranslate"><span class="pre">Storm.eye_location</span></code></a></li>
+<li><a class="reference internal" href="#clawpack.geoclaw.met.storm.Storm.file_format"><code class="docutils literal notranslate"><span class="pre">Storm.file_format</span></code></a></li>
+<li><a class="reference internal" href="#clawpack.geoclaw.met.storm.Storm.file_paths"><code class="docutils literal notranslate"><span class="pre">Storm.file_paths</span></code></a></li>
+<li><a class="reference internal" href="#clawpack.geoclaw.met.storm.Storm.max_wind_radius"><code class="docutils literal notranslate"><span class="pre">Storm.max_wind_radius</span></code></a></li>
+<li><a class="reference internal" href="#clawpack.geoclaw.met.storm.Storm.max_wind_speed"><code class="docutils literal notranslate"><span class="pre">Storm.max_wind_speed</span></code></a></li>
+<li><a class="reference internal" href="#clawpack.geoclaw.met.storm.Storm.met_fill_action"><code class="docutils literal notranslate"><span class="pre">Storm.met_fill_action</span></code></a></li>
+<li><a class="reference internal" href="#clawpack.geoclaw.met.storm.Storm.met_fill_value"><code class="docutils literal notranslate"><span class="pre">Storm.met_fill_value</span></code></a></li>
+<li><a class="reference internal" href="#clawpack.geoclaw.met.storm.Storm.met_lon_wrap"><code class="docutils literal notranslate"><span class="pre">Storm.met_lon_wrap</span></code></a></li>
+<li><a class="reference internal" href="#clawpack.geoclaw.met.storm.Storm.met_time_name"><code class="docutils literal notranslate"><span class="pre">Storm.met_time_name</span></code></a></li>
+<li><a class="reference internal" href="#clawpack.geoclaw.met.storm.Storm.met_time_offset"><code class="docutils literal notranslate"><span class="pre">Storm.met_time_offset</span></code></a></li>
+<li><a class="reference internal" href="#clawpack.geoclaw.met.storm.Storm.met_variable_map"><code class="docutils literal notranslate"><span class="pre">Storm.met_variable_map</span></code></a></li>
+<li><a class="reference internal" href="#clawpack.geoclaw.met.storm.Storm.met_x_name"><code class="docutils literal notranslate"><span class="pre">Storm.met_x_name</span></code></a></li>
+<li><a class="reference internal" href="#clawpack.geoclaw.met.storm.Storm.met_y_increasing"><code class="docutils literal notranslate"><span class="pre">Storm.met_y_increasing</span></code></a></li>
+<li><a class="reference internal" href="#clawpack.geoclaw.met.storm.Storm.met_y_name"><code class="docutils literal notranslate"><span class="pre">Storm.met_y_name</span></code></a></li>
+<li><a class="reference internal" href="#clawpack.geoclaw.met.storm.Storm.name"><code class="docutils literal notranslate"><span class="pre">Storm.name</span></code></a></li>
+<li><a class="reference internal" href="#clawpack.geoclaw.met.storm.Storm.plot"><code class="docutils literal notranslate"><span class="pre">Storm.plot()</span></code></a></li>
+<li><a class="reference internal" href="#clawpack.geoclaw.met.storm.Storm.ramp_width"><code class="docutils literal notranslate"><span class="pre">Storm.ramp_width</span></code></a></li>
+<li><a class="reference internal" href="#clawpack.geoclaw.met.storm.Storm.read"><code class="docutils literal notranslate"><span class="pre">Storm.read()</span></code></a></li>
+<li><a class="reference internal" href="#clawpack.geoclaw.met.storm.Storm.read_atcf"><code class="docutils literal notranslate"><span class="pre">Storm.read_atcf()</span></code></a></li>
+<li><a class="reference internal" href="#clawpack.geoclaw.met.storm.Storm.read_data"><code class="docutils literal notranslate"><span class="pre">Storm.read_data()</span></code></a></li>
+<li><a class="reference internal" href="#clawpack.geoclaw.met.storm.Storm.read_geoclaw"><code class="docutils literal notranslate"><span class="pre">Storm.read_geoclaw()</span></code></a></li>
+<li><a class="reference internal" href="#clawpack.geoclaw.met.storm.Storm.read_hurdat"><code class="docutils literal notranslate"><span class="pre">Storm.read_hurdat()</span></code></a></li>
+<li><a class="reference internal" href="#clawpack.geoclaw.met.storm.Storm.read_ibtracs"><code class="docutils literal notranslate"><span class="pre">Storm.read_ibtracs()</span></code></a></li>
+<li><a class="reference internal" href="#clawpack.geoclaw.met.storm.Storm.read_imd"><code class="docutils literal notranslate"><span class="pre">Storm.read_imd()</span></code></a></li>
+<li><a class="reference internal" href="#clawpack.geoclaw.met.storm.Storm.read_jma"><code class="docutils literal notranslate"><span class="pre">Storm.read_jma()</span></code></a></li>
+<li><a class="reference internal" href="#clawpack.geoclaw.met.storm.Storm.read_tcvitals"><code class="docutils literal notranslate"><span class="pre">Storm.read_tcvitals()</span></code></a></li>
+<li><a class="reference internal" href="#clawpack.geoclaw.met.storm.Storm.scaling"><code class="docutils literal notranslate"><span class="pre">Storm.scaling</span></code></a></li>
+<li><a class="reference internal" href="#clawpack.geoclaw.met.storm.Storm.storm_radius"><code class="docutils literal notranslate"><span class="pre">Storm.storm_radius</span></code></a></li>
+<li><a class="reference internal" href="#clawpack.geoclaw.met.storm.Storm.storm_time_scale"><code class="docutils literal notranslate"><span class="pre">Storm.storm_time_scale</span></code></a></li>
+<li><a class="reference internal" href="#clawpack.geoclaw.met.storm.Storm.t"><code class="docutils literal notranslate"><span class="pre">Storm.t</span></code></a></li>
+<li><a class="reference internal" href="#clawpack.geoclaw.met.storm.Storm.time_offset"><code class="docutils literal notranslate"><span class="pre">Storm.time_offset</span></code></a></li>
+<li><a class="reference internal" href="#clawpack.geoclaw.met.storm.Storm.wind_speeds"><code class="docutils literal notranslate"><span class="pre">Storm.wind_speeds</span></code></a></li>
+<li><a class="reference internal" href="#clawpack.geoclaw.met.storm.Storm.write"><code class="docutils literal notranslate"><span class="pre">Storm.write()</span></code></a></li>
+<li><a class="reference internal" href="#clawpack.geoclaw.met.storm.Storm.write_atcf"><code class="docutils literal notranslate"><span class="pre">Storm.write_atcf()</span></code></a></li>
+<li><a class="reference internal" href="#clawpack.geoclaw.met.storm.Storm.write_data"><code class="docutils literal notranslate"><span class="pre">Storm.write_data()</span></code></a></li>
+<li><a class="reference internal" href="#clawpack.geoclaw.met.storm.Storm.write_geoclaw"><code class="docutils literal notranslate"><span class="pre">Storm.write_geoclaw()</span></code></a></li>
+<li><a class="reference internal" href="#clawpack.geoclaw.met.storm.Storm.write_hurdat"><code class="docutils literal notranslate"><span class="pre">Storm.write_hurdat()</span></code></a></li>
+<li><a class="reference internal" href="#clawpack.geoclaw.met.storm.Storm.write_imd"><code class="docutils literal notranslate"><span class="pre">Storm.write_imd()</span></code></a></li>
+<li><a class="reference internal" href="#clawpack.geoclaw.met.storm.Storm.write_jma"><code class="docutils literal notranslate"><span class="pre">Storm.write_jma()</span></code></a></li>
+<li><a class="reference internal" href="#clawpack.geoclaw.met.storm.Storm.write_tcvitals"><code class="docutils literal notranslate"><span class="pre">Storm.write_tcvitals()</span></code></a></li>
+<li><a class="reference internal" href="#clawpack.geoclaw.met.storm.Storm.x_shift"><code class="docutils literal notranslate"><span class="pre">Storm.x_shift</span></code></a></li>
+<li><a class="reference internal" href="#clawpack.geoclaw.met.storm.Storm.y_shift"><code class="docutils literal notranslate"><span class="pre">Storm.y_shift</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#clawpack.geoclaw.met.storm.available_formats"><code class="docutils literal notranslate"><span class="pre">available_formats()</span></code></a></li>
+<li><a class="reference internal" href="#clawpack.geoclaw.met.storm.available_models"><code class="docutils literal notranslate"><span class="pre">available_models()</span></code></a></li>
+<li><a class="reference internal" href="#clawpack.geoclaw.met.storm.cle_2015"><code class="docutils literal notranslate"><span class="pre">cle_2015()</span></code></a></li>
+<li><a class="reference internal" href="#clawpack.geoclaw.met.storm.construct_fields"><code class="docutils literal notranslate"><span class="pre">construct_fields()</span></code></a></li>
+<li><a class="reference internal" href="#clawpack.geoclaw.met.storm.holland_1980"><code class="docutils literal notranslate"><span class="pre">holland_1980()</span></code></a></li>
+<li><a class="reference internal" href="#clawpack.geoclaw.met.storm.holland_2010"><code class="docutils literal notranslate"><span class="pre">holland_2010()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-clawpack.geoclaw.met.track">Track and StormTrack</a><ul>
+<li><a class="reference internal" href="#clawpack.geoclaw.met.track.Basin"><code class="docutils literal notranslate"><span class="pre">Basin</span></code></a><ul>
+<li><a class="reference internal" href="#clawpack.geoclaw.met.track.Basin.CENTRAL_PACIFIC"><code class="docutils literal notranslate"><span class="pre">Basin.CENTRAL_PACIFIC</span></code></a></li>
+<li><a class="reference internal" href="#clawpack.geoclaw.met.track.Basin.EAST_PACIFIC"><code class="docutils literal notranslate"><span class="pre">Basin.EAST_PACIFIC</span></code></a></li>
+<li><a class="reference internal" href="#clawpack.geoclaw.met.track.Basin.NORTH_ATLANTIC"><code class="docutils literal notranslate"><span class="pre">Basin.NORTH_ATLANTIC</span></code></a></li>
+<li><a class="reference internal" href="#clawpack.geoclaw.met.track.Basin.NORTH_INDIAN"><code class="docutils literal notranslate"><span class="pre">Basin.NORTH_INDIAN</span></code></a></li>
+<li><a class="reference internal" href="#clawpack.geoclaw.met.track.Basin.SOUTHERN_HEMISPHERE"><code class="docutils literal notranslate"><span class="pre">Basin.SOUTHERN_HEMISPHERE</span></code></a></li>
+<li><a class="reference internal" href="#clawpack.geoclaw.met.track.Basin.SOUTH_ATLANTIC"><code class="docutils literal notranslate"><span class="pre">Basin.SOUTH_ATLANTIC</span></code></a></li>
+<li><a class="reference internal" href="#clawpack.geoclaw.met.track.Basin.SOUTH_INDIAN"><code class="docutils literal notranslate"><span class="pre">Basin.SOUTH_INDIAN</span></code></a></li>
+<li><a class="reference internal" href="#clawpack.geoclaw.met.track.Basin.SOUTH_PACIFIC"><code class="docutils literal notranslate"><span class="pre">Basin.SOUTH_PACIFIC</span></code></a></li>
+<li><a class="reference internal" href="#clawpack.geoclaw.met.track.Basin.UNKNOWN"><code class="docutils literal notranslate"><span class="pre">Basin.UNKNOWN</span></code></a></li>
+<li><a class="reference internal" href="#clawpack.geoclaw.met.track.Basin.WEST_PACIFIC"><code class="docutils literal notranslate"><span class="pre">Basin.WEST_PACIFIC</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#clawpack.geoclaw.met.track.NoDataError"><code class="docutils literal notranslate"><span class="pre">NoDataError</span></code></a></li>
+<li><a class="reference internal" href="#clawpack.geoclaw.met.track.StormStatus"><code class="docutils literal notranslate"><span class="pre">StormStatus</span></code></a><ul>
+<li><a class="reference internal" href="#clawpack.geoclaw.met.track.StormStatus.DISSIPATING"><code class="docutils literal notranslate"><span class="pre">StormStatus.DISSIPATING</span></code></a></li>
+<li><a class="reference internal" href="#clawpack.geoclaw.met.track.StormStatus.DISTURBANCE"><code class="docutils literal notranslate"><span class="pre">StormStatus.DISTURBANCE</span></code></a></li>
+<li><a class="reference internal" href="#clawpack.geoclaw.met.track.StormStatus.EXTRATROPICAL"><code class="docutils literal notranslate"><span class="pre">StormStatus.EXTRATROPICAL</span></code></a></li>
+<li><a class="reference internal" href="#clawpack.geoclaw.met.track.StormStatus.HURRICANE"><code class="docutils literal notranslate"><span class="pre">StormStatus.HURRICANE</span></code></a></li>
+<li><a class="reference internal" href="#clawpack.geoclaw.met.track.StormStatus.INLAND"><code class="docutils literal notranslate"><span class="pre">StormStatus.INLAND</span></code></a></li>
+<li><a class="reference internal" href="#clawpack.geoclaw.met.track.StormStatus.LOW"><code class="docutils literal notranslate"><span class="pre">StormStatus.LOW</span></code></a></li>
+<li><a class="reference internal" href="#clawpack.geoclaw.met.track.StormStatus.SUBTROPICAL_DEPRESSION"><code class="docutils literal notranslate"><span class="pre">StormStatus.SUBTROPICAL_DEPRESSION</span></code></a></li>
+<li><a class="reference internal" href="#clawpack.geoclaw.met.track.StormStatus.SUBTROPICAL_STORM"><code class="docutils literal notranslate"><span class="pre">StormStatus.SUBTROPICAL_STORM</span></code></a></li>
+<li><a class="reference internal" href="#clawpack.geoclaw.met.track.StormStatus.SUPER_TYPHOON"><code class="docutils literal notranslate"><span class="pre">StormStatus.SUPER_TYPHOON</span></code></a></li>
+<li><a class="reference internal" href="#clawpack.geoclaw.met.track.StormStatus.TROPICAL_CYCLONE"><code class="docutils literal notranslate"><span class="pre">StormStatus.TROPICAL_CYCLONE</span></code></a></li>
+<li><a class="reference internal" href="#clawpack.geoclaw.met.track.StormStatus.TROPICAL_DEPRESSION"><code class="docutils literal notranslate"><span class="pre">StormStatus.TROPICAL_DEPRESSION</span></code></a></li>
+<li><a class="reference internal" href="#clawpack.geoclaw.met.track.StormStatus.TROPICAL_STORM"><code class="docutils literal notranslate"><span class="pre">StormStatus.TROPICAL_STORM</span></code></a></li>
+<li><a class="reference internal" href="#clawpack.geoclaw.met.track.StormStatus.TROPICAL_WAVE"><code class="docutils literal notranslate"><span class="pre">StormStatus.TROPICAL_WAVE</span></code></a></li>
+<li><a class="reference internal" href="#clawpack.geoclaw.met.track.StormStatus.TYPHOON"><code class="docutils literal notranslate"><span class="pre">StormStatus.TYPHOON</span></code></a></li>
+<li><a class="reference internal" href="#clawpack.geoclaw.met.track.StormStatus.UNKNOWN"><code class="docutils literal notranslate"><span class="pre">StormStatus.UNKNOWN</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#clawpack.geoclaw.met.track.StormTrack"><code class="docutils literal notranslate"><span class="pre">StormTrack</span></code></a><ul>
+<li><a class="reference internal" href="#clawpack.geoclaw.met.track.StormTrack.basin_standard"><code class="docutils literal notranslate"><span class="pre">StormTrack.basin_standard()</span></code></a></li>
+<li><a class="reference internal" href="#clawpack.geoclaw.met.track.StormTrack.category"><code class="docutils literal notranslate"><span class="pre">StormTrack.category()</span></code></a></li>
+<li><a class="reference internal" href="#clawpack.geoclaw.met.track.StormTrack.plot"><code class="docutils literal notranslate"><span class="pre">StormTrack.plot()</span></code></a></li>
+<li><a class="reference internal" href="#clawpack.geoclaw.met.track.StormTrack.read_atcf"><code class="docutils literal notranslate"><span class="pre">StormTrack.read_atcf()</span></code></a></li>
+<li><a class="reference internal" href="#clawpack.geoclaw.met.track.StormTrack.read_hurdat"><code class="docutils literal notranslate"><span class="pre">StormTrack.read_hurdat()</span></code></a></li>
+<li><a class="reference internal" href="#clawpack.geoclaw.met.track.StormTrack.read_ibtracs"><code class="docutils literal notranslate"><span class="pre">StormTrack.read_ibtracs()</span></code></a></li>
+<li><a class="reference internal" href="#clawpack.geoclaw.met.track.StormTrack.read_imd"><code class="docutils literal notranslate"><span class="pre">StormTrack.read_imd()</span></code></a></li>
+<li><a class="reference internal" href="#clawpack.geoclaw.met.track.StormTrack.read_jma"><code class="docutils literal notranslate"><span class="pre">StormTrack.read_jma()</span></code></a></li>
+<li><a class="reference internal" href="#clawpack.geoclaw.met.track.StormTrack.read_tcvitals"><code class="docutils literal notranslate"><span class="pre">StormTrack.read_tcvitals()</span></code></a></li>
+<li><a class="reference internal" href="#clawpack.geoclaw.met.track.StormTrack.status"><code class="docutils literal notranslate"><span class="pre">StormTrack.status()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#clawpack.geoclaw.met.track.Track"><code class="docutils literal notranslate"><span class="pre">Track</span></code></a><ul>
+<li><a class="reference internal" href="#clawpack.geoclaw.met.track.Track.ID"><code class="docutils literal notranslate"><span class="pre">Track.ID</span></code></a></li>
+<li><a class="reference internal" href="#clawpack.geoclaw.met.track.Track.eye_location"><code class="docutils literal notranslate"><span class="pre">Track.eye_location</span></code></a></li>
+<li><a class="reference internal" href="#clawpack.geoclaw.met.track.Track.file_format"><code class="docutils literal notranslate"><span class="pre">Track.file_format</span></code></a></li>
+<li><a class="reference internal" href="#clawpack.geoclaw.met.track.Track.file_paths"><code class="docutils literal notranslate"><span class="pre">Track.file_paths</span></code></a></li>
+<li><a class="reference internal" href="#clawpack.geoclaw.met.track.Track.time_offset"><code class="docutils literal notranslate"><span class="pre">Track.time_offset</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#clawpack.geoclaw.met.track.catalog_hurdat"><code class="docutils literal notranslate"><span class="pre">catalog_hurdat()</span></code></a></li>
+<li><a class="reference internal" href="#clawpack.geoclaw.met.track.catalog_ibtracs"><code class="docutils literal notranslate"><span class="pre">catalog_ibtracs()</span></code></a></li>
+<li><a class="reference internal" href="#clawpack.geoclaw.met.track.fill_rad_w_other_source"><code class="docutils literal notranslate"><span class="pre">fill_rad_w_other_source()</span></code></a></li>
+<li><a class="reference internal" href="#clawpack.geoclaw.met.track.iter_hurdat"><code class="docutils literal notranslate"><span class="pre">iter_hurdat()</span></code></a></li>
+<li><a class="reference internal" href="#clawpack.geoclaw.met.track.iter_ibtracs"><code class="docutils literal notranslate"><span class="pre">iter_ibtracs()</span></code></a></li>
+<li><a class="reference internal" href="#clawpack.geoclaw.met.track.standardize_basin"><code class="docutils literal notranslate"><span class="pre">standardize_basin()</span></code></a></li>
+<li><a class="reference internal" href="#clawpack.geoclaw.met.track.standardize_status"><code class="docutils literal notranslate"><span class="pre">standardize_status()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-clawpack.geoclaw.met.parametric">Parametric met forcing</a><ul>
+<li><a class="reference internal" href="#clawpack.geoclaw.met.parametric.ParametricMetForcing"><code class="docutils literal notranslate"><span class="pre">ParametricMetForcing</span></code></a><ul>
+<li><a class="reference internal" href="#clawpack.geoclaw.met.parametric.ParametricMetForcing.central_pressure"><code class="docutils literal notranslate"><span class="pre">ParametricMetForcing.central_pressure</span></code></a></li>
+<li><a class="reference internal" href="#clawpack.geoclaw.met.parametric.ParametricMetForcing.eye_location"><code class="docutils literal notranslate"><span class="pre">ParametricMetForcing.eye_location</span></code></a></li>
+<li><a class="reference internal" href="#clawpack.geoclaw.met.parametric.ParametricMetForcing.file_format"><code class="docutils literal notranslate"><span class="pre">ParametricMetForcing.file_format</span></code></a></li>
+<li><a class="reference internal" href="#clawpack.geoclaw.met.parametric.ParametricMetForcing.file_paths"><code class="docutils literal notranslate"><span class="pre">ParametricMetForcing.file_paths</span></code></a></li>
+<li><a class="reference internal" href="#clawpack.geoclaw.met.parametric.ParametricMetForcing.max_wind_radius"><code class="docutils literal notranslate"><span class="pre">ParametricMetForcing.max_wind_radius</span></code></a></li>
+<li><a class="reference internal" href="#clawpack.geoclaw.met.parametric.ParametricMetForcing.max_wind_speed"><code class="docutils literal notranslate"><span class="pre">ParametricMetForcing.max_wind_speed</span></code></a></li>
+<li><a class="reference internal" href="#clawpack.geoclaw.met.parametric.ParametricMetForcing.name"><code class="docutils literal notranslate"><span class="pre">ParametricMetForcing.name</span></code></a></li>
+<li><a class="reference internal" href="#clawpack.geoclaw.met.parametric.ParametricMetForcing.read_geoclaw"><code class="docutils literal notranslate"><span class="pre">ParametricMetForcing.read_geoclaw()</span></code></a></li>
+<li><a class="reference internal" href="#clawpack.geoclaw.met.parametric.ParametricMetForcing.storm_radius"><code class="docutils literal notranslate"><span class="pre">ParametricMetForcing.storm_radius</span></code></a></li>
+<li><a class="reference internal" href="#clawpack.geoclaw.met.parametric.ParametricMetForcing.t"><code class="docutils literal notranslate"><span class="pre">ParametricMetForcing.t</span></code></a></li>
+<li><a class="reference internal" href="#clawpack.geoclaw.met.parametric.ParametricMetForcing.time_offset"><code class="docutils literal notranslate"><span class="pre">ParametricMetForcing.time_offset</span></code></a></li>
+<li><a class="reference internal" href="#clawpack.geoclaw.met.parametric.ParametricMetForcing.write_geoclaw"><code class="docutils literal notranslate"><span class="pre">ParametricMetForcing.write_geoclaw()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-clawpack.geoclaw.met.gridded">Gridded met forcing</a><ul>
+<li><a class="reference internal" href="#clawpack.geoclaw.met.gridded.GriddedMetForcing"><code class="docutils literal notranslate"><span class="pre">GriddedMetForcing</span></code></a><ul>
+<li><a class="reference internal" href="#clawpack.geoclaw.met.gridded.GriddedMetForcing.file_format"><code class="docutils literal notranslate"><span class="pre">GriddedMetForcing.file_format</span></code></a></li>
+<li><a class="reference internal" href="#clawpack.geoclaw.met.gridded.GriddedMetForcing.file_paths"><code class="docutils literal notranslate"><span class="pre">GriddedMetForcing.file_paths</span></code></a></li>
+<li><a class="reference internal" href="#clawpack.geoclaw.met.gridded.GriddedMetForcing.from_owi"><code class="docutils literal notranslate"><span class="pre">GriddedMetForcing.from_owi()</span></code></a></li>
+<li><a class="reference internal" href="#clawpack.geoclaw.met.gridded.GriddedMetForcing.read_data"><code class="docutils literal notranslate"><span class="pre">GriddedMetForcing.read_data()</span></code></a></li>
+<li><a class="reference internal" href="#clawpack.geoclaw.met.gridded.GriddedMetForcing.time_offset"><code class="docutils literal notranslate"><span class="pre">GriddedMetForcing.time_offset</span></code></a></li>
+<li><a class="reference internal" href="#clawpack.geoclaw.met.gridded.GriddedMetForcing.to_owi"><code class="docutils literal notranslate"><span class="pre">GriddedMetForcing.to_owi()</span></code></a></li>
+<li><a class="reference internal" href="#clawpack.geoclaw.met.gridded.GriddedMetForcing.write_data"><code class="docutils literal notranslate"><span class="pre">GriddedMetForcing.write_data()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-clawpack.geoclaw.met.tools">Workflow tools</a><ul>
+<li><a class="reference internal" href="#clawpack.geoclaw.met.tools.iter_atcf"><code class="docutils literal notranslate"><span class="pre">iter_atcf()</span></code></a></li>
+<li><a class="reference internal" href="#clawpack.geoclaw.met.tools.make_multi_structure"><code class="docutils literal notranslate"><span class="pre">make_multi_structure()</span></code></a></li>
+</ul>
+</li>
 <li><a class="reference internal" href="#met-forcing-data-object">Met forcing data object</a><ul>
 <li><a class="reference internal" href="#clawpack.geoclaw.data.SurgeData"><code class="docutils literal notranslate"><span class="pre">SurgeData</span></code></a><ul>
 <li><a class="reference internal" href="#clawpack.geoclaw.data.SurgeData.read"><code class="docutils literal notranslate"><span class="pre">SurgeData.read()</span></code></a></li>
@@ -274,17 +1776,18 @@ descriptor.</p></li>
 <script>document.getElementById('searchbox').style.display = "block"</script>
 <h4>Latest Version</h4>
 <ul>
-  <li><a href="../v5.14.x/storm_module.html">v5.14.x</a></li>
   <li><a href="storm_module.html">dev</a></li>
+  <li><a href="../v5.14.x/storm_module.html">v5.14.x</a></li>
 </ul>
 <h4>Older Versions</h4>
 <ul>
-  <li><a href="../v5.7.x/storm_module.html">v5.7.x</a></li>
-  <li><a href="../v5.8.x/storm_module.html">v5.8.x</a></li>
-  <li><a href="../v5.9.x/storm_module.html">v5.9.x</a></li>
   <li><a href="../v5.10.x/storm_module.html">v5.10.x</a></li>
   <li><a href="../v5.11.x/storm_module.html">v5.11.x</a></li>
   <li><a href="../v5.12.x/storm_module.html">v5.12.x</a></li>
+  <li><a href="../v5.13.x/storm_module.html">v5.13.x</a></li>
+  <li><a href="../v5.7.x/storm_module.html">v5.7.x</a></li>
+  <li><a href="../v5.8.x/storm_module.html">v5.8.x</a></li>
+  <li><a href="../v5.9.x/storm_module.html">v5.9.x</a></li>
 </ul>
 
         </div>

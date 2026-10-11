@@ -12,8 +12,8 @@
     <link rel="stylesheet" type="text/css" href="_static/flasky.css?v=59fe8e2d" />
     <link rel="stylesheet" type="text/css" href="_static/graphviz.css?v=4ae1632d" />
     <script src="_static/documentation_options.js?v=3ce10a4d"></script>
-    <script src="_static/doctools.js?v=fd6eb6e6"></script>
-    <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="_static/doctools.js?v=9bcbadda"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <link rel="icon" href="_static/clawicon.ico"/>
     <link rel="author" title="About these documents" href="about.html" />
     <link rel="index" title="Index" href="genindex.html" />
@@ -107,7 +107,7 @@ can drive distance-to-center AMR refinement.  Supported models include
 the grid, rather than assuming a profile.  Two formats are supported:
 OWI/ASCII (NWS12) and NetCDF (NWS13).  Gridded forcing has no analytic
 center, so refinement is driven by the wind-speed thresholds only.  See
-<span class="xref std std-ref">netcdf_input</span> for the NetCDF conventions, automatic variable
+<a class="reference internal" href="netcdf.html#netcdf-input"><span class="std std-ref">GeoClaw NetCDF Input System</span></a> for the NetCDF conventions, automatic variable
 discovery, and unit/time handling.</p>
 </dd>
 </dl>
@@ -116,9 +116,9 @@ discovery, and unit/time handling.</p>
 <h2>Selecting a forcing<a class="headerlink" href="#selecting-a-forcing" title="Link to this heading">¶</a></h2>
 <p>The explicit, preferred way to select forcing is a <strong>family</strong> plus a
 <strong>subtype</strong>:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rundata</span><span class="o">.</span><span class="n">met_data</span><span class="o">.</span><span class="n">storm_family</span>  <span class="o">=</span> <span class="s2">&quot;parametric&quot;</span>   <span class="c1"># or &quot;gridded&quot; / &quot;none&quot;</span>
-<span class="n">rundata</span><span class="o">.</span><span class="n">met_data</span><span class="o">.</span><span class="n">storm_subtype</span> <span class="o">=</span> <span class="s2">&quot;holland80&quot;</span>    <span class="c1"># model, or &quot;gridded&quot;</span>
-<span class="n">rundata</span><span class="o">.</span><span class="n">met_data</span><span class="o">.</span><span class="n">storm_file</span>    <span class="o">=</span> <span class="s2">&quot;path/to/storm&quot;</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rundata</span><span class="o">.</span><span class="n">met_data</span><span class="o">.</span><span class="n">storm_family</span>  <span class="o">=</span> <span class="s2">"parametric"</span>   <span class="c1"># or "gridded" / "none"</span>
+<span class="n">rundata</span><span class="o">.</span><span class="n">met_data</span><span class="o">.</span><span class="n">storm_subtype</span> <span class="o">=</span> <span class="s2">"holland80"</span>    <span class="c1"># model, or "gridded"</span>
+<span class="n">rundata</span><span class="o">.</span><span class="n">met_data</span><span class="o">.</span><span class="n">storm_file</span>    <span class="o">=</span> <span class="s2">"path/to/storm"</span>
 </pre></div>
 </div>
 <p>See <a class="reference internal" href="setrun_geoclaw.html#setrun-surge"><span class="std std-ref">Storm Specification Data</span></a> for the full attribute reference.</p>
@@ -128,15 +128,15 @@ discovery, and unit/time handling.</p>
 <p>The Python side is organized around met forcing rather than only storms
 (<a class="reference internal" href="storm_module.html#storm-module"><span class="std std-ref">Meteorological Forcing Python API</span></a> is the API reference):</p>
 <ul class="simple">
-<li><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Track</span></code> – a generic evolving feature
+<li><p><a class="reference internal" href="storm_module.html#clawpack.geoclaw.met.track.Track" title="clawpack.geoclaw.met.track.Track"><code class="xref py py-class docutils literal notranslate"><span class="pre">Track</span></code></a> – a generic evolving feature
 with a center over time, and
-<code class="xref py py-class docutils literal notranslate"><span class="pre">StormTrack</span></code>, which adds storm metadata
+<a class="reference internal" href="storm_module.html#clawpack.geoclaw.met.track.StormTrack" title="clawpack.geoclaw.met.track.StormTrack"><code class="xref py py-class docutils literal notranslate"><span class="pre">StormTrack</span></code></a>, which adds storm metadata
 (max wind speed, radius of maximum winds, central pressure, …).</p></li>
-<li><p><code class="xref py py-class docutils literal notranslate"><span class="pre">ParametricMetForcing</span></code> – forcing
+<li><p><a class="reference internal" href="storm_module.html#clawpack.geoclaw.met.parametric.ParametricMetForcing" title="clawpack.geoclaw.met.parametric.ParametricMetForcing"><code class="xref py py-class docutils literal notranslate"><span class="pre">ParametricMetForcing</span></code></a> – forcing
 from a parameterized model referencing a track.</p></li>
-<li><p><code class="xref py py-class docutils literal notranslate"><span class="pre">GriddedMetForcing</span></code> – forcing from
+<li><p><a class="reference internal" href="storm_module.html#clawpack.geoclaw.met.gridded.GriddedMetForcing" title="clawpack.geoclaw.met.gridded.GriddedMetForcing"><code class="xref py py-class docutils literal notranslate"><span class="pre">GriddedMetForcing</span></code></a> – forcing from
 external field datasets (OWI/ASCII, NetCDF).</p></li>
-<li><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Storm</span></code> – a backwards-compatible
+<li><p><a class="reference internal" href="storm_module.html#clawpack.geoclaw.met.storm.Storm" title="clawpack.geoclaw.met.storm.Storm"><code class="xref py py-class docutils literal notranslate"><span class="pre">Storm</span></code></a> – a backwards-compatible
 wrapper retaining the historical <code class="docutils literal notranslate"><span class="pre">read</span></code>/<code class="docutils literal notranslate"><span class="pre">write</span></code> interface; new code can
 use the objects above directly.</p></li>
 </ul>
@@ -155,7 +155,7 @@ The legacy selector – either a model-name string (<code class="docutils litera
 to the same forcing.</p></li>
 <li><p><strong>Gridded NetCDF forcing.</strong> Full gridded wind/pressure forcing from
 CF-compliant NetCDF files, with automatic variable/coordinate discovery and
-unit handling (<span class="xref std std-ref">netcdf_input</span>).</p></li>
+unit handling (<a class="reference internal" href="netcdf.html#netcdf-input"><span class="std std-ref">GeoClaw NetCDF Input System</span></a>).</p></li>
 <li><p><strong>Temporal ramps.</strong> <code class="docutils literal notranslate"><span class="pre">t_ramp_on</span></code> / <code class="docutils literal notranslate"><span class="pre">t_ramp_off</span></code> ramp the forcing on and
 off over a specified number of seconds.</p></li>
 <li><p><strong>Object model.</strong> The <code class="docutils literal notranslate"><span class="pre">Track</span></code> / <code class="docutils literal notranslate"><span class="pre">StormTrack</span></code> / <code class="docutils literal notranslate"><span class="pre">ParametricMetForcing</span></code> /
@@ -247,17 +247,18 @@ are unaffected.</p>
 <script>document.getElementById('searchbox').style.display = "block"</script>
 <h4>Latest Version</h4>
 <ul>
-  <li><a href="../v5.14.x/index.html">v5.14.x</a></li>
   <li><a href="met_forcing.html">dev</a></li>
+  <li><a href="../v5.14.x/index.html">v5.14.x</a></li>
 </ul>
 <h4>Older Versions</h4>
 <ul>
-  <li><a href="../v5.7.x/index.html">v5.7.x</a></li>
-  <li><a href="../v5.8.x/index.html">v5.8.x</a></li>
-  <li><a href="../v5.9.x/index.html">v5.9.x</a></li>
   <li><a href="../v5.10.x/index.html">v5.10.x</a></li>
   <li><a href="../v5.11.x/index.html">v5.11.x</a></li>
   <li><a href="../v5.12.x/index.html">v5.12.x</a></li>
+  <li><a href="../v5.13.x/index.html">v5.13.x</a></li>
+  <li><a href="../v5.7.x/index.html">v5.7.x</a></li>
+  <li><a href="../v5.8.x/index.html">v5.8.x</a></li>
+  <li><a href="../v5.9.x/index.html">v5.9.x</a></li>
 </ul>
 
         </div>

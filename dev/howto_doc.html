@@ -12,8 +12,8 @@
     <link rel="stylesheet" type="text/css" href="_static/flasky.css?v=59fe8e2d" />
     <link rel="stylesheet" type="text/css" href="_static/graphviz.css?v=4ae1632d" />
     <script src="_static/documentation_options.js?v=3ce10a4d"></script>
-    <script src="_static/doctools.js?v=fd6eb6e6"></script>
-    <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="_static/doctools.js?v=9bcbadda"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <link rel="icon" href="_static/clawicon.ico"/>
     <link rel="author" title="About these documents" href="about.html" />
     <link rel="index" title="Index" href="genindex.html" />
@@ -129,7 +129,7 @@ file, you can do:</p>
 </pre></div>
 </div>
 <p>and check that it’s correct before committing via e.g.:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">git</span> <span class="n">commit</span> <span class="o">-</span><span class="n">m</span> <span class="s2">&quot;merged recent v5.7.x changes into dev&quot;</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">git</span> <span class="n">commit</span> <span class="o">-</span><span class="n">m</span> <span class="s2">"merged recent v5.7.x changes into dev"</span>
 </pre></div>
 </div>
 </section>
@@ -170,6 +170,103 @@ make html
 <p>Note that we suggest using <cite>_build1</cite> when building a single version so this
 can be quickly rebuilt when writing and editing documentation.</p>
 </section>
+<section id="checking-for-documentation-warnings">
+<span id="howto-doc-warnings"></span><h2>Checking for documentation warnings<a class="headerlink" href="#checking-for-documentation-warnings" title="Link to this heading">¶</a></h2>
+<p>Sphinx does not fail the build on reStructuredText or docstring problems
+(a missing blank line before a list, a bad cross reference, an autodoc import
+issue, and so on).  Historically these warnings were also <em>embedded</em> into the
+rendered HTML as “System Message” boxes (via <cite>keep_warnings = True</cite> in
+<cite>conf.py</cite>) while not being obvious on the command line, so they could slip
+onto the website unnoticed.  <cite>keep_warnings</cite> is now <cite>False</cite>, and the
+following <cite>make</cite> targets let you catch warnings before they are merged.</p>
+<p>To fail on any warning that is <strong>new</strong> relative to a committed baseline
+(<cite>tools/doc_warnings_baseline.txt</cite>):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>cd $CLAW/doc/doc
+make checkwarnings
+</pre></div>
+</div>
+<p>This does a full re-parse using the lightweight <cite>dummy</cite> builder (no HTML is
+written) and compares the result against the baseline, which records the
+warnings that already existed when the check was introduced.  Only newly
+introduced warnings cause a non-zero exit, so you can fix the backlog
+gradually without the check going red on unrelated pages.</p>
+<p>If you intentionally add or remove warnings (e.g. after fixing a batch of
+them), regenerate and commit the baseline with <cite>make checkwarnings-update</cite> –
+but see <a class="reference internal" href="#howto-doc-pinned-tree"><span class="std std-ref">The pinned source tree</span></a> first, because it only produces a
+reproducible result in the pinned environment.</p>
+<p>To ignore the baseline entirely and report <strong>every</strong> remaining warning –
+the goal once the backlog has been driven to zero – use:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">make</span> <span class="n">checkwarnings</span><span class="o">-</span><span class="n">strict</span>
+</pre></div>
+</div>
+<p>The same check runs in CI (<cite>.github/workflows/docs.yml</cite>) on pull requests to
+<cite>dev</cite> and the current release branch.</p>
+<section id="the-pinned-source-tree">
+<span id="howto-doc-pinned-tree"></span><h3>The pinned source tree<a class="headerlink" href="#the-pinned-source-tree" title="Link to this heading">¶</a></h3>
+<p><cite>autodoc</cite> documents a Clawpack <strong>source tree</strong>, not an installed clawpack:
+<cite>conf.py</cite> puts <cite>$CLAW</cite> on <cite>sys.path</cite> and the <cite>clawpack/__init__.py</cite> shim in
+the <cite>clawpack/clawpack</cite> super-repo maps <cite>clawpack.geoclaw</cite> onto
+<cite>geoclaw/src/python/geoclaw</cite>, and so on.  So the set of warnings depends on
+which Clawpack you are pointing at as much as on the docs themselves, and two
+files pin that:</p>
+<dl class="simple">
+<dt><cite>tools/requirements-docs.txt</cite></dt><dd><p>the Sphinx toolchain and the third-party packages Clawpack imports, all
+at exact versions.</p>
+</dd>
+<dt><cite>tools/clawpack-ref.txt</cite></dt><dd><p>each Clawpack repository, by commit.</p>
+</dd>
+</dl>
+<p><cite>make claw-pin</cite> clones the second into <cite>$CLAW/doc/.claw-pin</cite> (borrowing
+objects from your own checkouts, so it takes seconds), and <cite>$CLAW</cite> selects
+it.  Regenerate the baseline against both, in a virtualenv with <strong>no</strong>
+clawpack installed:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>cd $CLAW/doc/doc
+python -m venv /tmp/docvenv &amp;&amp; /tmp/docvenv/bin/pip install -r tools/requirements-docs.txt
+PATH=/tmp/docvenv/bin:$PATH make claw-pin
+PATH=/tmp/docvenv/bin:$PATH CLAW=$(cd ../.claw-pin &amp;&amp; pwd) make checkwarnings-update
+</pre></div>
+</div>
+<p>Then commit <cite>tools/doc_warnings_baseline.txt</cite>.  <cite>checkwarnings-update</cite>
+refuses to run against a tree that does not match the pin, because that is
+exactly how the baseline once filled up with one laptop’s absolute paths.</p>
+<p>A fresh virtualenv matters: an editable or pip-installed clawpack registers a
+meta-path finder that shadows the source tree whatever <cite>sys.path</cite> says.
+<cite>make checkenv</cite> reports that, and every other reason autodoc might not be
+able to import what the docs reference:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">make</span> <span class="n">checkenv</span>
+</pre></div>
+</div>
+<p>To bump the pinned Clawpack, edit <cite>tools/clawpack-ref.txt</cite> and repeat the
+regeneration above in the same commit.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>One warning class is never baselined, however long it has been present:
+<cite>autodoc: failed to import</cite> means the API pages for those modules come out
+<strong>empty</strong>, which no baseline should be allowed to hide.
+<cite>check_doc_warnings.py</cite> reports them separately and fails regardless, and
+<cite>tools/check_built_site.sh</cite> independently asserts that the built <cite>dev</cite>
+API pages contain generated content before anything is published.</p>
+</div>
+<p><strong>Possible future enhancements:</strong></p>
+<ul class="simple">
+<li><p>Extend the same warning check to the separate <cite>gallery</cite> Sphinx project
+(<cite>$CLAW/doc/gallery</cite>), which first requires running the examples that
+generate its figures.</p></li>
+<li><p>Turn off <cite>keep_warnings</cite> in <cite>gallery/conf.py</cite> and <cite>doc/pyclaw/conf.py</cite>
+(used only for standalone pyclaw builds) for consistency.</p></li>
+<li><p>Once the baseline is empty, switch CI to <cite>make checkwarnings-strict</cite> and
+optionally enable nitpicky (<cite>-n</cite>) cross-reference checking.</p></li>
+<li><p>Migrate off <cite>sphinx-multiversion</cite>, which is unmaintained and pins the
+toolchain to <cite>sphinx &lt; 9</cite> (it calls <cite>Config.read()</cite> positionally, and Sphinx
+9.0 made those arguments keyword-only).  This bound lives in
+<cite>tools/requirements-docs.txt</cite>.</p></li>
+<li><p>Restore <cite>v5.1.x</cite>–<cite>v5.6.x</cite> to the multiversion build, or formally retire
+them.  Their <cite>conf.py</cite> refers to a <cite>plot_directive</cite> extension that no longer
+resolves, so <cite>sphinx-multiversion</cite> skips them and only their long-published
+HTML remains on the site.</p></li>
+</ul>
+</section>
+</section>
 <section id="to-generate-docs-including-previous-versions">
 <h2>To generate docs including previous versions<a class="headerlink" href="#to-generate-docs-including-previous-versions" title="Link to this heading">¶</a></h2>
 <p>If you have just done a new major release, first see <a class="reference internal" href="#howto-doc-major"><span class="std std-ref">Updating for a new major version</span></a>
@@ -190,27 +287,50 @@ instead of
 committed to some branch (normally <cite>dev</cite> if you have been adding something new).</p>
 <p>And then do this:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>cd $CLAW/doc/doc
-rm -rf _build   # recommended to make sure new versions are clean
-make versions
+make versions-publish
 </pre></div>
 </div>
-<p>The <cite>Makefile</cite> has been modified so that <cite>make versions</cite> does this:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sphinx</span><span class="o">-</span><span class="n">multiversion</span> <span class="o">.</span> <span class="n">_build</span><span class="o">/</span><span class="n">html</span>
+<p>That single target does the whole job: a clean multiversion build followed by
+the promotion step described below.  It is equivalent to:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">make</span> <span class="n">clean</span><span class="o">-</span><span class="n">versions</span>      <span class="c1"># rm -rf _build</span>
+<span class="n">make</span> <span class="n">versions</span>            <span class="c1"># sphinx-multiversion . _build/html</span>
+<span class="n">make</span> <span class="n">versions</span><span class="o">-</span><span class="n">promote</span>    <span class="c1"># python tools/promote_latest.py _build/html</span>
 </pre></div>
 </div>
-<p>To view the files, point your browser to <cite>_build/html/dev/index.html</cite>
-and from there you should be able to navigate to other versions.</p>
-<p>Unlike <cite>sphinxcontrib-versioning</cite>, this now uses your local branches and tags
-rather than the versions on Github.  It lists only two branches under “Latest
-Versions” and all tags as “Older Versions”.
-The two branches are set to <cite>dev</cite> and the most
-recent version, by this line of <cite>conf.py</cite>:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">smv_branch_whitelist</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;v5.7.x|dev&#39;</span>
+<p>To view the result, point your browser to <cite>_build/html/index.html</cite>, which is
+the current release, and from there you should be able to navigate to other
+versions.</p>
+<p>Unlike <cite>sphinxcontrib-versioning</cite>, this uses your local branches and tags
+rather than the versions on Github.  It lists two branches under “Latest
+Versions” and the whitelisted tags as “Older Versions”.  The branches are set
+to <cite>dev</cite> and the most recent version, by this line of <cite>conf.py</cite>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">smv_branch_whitelist</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">'^(dev|v5\.14\.x)$'</span>
 </pre></div>
 </div>
-<p>This should be updated for a new version.</p>
-<p>Note that <cite>_build/html</cite> contains a subdirectory for each version, but there
-are no <cite>.html</cite> files in the top level of <cite>_build/html</cite>.  For the Clawpack
+<p>This should be updated for a new version, along with <cite>smv_latest_version</cite>.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p><cite>sphinx-multiversion</cite> only considers <strong>local</strong> branches and tags
+(<cite>refs/heads/*</cite> and <cite>refs/tags/*</cite>); it ignores remote-tracking refs such as
+<cite>clawpack/v5.14.x</cite> unless <cite>smv_remote_whitelist</cite> is set.  If you have never
+checked out the release branch, it will be missing from your build – and
+because it is <cite>smv_latest_version</cite>, the site would end up with no top-level
+pages at all.  It also silently skips any ref whose <cite>conf.py</cite> fails to
+load.  <cite>make versions</cite> therefore runs a pre-flight check first:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">make</span> <span class="n">check</span><span class="o">-</span><span class="n">versions</span>
+</pre></div>
+</div>
+<p>which reports exactly which versions will be built and prints the
+<cite>git branch</cite> command for anything missing.  Tags <cite>v5.1.x</cite> through <cite>v5.6.x</cite>
+are known not to build with a current Sphinx (their <cite>conf.py</cite> refers to a
+<cite>plot_directive</cite> extension that no longer resolves); they are listed in
+<cite>KNOWN_UNBUILDABLE</cite> in <cite>tools/check_versions.py</cite>, and their already
+published HTML is left untouched by the deployment step.</p>
+</div>
+<section id="why-the-promote-step-is-needed">
+<h3>Why the promote step is needed<a class="headerlink" href="#why-the-promote-step-is-needed" title="Link to this heading">¶</a></h3>
+<p><cite>_build/html</cite> contains a subdirectory for each version, but immediately after
+<cite>make versions</cite> there are no <cite>.html</cite> files in its top level.  For the Clawpack
 webpage we need to:</p>
 <ul class="simple">
 <li><p>Copy the files from the current version to the top level so that
@@ -219,10 +339,14 @@ for example, goes to the current version of this document.</p></li>
 <li><p>Fix the links in the sidebars of each of these <cite>.html</cite> files so that clicking
 on <cite>dev</cite>, for example, takes you to <a class="reference external" href="http://www.clawpack.org/dev/installing.html">http://www.clawpack.org/dev/installing.html</a></p></li>
 </ul>
-<p>This can be done as follows:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>cd $CLAW/doc/doc/_build/html
-cp -r v5.7.x/* .   # replacing v5.7.x with the current version
-python ../../fix_links_top_level.py
+<p><cite>make versions-promote</cite> does both, via <cite>tools/promote_latest.py</cite>.  This used to
+be a manual <cite>cp -r v5.7.x/* .</cite> plus <cite>python ../../fix_links_top_level.py</cite>; the
+script replaces that because the manual form had to be edited by hand at each
+release, skipped dotfiles (notably <cite>.nojekyll</cite>, without which GitHub Pages
+will not serve <cite>_static</cite>), and only fixed links one or two directories deep.</p>
+<p>You can sanity check the result before deploying:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>cd $CLAW/doc
+./doc/tools/check_built_site.sh doc/_build/html
 </pre></div>
 </div>
 <p>If you like what you see, you can push back to your fork and then issue a
@@ -231,6 +355,7 @@ pull request to have these changes incorporated into the documentation.</p>
 main doc pages together.   Instead there are hard links to <cite>www.clawpack.org</cite>
 to go from one to the other.  So the old use of
 the environment variable <cite>SPHINX_WEB</cite> is now deprecated.</p>
+</section>
 </section>
 <section id="updating-for-a-new-major-version">
 <span id="howto-doc-major"></span><h2>Updating for a new major version<a class="headerlink" href="#updating-for-a-new-major-version" title="Link to this heading">¶</a></h2>
@@ -275,25 +400,79 @@ updated for this release, the corresponding html files should be too.
 </section>
 <section id="updating-the-webpages">
 <h2>Updating the webpages<a class="headerlink" href="#updating-the-webpages" title="Link to this heading">¶</a></h2>
-<p>A few developers can push html files to the repository
+<p>The html files live in the repository
 <a class="reference external" href="https://github.com/clawpack/clawpack.github.com">clawpack/clawpack.github.com</a>
 which causes them to show up on the web at
 <a class="reference external" href="http://clawpack.github.io">http://clawpack.github.io</a>.</p>
-<p>To do so, first create the html files as described above, which should appear
-in <cite>doc/doc/_build/html</cite> and <cite>doc/gallery/_build/html</cite>.</p>
+<section id="publishing-with-github-actions-preferred">
+<span id="howto-doc-publish-ci"></span><h3>Publishing with GitHub Actions (preferred)<a class="headerlink" href="#publishing-with-github-actions-preferred" title="Link to this heading">¶</a></h3>
+<p><cite>.github/workflows/docs-publish.yml</cite> does the build and the push for you.
+Pushing documentation changes to <cite>dev</cite> refreshes <cite>www.clawpack.org/dev/</cite>
+automatically; a full-site publish (all versions plus the top-level pages) is
+run on demand from the Actions tab via <strong>Run workflow</strong>, choosing:</p>
+<dl class="simple">
+<dt><cite>scope</cite></dt><dd><p><cite>dry-run</cite> builds and uploads the site as an artifact without writing
+anything; <cite>dev-only</cite> publishes just <cite>dev/</cite>; <cite>full-site</cite> publishes every
+version and the promoted top level.</p>
+</dd>
+<dt><cite>target_branch</cite></dt><dd><p><cite>ci-preview</cite> is a branch of <cite>clawpack.github.com</cite> that GitHub Pages does
+not serve, so you can inspect a real diff without affecting the live site.
+Use <cite>master</cite> only when you mean to publish.</p>
+</dd>
+<dt><cite>prune</cite></dt><dd><p>Off by default.  When on, stale files <em>inside</em> rebuilt version directories
+are deleted.  Nothing outside them is ever removed.</p>
+</dd>
+</dl>
+<p>Publishing runs as two jobs.  <cite>stage</cite> builds the commit that would be pushed
+and shows its diff, the previous site revision and how to roll back in the run
+summary; <cite>push</cite> then pushes exactly that commit.  Which environment gates
+<cite>push</cite> depends on the risk:</p>
+<dl class="simple">
+<dt><cite>docs-dev</cite></dt><dd><p>Dev-only publishes (including every push to <cite>dev</cite>).  No reviewers: the
+sync is additive inside <cite>dev/</cite> and is checked automatically.</p>
+</dd>
+<dt><cite>docs-site</cite></dt><dd><p><cite>full-site</cite> publishes and anything with <cite>prune</cite> on.  Requires a reviewer.
+Read the <cite>stage</cite> summary on the same run page <em>before</em> approving – the
+approval is for that exact commit.</p>
+</dd>
+</dl>
+<p>If <cite>clawpack.github.com</cite> changes between staging and approval, <cite>push</cite> refuses
+and the workflow has to be re-run.</p>
+<p>Both environments hold the <cite>CLAWPACK_SITE_DEPLOY_KEY</cite> secret (the private half
+of a write deploy key on <cite>clawpack.github.com</cite>) and accept deployments from the
+<cite>dev</cite> branch only, so run the workflow from <cite>dev</cite>.</p>
+<p>The gallery is <em>not</em> published by CI – its pages and thumbnails have to be
+generated by running the examples (see <cite>gallery/README.md</cite>), so it stays a
+manual <cite>rsync</cite> as described below.</p>
+</section>
+<section id="publishing-by-hand">
+<h3>Publishing by hand<a class="headerlink" href="#publishing-by-hand" title="Link to this heading">¶</a></h3>
+<p>This still works and is the fallback if Actions is unavailable.  First create
+the html files as described above, which should appear in
+<cite>doc/doc/_build/html</cite> and <cite>doc/gallery/_build/html</cite>.</p>
 <p>Commit any changed source files and
 push to <a class="reference external" href="https://github.com/clawpack/doc">clawpack/doc</a>.</p>
 <p>Then do:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>cd $CLAW/clawpack.github.com
-git checkout v5.x.x
+git checkout master
 git pull origin  # make sure you are up to date before doing next steps!
 
-cd $CLAW/doc/doc
-rsync -azv _build/html/ ../../clawpack.github.com/
+cd $CLAW/doc
+./rsync_doc.sh
 </pre></div>
 </div>
 <p>If you have updated the gallery, also do:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rsync</span> <span class="o">-</span><span class="n">azv</span> <span class="o">../</span><span class="n">gallery</span><span class="o">/</span><span class="n">_build</span><span class="o">/</span><span class="n">html</span><span class="o">/</span> <span class="o">../../</span><span class="n">clawpack</span><span class="o">.</span><span class="n">github</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">gallery</span><span class="o">/</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">./</span><span class="n">rsync_gallery</span><span class="o">.</span><span class="n">sh</span>
+</pre></div>
+</div>
+<p>Both scripts refuse to run if there is no promoted build to copy, and neither
+passes <cite>–delete</cite>: the published site contains many directories that no
+current build produces (<cite>gallery/</cite>, <cite>doxygen/</cite>, <cite>pdf/</cite>, <cite>notebooks/</cite>, the
+<cite>v5.1.x</cite>–<cite>v5.6.x</cite> trees, and more), and deleting them would take down large
+parts of the website.  Set <cite>DRYRUN=1</cite> to see what would be copied.</p>
+<p>Before committing, you can run the same guard CI uses:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>cd $CLAW/doc
+./doc/tools/check_published_tree.sh ../clawpack.github.com doc/_build/html
 </pre></div>
 </div>
 <p>Then move to the <cite>clawpack.github.com</cite> repository and
@@ -307,7 +486,7 @@ git add .
 hash of the most recent commit in $CLAW/doc/doc:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>cd $CLAW/clawpack.github.com
 git add .
-git commit -m &quot;changes from doc/doc commit &lt;hash&gt;&quot;
+git commit -m "changes from doc/doc commit &lt;hash&gt;"
 </pre></div>
 </div>
 <p>And finally push to the web:</p>
@@ -323,6 +502,7 @@ should also resolve properly to <a class="reference external" href="http://clawp
 and that <cite>www.clawpack.org</cite> should appear in the browser address bar.  The
 file <cite>extra_files/CNAME</cite> combined with settings on the domain server
 <cite>godaddy.com</cite> determine this behavior.</p>
+</section>
 </section>
 <section id="extra-files-for-webpages-not-built-by-sphinx">
 <span id="extra-files"></span><h2>Extra files for webpages not built by Sphinx<a class="headerlink" href="#extra-files-for-webpages-not-built-by-sphinx" title="Link to this heading">¶</a></h2>
@@ -375,10 +555,21 @@ under <cite>Settings</cite>.</p>
 <li><a class="reference internal" href="#git-branches-and-tags">Git branches and tags</a></li>
 <li><a class="reference internal" href="#configuration-and-style-files">Configuration and style files</a></li>
 <li><a class="reference internal" href="#updating-the-docs-for-a-new-release">Updating the docs for a new release</a></li>
-<li><a class="reference internal" href="#to-generate-docs-including-previous-versions">To generate docs including previous versions</a></li>
+<li><a class="reference internal" href="#checking-for-documentation-warnings">Checking for documentation warnings</a><ul>
+<li><a class="reference internal" href="#the-pinned-source-tree">The pinned source tree</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#to-generate-docs-including-previous-versions">To generate docs including previous versions</a><ul>
+<li><a class="reference internal" href="#why-the-promote-step-is-needed">Why the promote step is needed</a></li>
+</ul>
+</li>
 <li><a class="reference internal" href="#updating-for-a-new-major-version">Updating for a new major version</a></li>
 <li><a class="reference internal" href="#updating-the-gallery">Updating the gallery</a></li>
-<li><a class="reference internal" href="#updating-the-webpages">Updating the webpages</a></li>
+<li><a class="reference internal" href="#updating-the-webpages">Updating the webpages</a><ul>
+<li><a class="reference internal" href="#publishing-with-github-actions-preferred">Publishing with GitHub Actions (preferred)</a></li>
+<li><a class="reference internal" href="#publishing-by-hand">Publishing by hand</a></li>
+</ul>
+</li>
 <li><a class="reference internal" href="#extra-files-for-webpages-not-built-by-sphinx">Extra files for webpages not built by Sphinx</a></li>
 <li><a class="reference internal" href="#pages-from-other-clawpack-repositories">Pages from other clawpack repositories</a></li>
 </ul>
@@ -428,17 +619,18 @@ under <cite>Settings</cite>.</p>
 <script>document.getElementById('searchbox').style.display = "block"</script>
 <h4>Latest Version</h4>
 <ul>
-  <li><a href="../v5.14.x/howto_doc.html">v5.14.x</a></li>
   <li><a href="howto_doc.html">dev</a></li>
+  <li><a href="../v5.14.x/howto_doc.html">v5.14.x</a></li>
 </ul>
 <h4>Older Versions</h4>
 <ul>
-  <li><a href="../v5.7.x/howto_doc.html">v5.7.x</a></li>
-  <li><a href="../v5.8.x/howto_doc.html">v5.8.x</a></li>
-  <li><a href="../v5.9.x/howto_doc.html">v5.9.x</a></li>
   <li><a href="../v5.10.x/howto_doc.html">v5.10.x</a></li>
   <li><a href="../v5.11.x/howto_doc.html">v5.11.x</a></li>
   <li><a href="../v5.12.x/howto_doc.html">v5.12.x</a></li>
+  <li><a href="../v5.13.x/howto_doc.html">v5.13.x</a></li>
+  <li><a href="../v5.7.x/howto_doc.html">v5.7.x</a></li>
+  <li><a href="../v5.8.x/howto_doc.html">v5.8.x</a></li>
+  <li><a href="../v5.9.x/howto_doc.html">v5.9.x</a></li>
 </ul>
 
         </div>

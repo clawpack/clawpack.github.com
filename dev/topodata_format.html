@@ -12,8 +12,8 @@
     <link rel="stylesheet" type="text/css" href="_static/flasky.css?v=59fe8e2d" />
     <link rel="stylesheet" type="text/css" href="_static/graphviz.css?v=4ae1632d" />
     <script src="_static/documentation_options.js?v=3ce10a4d"></script>
-    <script src="_static/doctools.js?v=fd6eb6e6"></script>
-    <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="_static/doctools.js?v=9bcbadda"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <link rel="icon" href="_static/clawicon.ico"/>
     <link rel="author" title="About these documents" href="about.html" />
     <link rel="index" title="Index" href="genindex.html" />
@@ -81,14 +81,14 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <div class="admonition warning" id="topodata-format">
+  <section id="topo-data-file-format">
+<span id="topodata-format"></span><h1>topo.data File Format<a class="headerlink" href="#topo-data-file-format" title="Link to this heading">¶</a></h1>
+<div class="admonition warning">
 <p class="admonition-title">Warning</p>
 <p>Many changes are being implemented in the way topo and dtopo
 files are handled, in both the Python tools and the Fortran code.
 See <a class="reference internal" href="topochanges.html#topochanges"><span class="std std-ref">Changes to topo and dtopo handling (planned for v5.15.0)</span></a> for a summary.</p>
 </div>
-<section id="topo-data-file-format">
-<h1>topo.data File Format<a class="headerlink" href="#topo-data-file-format" title="Link to this heading">¶</a></h1>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p><code class="docutils literal notranslate"><span class="pre">topo.data</span></code> is generated automatically by <code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">data</span></code> or by calling
@@ -138,7 +138,7 @@ sorts the files before writing but is <strong>not</strong> written to <code clas
 <h2>Per-File Block (10 lines, all types)<a class="headerlink" href="#per-file-block-10-lines-all-types" title="Link to this heading">¶</a></h2>
 <p>One block follows for each topography file, in priority order (coarsest
 resolution first, finest last; see <a class="reference internal" href="#priority-convention"><span class="std std-ref">Priority Convention</span></a> below).</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;&lt;absolute_path&gt;&#39;</span>           <span class="c1"># topo_path</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">'&lt;absolute_path&gt;'</span>           <span class="c1"># topo_path</span>
 <span class="o">&lt;</span><span class="n">topo_type</span><span class="o">&gt;</span>                 <span class="c1"># topo_type</span>
 <span class="o">&lt;</span><span class="n">x1</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="n">x2</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="n">y1</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="n">y2</span><span class="o">&gt;</span>        <span class="c1"># crop_extent [x1 x2 y1 y2]</span>
 <span class="o">&lt;</span><span class="n">coarsen</span><span class="o">&gt;</span>                   <span class="c1"># coarsen</span>
@@ -225,7 +225,7 @@ the correct value automatically.</p>
 <span class="mi">0</span>                          <span class="c1"># (Type topography specification)</span>
 <span class="mi">1</span>                          <span class="c1"># number of topo files</span>
 
-<span class="s1">&#39;/data/etopo1.tt2&#39;</span>         <span class="c1"># topo_path</span>
+<span class="s1">'/data/etopo1.tt2'</span>         <span class="c1"># topo_path</span>
   <span class="mi">2</span>                        <span class="c1"># topo_type</span>
 <span class="mf">0.</span> <span class="mf">0.</span> <span class="mf">0.</span> <span class="mf">0.</span>                <span class="c1"># crop_extent [x1 x2 y1 y2]</span>
 <span class="mi">1</span>                          <span class="c1"># coarsen</span>
@@ -244,7 +244,7 @@ the correct value automatically.</p>
 <span class="mi">0</span>                          <span class="c1"># (Type topography specification)</span>
 <span class="mi">1</span>                          <span class="c1"># number of topo files</span>
 
-<span class="s1">&#39;/data/gebco.nc&#39;</span>           <span class="c1"># topo_path</span>
+<span class="s1">'/data/gebco.nc'</span>           <span class="c1"># topo_path</span>
   <span class="mi">4</span>                        <span class="c1"># topo_type</span>
 <span class="o">-</span><span class="mf">100.</span> <span class="o">-</span><span class="mf">60.</span> <span class="mf">10.</span> <span class="mf">50.</span>         <span class="c1"># crop_extent [x1 x2 y1 y2]</span>
 <span class="mi">1</span>                          <span class="c1"># coarsen</span>
@@ -321,17 +321,17 @@ dicts.  These are still accepted by
 <code class="xref py py-class docutils literal notranslate"><span class="pre">TopographyData</span></code> but emit a
 <code class="docutils literal notranslate"><span class="pre">DeprecationWarning</span></code>.</p>
 <p><strong>Old list format (deprecated):</strong></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">rundata</span><span class="o">.</span><span class="n">topo_data</span><span class="o">.</span><span class="n">topofiles</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;/path/to/topo.tt2&#39;</span><span class="p">])</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">rundata</span><span class="o">.</span><span class="n">topo_data</span><span class="o">.</span><span class="n">topofiles</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span> <span class="s1">'/path/to/topo.tt2'</span><span class="p">])</span>
 <span class="c1"># or the older 6-element form (level/time info is ignored):</span>
-<span class="n">rundata</span><span class="o">.</span><span class="n">topo_data</span><span class="o">.</span><span class="n">topofiles</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1e10</span><span class="p">,</span> <span class="s1">&#39;/path/to/topo.tt2&#39;</span><span class="p">])</span>
+<span class="n">rundata</span><span class="o">.</span><span class="n">topo_data</span><span class="o">.</span><span class="n">topofiles</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1e10</span><span class="p">,</span> <span class="s1">'/path/to/topo.tt2'</span><span class="p">])</span>
 </pre></div>
 </div>
 <p><strong>Old dict format (deprecated):</strong></p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">rundata</span><span class="o">.</span><span class="n">topo_data</span><span class="o">.</span><span class="n">topofiles</span><span class="o">.</span><span class="n">append</span><span class="p">({</span>
-    <span class="s1">&#39;topo_type&#39;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
-    <span class="s1">&#39;topo_path&#39;</span><span class="p">:</span> <span class="s1">&#39;/path/to/topo.tt2&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;extent&#39;</span><span class="p">:</span> <span class="p">[</span><span class="o">-</span><span class="mf">100.</span><span class="p">,</span> <span class="o">-</span><span class="mf">60.</span><span class="p">,</span> <span class="mf">10.</span><span class="p">,</span> <span class="mf">50.</span><span class="p">],</span>   <span class="c1"># note: &#39;extent&#39; → crop_extent</span>
-    <span class="s1">&#39;coarsen&#39;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+    <span class="s1">'topo_type'</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+    <span class="s1">'topo_path'</span><span class="p">:</span> <span class="s1">'/path/to/topo.tt2'</span><span class="p">,</span>
+    <span class="s1">'extent'</span><span class="p">:</span> <span class="p">[</span><span class="o">-</span><span class="mf">100.</span><span class="p">,</span> <span class="o">-</span><span class="mf">60.</span><span class="p">,</span> <span class="mf">10.</span><span class="p">,</span> <span class="mf">50.</span><span class="p">],</span>   <span class="c1"># note: 'extent' → crop_extent</span>
+    <span class="s1">'coarsen'</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
 <span class="p">})</span>
 </pre></div>
 </div>
@@ -342,7 +342,7 @@ bounds).</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">clawpack.geoclaw.topotools</span><span class="w"> </span><span class="kn">import</span> <span class="n">Topography</span>
 
 <span class="n">t</span> <span class="o">=</span> <span class="n">Topography</span><span class="p">()</span>
-<span class="n">t</span><span class="o">.</span><span class="n">path</span> <span class="o">=</span> <span class="s1">&#39;/path/to/topo.tt2&#39;</span>
+<span class="n">t</span><span class="o">.</span><span class="n">path</span> <span class="o">=</span> <span class="s1">'/path/to/topo.tt2'</span>
 <span class="n">t</span><span class="o">.</span><span class="n">topo_type</span> <span class="o">=</span> <span class="mi">2</span>
 <span class="n">t</span><span class="o">.</span><span class="n">crop_extent</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mf">100.</span><span class="p">,</span> <span class="o">-</span><span class="mf">60.</span><span class="p">,</span> <span class="mf">10.</span><span class="p">,</span> <span class="mf">50.</span><span class="p">]</span>
 <span class="n">t</span><span class="o">.</span><span class="n">coarsen</span> <span class="o">=</span> <span class="mi">2</span>
@@ -354,8 +354,8 @@ bounds).</p>
 <code class="docutils literal notranslate"><span class="pre">DeprecationWarning</span></code>, but preprocessing attributes (<code class="docutils literal notranslate"><span class="pre">crop_extent</span></code>,
 <code class="docutils literal notranslate"><span class="pre">coarsen</span></code>, etc.) raise <code class="docutils literal notranslate"><span class="pre">NotImplementedError</span></code>.  To convert:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">t</span> <span class="o">=</span> <span class="n">Topography</span><span class="p">()</span>
-<span class="n">t</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;old_file.tt1&#39;</span><span class="p">,</span> <span class="n">topo_type</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>   <span class="c1"># DeprecationWarning</span>
-<span class="n">t</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;new_file.tt2&#39;</span><span class="p">,</span> <span class="n">topo_type</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>  <span class="c1"># convert to type 2</span>
+<span class="n">t</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">'old_file.tt1'</span><span class="p">,</span> <span class="n">topo_type</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>   <span class="c1"># DeprecationWarning</span>
+<span class="n">t</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">'new_file.tt2'</span><span class="p">,</span> <span class="n">topo_type</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>  <span class="c1"># convert to type 2</span>
 </pre></div>
 </div>
 <p>For genuinely unstructured (scattered) point data, grid it onto a regular,
@@ -441,17 +441,18 @@ logically rectangular grid before use – either with an external tool
 <script>document.getElementById('searchbox').style.display = "block"</script>
 <h4>Latest Version</h4>
 <ul>
-  <li><a href="../v5.14.x/index.html">v5.14.x</a></li>
   <li><a href="topodata_format.html">dev</a></li>
+  <li><a href="../v5.14.x/index.html">v5.14.x</a></li>
 </ul>
 <h4>Older Versions</h4>
 <ul>
-  <li><a href="../v5.7.x/index.html">v5.7.x</a></li>
-  <li><a href="../v5.8.x/index.html">v5.8.x</a></li>
-  <li><a href="../v5.9.x/index.html">v5.9.x</a></li>
   <li><a href="../v5.10.x/index.html">v5.10.x</a></li>
   <li><a href="../v5.11.x/index.html">v5.11.x</a></li>
   <li><a href="../v5.12.x/index.html">v5.12.x</a></li>
+  <li><a href="../v5.13.x/index.html">v5.13.x</a></li>
+  <li><a href="../v5.7.x/index.html">v5.7.x</a></li>
+  <li><a href="../v5.8.x/index.html">v5.8.x</a></li>
+  <li><a href="../v5.9.x/index.html">v5.9.x</a></li>
 </ul>
 
         </div>

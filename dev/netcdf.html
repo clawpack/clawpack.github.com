@@ -12,8 +12,8 @@
     <link rel="stylesheet" type="text/css" href="_static/flasky.css?v=59fe8e2d" />
     <link rel="stylesheet" type="text/css" href="_static/graphviz.css?v=4ae1632d" />
     <script src="_static/documentation_options.js?v=3ce10a4d"></script>
-    <script src="_static/doctools.js?v=fd6eb6e6"></script>
-    <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="_static/doctools.js?v=9bcbadda"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <link rel="icon" href="_static/clawicon.ico"/>
     <link rel="author" title="About these documents" href="about.html" />
     <link rel="index" title="Index" href="genindex.html" />
@@ -81,14 +81,14 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <div class="admonition warning" id="netcdf-input">
+  <section id="geoclaw-netcdf-input-system">
+<span id="netcdf-input"></span><h1>GeoClaw NetCDF Input System<a class="headerlink" href="#geoclaw-netcdf-input-system" title="Link to this heading">¶</a></h1>
+<div class="admonition warning">
 <p class="admonition-title">Warning</p>
 <p>Many changes are being implemented in the way topo and dtopo
 files are handled, in both the Python tools and the Fortran code.
 See <a class="reference internal" href="topochanges.html#topochanges"><span class="std std-ref">Changes to topo and dtopo handling (planned for v5.15.0)</span></a> for a summary.</p>
 </div>
-<section id="geoclaw-netcdf-input-system">
-<h1>GeoClaw NetCDF Input System<a class="headerlink" href="#geoclaw-netcdf-input-system" title="Link to this heading">¶</a></h1>
 <p>This document covers the NetCDF input pipeline introduced in the
 <code class="docutils literal notranslate"><span class="pre">refactor-netcdf-support</span></code>
 [PR #701](<a class="reference external" href="https://github.com/clawpack/geoclaw/pull/701">https://github.com/clawpack/geoclaw/pull/701</a>)
@@ -153,14 +153,14 @@ supported for topography.</p></li>
 <h4>Registering a NetCDF topo file in setrun.py<a class="headerlink" href="#registering-a-netcdf-topo-file-in-setrun-py" title="Link to this heading">¶</a></h4>
 <p>If your file meets the above requirements, you can simply use the following in
 <code class="docutils literal notranslate"><span class="pre">setrun.py</span></code>:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">rundata</span><span class="o">.</span><span class="n">topo_data</span><span class="o">.</span><span class="n">topofiles</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="mi">4</span><span class="p">,</span> <span class="s1">&#39;bathy.nc&#39;</span><span class="p">])</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">rundata</span><span class="o">.</span><span class="n">topo_data</span><span class="o">.</span><span class="n">topofiles</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="mi">4</span><span class="p">,</span> <span class="s1">'bathy.nc'</span><span class="p">])</span>
 </pre></div>
 </div>
 <p>This matches with what is expected for backwards compatibility.</p>
 <p>If you want to specify crop bounds, or if GeoClaw cannot find the elevation
 variable automatically, use <code class="docutils literal notranslate"><span class="pre">topo_entries()</span></code> to inspect the file:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">clawpack.geoclaw.netcdf_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">TopoInspector</span>
-<span class="k">with</span> <span class="n">TopoInspector</span><span class="p">(</span><span class="s1">&#39;bathy.nc&#39;</span><span class="p">,</span> <span class="n">crop_bounds</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="mi">100</span><span class="p">,</span> <span class="o">-</span><span class="mi">60</span><span class="p">,</span> <span class="mi">15</span><span class="p">,</span> <span class="mi">35</span><span class="p">))</span> <span class="k">as</span> <span class="n">insp</span><span class="p">:</span>
+<span class="k">with</span> <span class="n">TopoInspector</span><span class="p">(</span><span class="s1">'bathy.nc'</span><span class="p">,</span> <span class="n">crop_bounds</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="mi">100</span><span class="p">,</span> <span class="o">-</span><span class="mi">60</span><span class="p">,</span> <span class="mi">15</span><span class="p">,</span> <span class="mi">35</span><span class="p">))</span> <span class="k">as</span> <span class="n">insp</span><span class="p">:</span>
     <span class="n">rundata</span><span class="o">.</span><span class="n">topo_data</span><span class="o">.</span><span class="n">topofiles</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">insp</span><span class="o">.</span><span class="n">topo_entries</span><span class="p">())</span>
 </pre></div>
 </div>
@@ -184,7 +184,7 @@ checked against a built-in list that includes <code class="docutils literal notr
 <p>Pass <code class="docutils literal notranslate"><span class="pre">var_name</span></code> explicitly only when none of the names above match your file,
 or when the file contains multiple variables that would both match and you need
 to disambiguate:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">meta</span> <span class="o">=</span> <span class="n">TopoInspector</span><span class="p">(</span><span class="s1">&#39;bathy.nc&#39;</span><span class="p">,</span> <span class="n">var_name</span><span class="o">=</span><span class="s1">&#39;my_elevation&#39;</span><span class="p">,</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">meta</span> <span class="o">=</span> <span class="n">TopoInspector</span><span class="p">(</span><span class="s1">'bathy.nc'</span><span class="p">,</span> <span class="n">var_name</span><span class="o">=</span><span class="s1">'my_elevation'</span><span class="p">,</span>
                      <span class="n">crop_bounds</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="mi">100</span><span class="p">,</span> <span class="o">-</span><span class="mi">60</span><span class="p">,</span> <span class="mi">15</span><span class="p">,</span> <span class="mi">35</span><span class="p">))</span><span class="o">.</span><span class="n">inspect_topo</span><span class="p">()</span>
 </pre></div>
 </div>
@@ -197,7 +197,7 @@ always discovered automatically and never need to be specified.</p>
 (common with global or regional datasets), pass <code class="docutils literal notranslate"><span class="pre">crop_bounds</span></code> to
 <code class="docutils literal notranslate"><span class="pre">TopoInspector</span></code> and use <code class="docutils literal notranslate"><span class="pre">topo_entries()</span></code> to register the file:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">clawpack.geoclaw.netcdf_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">TopoInspector</span>
-<span class="k">with</span> <span class="n">TopoInspector</span><span class="p">(</span><span class="s1">&#39;gebco_global.nc&#39;</span><span class="p">,</span>
+<span class="k">with</span> <span class="n">TopoInspector</span><span class="p">(</span><span class="s1">'gebco_global.nc'</span><span class="p">,</span>
                    <span class="n">crop_bounds</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="mi">100</span><span class="p">,</span> <span class="o">-</span><span class="mi">80</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">35</span><span class="p">))</span> <span class="k">as</span> <span class="n">insp</span><span class="p">:</span>
     <span class="n">rundata</span><span class="o">.</span><span class="n">topo_data</span><span class="o">.</span><span class="n">topofiles</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">insp</span><span class="o">.</span><span class="n">topo_entries</span><span class="p">())</span>
 </pre></div>
@@ -211,9 +211,9 @@ loaded.</p>
 <code class="docutils literal notranslate"><span class="pre">CFNormalizer</span></code> utility can inspect and repair common issues:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">clawpack.geoclaw.netcdf_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">CFNormalizer</span>
 
-<span class="n">cf</span> <span class="o">=</span> <span class="n">CFNormalizer</span><span class="p">(</span><span class="s1">&#39;path/to/bathymetry.nc&#39;</span><span class="p">)</span>
+<span class="n">cf</span> <span class="o">=</span> <span class="n">CFNormalizer</span><span class="p">(</span><span class="s1">'path/to/bathymetry.nc'</span><span class="p">)</span>
 <span class="n">cf</span><span class="o">.</span><span class="n">report</span><span class="p">()</span>          <span class="c1"># prints any issues found</span>
-<span class="n">cf</span><span class="o">.</span><span class="n">normalize</span><span class="p">(</span><span class="s1">&#39;path/to/bathymetry_cf.nc&#39;</span><span class="p">)</span>  <span class="c1"># writes a corrected copy</span>
+<span class="n">cf</span><span class="o">.</span><span class="n">normalize</span><span class="p">(</span><span class="s1">'path/to/bathymetry_cf.nc'</span><span class="p">)</span>  <span class="c1"># writes a corrected copy</span>
 </pre></div>
 </div>
 <p><code class="docutils literal notranslate"><span class="pre">CFNormalizer</span></code> adds missing <code class="docutils literal notranslate"><span class="pre">standard_name</span></code>, <code class="docutils literal notranslate"><span class="pre">axis</span></code>, and <code class="docutils literal notranslate"><span class="pre">units</span></code>
@@ -225,9 +225,9 @@ does not resample or reproject.</p>
 <p>A <code class="docutils literal notranslate"><span class="pre">topotools.Topography</span></code> object can be written as a CF-compliant NetCDF
 file (<code class="docutils literal notranslate"><span class="pre">topo_type=4</span></code>) that GeoClaw reads back through the same descriptor
 mechanism:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">topo</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;bathy.nc&#39;</span><span class="p">,</span> <span class="n">topo_type</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>                     <span class="c1"># elevation float32</span>
-<span class="n">topo</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;bathy.nc&#39;</span><span class="p">,</span> <span class="n">topo_type</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">z_dtype</span><span class="o">=</span><span class="s1">&#39;float64&#39;</span><span class="p">)</span>  <span class="c1"># full precision</span>
-<span class="n">topo</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;bathy.nc&#39;</span><span class="p">,</span> <span class="n">topo_type</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">compression</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>   <span class="c1"># zlib-compressed</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">topo</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">'bathy.nc'</span><span class="p">,</span> <span class="n">topo_type</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>                     <span class="c1"># elevation float32</span>
+<span class="n">topo</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">'bathy.nc'</span><span class="p">,</span> <span class="n">topo_type</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">z_dtype</span><span class="o">=</span><span class="s1">'float64'</span><span class="p">)</span>  <span class="c1"># full precision</span>
+<span class="n">topo</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">'bathy.nc'</span><span class="p">,</span> <span class="n">topo_type</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">compression</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>   <span class="c1"># zlib-compressed</span>
 </pre></div>
 </div>
 <p>The elevation variable is written with <code class="docutils literal notranslate"><span class="pre">units</span> <span class="pre">=</span> <span class="pre">&quot;m&quot;</span></code>.  It is stored on
@@ -248,12 +248,12 @@ before.</p>
 <section id="seafloor-deformation-dtopo-from-netcdf">
 <h3>Seafloor deformation (dtopo) from NetCDF<a class="headerlink" href="#seafloor-deformation-dtopo-from-netcdf" title="Link to this heading">¶</a></h3>
 <p>Time-dependent seafloor deformation (dtopo) can also be read from and
-written to CF-compliant NetCDF using <code class="docutils literal notranslate"><span class="pre">dtopo_type=4</span></code> (see <span class="xref std std-ref">dtopo</span>):</p>
+written to CF-compliant NetCDF using <code class="docutils literal notranslate"><span class="pre">dtopo_type=4</span></code> (see <a class="reference internal" href="dtopo.html#dtopo"><span class="std std-ref">Moving topography displacement files</span></a>):</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">clawpack.geoclaw</span><span class="w"> </span><span class="kn">import</span> <span class="n">dtopotools</span>
-<span class="n">dtopo</span> <span class="o">=</span> <span class="n">dtopotools</span><span class="o">.</span><span class="n">DTopography</span><span class="p">(</span><span class="s1">&#39;deformation.nc&#39;</span><span class="p">,</span> <span class="n">dtopo_type</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>   <span class="c1"># read</span>
-<span class="n">dtopo</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;out.nc&#39;</span><span class="p">,</span> <span class="n">dtopo_type</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>                             <span class="c1"># write</span>
-<span class="n">dtopo</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;out.nc&#39;</span><span class="p">,</span> <span class="n">dtopo_type</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">dz_dtype</span><span class="o">=</span><span class="s1">&#39;float64&#39;</span><span class="p">)</span>         <span class="c1"># full precision</span>
-<span class="n">dtopo</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;out.nc&#39;</span><span class="p">,</span> <span class="n">dtopo_type</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">compression</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>           <span class="c1"># zlib-compressed</span>
+<span class="n">dtopo</span> <span class="o">=</span> <span class="n">dtopotools</span><span class="o">.</span><span class="n">DTopography</span><span class="p">(</span><span class="s1">'deformation.nc'</span><span class="p">,</span> <span class="n">dtopo_type</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>   <span class="c1"># read</span>
+<span class="n">dtopo</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">'out.nc'</span><span class="p">,</span> <span class="n">dtopo_type</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>                             <span class="c1"># write</span>
+<span class="n">dtopo</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">'out.nc'</span><span class="p">,</span> <span class="n">dtopo_type</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">dz_dtype</span><span class="o">=</span><span class="s1">'float64'</span><span class="p">)</span>         <span class="c1"># full precision</span>
+<span class="n">dtopo</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">'out.nc'</span><span class="p">,</span> <span class="n">dtopo_type</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">compression</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>           <span class="c1"># zlib-compressed</span>
 </pre></div>
 </div>
 <p>As with topography, the deformation contract unit is meters and it is stored
@@ -269,8 +269,8 @@ duration, <code class="docutils literal notranslate"><span class="pre">units</sp
 set the optional <code class="docutils literal notranslate"><span class="pre">time_reference</span></code> attribute to a real-world epoch (for
 example the earthquake origin time), the file is instead written with a CF
 datetime axis, <code class="docutils literal notranslate"><span class="pre">units</span> <span class="pre">=</span> <span class="pre">&quot;seconds</span> <span class="pre">since</span> <span class="pre">&lt;time_reference&gt;&quot;</span></code>:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">dtopo</span><span class="o">.</span><span class="n">time_reference</span> <span class="o">=</span> <span class="s1">&#39;2011-03-11T05:46:00&#39;</span>
-<span class="n">dtopo</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;out.nc&#39;</span><span class="p">,</span> <span class="n">dtopo_type</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">dtopo</span><span class="o">.</span><span class="n">time_reference</span> <span class="o">=</span> <span class="s1">'2011-03-11T05:46:00'</span>
+<span class="n">dtopo</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">'out.nc'</span><span class="p">,</span> <span class="n">dtopo_type</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>A datetime axis is more interoperable (a plain <code class="docutils literal notranslate"><span class="pre">xarray.open_dataset</span></code> or a
@@ -349,8 +349,8 @@ rejected outright (see <a class="reference internal" href="#time-handling">Time 
 <section id="registering-a-netcdf-storm-file">
 <h4>Registering a NetCDF storm file<a class="headerlink" href="#registering-a-netcdf-storm-file" title="Link to this heading">¶</a></h4>
 <p>In <code class="docutils literal notranslate"><span class="pre">setrun.py</span></code>:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">surge_data</span><span class="o">.</span><span class="n">storm_specification_type</span> <span class="o">=</span> <span class="s1">&#39;data&#39;</span>
-<span class="n">surge_data</span><span class="o">.</span><span class="n">storm_file</span> <span class="o">=</span> <span class="s1">&#39;isaac.storm&#39;</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">surge_data</span><span class="o">.</span><span class="n">storm_specification_type</span> <span class="o">=</span> <span class="s1">'data'</span>
+<span class="n">surge_data</span><span class="o">.</span><span class="n">storm_file</span> <span class="o">=</span> <span class="s1">'isaac.storm'</span>
 </pre></div>
 </div>
 <p>Then create the storm descriptor file, <em>e.g.</em> <code class="docutils literal notranslate"><span class="pre">isaac.storm</span></code>. GeoClaw
@@ -368,10 +368,10 @@ required:</p>
 <span class="kn">from</span><span class="w"> </span><span class="nn">clawpack.geoclaw.met.storm</span><span class="w"> </span><span class="kn">import</span> <span class="n">Storm</span>
 
 <span class="n">storm</span> <span class="o">=</span> <span class="n">Storm</span><span class="p">()</span>
-<span class="n">storm</span><span class="o">.</span><span class="n">time_offset</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">datetime64</span><span class="p">(</span><span class="s1">&#39;2012-08-29&#39;</span><span class="p">)</span>
-<span class="n">storm</span><span class="o">.</span><span class="n">file_format</span> <span class="o">=</span> <span class="s1">&#39;netcdf&#39;</span>
-<span class="n">storm</span><span class="o">.</span><span class="n">file_paths</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;path/to/era5_forcing.nc&#39;</span><span class="p">]</span>
-<span class="n">storm</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;isaac.storm&#39;</span><span class="p">,</span> <span class="n">file_format</span><span class="o">=</span><span class="s1">&#39;data&#39;</span><span class="p">)</span>
+<span class="n">storm</span><span class="o">.</span><span class="n">time_offset</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">datetime64</span><span class="p">(</span><span class="s1">'2012-08-29'</span><span class="p">)</span>
+<span class="n">storm</span><span class="o">.</span><span class="n">file_format</span> <span class="o">=</span> <span class="s1">'netcdf'</span>
+<span class="n">storm</span><span class="o">.</span><span class="n">file_paths</span> <span class="o">=</span> <span class="p">[</span><span class="s1">'path/to/era5_forcing.nc'</span><span class="p">]</span>
+<span class="n">storm</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">'isaac.storm'</span><span class="p">,</span> <span class="n">file_format</span><span class="o">=</span><span class="s1">'data'</span><span class="p">)</span>
 </pre></div>
 </div>
 <p><strong>Case 2 — mixed: standard wind names, non-standard pressure:</strong></p>
@@ -379,8 +379,8 @@ required:</p>
 sea-level and surface pressure) or a non-standard pressure variable
 name. Specify only the roles that cannot be discovered automatically;
 the rest are still found from the fallback lists:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">storm</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;isaac.storm&#39;</span><span class="p">,</span> <span class="n">file_format</span><span class="o">=</span><span class="s1">&#39;data&#39;</span><span class="p">,</span>
-            <span class="n">var_mapping</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;pressure&#39;</span><span class="p">:</span> <span class="s1">&#39;prmsl&#39;</span><span class="p">})</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">storm</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">'isaac.storm'</span><span class="p">,</span> <span class="n">file_format</span><span class="o">=</span><span class="s1">'data'</span><span class="p">,</span>
+            <span class="n">var_mapping</span><span class="o">=</span><span class="p">{</span><span class="s1">'pressure'</span><span class="p">:</span> <span class="s1">'prmsl'</span><span class="p">})</span>
 </pre></div>
 </div>
 <p>Any name supplied in <code class="docutils literal notranslate"><span class="pre">var_mapping</span></code> is validated against the variables
@@ -391,13 +391,13 @@ incorrect output silently.</p>
 <p>Supply all three roles explicitly when none of the variable names match
 the built-in fallback lists:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">storm</span> <span class="o">=</span> <span class="n">Storm</span><span class="p">()</span>
-<span class="n">storm</span><span class="o">.</span><span class="n">time_offset</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">datetime64</span><span class="p">(</span><span class="s1">&#39;2012-08-29&#39;</span><span class="p">)</span>
-<span class="n">storm</span><span class="o">.</span><span class="n">file_format</span> <span class="o">=</span> <span class="s1">&#39;nws13&#39;</span>
-<span class="n">storm</span><span class="o">.</span><span class="n">file_paths</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;path/to/nws13_forcing.nc&#39;</span><span class="p">]</span>
-<span class="n">storm</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;isaac.storm&#39;</span><span class="p">,</span> <span class="n">file_format</span><span class="o">=</span><span class="s1">&#39;data&#39;</span><span class="p">,</span>
-            <span class="n">var_mapping</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;wind_u&#39;</span><span class="p">:</span> <span class="s1">&#39;uwnd&#39;</span><span class="p">,</span>
-                         <span class="s1">&#39;wind_v&#39;</span><span class="p">:</span> <span class="s1">&#39;vwnd&#39;</span><span class="p">,</span>
-                         <span class="s1">&#39;pressure&#39;</span><span class="p">:</span> <span class="s1">&#39;press&#39;</span><span class="p">})</span>
+<span class="n">storm</span><span class="o">.</span><span class="n">time_offset</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">datetime64</span><span class="p">(</span><span class="s1">'2012-08-29'</span><span class="p">)</span>
+<span class="n">storm</span><span class="o">.</span><span class="n">file_format</span> <span class="o">=</span> <span class="s1">'nws13'</span>
+<span class="n">storm</span><span class="o">.</span><span class="n">file_paths</span> <span class="o">=</span> <span class="p">[</span><span class="s1">'path/to/nws13_forcing.nc'</span><span class="p">]</span>
+<span class="n">storm</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">'isaac.storm'</span><span class="p">,</span> <span class="n">file_format</span><span class="o">=</span><span class="s1">'data'</span><span class="p">,</span>
+            <span class="n">var_mapping</span><span class="o">=</span><span class="p">{</span><span class="s1">'wind_u'</span><span class="p">:</span> <span class="s1">'uwnd'</span><span class="p">,</span>
+                         <span class="s1">'wind_v'</span><span class="p">:</span> <span class="s1">'vwnd'</span><span class="p">,</span>
+                         <span class="s1">'pressure'</span><span class="p">:</span> <span class="s1">'press'</span><span class="p">})</span>
 </pre></div>
 </div>
 <p><strong>Advanced: pre-built MetInspector:</strong></p>
@@ -409,11 +409,11 @@ inspector is supplied, auto-discovery and <code class="docutils literal notransl
 are bypassed entirely:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">clawpack.geoclaw.netcdf_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">MetInspector</span>
 
-<span class="n">mi</span> <span class="o">=</span> <span class="n">MetInspector</span><span class="p">(</span><span class="s1">&#39;path/to/forcing.nc&#39;</span><span class="p">,</span>
-                  <span class="n">variable_map</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;wind_u&#39;</span><span class="p">:</span> <span class="s1">&#39;u10&#39;</span><span class="p">,</span>
-                                <span class="s1">&#39;wind_v&#39;</span><span class="p">:</span> <span class="s1">&#39;v10&#39;</span><span class="p">,</span>
-                                <span class="s1">&#39;pressure&#39;</span><span class="p">:</span> <span class="s1">&#39;msl&#39;</span><span class="p">})</span>
-<span class="n">storm</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;isaac.storm&#39;</span><span class="p">,</span> <span class="n">file_format</span><span class="o">=</span><span class="s1">&#39;data&#39;</span><span class="p">,</span> <span class="n">met_inspector</span><span class="o">=</span><span class="n">mi</span><span class="p">)</span>
+<span class="n">mi</span> <span class="o">=</span> <span class="n">MetInspector</span><span class="p">(</span><span class="s1">'path/to/forcing.nc'</span><span class="p">,</span>
+                  <span class="n">variable_map</span><span class="o">=</span><span class="p">{</span><span class="s1">'wind_u'</span><span class="p">:</span> <span class="s1">'u10'</span><span class="p">,</span>
+                                <span class="s1">'wind_v'</span><span class="p">:</span> <span class="s1">'v10'</span><span class="p">,</span>
+                                <span class="s1">'pressure'</span><span class="p">:</span> <span class="s1">'msl'</span><span class="p">})</span>
+<span class="n">storm</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">'isaac.storm'</span><span class="p">,</span> <span class="n">file_format</span><span class="o">=</span><span class="s1">'data'</span><span class="p">,</span> <span class="n">met_inspector</span><span class="o">=</span><span class="n">mi</span><span class="p">)</span>
 </pre></div>
 </div>
 <div class="admonition note">
@@ -435,7 +435,7 @@ other.</p>
 <p>GeoClaw works in seconds relative to a user-defined reference time
 (typically landfall or storm genesis). Set it when constructing the
 storm:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">storm</span><span class="o">.</span><span class="n">time_offset</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">datetime64</span><span class="p">(</span><span class="s1">&#39;2012-08-29T00:00&#39;</span><span class="p">)</span>  <span class="c1"># landfall time</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">storm</span><span class="o">.</span><span class="n">time_offset</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">datetime64</span><span class="p">(</span><span class="s1">'2012-08-29T00:00'</span><span class="p">)</span>  <span class="c1"># landfall time</span>
 </pre></div>
 </div>
 <p>Python computes <code class="docutils literal notranslate"><span class="pre">nc_time_offset</span></code> — the elapsed seconds from
@@ -614,11 +614,11 @@ friction) requires no change to the Fortran parser.</p>
 <h3>Unit contract<a class="headerlink" href="#unit-contract" title="Link to this heading">¶</a></h3>
 <p>Defined in <code class="docutils literal notranslate"><span class="pre">units.py</span></code>:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">GEOCLAW_NETCDF_UNITS</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s2">&quot;topo&quot;</span><span class="p">:</span>     <span class="s2">&quot;m&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;wind_u&quot;</span><span class="p">:</span>   <span class="s2">&quot;m/s&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;wind_v&quot;</span><span class="p">:</span>   <span class="s2">&quot;m/s&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;pressure&quot;</span><span class="p">:</span> <span class="s2">&quot;Pa&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;time&quot;</span><span class="p">:</span>     <span class="s2">&quot;s&quot;</span><span class="p">,</span>
+    <span class="s2">"topo"</span><span class="p">:</span>     <span class="s2">"m"</span><span class="p">,</span>
+    <span class="s2">"wind_u"</span><span class="p">:</span>   <span class="s2">"m/s"</span><span class="p">,</span>
+    <span class="s2">"wind_v"</span><span class="p">:</span>   <span class="s2">"m/s"</span><span class="p">,</span>
+    <span class="s2">"pressure"</span><span class="p">:</span> <span class="s2">"Pa"</span><span class="p">,</span>
+    <span class="s2">"time"</span><span class="p">:</span>     <span class="s2">"s"</span><span class="p">,</span>
 <span class="p">}</span>
 </pre></div>
 </div>
@@ -820,17 +820,18 @@ to <code class="docutils literal notranslate"><span class="pre">NetCDFInspector<
 <script>document.getElementById('searchbox').style.display = "block"</script>
 <h4>Latest Version</h4>
 <ul>
-  <li><a href="../v5.14.x/netcdf.html">v5.14.x</a></li>
   <li><a href="netcdf.html">dev</a></li>
+  <li><a href="../v5.14.x/netcdf.html">v5.14.x</a></li>
 </ul>
 <h4>Older Versions</h4>
 <ul>
-  <li><a href="../v5.7.x/netcdf.html">v5.7.x</a></li>
-  <li><a href="../v5.8.x/netcdf.html">v5.8.x</a></li>
-  <li><a href="../v5.9.x/netcdf.html">v5.9.x</a></li>
   <li><a href="../v5.10.x/netcdf.html">v5.10.x</a></li>
   <li><a href="../v5.11.x/netcdf.html">v5.11.x</a></li>
   <li><a href="../v5.12.x/netcdf.html">v5.12.x</a></li>
+  <li><a href="../v5.13.x/netcdf.html">v5.13.x</a></li>
+  <li><a href="../v5.7.x/netcdf.html">v5.7.x</a></li>
+  <li><a href="../v5.8.x/netcdf.html">v5.8.x</a></li>
+  <li><a href="../v5.9.x/netcdf.html">v5.9.x</a></li>
 </ul>
 
         </div>
